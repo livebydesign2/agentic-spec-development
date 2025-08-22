@@ -1,0 +1,214 @@
+#!/usr/bin/env node
+
+const { Command } = require('commander');
+const path = require('path');
+const chalk = require('chalk');
+const ASDClient = require('../lib/index');
+const ConfigManager = require('../lib/config-manager');
+
+const program = new Command();
+
+program
+  .name('asd')
+  .description('Agentic Spec Development (ASD) - AI-first terminal tool for specification development and project management')
+  .version('1.0.0')
+  .option('-c, --config <path>', 'Path to configuration file')
+  .option('-p, --path <path>', 'Path to specs directory (overrides config)')
+  .option('--no-auto-refresh', 'Disable automatic file watching and refresh')
+  .option('--app-name <name>', 'Custom application name')
+  .option('--app-icon <icon>', 'Custom application icon')
+  .option('--debug', 'Enable debug output');
+
+program
+  .command('init')
+  .description('Initialize ASD in the current directory')
+  .option('-t, --type <type>', 'Project type (spec, feature, mixed)', 'mixed')
+  .action(async (options) => {
+    console.log(chalk.cyan('🤖 Initializing Agentic Spec Development...'));
+    
+    const configManager = new ConfigManager(process.cwd());
+    const configPath = path.join(process.cwd(), 'asd.config.js');
+    
+    try {
+      configManager.createExampleConfig(configPath);
+      console.log(chalk.green(`✅ Created configuration file: ${configPath}`));
+      
+      // Create default directory structure
+      const fs = require('fs').promises;
+      const specsPath = path.join(process.cwd(), 'docs/specs');
+      
+      await fs.mkdir(path.join(specsPath, 'active'), { recursive: true });
+      await fs.mkdir(path.join(specsPath, 'backlog'), { recursive: true });
+      await fs.mkdir(path.join(specsPath, 'done'), { recursive: true });
+      await fs.mkdir(path.join(specsPath, 'template'), { recursive: true });
+      
+      console.log(chalk.green('✅ Created directory structure:'));
+      console.log(chalk.gray('   docs/specs/active/'));
+      console.log(chalk.gray('   docs/specs/backlog/'));
+      console.log(chalk.gray('   docs/specs/done/'));
+      console.log(chalk.gray('   docs/specs/template/'));
+      
+      console.log(chalk.cyan('\n🚀 ASD initialization complete!'));
+      console.log(chalk.white('Run "asd" to start the terminal interface.'));
+      
+    } catch (error) {
+      console.error(chalk.red('❌ Initialization failed:'), error.message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('config')
+  .description('Show current configuration')
+  .action(() => {
+    const configManager = new ConfigManager(process.cwd());
+    const configInfo = configManager.getConfigInfo();
+    
+    console.log(chalk.cyan('🤖 ASD Configuration'));
+    console.log(chalk.gray('='.repeat(50)));
+    
+    if (configInfo.configPath) {
+      console.log(chalk.white('Config file:'), chalk.yellow(configInfo.configPath));
+    } else {
+      console.log(chalk.white('Config file:'), chalk.gray('Using defaults (no config file found)'));
+    }
+    
+    console.log(chalk.white('Project root:'), chalk.yellow(configInfo.projectRoot));
+    console.log(chalk.white('Specs path:'), chalk.yellow(configInfo.config.featuresPath));
+    console.log(chalk.white('Auto refresh:'), configInfo.config.autoRefresh ? chalk.green('enabled') : chalk.red('disabled'));
+    console.log(chalk.white('Supported types:'), chalk.cyan(configInfo.config.supportedTypes.join(', ')));
+    console.log(chalk.white('Status folders:'), chalk.cyan(configInfo.config.statusFolders.join(', ')));
+  });
+
+program
+  .command('doctor')
+  .description('Check ASD setup and configuration')
+  .action(async () => {
+    console.log(chalk.cyan('🔍 ASD Health Check'));
+    console.log(chalk.gray('='.repeat(50)));
+    
+    const configManager = new ConfigManager(process.cwd());
+    const config = configManager.loadConfig();
+    const fs = require('fs').promises;
+    
+    let allGood = true;
+    
+    // Check if specs directory exists
+    try {
+      await fs.access(config.featuresPath);
+      console.log(chalk.green('✅ Specs directory exists:'), chalk.yellow(config.featuresPath));
+    } catch (error) {
+      console.log(chalk.red('❌ Specs directory missing:'), chalk.yellow(config.featuresPath));
+      allGood = false;
+    }
+    
+    // Check if status folders exist
+    for (const folder of config.statusFolders) {
+      const folderPath = path.join(config.featuresPath, folder);
+      try {
+        await fs.access(folderPath);
+        console.log(chalk.green('✅ Status folder exists:'), chalk.gray(folder));
+      } catch (error) {
+        console.log(chalk.red('❌ Status folder missing:'), chalk.gray(folder));
+        allGood = false;
+      }
+    }
+    
+    // Check for spec files
+    let totalSpecs = 0;
+    for (const folder of config.statusFolders) {
+      const folderPath = path.join(config.featuresPath, folder);
+      try {
+        const files = await fs.readdir(folderPath);
+        const mdFiles = files.filter(file => file.endsWith('.md'));
+        totalSpecs += mdFiles.length;
+      } catch (error) {
+        // Folder doesn't exist, already reported above
+      }
+    }
+    
+    if (totalSpecs > 0) {
+      console.log(chalk.green(`✅ Found ${totalSpecs} specification files`));
+    } else {
+      console.log(chalk.yellow('⚠️  No specification files found'));
+    }
+    
+    // Check dependencies
+    try {
+      require('terminal-kit');
+      console.log(chalk.green('✅ terminal-kit dependency available'));
+    } catch (error) {
+      console.log(chalk.red('❌ terminal-kit dependency missing'));
+      allGood = false;
+    }
+    
+    console.log(chalk.gray('='.repeat(50)));
+    if (allGood) {
+      console.log(chalk.green('🎉 All checks passed! ASD is ready to use.'));
+    } else {
+      console.log(chalk.red('❌ Some issues found. Run "asd init" to set up missing directories.'));
+      process.exit(1);
+    }
+  });
+
+// Default command - start the interactive terminal
+program
+  .command('start')
+  .description('Start the interactive ASD terminal interface (default)')
+  .action(async () => {
+    const options = program.opts();
+    await startASD(options);
+  });
+
+// Handle when no command is specified (default to start)
+program.action(async () => {
+  const options = program.opts();
+  await startASD(options);
+});
+
+async function startASD(options) {
+  try {
+    // Prepare configuration
+    const configOptions = {
+      cwd: process.cwd(),
+      configPath: options.config,
+      appName: options.appName,
+      appIcon: options.appIcon,
+    };
+    
+    if (options.path) {
+      configOptions.featuresPath = options.path;
+    }
+    
+    if (options.noAutoRefresh) {
+      configOptions.autoRefresh = false;
+    }
+    
+    if (options.debug) {
+      process.env.DEBUG_STARTUP = 'true';
+      process.env.DEBUG_LAYOUT = 'true';
+    }
+    
+    // Create and start ASD client
+    const asd = new ASDClient(configOptions);
+    await asd.init();
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Failed to start ASD:'), error.message);
+    
+    if (options.debug) {
+      console.error(chalk.gray('Stack trace:'), error.stack);
+    }
+    
+    process.exit(1);
+  }
+}
+
+// Handle CLI parsing
+program.parse();
+
+// If no command was specified and no arguments, show help
+if (!process.argv.slice(2).length) {
+  const options = program.opts();
+  startASD(options);
+}

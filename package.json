@@ -1,0 +1,75 @@
+{
+  "name": "agentic-spec-development",
+  "version": "1.0.0",
+  "description": "AI-first terminal tool for agentic specification development and project management",
+  "keywords": [
+    "agentic",
+    "specification",
+    "development",
+    "ai-first",
+    "terminal",
+    "cli",
+    "tui",
+    "specs",
+    "features",
+    "markdown",
+    "project-management"
+  ],
+  "homepage": "https://github.com/livebydesign2/agentic-spec-development#readme",
+  "bugs": {
+    "url": "https://github.com/livebydesign2/agentic-spec-development/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/livebydesign2/agentic-spec-development.git"
+  },
+  "license": "MIT",
+  "author": "Campfire Team <noreply@campfireapp.dev>",
+  "main": "lib/index.js",
+  "bin": {
+    "asd": "./bin/asd"
+  },
+  "scripts": {
+    "start": "node bin/asd",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest --testPathPattern='test/(?!integration|performance).*\\.test\\.js$'",
+    "test:integration": "jest --testPathPattern='test/integration/.*\\.test\\.js$'",
+    "test:performance": "jest --testPathPattern='test/performance\\.test\\.js$' --testTimeout=30000",
+    "test:ci": "jest --coverage --ci --watchAll=false",
+    "test:debug": "DEBUG_TESTS=true jest --verbose",
+    "lint": "eslint lib/ test/ --ext .js && eslint bin/*",
+    "lint:fix": "eslint lib/ test/ --ext .js --fix && eslint bin/* --fix",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,json,md}\"",
+    "validate": "npm run lint && npm run format:check && npm run test:unit",
+    "prepublishOnly": "npm run validate && npm run test:integration"
+  },
+  "dependencies": {
+    "terminal-kit": "^3.1.2",
+    "chalk": "^4.1.2",
+    "commander": "^9.0.0",
+    "cosmiconfig": "^8.0.0",
+    "joi": "^17.6.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^2.8.0",
+    "@types/node": "^18.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "config/",
+    "templates/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ]
+}
