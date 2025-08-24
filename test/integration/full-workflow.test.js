@@ -70,7 +70,7 @@ Login form and user interface.
 
 ## Required Reading
 - docs/architecture/auth-design.md
-- docs/security/guidelines.md`
+- docs/security/guidelines.md`,
       },
 
       // Backlog P0 feature (critical ready)
@@ -105,7 +105,7 @@ Implement proper token lifecycle management with database cleanup.
 Fix token invalidation logic.
 
 ### **⏳ TASK-002** 🤖 **Database Migration** | Agent: Database-Engineer
-Add token cleanup job.`
+Add token cleanup job.`,
       },
 
       // Active P1 feature
@@ -128,7 +128,7 @@ Allow users to manage their profile information and preferences.
 - [ ] Profile image upload
 
 ### **TASK-003** 🤖 **Profile UI** | Agent: Frontend-Developer
-User interface for profile management.`
+User interface for profile management.`,
       },
 
       // Research spike
@@ -155,7 +155,7 @@ What indexing strategies provide the best performance for our current user query
 Create baseline performance measurements.
 
 ### **⏳ TASK-002** 🤖 **Index Strategy Testing** | Agent: Database-Engineer
-Implement and test different strategies.`
+Implement and test different strategies.`,
       },
 
       // Maintenance task
@@ -181,7 +181,7 @@ Update all project dependencies to latest stable versions.
 ### **TASK-003** 🤖 **Testing & Validation** | Agent: QA-Engineer
 - [ ] Run test suite
 - [ ] Performance regression testing
-- [ ] Security validation`
+- [ ] Security validation`,
       },
 
       // Completed feature
@@ -201,8 +201,8 @@ Email service provider integration completed.
 Email template engine implemented.
 
 ### **✅ TASK-003** 🤖 **Notification Logic** | Agent: Backend-Developer
-User notification preferences and triggers.`
-      }
+User notification preferences and triggers.`,
+      },
     ];
 
     for (const spec of specs) {
@@ -212,13 +212,13 @@ User notification preferences and triggers.`
 
   describe('Complete ASD Workflow', () => {
     it('should load and parse all specifications correctly', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
       expect(specs).toHaveLength(6);
 
       // Verify spec types
-      const specTypes = specs.map(s => s.type);
+      const specTypes = specs.map((s) => s.type);
       expect(specTypes).toContain('SPEC');
       expect(specTypes).toContain('BUG');
       expect(specTypes).toContain('FEAT');
@@ -226,12 +226,12 @@ User notification preferences and triggers.`
       expect(specTypes).toContain('MAINT');
 
       // Verify priorities
-      const p0Specs = specs.filter(s => s.priority === 'P0');
+      const p0Specs = specs.filter((s) => s.priority === 'P0');
       expect(p0Specs).toHaveLength(2);
     });
 
     it('should calculate progress across all features correctly', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
       const overallProgress = progressCalc.calculateOverallProgress(specs);
@@ -243,7 +243,7 @@ User notification preferences and triggers.`
     });
 
     it('should identify critical ready features', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const criticalReady = specParser.getCriticalReady();
 
@@ -254,26 +254,26 @@ User notification preferences and triggers.`
     });
 
     it('should track task assignments to agents', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
       const tasksWithAgents = specs
-        .flatMap(s => s.tasks || [])
-        .filter(t => t.assigneeRole);
+        .flatMap((s) => s.tasks || [])
+        .filter((t) => t.assigneeRole);
 
       expect(tasksWithAgents.length).toBeGreaterThan(0);
 
-      const agentRoles = tasksWithAgents.map(t => t.assigneeRole);
+      const agentRoles = tasksWithAgents.map((t) => t.assigneeRole);
       expect(agentRoles).toContain('Database-Engineer');
       expect(agentRoles).toContain('Backend-Developer');
       expect(agentRoles).toContain('Frontend-Developer');
     });
 
     it('should handle different task status formats', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
-      const allTasks = specs.flatMap(s => s.tasks || []);
+      const allTasks = specs.flatMap((s) => s.tasks || []);
 
       const statusCounts = allTasks.reduce((acc, task) => {
         acc[task.status] = (acc[task.status] || 0) + 1;
@@ -286,10 +286,10 @@ User notification preferences and triggers.`
     });
 
     it('should parse subtasks and calculate partial progress', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
-      const authSpec = specs.find(s => s.id === 'SPEC-001');
+      const authSpec = specs.find((s) => s.id === 'SPEC-001');
 
       expect(authSpec).toBeDefined();
       expect(authSpec.tasks).toHaveLength(3);
@@ -297,7 +297,7 @@ User notification preferences and triggers.`
       // Check subtasks
       const firstTask = authSpec.tasks[0];
       expect(firstTask.subtasks).toHaveLength(3);
-      expect(firstTask.subtasks.every(st => st.completed)).toBe(true);
+      expect(firstTask.subtasks.every((st) => st.completed)).toBe(true);
 
       const secondTask = authSpec.tasks[1];
       expect(secondTask.subtasks).toHaveLength(3);
@@ -309,26 +309,26 @@ User notification preferences and triggers.`
     });
 
     it('should support different specification types with specific fields', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
 
       // Bug spec should have bug-specific fields
-      const bugSpec = specs.find(s => s.type === 'BUG');
+      const bugSpec = specs.find((s) => s.type === 'BUG');
       expect(bugSpec.bugSeverity).toBe('Critical');
       expect(bugSpec.reproductionSteps).toHaveLength(5);
       expect(bugSpec.rootCause).toContain('Password reset tokens');
       expect(bugSpec.proposedSolution).toContain('token lifecycle');
 
       // Spike spec should have research fields
-      const spikeSpec = specs.find(s => s.type === 'SPIKE');
+      const spikeSpec = specs.find((s) => s.type === 'SPIKE');
       expect(spikeSpec.researchType).toBe('Performance Analysis');
       expect(spikeSpec.researchQuestion).toContain('indexing strategies');
       expect(spikeSpec.researchFindings).toHaveLength(4);
     });
 
     it('should generate comprehensive statistics', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const stats = specParser.getStats();
 
@@ -337,19 +337,19 @@ User notification preferences and triggers.`
         active: 3,
         backlog: 2,
         done: 1,
-        p0: 2
+        p0: 2,
       });
 
       // Verify stats match actual data
       const specs = specParser.getSpecs();
-      expect(specs.filter(s => s.status === 'active')).toHaveLength(3);
-      expect(specs.filter(s => s.status === 'backlog')).toHaveLength(2);
-      expect(specs.filter(s => s.status === 'done')).toHaveLength(1);
-      expect(specs.filter(s => s.priority === 'P0')).toHaveLength(2);
+      expect(specs.filter((s) => s.status === 'active')).toHaveLength(3);
+      expect(specs.filter((s) => s.status === 'backlog')).toHaveLength(2);
+      expect(specs.filter((s) => s.status === 'done')).toHaveLength(1);
+      expect(specs.filter((s) => s.priority === 'P0')).toHaveLength(2);
     });
 
     it('should create formatted UI output for all components', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
       const stats = specParser.getStats();
@@ -361,7 +361,7 @@ User notification preferences and triggers.`
       expect(summaryStats).toContain('Critical (P0): 2');
 
       // Test feature list items
-      const activeSpecs = specs.filter(s => s.status === 'active');
+      const activeSpecs = specs.filter((s) => s.status === 'active');
       for (const spec of activeSpecs) {
         const progress = progressCalc.calculateProgress(spec);
         const listItem = ui.createFeatureListItem(spec, progress, false);
@@ -377,7 +377,7 @@ User notification preferences and triggers.`
           expect(taskList).toContain('TASK-');
 
           // Check for agent assignments
-          const tasksWithAgents = spec.tasks.filter(t => t.assigneeRole);
+          const tasksWithAgents = spec.tasks.filter((t) => t.assigneeRole);
           if (tasksWithAgents.length > 0) {
             expect(taskList).toContain('[');
             expect(taskList).toContain(']');
@@ -387,7 +387,7 @@ User notification preferences and triggers.`
     });
 
     it('should handle velocity and completion estimates', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
 
@@ -404,7 +404,7 @@ User notification preferences and triggers.`
     });
 
     it('should find next available tasks across all features', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
       const nextTasks = [];
@@ -419,7 +419,7 @@ User notification preferences and triggers.`
       expect(nextTasks.length).toBeGreaterThan(0);
 
       // Should include the ready tasks from various specs
-      const taskTitles = nextTasks.map(t => t.title);
+      const taskTitles = nextTasks.map((t) => t.title);
       expect(taskTitles).toContain('Frontend Integration');
       expect(taskTitles).toContain('Profile Data Model');
     });
@@ -438,7 +438,7 @@ User notification preferences and triggers.`
 
       // Create new managers with custom config
       const customConfigManager = new ConfigManager(testDir);
-      const customSpecParser = new SpecParser(customConfigManager);
+      // const _customSpecParser = new SpecParser(customConfigManager);
 
       // Override config path
       customConfigManager.configPath = path.join(testDir, 'custom.config.js');
@@ -447,7 +447,12 @@ User notification preferences and triggers.`
       const config = customConfigManager.loadConfig();
 
       expect(config.supportedTypes).toEqual(['SPEC', 'CUSTOM']);
-      expect(config.statusFolders).toEqual(['active', 'backlog', 'done', 'review']);
+      expect(config.statusFolders).toEqual([
+        'active',
+        'backlog',
+        'done',
+        'review',
+      ]);
       expect(config.priorities).toEqual(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']);
     });
   });
@@ -455,13 +460,19 @@ User notification preferences and triggers.`
   describe('Error Resilience', () => {
     it('should handle malformed spec files gracefully', async () => {
       // Add some malformed files
-      global.createTestFile('docs/specs/active/malformed-no-id.md', 'Invalid content without ID');
-      global.createTestFile('docs/specs/active/INVALID-FORMAT.md', '# Invalid\nNo proper format');
+      global.createTestFile(
+        'docs/specs/active/malformed-no-id.md',
+        'Invalid content without ID'
+      );
+      global.createTestFile(
+        'docs/specs/active/INVALID-FORMAT.md',
+        '# Invalid\nNo proper format'
+      );
       global.createTestFile('docs/specs/active/empty-file.md', '');
 
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
 
@@ -476,17 +487,19 @@ User notification preferences and triggers.`
 
     it('should handle missing directories', async () => {
       // Remove one status directory
-      await fs.rmdir(path.join(testDir, 'docs/specs/done'), { recursive: true });
+      await fs.rmdir(path.join(testDir, 'docs/specs/done'), {
+        recursive: true,
+      });
 
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
 
       // Should still load specs from existing directories
       expect(specs.length).toBeGreaterThan(0);
-      expect(specs.filter(s => s.status === 'done')).toHaveLength(0);
+      expect(specs.filter((s) => s.status === 'done')).toHaveLength(0);
 
       expect(consoleSpy).toHaveBeenCalledWith(
         'Warning: Could not read folder done:',
@@ -537,8 +550,10 @@ Testing task for spec ${i}.`;
 
         const status = ['active', 'backlog', 'done'][i % 3];
         largeDataset.push({
-          path: `docs/specs/${status}/SPEC-${i.toString().padStart(3, '0')}-test.md`,
-          content
+          path: `docs/specs/${status}/SPEC-${i
+            .toString()
+            .padStart(3, '0')}-test.md`,
+          content,
         });
       }
 
@@ -548,7 +563,7 @@ Testing task for spec ${i}.`;
 
       const startTime = Date.now();
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const loadTime = Date.now() - startTime;
 
@@ -578,12 +593,14 @@ Testing task for spec ${i}.`;
       const altStructure = [
         {
           path: 'features/current/SPEC-200-alt.md',
-          content: '# Alternative Structure\n**Priority:** P1\n## Description\nAlternative project structure.'
+          content:
+            '# Alternative Structure\n**Priority:** P1\n## Description\nAlternative project structure.',
         },
         {
           path: 'features/planned/FEAT-201-alt.md',
-          content: '# Alternative Feature\n**Priority:** P2\n## Description\nFeature in alternative structure.'
-        }
+          content:
+            '# Alternative Feature\n**Priority:** P2\n## Description\nFeature in alternative structure.',
+        },
       ];
 
       for (const spec of altStructure) {
@@ -607,13 +624,13 @@ Testing task for spec ${i}.`;
 
       const altSpecParser = new SpecParser(altConfigManager);
 
-      await altSpecParser.loadFeatures();
+      await altSpecParser.loadSpecs();
 
       const altSpecs = altSpecParser.getSpecs();
 
       expect(altSpecs.length).toBeGreaterThanOrEqual(2);
-      expect(altSpecs.some(s => s.id === 'SPEC-200')).toBe(true);
-      expect(altSpecs.some(s => s.id === 'FEAT-201')).toBe(true);
+      expect(altSpecs.some((s) => s.id === 'SPEC-200')).toBe(true);
+      expect(altSpecs.some((s) => s.id === 'FEAT-201')).toBe(true);
     });
   });
 });

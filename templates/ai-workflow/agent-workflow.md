@@ -11,6 +11,7 @@ Each AI agent works on **exactly one task** within a specification, then cleanly
 ## 🔄 Standard Agent Workflow
 
 ### **1. Task Pickup**
+
 ```bash
 # Agent picks up work
 1. Read specification document (SPEC-XXX-name.md)
@@ -21,6 +22,7 @@ Each AI agent works on **exactly one task** within a specification, then cleanly
 ```
 
 ### **2. Task Execution**
+
 ```bash
 # During development
 1. Work on assigned subtasks only
@@ -31,6 +33,7 @@ Each AI agent works on **exactly one task** within a specification, then cleanly
 ```
 
 ### **3. Task Completion**
+
 ```bash
 # Before committing
 1. Complete validation checklist (tests, lint, functionality)
@@ -45,26 +48,31 @@ Each AI agent works on **exactly one task** within a specification, then cleanly
 ## 🎯 Agent Types & Responsibilities
 
 ### **Product-Manager**
+
 - **When**: Before any implementation (Step 1) and after completion (Step 8)
 - **Role**: Specification creation, numbering, lifecycle management, roadmap updates
 - **Handoff**: Creates properly numbered specifications, moves between backlog/active/done
 
 ### **Software-Architect**
+
 - **When**: Foundation and design tasks
 - **Role**: System design, architecture decisions, technical strategy
 - **Handoff**: Technical specifications and architectural patterns
 
 ### **Code-Quality-Specialist**
+
 - **When**: Implementation and testing tasks
 - **Role**: Code implementation, testing, quality assurance
 - **Handoff**: Working, tested code with proper documentation
 
 ### **UI-Developer**
-- **When**: User interface and documentation tasks  
+
+- **When**: User interface and documentation tasks
 - **Role**: User experience, visual design, user-facing documentation
 - **Handoff**: Polished interfaces and clear documentation
 
 ### **Git-Specialist**
+
 - **When**: Repository management and deployment
 - **Role**: Version control, CI/CD, deployment processes
 - **Handoff**: Deployed code and proper git history
@@ -74,20 +82,24 @@ Each AI agent works on **exactly one task** within a specification, then cleanly
 ## 📋 Context Management Strategy
 
 ### **🔥 CRITICAL - Always Read (Required)**
+
 - `docs/ai-context/implementation-rules.md` - Code standards and patterns
 - Current specification document - Complete technical requirements
 
 ### **📋 TASK-SPECIFIC - Read for Your Task Only**
+
 - Files specific to your assigned task
 - Dependencies and related components for your task
 - Testing guidance for your implementation area
 
 ### **📖 REFERENCE - Read When Stuck**
+
 - Background context and system overview
 - Decision frameworks and debugging guides
 - Related specifications for context
 
 ### **Context Window Management**
+
 Start with CRITICAL docs only (~400-500 lines). Only add TASK-SPECIFIC content for your specific task. Avoid REFERENCE material unless debugging issues.
 
 ---
@@ -95,14 +107,17 @@ Start with CRITICAL docs only (~400-500 lines). Only add TASK-SPECIFIC content f
 ## 🚦 Task Status System
 
 ### **Status Indicators**
+
 - ⏳ **Ready for pickup** - Task can be started immediately
-- 🔄 **In progress** - Agent is actively working on task  
+- 🔄 **In progress** - Agent is actively working on task
 - ✅ **Complete** - Task finished and validated
 - ⏸️ **Blocked** - Task waiting for dependencies
 
 ### **Task Handoff Protocol**
+
 ```markdown
 **TASK-001** 🤖 **Foundation Setup** ✅ **← COMPLETE** | Agent: Software-Architect
+
 - [x] Set up project structure
 - [x] Configure build system
 - [x] Create initial documentation
@@ -110,6 +125,7 @@ Start with CRITICAL docs only (~400-500 lines). Only add TASK-SPECIFIC content f
 - **Next**: TASK-002 ready for Code-Quality-Specialist
 
 **TASK-002** 🤖 **Core Implementation** ⏳ **← READY FOR PICKUP** | Agent: Code-Quality-Specialist
+
 - [ ] Implement core functionality
 - [ ] Add unit tests
 - [ ] Integration testing
@@ -120,18 +136,21 @@ Start with CRITICAL docs only (~400-500 lines). Only add TASK-SPECIFIC content f
 ## 🔍 Quality Gates
 
 ### **Before Starting Task**
+
 - [ ] Specification exists and is properly numbered
 - [ ] Task is marked as "ready for pickup" (⏳)
 - [ ] Dependencies are complete
 - [ ] Context files identified and prioritized
 
 ### **During Task Execution**
+
 - [ ] Use TodoWrite for complex tasks
 - [ ] Test incrementally (don't save all testing for end)
 - [ ] Document issues found outside scope
 - [ ] Stay focused on assigned task only
 
 ### **Before Task Completion**
+
 - [ ] All subtasks checked off as complete
 - [ ] Validation checklist completed (tests, lint, functionality)
 - [ ] Task marked as ✅ complete
@@ -139,6 +158,7 @@ Start with CRITICAL docs only (~400-500 lines). Only add TASK-SPECIFIC content f
 - [ ] Clean commit with task reference
 
 ### **After Task Completion**
+
 - [ ] Product-manager notified if specification complete
 - [ ] Documentation updated if needed
 - [ ] Next agent has clear pickup instructions
@@ -153,11 +173,12 @@ Start with CRITICAL docs only (~400-500 lines). Only add TASK-SPECIFIC content f
 
 1. **Create Bug Ticket**: Use `BUG-XXX-description.md` template
 2. **Document Thoroughly**: Reproduction steps, expected vs actual behavior
-3. **Save to Backlog**: Place in `docs/specs/backlog/` folder  
+3. **Save to Backlog**: Place in `docs/specs/backlog/` folder
 4. **Note in Handoff**: Mention bug ticket in task completion
 5. **Continue Task**: Return focus to your assigned work
 
 ### **Bug Ticket Format**
+
 ```markdown
 # BUG-001: [Brief Description]
 
@@ -166,20 +187,25 @@ Start with CRITICAL docs only (~400-500 lines). Only add TASK-SPECIFIC content f
 **Reported By**: [Agent Name] on [Date]
 
 ## Problem
+
 [Clear description of the issue]
 
 ## Reproduction Steps
+
 1. [Step 1]
 2. [Step 2]
 3. [Step 3]
 
 ## Expected Behavior
+
 [What should happen]
 
-## Actual Behavior  
+## Actual Behavior
+
 [What actually happens]
 
 ## Files Affected
+
 - [File 1]
 - [File 2]
 ```
@@ -189,11 +215,13 @@ Start with CRITICAL docs only (~400-500 lines). Only add TASK-SPECIFIC content f
 ## 🔄 Specification Lifecycle
 
 ### **Lifecycle States**
+
 - **Backlog**: Specification created, not yet started
 - **Active**: Specification being actively developed
 - **Done**: Specification completed and validated
 
 ### **State Transitions**
+
 ```
 Backlog → Active: Product-manager moves when development starts
 Active → Done: Product-manager moves when all tasks complete
@@ -201,6 +229,7 @@ Done → Active: Only if major changes needed (rare)
 ```
 
 ### **Agent Responsibilities**
+
 - **All Agents**: Work on tasks within Active specifications
 - **Product-manager**: Manages specification lifecycle transitions
 - **No Agent**: Should modify specification state directly
@@ -210,14 +239,16 @@ Done → Active: Only if major changes needed (rare)
 ## 🎯 Success Patterns
 
 ### **Effective Agent Behaviors**
+
 - ✅ Read only required context for your task
-- ✅ Use TodoWrite for complex task planning  
+- ✅ Use TodoWrite for complex task planning
 - ✅ Test incrementally during development
 - ✅ Document issues found outside scope
 - ✅ Complete validation before committing
 - ✅ Clear handoff notes for next agent
 
 ### **Anti-Patterns to Avoid**
+
 - ❌ Reading all context files upfront (context overload)
 - ❌ Working on multiple tasks simultaneously
 - ❌ Fixing issues outside assigned task scope
@@ -229,17 +260,20 @@ Done → Active: Only if major changes needed (rare)
 ## 📊 Workflow Metrics
 
 ### **Cycle Time Tracking**
+
 - Task pickup to completion time
 - Handoff quality (clear instructions vs confusion)
 - Rework frequency (tasks that need to be redone)
 
 ### **Quality Indicators**
+
 - Test coverage for implemented features
 - Documentation completeness
 - Issue discovery rate during development
 - Successful handoffs without blocking
 
 ### **Team Coordination**
+
 - Clean handoffs between agents
 - Minimal context confusion
 - Efficient task progression
@@ -247,4 +281,4 @@ Done → Active: Only if major changes needed (rare)
 
 ---
 
-*This workflow enables AI agents to collaborate effectively while maintaining code quality and clear accountability.*
+_This workflow enables AI agents to collaborate effectively while maintaining code quality and clear accountability._

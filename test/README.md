@@ -9,7 +9,7 @@ test/
 ├── setup.js                           # Global test setup and utilities
 ├── fixtures/                          # Test data and sample files
 │   ├── spec-001-example.md           # Sample SPEC format
-│   ├── feat-042-legacy.md            # Legacy FEAT format  
+│   ├── feat-042-legacy.md            # Legacy FEAT format
 │   ├── bug-001-critical.md           # Bug specification
 │   ├── spike-005-research.md         # Research spike
 │   ├── malformed-spec.md             # Invalid file for error testing
@@ -64,14 +64,16 @@ npm run test:ci
 The test suite aims for high coverage across all modules:
 
 ### Target Coverage Goals
+
 - **Lines**: >80%
-- **Functions**: >80% 
+- **Functions**: >80%
 - **Branches**: >80%
 - **Statements**: >80%
 
 ### Coverage Areas
 
 #### ConfigManager (`config-manager.test.js`)
+
 - ✅ Configuration loading from multiple sources
 - ✅ Validation and normalization
 - ✅ Path resolution (relative/absolute)
@@ -80,6 +82,7 @@ The test suite aims for high coverage across all modules:
 - ✅ Helper methods (getters, validators)
 
 #### SpecParser (`spec-parser.test.js`)
+
 - ✅ Multi-format parsing (SPEC, FEAT, BUG, SPIKE, MAINT)
 - ✅ Task and subtask parsing
 - ✅ Agent assignment extraction
@@ -90,6 +93,7 @@ The test suite aims for high coverage across all modules:
 - ✅ Backwards compatibility methods
 
 #### ProgressCalculator (`progress-calc.test.js`)
+
 - ✅ Task-based progress calculation
 - ✅ Subtask-based progress calculation
 - ✅ Mixed format progress handling
@@ -99,6 +103,7 @@ The test suite aims for high coverage across all modules:
 - ✅ Edge case handling
 
 #### UIComponents (`ui-components.test.js`)
+
 - ✅ Progress bar generation
 - ✅ Status and priority icons
 - ✅ Color formatting
@@ -109,6 +114,7 @@ The test suite aims for high coverage across all modules:
 - ✅ Help text generation
 
 #### CLI Commands (`cli.test.js`)
+
 - ✅ Help and version output
 - ✅ Project initialization (`asd init`)
 - ✅ Configuration display (`asd config`)
@@ -119,6 +125,7 @@ The test suite aims for high coverage across all modules:
 ## 🔧 Integration Tests
 
 ### Full Workflow (`full-workflow.test.js`)
+
 Tests complete ASD workflows with realistic data:
 
 - **Multi-format support**: SPEC, FEAT, BUG, SPIKE, MAINT formats
@@ -131,6 +138,7 @@ Tests complete ASD workflows with realistic data:
 - **Large dataset handling**: Performance with 100+ specs
 
 ### Backwards Compatibility (`backwards-compatibility.test.js`)
+
 Ensures compatibility with legacy Campfire projects:
 
 - **Legacy configuration**: `.roadmaprc.json`, `roadmap.config.js`
@@ -142,6 +150,7 @@ Ensures compatibility with legacy Campfire projects:
 ## ⚡ Performance Tests
 
 ### Large Dataset Performance (`performance.test.js`)
+
 Validates performance with realistic loads:
 
 - **500+ specifications**: Stress testing with large datasets
@@ -151,6 +160,7 @@ Validates performance with realistic loads:
 - **Individual large specs**: 100+ tasks per specification
 
 ### Performance Thresholds
+
 - **Loading**: <5 seconds for 500 specs
 - **Progress calculation**: <1 second for all specs
 - **UI generation**: <2 seconds for all components
@@ -159,23 +169,25 @@ Validates performance with realistic loads:
 ## 🛠️ Test Utilities
 
 ### Global Test Setup (`setup.js`)
+
 Provides common testing utilities:
 
 ```javascript
 // Test directory management
-global.setupTestDir()     // Create clean test environment
-global.cleanupTestDir()   // Remove test files
-global.TEST_DIR          // Path to test directory
+global.setupTestDir(); // Create clean test environment
+global.cleanupTestDir(); // Remove test files
+global.TEST_DIR; // Path to test directory
 
 // File creation utilities
-global.createTestFile(path, content)  // Create test file
-global.readFixture(name)             // Read fixture file
+global.createTestFile(path, content); // Create test file
+global.readFixture(name); // Read fixture file
 
 // Mock management
 // Terminal-kit mocked to prevent actual terminal operations
 ```
 
 ### Test Fixtures (`fixtures/`)
+
 Realistic sample data for testing:
 
 - **spec-001-example.md**: Standard SPEC format with tasks/subtasks
@@ -187,6 +199,7 @@ Realistic sample data for testing:
 ## 🚨 Error Testing
 
 ### Error Scenarios Covered
+
 - **Malformed configuration files**: Invalid JSON/JavaScript
 - **Missing directories**: Non-existent spec folders
 - **Invalid spec files**: Files without proper IDs or format
@@ -196,6 +209,7 @@ Realistic sample data for testing:
 - **Memory constraints**: Large dataset handling
 
 ### Error Handling Validation
+
 - **Graceful degradation**: Continue with valid data
 - **Informative warnings**: Clear error messages
 - **Fallback behavior**: Default values and configurations
@@ -204,12 +218,14 @@ Realistic sample data for testing:
 ## 📈 Test Metrics
 
 ### Execution Time Targets
+
 - **Unit tests**: <10 seconds total
-- **Integration tests**: <30 seconds total  
+- **Integration tests**: <30 seconds total
 - **Performance tests**: <60 seconds total
 - **Full suite**: <90 seconds total
 
 ### Quality Metrics
+
 - **Zero test failures**: All tests must pass
 - **High coverage**: >80% across all modules
 - **No memory leaks**: Stable memory usage
@@ -218,6 +234,7 @@ Realistic sample data for testing:
 ## 🔍 Debugging Tests
 
 ### Debug Mode
+
 ```bash
 # Enable debug output
 npm run test:debug
@@ -230,22 +247,24 @@ npx jest test/spec-parser.test.js --coverage --verbose
 ```
 
 ### Common Debug Patterns
+
 ```javascript
 // Log test data during development
 if (process.env.DEBUG_TESTS) {
-  console.log('Test data:', testData);
+  console.log("Test data:", testData);
 }
 
 // Inspect test directory contents
-console.log('Test dir contents:', fs.readdirSync(global.TEST_DIR));
+console.log("Test dir contents:", fs.readdirSync(global.TEST_DIR));
 
 // Check memory usage
-console.log('Memory usage:', process.memoryUsage());
+console.log("Memory usage:", process.memoryUsage());
 ```
 
 ## 🎯 Best Practices
 
 ### Test Writing Guidelines
+
 - **Descriptive test names**: Clear what is being tested
 - **Independent tests**: No dependencies between tests
 - **Realistic data**: Use representative test data
@@ -253,15 +272,17 @@ console.log('Memory usage:', process.memoryUsage());
 - **Performance awareness**: Monitor execution time
 
 ### Test Data Management
+
 - **Use fixtures**: Shared test data in `fixtures/`
 - **Clean state**: Reset between tests
 - **Realistic content**: Representative of actual usage
 - **Edge cases**: Boundary conditions and limits
 
 ### Assertion Patterns
+
 ```javascript
 // Prefer specific assertions
-expect(result.id).toBe('SPEC-001');
+expect(result.id).toBe("SPEC-001");
 expect(result.tasks).toHaveLength(3);
 expect(result.progress.percentage).toBe(50);
 
@@ -273,6 +294,7 @@ expect(result.memory).toBeCloseTo(50.5, 1);
 ## 🚀 Contributing to Tests
 
 ### Adding New Tests
+
 1. Follow existing naming conventions
 2. Add to appropriate test file or create new one
 3. Include both positive and negative test cases
@@ -280,13 +302,16 @@ expect(result.memory).toBeCloseTo(50.5, 1);
 5. Add fixtures for complex test data
 
 ### Test Categories
+
 - **Unit tests**: Single module/function testing
 - **Integration tests**: Multi-module interaction
 - **Performance tests**: Load and stress testing
 - **Regression tests**: Prevent known issue recurrence
 
 ### Coverage Goals
+
 When adding new functionality:
+
 1. Write tests before or during implementation
 2. Aim for >90% coverage of new code
 3. Include error handling tests

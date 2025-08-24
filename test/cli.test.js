@@ -1,4 +1,4 @@
-const { execSync, spawn } = require('child_process');
+const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
@@ -25,9 +25,9 @@ jest.mock('terminal-kit', () => ({
     brightGreen: jest.fn(),
     brightCyan: jest.fn(),
     bgCyan: {
-      black: jest.fn()
-    }
-  }
+      black: jest.fn(),
+    },
+  },
 }));
 
 describe('CLI Commands', () => {
@@ -51,7 +51,7 @@ describe('CLI Commands', () => {
     it('should display help information', () => {
       const result = execSync(`node "${cliPath}" --help`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('Agentic Spec Development');
@@ -68,7 +68,7 @@ describe('CLI Commands', () => {
     it('should display version information', () => {
       const result = execSync(`node "${cliPath}" --version`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result.trim()).toMatch(/^\d+\.\d+\.\d+$/);
@@ -79,7 +79,7 @@ describe('CLI Commands', () => {
     it('should initialize ASD project structure', () => {
       const result = execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('Initializing Agentic Spec Development');
@@ -90,15 +90,19 @@ describe('CLI Commands', () => {
       // Check that files and directories were created
       expect(fs.existsSync(path.join(testDir, 'asd.config.js'))).toBe(true);
       expect(fs.existsSync(path.join(testDir, 'docs/specs/active'))).toBe(true);
-      expect(fs.existsSync(path.join(testDir, 'docs/specs/backlog'))).toBe(true);
+      expect(fs.existsSync(path.join(testDir, 'docs/specs/backlog'))).toBe(
+        true
+      );
       expect(fs.existsSync(path.join(testDir, 'docs/specs/done'))).toBe(true);
-      expect(fs.existsSync(path.join(testDir, 'docs/specs/template'))).toBe(true);
+      expect(fs.existsSync(path.join(testDir, 'docs/specs/template'))).toBe(
+        true
+      );
     });
 
     it('should create valid configuration file', () => {
       execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       const configPath = path.join(testDir, 'asd.config.js');
@@ -116,7 +120,7 @@ describe('CLI Commands', () => {
     it('should handle init with custom type option', () => {
       const result = execSync(`node "${cliPath}" init --type spec`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('initialization complete');
@@ -124,11 +128,13 @@ describe('CLI Commands', () => {
 
     it('should handle existing directory gracefully', () => {
       // Create directory first
-      fs.mkdirSync(path.join(testDir, 'docs/specs/active'), { recursive: true });
+      fs.mkdirSync(path.join(testDir, 'docs/specs/active'), {
+        recursive: true,
+      });
 
       const result = execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('initialization complete');
@@ -139,7 +145,7 @@ describe('CLI Commands', () => {
     it('should show default configuration when no config file exists', () => {
       const result = execSync(`node "${cliPath}" config`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('ASD Configuration');
@@ -165,7 +171,7 @@ describe('CLI Commands', () => {
 
       const result = execSync(`node "${cliPath}" config`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('asd.config.js');
@@ -177,7 +183,7 @@ describe('CLI Commands', () => {
     it('should show project root correctly', () => {
       const result = execSync(`node "${cliPath}" config`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain(`Project root: ${testDir}`);
@@ -188,7 +194,7 @@ describe('CLI Commands', () => {
     it('should report missing directories', () => {
       const result = execSync(`node "${cliPath}" doctor`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('ASD Health Check');
@@ -201,12 +207,12 @@ describe('CLI Commands', () => {
       // Initialize first
       execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       const result = execSync(`node "${cliPath}" doctor`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('ASD Health Check');
@@ -219,10 +225,11 @@ describe('CLI Commands', () => {
       // Initialize and create some spec files
       execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
-      const specContent = '# Test Spec\n**Priority:** P1\n## Description\nTest spec.';
+      const specContent =
+        '# Test Spec\n**Priority:** P1\n## Description\nTest spec.';
       fs.writeFileSync(
         path.join(testDir, 'docs/specs/active/SPEC-001-test.md'),
         specContent
@@ -234,7 +241,7 @@ describe('CLI Commands', () => {
 
       const result = execSync(`node "${cliPath}" doctor`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('Found 2 specification files');
@@ -244,12 +251,12 @@ describe('CLI Commands', () => {
       // Initialize first to create directories
       execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       const result = execSync(`node "${cliPath}" doctor`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('terminal-kit dependency available');
@@ -259,9 +266,9 @@ describe('CLI Commands', () => {
       try {
         execSync(`node "${cliPath}" doctor`, {
           encoding: 'utf-8',
-          cwd: testDir
+          cwd: testDir,
         });
-        fail('Should have thrown an error');
+        expect(true).toBe(false); // Should have thrown an error
       } catch (error) {
         expect(error.status).toBe(1);
         expect(error.stdout.toString()).toContain('Some issues found');
@@ -274,7 +281,7 @@ describe('CLI Commands', () => {
       // Initialize project for option tests
       execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
     });
 
@@ -285,12 +292,18 @@ describe('CLI Commands', () => {
           autoRefresh: false
         };
       `;
-      fs.writeFileSync(path.join(testDir, 'custom.config.js'), customConfigContent);
+      fs.writeFileSync(
+        path.join(testDir, 'custom.config.js'),
+        customConfigContent
+      );
 
-      const result = execSync(`node "${cliPath}" config --config custom.config.js`, {
-        encoding: 'utf-8',
-        cwd: testDir
-      });
+      const result = execSync(
+        `node "${cliPath}" config --config custom.config.js`,
+        {
+          encoding: 'utf-8',
+          cwd: testDir,
+        }
+      );
 
       expect(result).toContain('custom.config.js');
       expect(result).toContain('custom/path');
@@ -299,7 +312,7 @@ describe('CLI Commands', () => {
     it('should accept custom specs path', () => {
       const result = execSync(`node "${cliPath}" config --path custom/specs`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('custom/specs');
@@ -308,17 +321,20 @@ describe('CLI Commands', () => {
     it('should accept no-auto-refresh option', () => {
       const result = execSync(`node "${cliPath}" config --no-auto-refresh`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('disabled');
     });
 
     it('should accept custom app name and icon', () => {
-      const result = execSync(`node "${cliPath}" config --app-name "Custom ASD" --app-icon "🚀"`, {
-        encoding: 'utf-8',
-        cwd: testDir
-      });
+      const result = execSync(
+        `node "${cliPath}" config --app-name "Custom ASD" --app-icon "🚀"`,
+        {
+          encoding: 'utf-8',
+          cwd: testDir,
+        }
+      );
 
       // These options affect the application when started, not config output
       expect(result).toContain('ASD Configuration');
@@ -330,12 +346,14 @@ describe('CLI Commands', () => {
       try {
         execSync(`node "${cliPath}" invalid-command`, {
           encoding: 'utf-8',
-          cwd: testDir
+          cwd: testDir,
         });
-        fail('Should have thrown an error');
+        expect(true).toBe(false); // Should have thrown an error
       } catch (error) {
         expect(error.status).toBe(1);
-        expect(error.stderr.toString() || error.stdout.toString()).toContain('Unknown command');
+        expect(error.stderr.toString() || error.stdout.toString()).toContain(
+          'Unknown command'
+        );
       }
     });
 
@@ -348,9 +366,9 @@ describe('CLI Commands', () => {
       try {
         execSync(`node "${cliPath}" init`, {
           encoding: 'utf-8',
-          cwd: readOnlyDir
+          cwd: readOnlyDir,
         });
-        fail('Should have thrown an error');
+        expect(true).toBe(false); // Should have thrown an error
       } catch (error) {
         expect(error.status).toBe(1);
         expect(error.stdout.toString()).toContain('Initialization failed');
@@ -362,11 +380,14 @@ describe('CLI Commands', () => {
 
     it('should handle malformed config files', () => {
       // Create invalid config
-      fs.writeFileSync(path.join(testDir, 'asd.config.js'), 'invalid javascript');
+      fs.writeFileSync(
+        path.join(testDir, 'asd.config.js'),
+        'invalid javascript'
+      );
 
       const result = execSync(`node "${cliPath}" config`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('Using defaults');
@@ -377,26 +398,29 @@ describe('CLI Commands', () => {
     beforeEach(() => {
       execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       // Create test spec files
       const specs = [
         {
           path: 'docs/specs/active/SPEC-001-auth.md',
-          content: '# Authentication\n**Priority:** P0\n## Description\nAuth system.\n## Tasks\n### **TASK-001** 🤖 **Setup**'
+          content:
+            '# Authentication\n**Priority:** P0\n## Description\nAuth system.\n## Tasks\n### **TASK-001** 🤖 **Setup**',
         },
         {
           path: 'docs/specs/backlog/BUG-001-login.md',
-          content: '# Login Bug\n**Priority:** P1\n**Severity:** High\n## Description\nLogin issue.'
+          content:
+            '# Login Bug\n**Priority:** P1\n**Severity:** High\n## Description\nLogin issue.',
         },
         {
           path: 'docs/specs/done/SPIKE-001-research.md',
-          content: '# Research Spike\n**Priority:** P2\n**Research Type:** Performance\n## Description\nPerformance research.'
-        }
+          content:
+            '# Research Spike\n**Priority:** P2\n**Research Type:** Performance\n## Description\nPerformance research.',
+        },
       ];
 
-      specs.forEach(spec => {
+      specs.forEach((spec) => {
         global.createTestFile(spec.path, spec.content);
       });
     });
@@ -404,7 +428,7 @@ describe('CLI Commands', () => {
     it('should work with ConfigManager', () => {
       const result = execSync(`node "${cliPath}" config`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('asd.config.js');
@@ -414,7 +438,7 @@ describe('CLI Commands', () => {
     it('should detect specs with doctor command', () => {
       const result = execSync(`node "${cliPath}" doctor`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('Found 3 specification files');
@@ -426,14 +450,14 @@ describe('CLI Commands', () => {
     beforeEach(() => {
       execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
     });
 
     it('should have start command in help', () => {
       const result = execSync(`node "${cliPath}" --help`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('start');
@@ -449,7 +473,7 @@ describe('CLI Commands', () => {
     beforeEach(() => {
       execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
     });
 
@@ -457,7 +481,7 @@ describe('CLI Commands', () => {
       // Debug flag should be accepted without error
       const result = execSync(`node "${cliPath}" config --debug`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       expect(result).toContain('ASD Configuration');
@@ -466,27 +490,23 @@ describe('CLI Commands', () => {
 
   describe('performance and reliability', () => {
     it('should handle multiple rapid command executions', () => {
-      const commands = [
-        'init',
-        'config',
-        'doctor'
-      ];
+      const commands = ['init', 'config', 'doctor'];
 
       // Run init first
       execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       // Then run other commands rapidly
-      const results = commands.slice(1).map(cmd => {
+      const results = commands.slice(1).map((cmd) => {
         return execSync(`node "${cliPath}" ${cmd}`, {
           encoding: 'utf-8',
-          cwd: testDir
+          cwd: testDir,
         });
       });
 
-      expect(results.every(result => result.includes('ASD'))).toBe(true);
+      expect(results.every((result) => result.includes('ASD'))).toBe(true);
     });
 
     it('should complete commands within reasonable time', () => {
@@ -494,7 +514,7 @@ describe('CLI Commands', () => {
 
       execSync(`node "${cliPath}" init`, {
         encoding: 'utf-8',
-        cwd: testDir
+        cwd: testDir,
       });
 
       const duration = Date.now() - start;

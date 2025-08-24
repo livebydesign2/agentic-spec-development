@@ -18,17 +18,20 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 1. Fork the repository on GitHub
 2. Clone your fork locally:
+
    ```bash
    git clone https://github.com/your-username/agentic-spec-development.git
    cd agentic-spec-development
    ```
 
 3. Install dependencies:
+
    ```bash
    npm install
    ```
 
 4. Run tests to make sure everything works:
+
    ```bash
    npm test
    ```
@@ -43,6 +46,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 ### Making Changes
 
 1. Create a new branch for your feature/fix:
+
    ```bash
    git checkout -b feature/my-new-feature
    ```
@@ -50,6 +54,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 2. Make your changes following our coding standards
 3. Add/update tests as needed
 4. Run the test suite:
+
    ```bash
    npm run test
    npm run lint
@@ -57,6 +62,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
    ```
 
 5. Commit your changes with a descriptive message:
+
    ```bash
    git commit -m "feat: add support for custom spec templates"
    ```
@@ -76,6 +82,7 @@ We use [Conventional Commits](https://conventionalcommits.org/) for our commit m
 - `chore:` - Maintenance tasks
 
 Examples:
+
 - `feat: add YAML configuration support`
 - `fix: resolve CLI argument parsing issue`
 - `docs: update installation instructions`

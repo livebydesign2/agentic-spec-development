@@ -36,13 +36,13 @@ describe('SpecParser', () => {
     });
 
     it('should load configuration on initialization', () => {
-      expect(specParser.featuresPath).toBeDefined();
+      expect(specParser.dataPath).toBeDefined();
       expect(specParser.statusFolders).toEqual(['active', 'backlog', 'done']);
       expect(specParser.supportedTypes).toContain('SPEC');
     });
   });
 
-  describe('loadFeatures', () => {
+  describe('loadSpecs', () => {
     beforeEach(async () => {
       // Create test spec files
       const specContent = global.readFixture('spec-001-example.md');
@@ -52,23 +52,26 @@ describe('SpecParser', () => {
       global.createTestFile('docs/specs/backlog/BUG-001-login.md', bugContent);
 
       const spikeContent = global.readFixture('spike-005-research.md');
-      global.createTestFile('docs/specs/done/SPIKE-005-database.md', spikeContent);
+      global.createTestFile(
+        'docs/specs/done/SPIKE-005-database.md',
+        spikeContent
+      );
     });
 
     it('should load specs from all status folders', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
       expect(specs).toHaveLength(3);
 
-      const specIds = specs.map(s => s.id);
+      const specIds = specs.map((s) => s.id);
       expect(specIds).toContain('SPEC-001');
       expect(specIds).toContain('BUG-001');
       expect(specIds).toContain('SPIKE-005');
     });
 
     it('should set correct status based on folder location', async () => {
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
       const specByStatus = specs.reduce((acc, spec) => {
@@ -84,11 +87,13 @@ describe('SpecParser', () => {
 
     it('should handle missing folders gracefully', async () => {
       // Remove one of the status folders
-      await fs.rmdir(path.join(testDir, 'docs/specs/done'), { recursive: true });
+      await fs.rmdir(path.join(testDir, 'docs/specs/done'), {
+        recursive: true,
+      });
 
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       expect(consoleSpy).toHaveBeenCalledWith(
         'Warning: Could not read folder done:',
@@ -103,17 +108,21 @@ describe('SpecParser', () => {
 
     it('should sort specs with P0 priority first', async () => {
       // Create P0 spec
-      const p0Content = '# Critical Feature\n**Priority:** P0\n## Description\nCritical feature.';
-      global.createTestFile('docs/specs/backlog/SPEC-002-critical.md', p0Content);
+      const p0Content =
+        '# Critical Feature\n**Priority:** P0\n## Description\nCritical feature.';
+      global.createTestFile(
+        'docs/specs/backlog/SPEC-002-critical.md',
+        p0Content
+      );
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
-      const priorities = specs.map(s => s.priority);
+      const priorities = specs.map((s) => s.priority);
 
       // P0 specs should come first
       const p0Index = priorities.indexOf('P0');
-      const otherPriorityIndex = priorities.findIndex(p => p && p !== 'P0');
+      const otherPriorityIndex = priorities.findIndex((p) => p && p !== 'P0');
 
       if (p0Index !== -1 && otherPriorityIndex !== -1) {
         expect(p0Index).toBeLessThan(otherPriorityIndex);
@@ -122,12 +131,15 @@ describe('SpecParser', () => {
 
     it('should support legacy feature format', async () => {
       const legacyContent = global.readFixture('feat-042-legacy.md');
-      global.createTestFile('docs/specs/active/FEAT-042-legacy.md', legacyContent);
+      global.createTestFile(
+        'docs/specs/active/FEAT-042-legacy.md',
+        legacyContent
+      );
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
-      const features = specParser.getFeatures(); // Legacy method
-      const legacyFeature = features.find(f => f.id === 'FEAT-042');
+      const features = specParser.getSpecs(); // Legacy method
+      const legacyFeature = features.find((f) => f.id === 'FEAT-042');
 
       expect(legacyFeature).toBeDefined();
       expect(legacyFeature.type).toBe('FEAT');
@@ -138,20 +150,24 @@ describe('SpecParser', () => {
       const malformedContent = global.readFixture('malformed-spec.md');
       global.createTestFile('docs/specs/active/malformed.md', malformedContent);
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
-      expect(specs.find(s => s.filename === 'malformed.md')).toBeUndefined();
+      expect(specs.find((s) => s.filename === 'malformed.md')).toBeUndefined();
     });
 
     it('should ignore report documents', async () => {
-      const reportContent = '# SPEC-001 Implementation Report\n\nThis is a report document.';
-      global.createTestFile('docs/specs/done/SPEC-001-report.md', reportContent);
+      const reportContent =
+        '# SPEC-001 Implementation Report\n\nThis is a report document.';
+      global.createTestFile(
+        'docs/specs/done/SPEC-001-report.md',
+        reportContent
+      );
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
-      expect(specs.find(s => s.filename.includes('report'))).toBeUndefined();
+      expect(specs.find((s) => s.filename.includes('report'))).toBeUndefined();
     });
   });
 
@@ -181,7 +197,7 @@ This is a test specification.
         status: 'active',
         title: 'Test Specification',
         description: 'This is a test specification.',
-        priority: 'P1'
+        priority: 'P1',
       });
     });
 
@@ -203,7 +219,10 @@ Task in progress.
 `;
 
       global.createTestFile('docs/specs/active/SPEC-002-tasks.md', content);
-      const filePath = path.join(testDir, 'docs/specs/active/SPEC-002-tasks.md');
+      const filePath = path.join(
+        testDir,
+        'docs/specs/active/SPEC-002-tasks.md'
+      );
 
       const spec = await specParser.parseSpecFile(filePath, 'active');
 
@@ -211,22 +230,22 @@ Task in progress.
       expect(spec.tasks[0]).toMatchObject({
         id: 'TASK-001',
         status: 'ready',
-        title: 'First Task'
+        title: 'First Task',
       });
       expect(spec.tasks[1]).toMatchObject({
         id: 'TASK-002',
         status: 'complete',
-        title: 'Completed Task'
+        title: 'Completed Task',
       });
       expect(spec.tasks[2]).toMatchObject({
         id: 'TASK-003',
         status: 'ready',
-        title: 'Ready Task'
+        title: 'Ready Task',
       });
       expect(spec.tasks[3]).toMatchObject({
         id: 'TASK-004',
         status: 'in_progress',
-        title: 'In Progress Task'
+        title: 'In Progress Task',
       });
     });
 
@@ -241,7 +260,10 @@ Task in progress.
 `;
 
       global.createTestFile('docs/specs/active/SPEC-003-subtasks.md', content);
-      const filePath = path.join(testDir, 'docs/specs/active/SPEC-003-subtasks.md');
+      const filePath = path.join(
+        testDir,
+        'docs/specs/active/SPEC-003-subtasks.md'
+      );
 
       const spec = await specParser.parseSpecFile(filePath, 'active');
 
@@ -250,12 +272,12 @@ Task in progress.
       expect(spec.tasks[0].subtasks[0]).toMatchObject({
         type: 'subtask',
         completed: true,
-        title: 'Completed subtask'
+        title: 'Completed subtask',
       });
       expect(spec.tasks[0].subtasks[1]).toMatchObject({
         type: 'subtask',
         completed: false,
-        title: 'Pending subtask'
+        title: 'Pending subtask',
       });
     });
 
@@ -271,7 +293,10 @@ User interface task.
 `;
 
       global.createTestFile('docs/specs/active/SPEC-004-agents.md', content);
-      const filePath = path.join(testDir, 'docs/specs/active/SPEC-004-agents.md');
+      const filePath = path.join(
+        testDir,
+        'docs/specs/active/SPEC-004-agents.md'
+      );
 
       const spec = await specParser.parseSpecFile(filePath, 'active');
 
@@ -337,13 +362,18 @@ How can we improve performance?
 `;
 
       global.createTestFile('docs/specs/active/SPIKE-001-test.md', content);
-      const filePath = path.join(testDir, 'docs/specs/active/SPIKE-001-test.md');
+      const filePath = path.join(
+        testDir,
+        'docs/specs/active/SPIKE-001-test.md'
+      );
 
       const spec = await specParser.parseSpecFile(filePath, 'active');
 
       expect(spec.type).toBe('SPIKE');
       expect(spec.researchType).toBe('Performance Analysis');
-      expect(spec.researchQuestion).toContain('How can we improve performance?');
+      expect(spec.researchQuestion).toContain(
+        'How can we improve performance?'
+      );
       expect(spec.researchFindings).toContain('- [ ] Benchmark current state');
       expect(spec.researchFindings).toContain('- [ ] Test alternatives');
     });
@@ -363,8 +393,14 @@ required_docs:
 This spec has YAML front matter.
 `;
 
-      global.createTestFile('docs/specs/active/SPEC-005-frontmatter.md', content);
-      const filePath = path.join(testDir, 'docs/specs/active/SPEC-005-frontmatter.md');
+      global.createTestFile(
+        'docs/specs/active/SPEC-005-frontmatter.md',
+        content
+      );
+      const filePath = path.join(
+        testDir,
+        'docs/specs/active/SPEC-005-frontmatter.md'
+      );
 
       const spec = await specParser.parseSpecFile(filePath, 'active');
 
@@ -389,18 +425,29 @@ Do the work.
 `;
 
       global.createTestFile('docs/specs/active/SPEC-006-fallback.md', content);
-      const filePath = path.join(testDir, 'docs/specs/active/SPEC-006-fallback.md');
+      const filePath = path.join(
+        testDir,
+        'docs/specs/active/SPEC-006-fallback.md'
+      );
 
       const spec = await specParser.parseSpecFile(filePath, 'active');
 
-      expect(spec.description).toContain('This is the problem we need to solve');
+      expect(spec.description).toContain(
+        'This is the problem we need to solve'
+      );
       expect(spec.description).toContain('This is how we plan to solve it');
       expect(spec.warnings).toContain('Missing Description; used fallback');
     });
 
     it('should handle malformed files gracefully', async () => {
-      global.createTestFile('docs/specs/active/SPEC-999-broken.md', 'Invalid content');
-      const filePath = path.join(testDir, 'docs/specs/active/SPEC-999-broken.md');
+      global.createTestFile(
+        'docs/specs/active/SPEC-999-broken.md',
+        'Invalid content'
+      );
+      const filePath = path.join(
+        testDir,
+        'docs/specs/active/SPEC-999-broken.md'
+      );
 
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 
@@ -431,10 +478,30 @@ Do the work.
     beforeEach(async () => {
       // Create test specs with different statuses and priorities
       const specs = [
-        { id: 'SPEC-001', status: 'active', priority: 'P0', content: '# Active P0\n**Priority:** P0' },
-        { id: 'SPEC-002', status: 'active', priority: 'P1', content: '# Active P1\n**Priority:** P1' },
-        { id: 'BUG-001', status: 'backlog', priority: 'P0', content: '# Backlog P0\n**Priority:** P0' },
-        { id: 'SPIKE-001', status: 'done', priority: 'P2', content: '# Done P2\n**Priority:** P2' }
+        {
+          id: 'SPEC-001',
+          status: 'active',
+          priority: 'P0',
+          content: '# Active P0\n**Priority:** P0',
+        },
+        {
+          id: 'SPEC-002',
+          status: 'active',
+          priority: 'P1',
+          content: '# Active P1\n**Priority:** P1',
+        },
+        {
+          id: 'BUG-001',
+          status: 'backlog',
+          priority: 'P0',
+          content: '# Backlog P0\n**Priority:** P0',
+        },
+        {
+          id: 'SPIKE-001',
+          status: 'done',
+          priority: 'P2',
+          content: '# Done P2\n**Priority:** P2',
+        },
       ];
 
       for (const spec of specs) {
@@ -444,7 +511,7 @@ Do the work.
         );
       }
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
     });
 
     it('should return all specs', () => {
@@ -461,9 +528,9 @@ Do the work.
       expect(backlogSpecs).toHaveLength(1);
       expect(doneSpecs).toHaveLength(1);
 
-      expect(activeSpecs.every(s => s.status === 'active')).toBe(true);
-      expect(backlogSpecs.every(s => s.status === 'backlog')).toBe(true);
-      expect(doneSpecs.every(s => s.status === 'done')).toBe(true);
+      expect(activeSpecs.every((s) => s.status === 'active')).toBe(true);
+      expect(backlogSpecs.every((s) => s.status === 'backlog')).toBe(true);
+      expect(doneSpecs.every((s) => s.status === 'done')).toBe(true);
     });
 
     it('should return specs by priority', () => {
@@ -475,7 +542,7 @@ Do the work.
       expect(p1Specs).toHaveLength(1);
       expect(p2Specs).toHaveLength(1);
 
-      expect(p0Specs.every(s => s.priority === 'P0')).toBe(true);
+      expect(p0Specs.every((s) => s.priority === 'P0')).toBe(true);
     });
 
     it('should return critical ready specs', () => {
@@ -495,14 +562,14 @@ Do the work.
         active: 2,
         backlog: 1,
         done: 1,
-        p0: 2
+        p0: 2,
       });
     });
 
     it('should support legacy feature methods', () => {
-      const features = specParser.getFeatures();
-      const activeFeatures = specParser.getFeaturesByStatus('active');
-      const p0Features = specParser.getFeaturesByPriority('P0');
+      const features = specParser.getSpecs();
+      const activeFeatures = specParser.getSpecsByStatus('active');
+      const p0Features = specParser.getSpecsByPriority('P0');
 
       expect(features).toHaveLength(4);
       expect(activeFeatures).toHaveLength(2);
@@ -520,7 +587,7 @@ Do the work.
         number: 1,
         status: 'ready',
         title: 'Setup Database',
-        subtasks: []
+        subtasks: [],
       });
     });
 
@@ -532,29 +599,31 @@ Do the work.
         id: 'TASK-002',
         status: 'complete',
         title: 'Complete Implementation',
-        icon: '✅'
+        icon: '✅',
       });
     });
 
     it('should parse MAINT task format', () => {
-      const taskLine = '### **✅ TASK-003**: Database Cleanup Tasks (COMPLETED)';
+      const taskLine =
+        '### **✅ TASK-003**: Database Cleanup Tasks (COMPLETED)';
       const task = specParser.parseTask(taskLine);
 
       expect(task).toMatchObject({
         id: 'TASK-003',
         status: 'complete',
-        title: 'Database Cleanup Tasks'
+        title: 'Database Cleanup Tasks',
       });
     });
 
     it('should parse task with agent assignment', () => {
-      const taskLine = '### **TASK-004** 🤖 **API Development** | Agent: Backend-Developer';
+      const taskLine =
+        '### **TASK-004** 🤖 **API Development** | Agent: Backend-Developer';
       const task = specParser.parseTask(taskLine);
 
       expect(task).toMatchObject({
         id: 'TASK-004',
         title: 'API Development',
-        assigneeRole: 'Backend-Developer'
+        assigneeRole: 'Backend-Developer',
       });
     });
 
@@ -565,7 +634,7 @@ Do the work.
       expect(subtask).toMatchObject({
         type: 'subtask',
         completed: true,
-        title: 'Create database schema'
+        title: 'Create database schema',
       });
     });
 
@@ -591,7 +660,7 @@ Do the work.
         'The fix will work like this.',
         '',
         '## Other Section',
-        'Other content'
+        'Other content',
       ];
 
       const fallback = specParser.computeFallbackDescription(lines);

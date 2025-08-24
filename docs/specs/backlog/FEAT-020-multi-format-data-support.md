@@ -1,11 +1,20 @@
-# FEAT-R03: Multi-Format Data Support (JSON/YAML)
+# Multi-Format Data Support (JSON/YAML)
 
 **Status**: Backlog  
-**Priority**: P2 (Medium) - Score: 12.5  
+**Priority**: P1 (High) - Score: 14.0  
 **Type**: Data Architecture  
-**Effort**: 4-6 hours  
-**Assignee**: Software Architect → Data Engineer  
-**Dependencies**: FEAT-R01 (Repository Abstraction), FEAT-R02 (CLI Commands)
+**Effort**: 8 hours  
+**Phase**: PHASE-1B  
+**Assignee**: Software Architect → Backend Specialist  
+**Dependencies**: FEAT-012 (Context Injection), FEAT-013 (Task Router)
+
+---
+id: "FEAT-020"
+title: "Multi-Format Data Support"
+type: "FEAT"
+phase: "PHASE-1B"
+priority: "P1"
+status: "backlog"
 
 ## Summary
 
@@ -21,12 +30,14 @@ While markdown provides excellent human readability, many development workflows 
 ## Business Value
 
 ### Strategic Benefits
+
 - **Integration Flexibility**: Enable integration with tools expecting structured data
 - **Validation Enhancement**: Structured formats support schema validation
 - **Automation Friendly**: JSON/YAML easier for automated parsing and generation
 - **Data Export**: Seamless export to various external project management tools
 
 ### Success Metrics
+
 - **Format Adoption**: 25%+ of new users choose JSON/YAML formats
 - **Integration Usage**: 3+ external tool integrations utilizing structured formats
 - **Performance**: No degradation in CLI performance with multiple format support
@@ -37,11 +48,12 @@ While markdown provides excellent human readability, many development workflows 
 ### Multi-Format Data Structure
 
 #### JSON Format
+
 ```json
 {
   "id": "FEAT-045",
   "type": "feature",
-  "title": "Enhanced Search System", 
+  "title": "Enhanced Search System",
   "status": "active",
   "priority": "P1",
   "effort": "5-8 hours",
@@ -55,16 +67,16 @@ While markdown provides excellent human readability, many development workflows 
       "id": "TASK-001",
       "title": "Design search architecture",
       "status": "completed",
-      "agent": "Software-Architect", 
+      "agent": "Software-Architect",
       "effort": "2 hours",
       "completion_date": "2025-01-15T16:00:00Z",
       "subtasks": [
-        {"description": "Research search engines", "completed": true},
-        {"description": "Design API interface", "completed": true}
+        { "description": "Research search engines", "completed": true },
+        { "description": "Design API interface", "completed": true }
       ]
     },
     {
-      "id": "TASK-002", 
+      "id": "TASK-002",
       "title": "Implement search indexing",
       "status": "in_progress",
       "agent": "Backend-Developer",
@@ -77,14 +89,15 @@ While markdown provides excellent human readability, many development workflows 
   "blocking": ["FEAT-046", "FEAT-047"],
   "acceptance_criteria": [
     "Search returns results within 200ms",
-    "Full-text search across all content types", 
+    "Full-text search across all content types",
     "Search relevance scoring implemented"
   ],
   "technical_notes": "Consider Elasticsearch for advanced search features"
 }
 ```
 
-#### YAML Format  
+#### YAML Format
+
 ```yaml
 id: FEAT-045
 type: feature
@@ -102,7 +115,7 @@ description: |
 
 tags:
   - search
-  - performance  
+  - performance
   - user-experience
 
 tasks:
@@ -115,7 +128,7 @@ tasks:
     subtasks:
       - description: Research search engines
         completed: true
-      - description: Design API interface  
+      - description: Design API interface
         completed: true
 
   - id: TASK-002
@@ -144,11 +157,12 @@ technical_notes: >
 ```
 
 ### Data Adapter Architecture
+
 ```
 lib/data-adapters/
 ├── base-adapter.js           # Abstract base adapter
 ├── markdown-adapter.js       # Existing markdown support
-├── json-adapter.js           # JSON format support  
+├── json-adapter.js           # JSON format support
 ├── yaml-adapter.js           # YAML format support
 ├── format-detector.js        # Auto-detect data format
 ├── schema-validator.js       # Format validation
@@ -156,6 +170,7 @@ lib/data-adapters/
 ```
 
 ### Configuration Schema
+
 ```json
 {
   "asd": {
@@ -167,7 +182,7 @@ lib/data-adapters/
         "dateFormat": "iso"
       },
       "yaml": {
-        "indent": 2, 
+        "indent": 2,
         "lineWidth": 120,
         "noRefs": false
       },
@@ -188,6 +203,7 @@ lib/data-adapters/
 ## Core Features
 
 ### Format Detection & Selection
+
 ```bash
 # Auto-detect format from existing files
 asd init --auto-detect
@@ -201,6 +217,7 @@ asd config set dataFormat auto
 ```
 
 ### Format Conversion
+
 ```bash
 # Convert between formats
 asd convert --from markdown --to json --output ./features.json
@@ -214,11 +231,12 @@ asd convert --validate-schema --fix-errors --report conversion-report.json
 ```
 
 ### Schema Validation
+
 ```bash
 # Validate against schema
 asd validate --schema asd-v1 --format json --fix-violations
 
-# Custom schema validation  
+# Custom schema validation
 asd validate --schema ./custom-schema.json --report validation-report.json
 
 # Auto-fix common issues
@@ -226,6 +244,7 @@ asd validate --auto-fix --backup --dry-run
 ```
 
 ### Enhanced Data Operations
+
 ```bash
 # Query structured data
 asd query --format json --filter 'status=="active" && priority in ["P0","P1"]'
@@ -243,6 +262,7 @@ asd list --format yaml --progress-range 50:80 --created-after 2025-01-01
 **FEAT-R03** ✅ **Multi-Format Data Support (JSON/YAML)**
 
 **TASK-001** ⏳ **READY** - Data Adapter Architecture | Agent: Software Architect
+
 - [ ] Design abstract base adapter interface for all formats
 - [ ] Implement format detection logic based on file extensions and content
 - [ ] Create configuration system for format-specific options
@@ -250,13 +270,15 @@ asd list --format yaml --progress-range 50:80 --created-after 2025-01-01
 - [ ] Add error handling for malformed data files
 
 **TASK-002** ⏳ **READY** - JSON Format Support | Agent: Data Engineer
+
 - [ ] Implement JSON data adapter with full CRUD operations
 - [ ] Add JSON schema validation and auto-completion
 - [ ] Create JSON-specific formatting and optimization
-- [ ] Build JSON query and filtering capabilities  
+- [ ] Build JSON query and filtering capabilities
 - [ ] Add JSON import/export utilities
 
-**TASK-003** ⏳ **READY** - YAML Format Support | Agent: Data Engineer  
+**TASK-003** ⏳ **READY** - YAML Format Support | Agent: Data Engineer
+
 - [ ] Implement YAML data adapter with comment preservation
 - [ ] Add YAML schema validation and linting
 - [ ] Create YAML-specific formatting with customizable indentation
@@ -264,6 +286,7 @@ asd list --format yaml --progress-range 50:80 --created-after 2025-01-01
 - [ ] Add YAML import/export with metadata preservation
 
 **TASK-004** ⏳ **READY** - Format Conversion System | Agent: Backend Developer
+
 - [ ] Build bidirectional conversion between all formats (MD ↔ JSON ↔ YAML)
 - [ ] Implement metadata preservation during conversion
 - [ ] Add batch conversion capabilities with progress reporting
@@ -271,6 +294,7 @@ asd list --format yaml --progress-range 50:80 --created-after 2025-01-01
 - [ ] Build migration utilities for existing projects
 
 **TASK-005** ⏳ **READY** - CLI Integration & Testing | Agent: QA Engineer
+
 - [ ] Integrate multi-format support into existing CLI commands
 - [ ] Add format-specific command options and flags
 - [ ] Create comprehensive test suite for all format combinations
@@ -280,6 +304,7 @@ asd list --format yaml --progress-range 50:80 --created-after 2025-01-01
 ## Advanced Features
 
 ### Schema Management
+
 ```bash
 # Schema operations
 asd schema init --format json --version v1.0
@@ -292,6 +317,7 @@ asd schema export --format json-schema --output ./schema.json
 ```
 
 ### Advanced Queries
+
 ```bash
 # Complex filtering with structured data
 asd query --sql-like "SELECT id, title FROM features WHERE priority = 'P0' AND progress > 50"
@@ -303,9 +329,10 @@ asd progress --timeline --format csv --date-range 2025-01-01:2025-02-01
 ```
 
 ### External Integration
+
 ```bash
 # Import from external tools
-asd import --from jira --format json --mapping ./jira-mapping.json  
+asd import --from jira --format json --mapping ./jira-mapping.json
 asd import --from github-issues --format yaml --filter 'label:roadmap'
 
 # Export to external tools
@@ -316,6 +343,7 @@ asd export --to csv --columns id,title,assignee,progress --filter 'status==activ
 ## Acceptance Criteria
 
 ### Core Multi-Format Support
+
 - [ ] CLI automatically detects and handles JSON, YAML, and Markdown files
 - [ ] All CLI commands work consistently across all supported formats
 - [ ] Format-specific options (indentation, schema validation) are configurable
@@ -323,6 +351,7 @@ asd export --to csv --columns id,title,assignee,progress --filter 'status==activ
 - [ ] Error messages are clear and format-specific
 
 ### Conversion & Migration
+
 - [ ] Bidirectional conversion preserves all data and metadata
 - [ ] Batch conversion handles large numbers of files efficiently
 - [ ] Conversion validation prevents data loss
@@ -330,13 +359,15 @@ asd export --to csv --columns id,title,assignee,progress --filter 'status==activ
 - [ ] Rollback mechanisms available for failed conversions
 
 ### Validation & Schema
+
 - [ ] Schema validation works for JSON and YAML formats
-- [ ] Custom schemas supported for project-specific requirements  
+- [ ] Custom schemas supported for project-specific requirements
 - [ ] Auto-fix capabilities repair common validation issues
 - [ ] Validation reports provide actionable error information
 - [ ] Schema evolution supported with migration utilities
 
 ### Integration & Querying
+
 - [ ] Advanced querying works across all structured formats
 - [ ] Filtering and sorting maintain performance with large datasets
 - [ ] Import/export utilities work with common external tools
@@ -346,6 +377,7 @@ asd export --to csv --columns id,title,assignee,progress --filter 'status==activ
 ## Success Validation
 
 ### Format Testing Matrix
+
 ```bash
 # Test all format combinations
 for source in markdown json yaml; do
@@ -360,6 +392,7 @@ asd benchmark --format yaml --features 1000 --operations convert,validate
 ```
 
 ### Integration Testing
+
 - [ ] External tool import/export works without data loss
 - [ ] Schema validation catches real-world issues
 - [ ] Performance meets requirements for large datasets (1000+ features)
@@ -369,12 +402,14 @@ asd benchmark --format yaml --features 1000 --operations convert,validate
 ## Dependencies & Risks
 
 ### Dependencies
+
 - **FEAT-R01**: Repository abstraction provides configuration foundation
-- **FEAT-R02**: CLI commands provide interface for multi-format operations  
+- **FEAT-R02**: CLI commands provide interface for multi-format operations
 - **Software Architect**: Data architecture and adapter pattern design
 - **Data Engineer**: Implementation of parsing and validation logic
 
 ### Risks & Mitigation
+
 - **Risk**: Data loss during format conversion
   - **Mitigation**: Comprehensive testing, validation, and backup mechanisms
 - **Risk**: Performance degradation with multiple formats
@@ -385,12 +420,14 @@ asd benchmark --format yaml --features 1000 --operations convert,validate
 ## Future Enhancements
 
 ### Advanced Schema Features
+
 - Schema versioning and automatic migration
 - Custom validation rules and business logic
 - Schema inheritance and composition
 - Real-time validation during editing
 
 ### External Format Support
+
 - XML format support for enterprise integration
 - TOML format for configuration-focused projects
 - Database backends (SQLite, PostgreSQL) for large teams

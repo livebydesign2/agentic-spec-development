@@ -7,6 +7,7 @@ This document provides comprehensive templates for different types of specificat
 ### Standard Specification Template
 
 **spec-template.md**
+
 ```markdown
 # SPEC-XXX: [Specification Title]
 
@@ -16,70 +17,87 @@ This document provides comprehensive templates for different types of specificat
 **Created:** YYYY-MM-DD  
 **Owner:** @username  
 **Epic:** EPIC-XXX (or none)  
-**Estimated:** X days  
+**Estimated:** X days
 
 ## Overview
+
 Brief description of what this specification covers and its purpose.
 
 ## Business Context
+
 ### Problem Statement
+
 Describe the problem this specification solves.
 
 ### Success Criteria
+
 - Measurable outcome 1
 - Measurable outcome 2
 - Measurable outcome 3
 
 ## Requirements
+
 ### Functional Requirements
+
 - [ ] Requirement 1
 - [ ] Requirement 2
 - [ ] Requirement 3
 
 ### Non-Functional Requirements
+
 - [ ] Performance requirements
 - [ ] Security requirements
 - [ ] Scalability requirements
 
 ## Tasks
+
 ### TASK-001: Task Title
+
 **Status:** ready  
 **Assignee:** @username  
-**Estimated:** X days  
+**Estimated:** X days
 
 Detailed task description.
 
 ### TASK-002: Another Task
+
 **Status:** ready  
-**Estimated:** X days  
+**Estimated:** X days
 
 Another task description.
 
 ## Acceptance Criteria
+
 - [ ] Criteria 1
 - [ ] Criteria 2
 - [ ] Criteria 3
 
 ## Dependencies
+
 - SPEC-XXX: Dependency description
 - External dependency
 
 ## Risks and Mitigation
+
 ### Identified Risks
+
 - Risk 1: Description and probability
 - Risk 2: Description and probability
 
 ### Mitigation Strategies
+
 - Mitigation for Risk 1
 - Mitigation for Risk 2
 
 ## Notes
+
 Additional notes, considerations, or references.
 ```
 
 ### Feature Template
 
 **feature-template.md**
+
 ```markdown
 # FEAT-XXX: [Feature Title]
 
@@ -89,78 +107,97 @@ Additional notes, considerations, or references.
 **Created:** YYYY-MM-DD  
 **Owner:** @username  
 **Epic:** EPIC-XXX  
-**Estimated:** X days  
+**Estimated:** X days
 
 ## User Story
+
 As a [user type], I want [functionality] so that [benefit].
 
 ## Business Value
+
 ### Impact
+
 Describe the business impact and value this feature provides.
 
 ### Success Metrics
+
 - Metric 1: Target value
 - Metric 2: Target value
 - Metric 3: Target value
 
 ## Functional Requirements
+
 - [ ] Core functionality requirement 1
 - [ ] Core functionality requirement 2
 - [ ] Edge case handling
 
 ## Technical Requirements
+
 ### Frontend
+
 - [ ] UI components needed
 - [ ] User interaction flows
 - [ ] Responsive design requirements
 
 ### Backend
+
 - [ ] API endpoints required
 - [ ] Database changes
 - [ ] Business logic implementation
 
 ### Integration
+
 - [ ] Third-party integrations
 - [ ] Internal service connections
 - [ ] Data synchronization
 
 ## Implementation Plan
+
 ### Phase 1: Foundation
+
 - [ ] TASK-001: Basic setup
 - [ ] TASK-002: Core implementation
 
 ### Phase 2: Enhancement
+
 - [ ] TASK-003: Advanced features
 - [ ] TASK-004: Integration testing
 
 ## Design Considerations
+
 ### User Experience
+
 - User flow diagrams
 - Wireframes/mockups
 - Accessibility requirements
 
 ### Technical Design
+
 - Architecture decisions
 - Technology choices
 - Performance considerations
 
 ## Testing Strategy
+
 - [ ] Unit testing approach
 - [ ] Integration testing plan
 - [ ] User acceptance testing
 
 ## Acceptance Criteria
+
 - [ ] All functional requirements met
 - [ ] Performance criteria satisfied
 - [ ] Security requirements implemented
 - [ ] Accessibility standards met
 
 ## Dependencies
+
 - FEAT-XXX: Related feature
 - API-XXX: Required API
 - INFRA-XXX: Infrastructure need
 
 ## References
+
 - [Design mockups](link)
 - [API documentation](link)
 - [Business requirements](link)
@@ -171,7 +208,8 @@ Describe the business impact and value this feature provides.
 ### API Specification Template
 
 **api-template.md**
-```markdown
+
+````markdown
 # API-XXX: [API Title]
 
 **Priority:** P2  
@@ -180,24 +218,28 @@ Describe the business impact and value this feature provides.
 **Created:** YYYY-MM-DD  
 **Owner:** @backend-team  
 **Version:** v1.0  
-**Estimated:** X days  
+**Estimated:** X days
 
 ## API Overview
+
 Brief description of the API purpose and functionality.
 
 ## Endpoints
 
 ### GET /api/v1/resource
+
 **Purpose:** Retrieve resources  
 **Authentication:** Required  
-**Rate Limiting:** 1000 requests/hour  
+**Rate Limiting:** 1000 requests/hour
 
 #### Parameters
+
 - `id` (string, required): Resource identifier
 - `filter` (string, optional): Filter criteria
 - `limit` (integer, optional): Number of results (default: 20, max: 100)
 
 #### Response Format
+
 ```json
 {
   "data": [
@@ -214,8 +256,10 @@ Brief description of the API purpose and functionality.
   }
 }
 ```
+````
 
 #### Error Responses
+
 - `400 Bad Request`: Invalid parameters
 - `401 Unauthorized`: Authentication required
 - `403 Forbidden`: Insufficient permissions
@@ -223,11 +267,13 @@ Brief description of the API purpose and functionality.
 - `429 Too Many Requests`: Rate limit exceeded
 
 ### POST /api/v1/resource
+
 **Purpose:** Create new resource  
 **Authentication:** Required  
-**Permissions:** write:resource  
+**Permissions:** write:resource
 
 #### Request Body
+
 ```json
 {
   "name": "string (required)",
@@ -237,6 +283,7 @@ Brief description of the API purpose and functionality.
 ```
 
 #### Response
+
 ```json
 {
   "id": "string",
@@ -247,17 +294,21 @@ Brief description of the API purpose and functionality.
 ```
 
 ## Authentication
+
 ### Bearer Token
+
 ```http
 Authorization: Bearer <token>
 ```
 
 ### API Key
+
 ```http
 X-API-Key: <api-key>
 ```
 
 ## Rate Limiting
+
 - Standard: 1000 requests/hour
 - Premium: 10000 requests/hour
 - Headers included in response:
@@ -266,7 +317,9 @@ X-API-Key: <api-key>
   - `X-RateLimit-Reset`
 
 ## Error Handling
+
 ### Standard Error Format
+
 ```json
 {
   "error": {
@@ -279,25 +332,29 @@ X-API-Key: <api-key>
 ```
 
 ## Versioning
+
 - Current version: v1.0
 - Versioning strategy: URL path (`/api/v1/`)
 - Deprecation policy: 6 months notice
 
 ## SDK Examples
+
 ### JavaScript
+
 ```javascript
 const api = new APIClient({
-  baseURL: 'https://api.example.com',
-  apiKey: 'your-api-key'
+  baseURL: "https://api.example.com",
+  apiKey: "your-api-key",
 });
 
 const resources = await api.getResources({
-  filter: 'active',
-  limit: 50
+  filter: "active",
+  limit: 50,
 });
 ```
 
 ### Python
+
 ```python
 import requests
 
@@ -309,7 +366,9 @@ response = requests.get(
 ```
 
 ## Testing
+
 ### Test Cases
+
 - [ ] Authentication validation
 - [ ] Parameter validation
 - [ ] Rate limiting
@@ -317,6 +376,7 @@ response = requests.get(
 - [ ] Performance testing
 
 ### Test Data
+
 ```json
 {
   "valid_resource": {
@@ -330,6 +390,7 @@ response = requests.get(
 ```
 
 ## Implementation Tasks
+
 - [ ] TASK-001: Endpoint implementation
 - [ ] TASK-002: Authentication middleware
 - [ ] TASK-003: Rate limiting
@@ -337,17 +398,20 @@ response = requests.get(
 - [ ] TASK-005: SDK development
 
 ## Documentation
+
 - [ ] OpenAPI/Swagger specification
 - [ ] Postman collection
 - [ ] Code examples
 - [ ] Migration guide (if applicable)
 
 ## Monitoring and Analytics
+
 - [ ] Endpoint performance metrics
 - [ ] Error rate monitoring
 - [ ] Usage analytics
 - [ ] SLA monitoring
-```
+
+````
 
 ### Architecture Specification Template
 
@@ -355,13 +419,13 @@ response = requests.get(
 ```markdown
 # ARCH-XXX: [Architecture Title]
 
-**Priority:** HIGH  
-**Status:** proposed  
-**Type:** ARCH  
-**Created:** YYYY-MM-DD  
-**Owner:** @architecture-team  
-**Stakeholders:** @team1, @team2, @team3  
-**Review Date:** YYYY-MM-DD  
+**Priority:** HIGH
+**Status:** proposed
+**Type:** ARCH
+**Created:** YYYY-MM-DD
+**Owner:** @architecture-team
+**Stakeholders:** @team1, @team2, @team3
+**Review Date:** YYYY-MM-DD
 
 ## Executive Summary
 High-level summary of the architectural change and its business impact.
@@ -542,11 +606,12 @@ Description of how data flows through the system.
 - [Proof of concept results](link)
 - [Technology evaluation](link)
 - [Security review](link)
-```
+````
 
 ### Bug Report Template
 
 **bug-template.md**
+
 ```markdown
 # BUG-XXX: [Bug Title]
 
@@ -556,12 +621,14 @@ Description of how data flows through the system.
 **Created:** YYYY-MM-DD  
 **Owner:** @username  
 **Severity:** Medium  
-**Component:** ComponentName  
+**Component:** ComponentName
 
 ## Bug Description
+
 Clear and concise description of the bug.
 
 ## Environment
+
 - **Browser:** Chrome 91.0.4472.124
 - **OS:** macOS 11.4
 - **Device:** Desktop/Mobile
@@ -569,29 +636,37 @@ Clear and concise description of the bug.
 - **Environment:** Production/Staging/Development
 
 ## Steps to Reproduce
+
 1. Go to page X
 2. Click on element Y
 3. Enter data Z
 4. Observe the issue
 
 ## Expected Behavior
+
 Description of what should happen.
 
 ## Actual Behavior
+
 Description of what actually happens.
 
 ## Screenshots/Videos
+
 - [Screenshot 1](link)
 - [Video recording](link)
 
 ## Error Messages
 ```
+
 Error message text or stack trace
+
 ```
 
 ## Browser Console Logs
 ```
+
 Console error messages
+
 ```
 
 ## Network Information
@@ -627,23 +702,23 @@ Any additional information that might be relevant.
 
 ## Fix Implementation
 ### TASK-001: Immediate Fix
-**Status:** ready  
-**Assignee:** @developer  
-**Estimated:** 2 hours  
+**Status:** ready
+**Assignee:** @developer
+**Estimated:** 2 hours
 
 Quick fix to resolve the immediate issue.
 
 ### TASK-002: Permanent Solution
-**Status:** ready  
-**Assignee:** @developer  
-**Estimated:** 1 day  
+**Status:** ready
+**Assignee:** @developer
+**Estimated:** 1 day
 
 Long-term solution to prevent recurrence.
 
 ### TASK-003: Prevention Measures
-**Status:** ready  
-**Assignee:** @team-lead  
-**Estimated:** 4 hours  
+**Status:** ready
+**Assignee:** @team-lead
+**Estimated:** 4 hours
 
 Process improvements to prevent similar issues.
 
@@ -692,6 +767,7 @@ Process improvements to prevent similar issues.
 ### Security Specification Template
 
 **security-template.md**
+
 ```markdown
 # SEC-XXX: [Security Specification Title]
 
@@ -701,114 +777,138 @@ Process improvements to prevent similar issues.
 **Created:** YYYY-MM-DD  
 **Owner:** @security-team  
 **Classification:** Confidential  
-**Compliance:** GDPR, SOX, ISO27001  
+**Compliance:** GDPR, SOX, ISO27001
 
 ## Security Overview
+
 Description of the security requirement or implementation.
 
 ## Threat Model
+
 ### Assets to Protect
+
 - User data
 - Financial information
 - System credentials
 - Business intelligence
 
 ### Threat Actors
+
 - External attackers
 - Malicious insiders
 - Compromised accounts
 - Nation-state actors
 
 ### Attack Vectors
+
 - Web application attacks
 - Social engineering
 - Physical access
 - Supply chain attacks
 
 ## Security Requirements
+
 ### Authentication
+
 - [ ] Multi-factor authentication
 - [ ] Strong password policies
 - [ ] Account lockout mechanisms
 - [ ] Session management
 
 ### Authorization
+
 - [ ] Role-based access control
 - [ ] Principle of least privilege
 - [ ] Resource-level permissions
 - [ ] Regular access reviews
 
 ### Data Protection
+
 - [ ] Encryption at rest
 - [ ] Encryption in transit
 - [ ] Data classification
 - [ ] Data retention policies
 
 ### Monitoring and Logging
+
 - [ ] Security event logging
 - [ ] Real-time monitoring
 - [ ] Incident detection
 - [ ] Audit trails
 
 ## Implementation Tasks
+
 ### TASK-001: Authentication Enhancement
+
 **Status:** ready  
 **Assignee:** @security-engineer  
-**Estimated:** 5 days  
+**Estimated:** 5 days
 
 Implement multi-factor authentication.
 
 ### TASK-002: Data Encryption
+
 **Status:** ready  
 **Assignee:** @backend-engineer  
-**Estimated:** 3 days  
+**Estimated:** 3 days
 
 Implement encryption for sensitive data.
 
 ## Compliance Requirements
+
 ### GDPR
+
 - [ ] Data processing lawfulness
 - [ ] Data subject rights
 - [ ] Privacy by design
 - [ ] Data breach notification
 
 ### SOX
+
 - [ ] Financial data integrity
 - [ ] Access controls
 - [ ] Audit trails
 - [ ] Change management
 
 ## Testing and Validation
+
 ### Security Testing
+
 - [ ] Penetration testing
 - [ ] Vulnerability scanning
 - [ ] Code security review
 - [ ] Configuration review
 
 ### Compliance Testing
+
 - [ ] Control effectiveness testing
 - [ ] Audit readiness verification
 - [ ] Documentation review
 
 ## Risk Assessment
-| Risk | Likelihood | Impact | Risk Level | Mitigation |
-|------|------------|--------|------------|------------|
-| Data breach | Low | High | Medium | Encryption, monitoring |
-| Unauthorized access | Medium | High | High | MFA, access controls |
+
+| Risk                | Likelihood | Impact | Risk Level | Mitigation             |
+| ------------------- | ---------- | ------ | ---------- | ---------------------- |
+| Data breach         | Low        | High   | Medium     | Encryption, monitoring |
+| Unauthorized access | Medium     | High   | High       | MFA, access controls   |
 
 ## Incident Response
+
 ### Response Team
+
 - Security lead: @security-lead
 - Technical lead: @tech-lead
 - Communications: @comms-lead
 
 ### Response Procedures
+
 1. Immediate containment
 2. Impact assessment
 3. Evidence preservation
 4. Stakeholder notification
 
 ## References
+
 - [Security policy](link)
 - [Compliance framework](link)
 - [Incident response plan](link)
@@ -817,6 +917,7 @@ Implement encryption for sensitive data.
 ### Performance Specification Template
 
 **performance-template.md**
+
 ```markdown
 # PERF-XXX: [Performance Specification Title]
 
@@ -825,102 +926,124 @@ Implement encryption for sensitive data.
 **Type:** PERF  
 **Created:** YYYY-MM-DD  
 **Owner:** @performance-team  
-**Baseline:** Current performance metrics  
+**Baseline:** Current performance metrics
 
 ## Performance Overview
+
 Description of the performance requirement or optimization.
 
 ## Current Performance
+
 ### Metrics
+
 - Page load time: XXXms
 - API response time: XXXms
 - Throughput: XXX requests/second
 - Error rate: X.XX%
 
 ### Bottlenecks
+
 - Database queries: Slow JOIN operations
 - Network latency: High latency to external services
 - Frontend rendering: Large bundle size
 
 ## Performance Goals
+
 ### Target Metrics
+
 - Page load time: < 2000ms (95th percentile)
 - API response time: < 500ms (95th percentile)
 - Throughput: > 1000 requests/second
 - Error rate: < 0.1%
 
 ### Success Criteria
+
 - [ ] All target metrics achieved
 - [ ] No regression in other areas
 - [ ] Sustainable under load
 - [ ] Cost-effective solution
 
 ## Optimization Strategy
+
 ### Database Optimization
+
 - [ ] Query optimization
 - [ ] Index creation
 - [ ] Connection pooling
 - [ ] Caching layer
 
 ### Frontend Optimization
+
 - [ ] Code splitting
 - [ ] Bundle optimization
 - [ ] Image optimization
 - [ ] CDN implementation
 
 ### Backend Optimization
+
 - [ ] Algorithm improvements
 - [ ] Caching strategies
 - [ ] Resource pooling
 - [ ] Async processing
 
 ## Implementation Tasks
+
 ### TASK-001: Database Query Optimization
+
 **Status:** ready  
 **Assignee:** @database-engineer  
-**Estimated:** 3 days  
+**Estimated:** 3 days
 
 Optimize slow database queries identified in profiling.
 
 ### TASK-002: Frontend Bundle Optimization
+
 **Status:** ready  
 **Assignee:** @frontend-engineer  
-**Estimated:** 2 days  
+**Estimated:** 2 days
 
 Implement code splitting and reduce bundle size.
 
 ## Testing Strategy
+
 ### Performance Testing
+
 - [ ] Load testing
 - [ ] Stress testing
 - [ ] Volume testing
 - [ ] Endurance testing
 
 ### Monitoring
+
 - [ ] Real-time metrics
 - [ ] Performance dashboards
 - [ ] Alert thresholds
 - [ ] Trend analysis
 
 ## Tools and Infrastructure
+
 ### Testing Tools
+
 - Artillery for load testing
 - Lighthouse for frontend performance
 - New Relic for APM
 - Grafana for visualization
 
 ### Monitoring Tools
+
 - Application performance monitoring
 - Infrastructure monitoring
 - User experience monitoring
 - Synthetic testing
 
 ## Risk Assessment
+
 - Performance degradation during optimization
 - Increased complexity
 - Resource consumption
 
 ## References
+
 - [Performance baseline report](link)
 - [Testing plan](link)
 - [Monitoring setup](link)

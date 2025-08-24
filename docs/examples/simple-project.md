@@ -25,38 +25,40 @@ my-app/
 ## Configuration
 
 **asd.config.js**
+
 ```javascript
 module.exports = {
   // Basic setup
-  featuresPath: 'docs/specs',
-  templatePath: 'docs/specs/template',
-  
+  featuresPath: "docs/specs",
+  templatePath: "docs/specs/template",
+
   // Simple workflow
-  statusFolders: ['active', 'backlog', 'done'],
-  
+  statusFolders: ["active", "backlog", "done"],
+
   // Basic types for a web application
-  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
-  
+  supportedTypes: ["SPEC", "FEAT", "BUG"],
+
   // Standard priorities
-  priorities: ['P0', 'P1', 'P2', 'P3'],
-  
+  priorities: ["P0", "P1", "P2", "P3"],
+
   // Reasonable defaults
-  defaultPriority: 'P2',
-  defaultStatus: 'backlog',
-  
+  defaultPriority: "P2",
+  defaultStatus: "backlog",
+
   // Enable auto-refresh for development
   autoRefresh: true,
   refreshDebounce: 500,
-  
+
   // Custom branding
-  appName: 'My App Specifications',
-  appIcon: '🚀'
+  appName: "My App Specifications",
+  appIcon: "🚀",
 };
 ```
 
 ## Package.json Integration
 
 **package.json**
+
 ```json
 {
   "name": "my-app",
@@ -76,6 +78,7 @@ module.exports = {
 ## Specification Templates
 
 **docs/specs/template/spec-template.md**
+
 ```markdown
 # SPEC-XXX: [Title]
 
@@ -83,36 +86,43 @@ module.exports = {
 **Status:** backlog  
 **Type:** SPEC  
 **Created:** YYYY-MM-DD  
-**Owner:** @username  
+**Owner:** @username
 
 ## Overview
+
 Brief description of what this specification covers.
 
 ## Requirements
+
 - [ ] Requirement 1
 - [ ] Requirement 2
 - [ ] Requirement 3
 
 ## Tasks
+
 ### TASK-001: Task Title
+
 **Status:** ready  
 **Assignee:** @username  
-**Estimated:** X days  
+**Estimated:** X days
 
 Task description and details.
 
 ## Acceptance Criteria
+
 - Criteria 1
 - Criteria 2
 - Criteria 3
 
 ## Notes
+
 Additional notes and considerations.
 ```
 
 ## Example Specifications
 
 **docs/specs/active/SPEC-001-user-auth.md**
+
 ```markdown
 # SPEC-001: User Authentication System
 
@@ -120,12 +130,14 @@ Additional notes and considerations.
 **Status:** active  
 **Type:** SPEC  
 **Created:** 2024-01-15  
-**Owner:** @alice  
+**Owner:** @alice
 
 ## Overview
+
 Implement comprehensive user authentication with OAuth2 and JWT tokens.
 
 ## Requirements
+
 - [x] User registration and login
 - [x] JWT token management
 - [ ] OAuth2 integration (Google, GitHub)
@@ -133,28 +145,33 @@ Implement comprehensive user authentication with OAuth2 and JWT tokens.
 - [ ] Account email verification
 
 ## Tasks
+
 ### TASK-001: Basic Auth Implementation
+
 **Status:** done  
 **Assignee:** @alice  
-**Estimated:** 3 days  
+**Estimated:** 3 days
 
 Implement basic email/password authentication with JWT tokens.
 
 ### TASK-002: OAuth2 Integration
+
 **Status:** in_progress  
 **Assignee:** @bob  
-**Estimated:** 4 days  
+**Estimated:** 4 days
 
 Add OAuth2 providers (Google, GitHub) for social login.
 
 ### TASK-003: Password Reset
+
 **Status:** ready  
 **Assignee:** @alice  
-**Estimated:** 2 days  
+**Estimated:** 2 days
 
 Implement secure password reset via email tokens.
 
 ## Acceptance Criteria
+
 - Users can register with email/password
 - Users can login with OAuth2 providers
 - JWT tokens expire and refresh properly
@@ -162,12 +179,14 @@ Implement secure password reset via email tokens.
 - All authentication is secure and tested
 
 ## Notes
+
 - Use bcrypt for password hashing
 - Implement rate limiting for login attempts
 - Consider 2FA for future enhancement
 ```
 
 **docs/specs/active/FEAT-002-dashboard.md**
+
 ```markdown
 # FEAT-002: User Dashboard
 
@@ -175,12 +194,14 @@ Implement secure password reset via email tokens.
 **Status:** active  
 **Type:** FEAT  
 **Created:** 2024-01-16  
-**Owner:** @charlie  
+**Owner:** @charlie
 
 ## Overview
+
 Create a user dashboard showing key metrics and recent activity.
 
 ## Requirements
+
 - [ ] Dashboard layout and navigation
 - [ ] User profile section
 - [ ] Activity timeline
@@ -188,33 +209,39 @@ Create a user dashboard showing key metrics and recent activity.
 - [ ] Responsive design
 
 ## Tasks
+
 ### TASK-001: Dashboard Layout
+
 **Status:** in_progress  
 **Assignee:** @charlie  
-**Estimated:** 2 days  
+**Estimated:** 2 days
 
 Create the main dashboard layout with navigation and sections.
 
 ### TASK-002: Profile Section
+
 **Status:** ready  
 **Assignee:** @david  
-**Estimated:** 1 day  
+**Estimated:** 1 day
 
 Add user profile display with avatar and basic info.
 
 ## Acceptance Criteria
+
 - Dashboard loads quickly (<2s)
 - All sections are responsive
 - Navigation is intuitive
 - Matches design mockups
 
 ## Notes
+
 - Use Material-UI components
 - Implement lazy loading for performance
 - Add loading states for all sections
 ```
 
 **docs/specs/backlog/SPEC-003-api-docs.md**
+
 ```markdown
 # SPEC-003: API Documentation System
 
@@ -222,12 +249,14 @@ Add user profile display with avatar and basic info.
 **Status:** backlog  
 **Type:** SPEC  
 **Created:** 2024-01-17  
-**Owner:** @eve  
+**Owner:** @eve
 
 ## Overview
+
 Implement comprehensive API documentation with interactive examples.
 
 ## Requirements
+
 - [ ] OpenAPI/Swagger integration
 - [ ] Interactive API explorer
 - [ ] Code examples in multiple languages
@@ -235,32 +264,38 @@ Implement comprehensive API documentation with interactive examples.
 - [ ] Versioning support
 
 ## Tasks
+
 ### TASK-001: OpenAPI Setup
+
 **Status:** ready  
 **Assignee:** @eve  
-**Estimated:** 3 days  
+**Estimated:** 3 days
 
 Set up OpenAPI specification and documentation generation.
 
 ### TASK-002: Interactive Explorer
+
 **Status:** ready  
-**Estimated:** 4 days  
+**Estimated:** 4 days
 
 Create interactive API explorer with test functionality.
 
 ## Acceptance Criteria
+
 - All endpoints are documented
 - Examples work correctly
 - Documentation is always up-to-date
 - Multiple programming languages supported
 
 ## Notes
+
 - Use Swagger UI for the explorer
 - Auto-generate from code comments
 - Include rate limiting information
 ```
 
 **docs/specs/done/SPEC-000-project-setup.md**
+
 ```markdown
 # SPEC-000: Project Setup and Infrastructure
 
@@ -269,12 +304,14 @@ Create interactive API explorer with test functionality.
 **Type:** SPEC  
 **Created:** 2024-01-10  
 **Owner:** @alice  
-**Completed:** 2024-01-14  
+**Completed:** 2024-01-14
 
 ## Overview
+
 Set up the basic project infrastructure, development environment, and CI/CD pipeline.
 
 ## Requirements
+
 - [x] Repository structure and configuration
 - [x] Development environment setup
 - [x] CI/CD pipeline configuration
@@ -282,31 +319,36 @@ Set up the basic project infrastructure, development environment, and CI/CD pipe
 - [x] Documentation framework
 
 ## Tasks
+
 ### TASK-001: Repository Setup
+
 **Status:** done  
 **Assignee:** @alice  
 **Estimated:** 1 day  
-**Completed:** 2024-01-11  
+**Completed:** 2024-01-11
 
 Initialize Git repository with proper structure and configuration.
 
 ### TASK-002: Development Environment
+
 **Status:** done  
 **Assignee:** @alice  
 **Estimated:** 2 days  
-**Completed:** 2024-01-13  
+**Completed:** 2024-01-13
 
 Set up Node.js environment with package.json and development scripts.
 
 ### TASK-003: CI/CD Pipeline
+
 **Status:** done  
 **Assignee:** @bob  
 **Estimated:** 2 days  
-**Completed:** 2024-01-14  
+**Completed:** 2024-01-14
 
 Configure GitHub Actions for testing and deployment.
 
 ## Acceptance Criteria
+
 - [x] Clean repository structure
 - [x] Consistent code formatting
 - [x] Automated testing on PRs
@@ -314,6 +356,7 @@ Configure GitHub Actions for testing and deployment.
 - [x] Documentation accessible
 
 ## Notes
+
 Project successfully set up and ready for development. All team members have access and development environment is working.
 ```
 
@@ -333,14 +376,14 @@ Edit `asd.config.js` to match your project needs:
 
 ```javascript
 module.exports = {
-  featuresPath: 'docs/specs',
-  appName: 'My App Specifications',
-  appIcon: '🚀',
-  
+  featuresPath: "docs/specs",
+  appName: "My App Specifications",
+  appIcon: "🚀",
+
   // Customize for your workflow
-  statusFolders: ['active', 'backlog', 'done'],
-  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
-  priorities: ['P0', 'P1', 'P2', 'P3']
+  statusFolders: ["active", "backlog", "done"],
+  supportedTypes: ["SPEC", "FEAT", "BUG"],
+  priorities: ["P0", "P1", "P2", "P3"],
 };
 ```
 
@@ -408,21 +451,22 @@ ASD will automatically update the display.
 
 ## Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| `↑/↓` | Navigate specifications |
+| Key   | Action                             |
+| ----- | ---------------------------------- |
+| `↑/↓` | Navigate specifications            |
 | `←/→` | Switch views (Active/Backlog/Done) |
-| `Tab` | Cycle through panels |
-| `1-4` | Jump to specific panel |
-| `r` | Refresh manually |
-| `?` | Show help |
-| `q` | Quit |
+| `Tab` | Cycle through panels               |
+| `1-4` | Jump to specific panel             |
+| `r`   | Refresh manually                   |
+| `?`   | Show help                          |
+| `q`   | Quit                               |
 
 ## Tips and Best Practices
 
 ### 1. Consistent Naming
 
 Use consistent specification naming:
+
 - `SPEC-001-user-authentication.md`
 - `FEAT-002-dashboard-ui.md`
 - `BUG-003-login-error.md`
@@ -430,6 +474,7 @@ Use consistent specification naming:
 ### 2. Status Management
 
 Keep status folders organized:
+
 - **active**: Currently being worked on (limit to 3-5)
 - **backlog**: Planned for future work
 - **done**: Completed specifications (archive periodically)
@@ -437,8 +482,10 @@ Keep status folders organized:
 ### 3. Task Tracking
 
 Use checkbox tasks for granular progress tracking:
+
 ```markdown
 ## Tasks
+
 - [x] Completed task
 - [ ] Pending task
 - [ ] Future task
@@ -447,6 +494,7 @@ Use checkbox tasks for granular progress tracking:
 ### 4. Regular Reviews
 
 Schedule regular specification reviews:
+
 - Weekly active specification review
 - Monthly backlog prioritization
 - Quarterly done specification archival
@@ -454,6 +502,7 @@ Schedule regular specification reviews:
 ### 5. Team Collaboration
 
 Establish team conventions:
+
 - Always assign owners to specifications
 - Use consistent priority levels
 - Regular status updates in task descriptions

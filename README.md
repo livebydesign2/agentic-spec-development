@@ -2,9 +2,11 @@
 
 > AI-first terminal tool for agentic specification development and project management
 
-[![npm version](https://badge.fury.io/js/agentic-spec-development.svg)](https://badge.fury.io/js/agentic-spec-development)
+[![Pre-Production](https://img.shields.io/badge/Status-Pre--Production-orange.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)](https://nodejs.org/)
+
+> ⚠️ **Pre-Production Software**: ASD is currently in active development and not yet published to npm. Features and APIs may change before the first stable release.
 
 **ASD** is a powerful terminal user interface (TUI) designed for teams adopting AI-first specification development workflows. It provides a beautiful, interactive dashboard for managing specifications, features, and tasks through an intuitive terminal interface.
 
@@ -25,26 +27,38 @@
 
 ### Installation
 
-```bash
-# Install globally for CLI usage
-npm install -g agentic-spec-development
+> **Note**: ASD is not yet published to npm. Install from source:
 
-# Or use without installation
-npx agentic-spec-development init
-npx agentic-spec-development
+```bash
+# Clone the repository
+git clone https://github.com/livebydesign2/agentic-spec-development.git
+cd agentic-spec-development
+
+# Install dependencies
+npm install
+
+# Link for global usage (optional)
+npm link
+
+# Run directly from source
+node bin/asd
 ```
 
 ### Initialize a Project
 
 ```bash
-# Set up ASD in your project
+# Set up ASD in your project (if linked globally)
 asd init
 
-# Or with custom project type
-asd init --type spec
+# Or run from source
+node bin/asd init
+
+# With custom project type
+node bin/asd init --type spec
 ```
 
 This creates:
+
 ```
 docs/specs/
 ├── active/     # Currently active specifications
@@ -56,14 +70,17 @@ docs/specs/
 ### Start the Terminal Interface
 
 ```bash
-# Launch the interactive TUI
+# Launch the interactive TUI (if linked globally)
 asd
 
+# Or run from source
+node bin/asd
+
 # With custom configuration
-asd --config my-config.js
+node bin/asd --config my-config.js
 
 # With debug information
-asd --debug
+node bin/asd --debug
 ```
 
 ## 📋 How It Works
@@ -95,15 +112,15 @@ ASD transforms your specification files into an interactive dashboard:
 
 ## 🎮 Navigation & Controls
 
-| Key | Action |
-|-----|--------|
-| `↑/↓` or `j/k` | Navigate items |
-| `←/→` or `h/l` | Switch views (Active/Backlog/Done) |
-| `Tab` | Cycle through panels |
-| `1-4` | Jump to specific panel |
-| `r` | Refresh data |
-| `?` or `F1` | Show help |
-| `q` or `Ctrl+C` | Quit |
+| Key             | Action                             |
+| --------------- | ---------------------------------- |
+| `↑/↓` or `j/k`  | Navigate items                     |
+| `←/→` or `h/l`  | Switch views (Active/Backlog/Done) |
+| `Tab`           | Cycle through panels               |
+| `1-4`           | Jump to specific panel             |
+| `r`             | Refresh data                       |
+| `?` or `F1`     | Show help                          |
+| `q` or `Ctrl+C` | Quit                               |
 
 ## ⚙️ Configuration
 
@@ -123,25 +140,26 @@ ASD will search for configuration in the following order:
 ### Basic Configuration
 
 **asd.config.js**
+
 ```javascript
 module.exports = {
   // Path to specifications directory
-  featuresPath: 'docs/specs',
-  
+  featuresPath: "docs/specs",
+
   // Template directory for new specs
-  templatePath: 'docs/specs/template',
-  
+  templatePath: "docs/specs/template",
+
   // Enable automatic file watching
   autoRefresh: true,
-  
+
   // Supported specification types
-  supportedTypes: ['SPEC', 'FEAT', 'BUG', 'SPIKE', 'MAINT', 'RELEASE'],
-  
+  supportedTypes: ["SPEC", "FEAT", "BUG", "SPIKE", "MAINT", "RELEASE"],
+
   // Status folders (subdirectories)
-  statusFolders: ['active', 'backlog', 'done'],
-  
+  statusFolders: ["active", "backlog", "done"],
+
   // Priority levels
-  priorities: ['P0', 'P1', 'P2', 'P3']
+  priorities: ["P0", "P1", "P2", "P3"],
 };
 ```
 
@@ -149,29 +167,29 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: 'docs/specifications',
-  templatePath: 'templates/specs',
-  legacyFeaturesPath: 'docs/product/features', // Backwards compatibility
-  
+  featuresPath: "docs/specifications",
+  templatePath: "templates/specs",
+  legacyFeaturesPath: "docs/product/features", // Backwards compatibility
+
   // UI Customization
-  appName: 'My Project Specs',
-  appIcon: '🎯',
-  
+  appName: "My Project Specs",
+  appIcon: "🎯",
+
   // File watching
   autoRefresh: true,
   refreshDebounce: 500,
-  
+
   // Defaults for new specs
-  defaultPriority: 'P2',
-  defaultStatus: 'backlog',
-  
+  defaultPriority: "P2",
+  defaultStatus: "backlog",
+
   // Enforce specification format
   enforceSpec: true,
-  
+
   // Custom types and statuses
-  supportedTypes: ['SPEC', 'EPIC', 'STORY', 'TASK', 'BUG'],
-  statusFolders: ['todo', 'doing', 'review', 'done'],
-  priorities: ['critical', 'high', 'medium', 'low']
+  supportedTypes: ["SPEC", "EPIC", "STORY", "TASK", "BUG"],
+  statusFolders: ["todo", "doing", "review", "done"],
+  priorities: ["critical", "high", "medium", "low"],
 };
 ```
 
@@ -203,30 +221,36 @@ ASD supports multiple specification formats and is backwards compatible with exi
 **Owner:** @alice
 
 ## Overview
+
 Implement comprehensive authentication system with OAuth2, 2FA, and RBAC.
 
 ## Requirements
+
 - [ ] OAuth2 provider integration
-- [x] JWT token management  
+- [x] JWT token management
 - [ ] Two-factor authentication
 - [ ] Role-based access control
 
 ## Tasks
+
 ### TASK-001: Setup OAuth2 Integration
+
 **Status:** done  
 **Assignee:** @bob  
-**Estimated:** 5 days  
+**Estimated:** 5 days
 
 Configure OAuth2 providers (Google, GitHub, Microsoft).
 
 ### TASK-002: Implement 2FA
+
 **Status:** in_progress  
 **Assignee:** @alice  
-**Estimated:** 3 days  
+**Estimated:** 3 days
 
 Add TOTP-based two-factor authentication.
 
 ## Acceptance Criteria
+
 - Users can authenticate via OAuth2 providers
 - 2FA is required for admin users
 - Role permissions are enforced
@@ -241,17 +265,20 @@ ASD also supports existing FEAT-XXX formats:
 
 **Priority:** P2  
 **Status:** backlog  
-**Epic:** User Interface  
+**Epic:** User Interface
 
 ## Description
+
 Create reusable UI components for the admin dashboard.
 
 ## Requirements
+
 - Component library setup
 - Storybook documentation
 - Accessibility compliance
 
 ## Tasks
+
 - [ ] Setup component library
 - [ ] Create base components
 - [ ] Add accessibility tests
@@ -260,32 +287,50 @@ Create reusable UI components for the admin dashboard.
 ## 🔧 CLI Commands
 
 ### `asd` (default)
+
 Start the interactive terminal interface.
 
 ```bash
+# If linked globally
 asd                          # Start with default config
 asd --config custom.js       # Use custom config file
 asd --path ./specifications  # Override specs directory
 asd --no-auto-refresh       # Disable file watching
 asd --debug                 # Enable debug output
+
+# Or run from source
+node bin/asd                 # Start from source
+node bin/asd --debug         # Debug mode from source
 ```
 
 ### `asd init`
+
 Initialize ASD in the current directory.
 
 ```bash
+# If linked globally
 asd init                    # Initialize with defaults
 asd init --type spec       # Create spec-focused structure
 asd init --type feature    # Create feature-focused structure
 asd init --type mixed      # Create mixed structure (default)
+
+# Or run from source
+node bin/asd init           # Initialize from source
+node bin/asd init --type spec
 ```
 
 ### `asd config`
+
 Show current configuration.
 
 ```bash
+# If linked globally
 asd config
+
+# Or run from source
+node bin/asd config
 ```
+
 ```
 🤖 ASD Configuration
 ==================================================
@@ -298,11 +343,17 @@ Status folders: active, backlog, done
 ```
 
 ### `asd doctor`
+
 Check ASD setup and configuration health.
 
 ```bash
+# If linked globally
 asd doctor
+
+# Or run from source
+node bin/asd doctor
 ```
+
 ```
 🔍 ASD Health Check
 ==================================================
@@ -323,12 +374,12 @@ Use ASD programmatically in your applications:
 ### Basic Usage
 
 ```javascript
-const ASDClient = require('agentic-spec-development');
+const ASDClient = require("agentic-spec-development");
 
 const asd = new ASDClient({
-  cwd: '/path/to/project',
-  appName: 'My Project Specs',
-  appIcon: '🎯'
+  cwd: "/path/to/project",
+  appName: "My Project Specs",
+  appIcon: "🎯",
 });
 
 await asd.init();
@@ -337,15 +388,15 @@ await asd.init();
 ### Custom Configuration
 
 ```javascript
-const { ConfigManager } = require('agentic-spec-development');
+const { ConfigManager } = require("agentic-spec-development");
 
-const configManager = new ConfigManager('/project/root');
+const configManager = new ConfigManager("/project/root");
 const config = configManager.loadConfig();
 
 const asd = new ASDClient({
   configManager,
-  appName: 'Custom App',
-  appVersion: '2.0.0'
+  appName: "Custom App",
+  appVersion: "2.0.0",
 });
 
 await asd.init();
@@ -369,6 +420,7 @@ console.log(`Progress: ${stats.completedTasks}/${stats.totalTasks} tasks`);
 ## 📂 Directory Structure Examples
 
 ### Simple Project
+
 ```
 my-project/
 ├── asd.config.js
@@ -384,6 +436,7 @@ my-project/
 ```
 
 ### Enterprise Project
+
 ```
 enterprise-project/
 ├── .asdrc.js
@@ -405,6 +458,7 @@ enterprise-project/
 ```
 
 ### Legacy Project (Backwards Compatible)
+
 ```
 legacy-project/
 ├── .roadmaprc.json
@@ -425,15 +479,15 @@ legacy-project/
 // asd.config.js
 module.exports = {
   // Custom branding
-  appName: 'Product Specifications',
-  appIcon: '📋',
-  
+  appName: "Product Specifications",
+  appIcon: "📋",
+
   // UI customization
   theme: {
-    primaryColor: 'brightBlue',
-    accentColor: 'brightGreen',
-    backgroundColor: 'bgBlack'
-  }
+    primaryColor: "brightBlue",
+    accentColor: "brightGreen",
+    backgroundColor: "bgBlack",
+  },
 };
 ```
 
@@ -447,6 +501,7 @@ asd --app-name "Product Specs" --app-icon "📋"
 ## 🔗 Integration Examples
 
 ### GitHub Actions
+
 ```yaml
 name: Spec Validation
 on: [push]
@@ -462,6 +517,7 @@ jobs:
 ```
 
 ### VS Code Integration
+
 ```json
 {
   "tasks": [
@@ -484,12 +540,14 @@ jobs:
 ## 🚀 Best Practices
 
 ### File Organization
+
 - Use descriptive file names: `SPEC-001-user-authentication.md`
 - Keep status folders organized: `active/`, `backlog/`, `done/`
 - Use templates for consistency
 - Add dates and owners to specifications
 
 ### AI-First Workflow
+
 1. **Generate specifications** using AI tools (ChatGPT, Claude, etc.)
 2. **Save to appropriate status folder** (usually `backlog/`)
 3. **Review and refine** in ASD terminal interface
@@ -498,6 +556,7 @@ jobs:
 6. **Move to done** when completed
 
 ### Team Collaboration
+
 - Use consistent naming conventions
 - Define clear status transitions
 - Regular spec reviews using ASD interface
@@ -509,6 +568,7 @@ jobs:
 ### Common Issues
 
 **ASD won't start**
+
 ```bash
 # Check system requirements
 node --version  # Should be >= 16.0.0
@@ -521,6 +581,7 @@ asd config
 ```
 
 **No specifications found**
+
 ```bash
 # Check directory structure
 asd doctor
@@ -533,6 +594,7 @@ asd config
 ```
 
 **Terminal display issues**
+
 ```bash
 # Force terminal size detection
 asd --debug
@@ -542,6 +604,7 @@ echo $TERM
 ```
 
 **File watching not working**
+
 ```bash
 # Check if auto-refresh is enabled
 asd config
@@ -566,23 +629,48 @@ asd --debug
 ```
 
 This provides:
+
 - Terminal size detection details
 - Layout calculations
 - Configuration loading steps
 - File system operations
 - Memory usage information
 
+## 🚧 Development Status
+
+**Current Status**: Pre-Production (v0.1.0-alpha)
+
+- ✅ **Core functionality implemented**: Spec parsing, terminal UI, file watching
+- ✅ **Basic CLI commands working**: init, config, doctor
+- 🔄 **In active development**: UI improvements, performance optimization
+- ❌ **Not yet published to npm**: Install from source only
+- ❌ **API may change**: Interfaces not yet stable
+
+### Roadmap to v1.0.0
+
+- [ ] Complete test coverage
+- [ ] Performance optimization for large spec sets
+- [ ] Plugin architecture
+- [ ] Configuration validation improvements
+- [ ] Comprehensive documentation
+- [ ] Stable API freeze
+
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) and [Development Setup](DEVELOPMENT.md) for details.
 
-### Development Setup
+### Quick Development Setup
 
 ```bash
 git clone https://github.com/livebydesign2/agentic-spec-development.git
 cd agentic-spec-development
 npm install
-npm test
+
+# Link for global usage (optional)
+npm link
+
+# Test your setup
+node bin/asd --help
 ```
 
 ### Running Tests

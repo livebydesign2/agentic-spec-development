@@ -1,25 +1,28 @@
 # [Specification Name]
 
-## **🎯 Quick Start** *(30 seconds)*
+## **🎯 Quick Start** _(30 seconds)_
 
 **Priority:** P1
 
 **What**: [One-line description of what this specification defines]  
-**Status**: [Backlog/Active/Done] | **Owner**: [AI Agent/Human]  
+**Status**: [Backlog/Active/Done] | **Owner**: [AI Agent/Human]
 
 ### **🚀 AGENT PICKUP GUIDE**
+
 **➡️ Next Available Task**: **[TASK-XXX]** - [Brief task description]  
 **📋 Your Job**: Work on TASK-XXX only, then update docs and hand off  
 **🚦 Dependencies**: [None, or "Wait for TASK-YYY to complete first"]
 
 ### **Required Reading**
+
 - docs/ai-context/agent-workflow.md
 - docs/ai-context/implementation-rules.md
 - docs/development/testing-workflow.md ← **MANDATORY: Testing workflow for AI agents**
 
-### **🚦 Current State** *(AGENTS: Update this when you complete YOUR task)*
+### **🚦 Current State** _(AGENTS: Update this when you complete YOUR task)_
+
 - **Next Available Task**: [TASK-XXX - what task is ready to be picked up]
-- **Current Task Status**: [TASK being worked on, or "None - ready for pickup"]  
+- **Current Task Status**: [TASK being worked on, or "None - ready for pickup"]
 - **Overall Progress**: [X of Y tasks complete]
 - **Blockers**: [Any blockers preventing next task, or "None"]
 - **Last Updated**: [YYYY-MM-DD] by [Agent name] after completing [TASK-XXX]
@@ -27,52 +30,60 @@
 ---
 
 ## **🤖 Agent Workflow**
+
 See: `docs/ai-context/agent-workflow.md`
 
 **⚠️ IMPORTANT: Each agent works on ONE TASK, then hands off to next agent**
 
 **When picking up a task (e.g., TASK-001):**
 
-1. **🎯 Product Check** *(Product-manager subagent)*: Ensure spec exists, numbering is correct, priority is set, and spec is in proper lifecycle state (backlog → active)
-2. **📊 Check Status**: What's the next available task? (look for ⏳ status)  
+1. **🎯 Product Check** _(Product-manager subagent)_: Ensure spec exists, numbering is correct, priority is set, and spec is in proper lifecycle state (backlog → active)
+2. **📊 Check Status**: What's the next available task? (look for ⏳ status)
 3. **🔍 Gather Context**: Read the context files below for this specific task
-4. **📋 Plan Work**: Use `todowrite` if this task has >3 subtasks  
+4. **📋 Plan Work**: Use `todowrite` if this task has >3 subtasks
 5. **⚡ Execute**: Complete ONLY your assigned task AND check off [x] subtasks
 
 Closure: For every task, complete the Task Closure Checklist inside the task (Validate + User Visual Validation, Update & Commit with [x], Product Handoff).
 
-### **📚 Context Priority Levels** *(Prevent context window overload)*
+### **📚 Context Priority Levels** _(Prevent context window overload)_
 
-#### **🔥 CRITICAL - Always Read First** *(Required for any task)*
+#### **🔥 CRITICAL - Always Read First** _(Required for any task)_
+
 - `docs/ai-context/implementation-rules.md` ← **THE CODE STANDARDS & PATTERNS**
-- **Implementation Context Section** *(This document, detailed requirements)* ← **Complete technical guide**
+- **Implementation Context Section** _(This document, detailed requirements)_ ← **Complete technical guide**
 
-#### **📋 TASK-SPECIFIC - Read for Your Task** *(Only what you're working on)*
+#### **📋 TASK-SPECIFIC - Read for Your Task** _(Only what you're working on)_
+
 **TASK-001 (Foundation/Setup)**:
+
 - `docs/ai-context/current-state.md` ← **Current system state**
 - `docs/development/project-setup.md` ← **If setting up new components**
 
 **TASK-002 (Core Implementation)**:
+
 - `[Specific files and line numbers for this task]` ← **Main files to modify**
 - `[Related component files]` ← **Dependencies**
 
 **TASK-003 (Integration/Testing)**:
+
 - `docs/development/testing-patterns.md` ← **Testing approach**
 - `[Test files]` ← **Integration testing**
 
-#### **📖 REFERENCE - Read When Stuck** *(Background/debugging only)*
+#### **📖 REFERENCE - Read When Stuck** _(Background/debugging only)_
+
 - `docs/ai-context/current-state.md` ← **System context** (if not task-specific)
 - `docs/ai-context/decision-framework.md` ← **Decision guidelines**
 - `docs/development/development-guide.md` ← **Development patterns** (if debugging setup issues)
 
 ### **💡 Agent Tips**
+
 - **Context Management**: Start with 🔥 CRITICAL docs only (~450 lines). Only read 📋 TASK-SPECIFIC for your task. Avoid 📖 REFERENCE unless stuck.
-- **Product-manager Integration**: 
+- **Product-manager Integration**:
   - **Step 1**: Call Product-manager subagent BEFORE starting any new specification work
   - **Step 8**: Call Product-manager subagent AFTER completing all specification tasks
   - Let Product-manager handle: specs, numbering, priorities, lifecycle states, roadmap updates
 - **Pick ONE TASK**: Look for ⏳ status, work on that task only
-- **Get current date**: Run `date +%Y-%m-%d` before status updates  
+- **Get current date**: Run `date +%Y-%m-%d` before status updates
 - **MANDATORY**: Check off subtasks `- [x]` as you complete them
 - **BEFORE COMMITTING**: Mark your task ✅, update "Next Available Task", hand off cleanly
 - **Multi-step work**: Use `todowrite` if YOUR task has >3 subtasks
@@ -81,12 +92,14 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 ### **🎯 When to Call Product-manager Subagent**
 
 **STEP 1 - Before Implementation (🎯 Product Check):**
+
 - **New Specifications**: Creating specs, assigning spec numbers, setting priorities
 - **Existing Specifications**: Verify spec is properly documented and in active/ folder
 - **Priority Questions**: When unsure about spec priority or strategic alignment
 - **Lifecycle Moves**: Moving specs from backlog/ to active/ folder
 
 **STEP 8 - After Implementation (🚀 Product Handoff):**
+
 - **Specification Completion**: Moving completed specs from active/ to done/ folder
 - **Roadmap Updates**: Updating strategic roadmap with completed specifications
 - **Success Metrics**: Recording completion and impact assessment
@@ -110,18 +123,22 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 
 ---
 
-## **📋 Work Definition** *(What needs to be built)*
+## **📋 Work Definition** _(What needs to be built)_
 
 ## **Description**
+
 [2–3 lines summarizing user value and scope]
 
 ### **Problem Statement**
+
 [2-3 sentences: What specific problem does this solve? Why does it matter?]
 
 ### **Solution Approach**
+
 [2-3 sentences: How will we solve it? What's the core strategy?]
 
 ### **Success Criteria**
+
 - [ ] [Specific, measurable outcome 1]
 - [ ] [Specific, measurable outcome 2]
 - [ ] [Specific, measurable outcome 3]
@@ -131,11 +148,13 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 ## **🏗️ Implementation Plan**
 
 ### **Technical Approach**
+
 [Brief description of the technical strategy - architecture/patterns to use]
 
-### **Implementation Tasks** *(Each task = one agent handoff)*
+### **Implementation Tasks** _(Each task = one agent handoff)_
 
 **TASK-001** 🤖 **[Task Name]** ⏳ **← READY FOR PICKUP** | Agent: [Agent-Type]
+
 - [ ] [Specific subtask 1]
 - [ ] [Specific subtask 2]
 - [ ] [Specific subtask 3]
@@ -146,6 +165,7 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 - **Agent Instructions**: [Specific guidance for this task]
 
 **TASK-002** 🤖 **[Task Name]** ⏸️ **← BLOCKED (waiting for TASK-001)** | Agent: [Agent-Type]
+
 - [ ] [Specific subtask 1]
 - [ ] [Specific subtask 2]
 - [ ] Validate (tests, lint, functionality) per "Validation Requirements"
@@ -155,6 +175,7 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 - **Files**: [Key files to create/modify]
 
 **TASK-003** 🤖 **[Task Name]** ⏸️ **← BLOCKED (waiting for TASK-002)** | Agent: [Agent-Type]
+
 - [ ] [Specific subtask 1]
 - [ ] [Specific subtask 2]
 - [ ] Create comprehensive tests for functionality
@@ -171,21 +192,24 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 
 ## **✅ Validation Requirements**
 
-### **📝 Documentation Checklist** *(REQUIRED before committing YOUR task)*
+### **📝 Documentation Checklist** _(REQUIRED before committing YOUR task)_
+
 - [ ] **Your Task Status**: Mark your task ✅ and update all subtasks to `- [x]`
 - [ ] **Current State**: Update "Next Available Task" to show what task is ready next
 - [ ] **Success Criteria**: Check off any criteria your task completed
 - [ ] **Handoff**: Clear what the next agent should pick up
 - [ ] **Issues Found**: If you discovered bugs/issues outside your scope, confirm you created bug tickets in backlog folder and mentioned them in your completion notes
 
-### **🧪 Testing Checklist** *(Follow this exact order)*
+### **🧪 Testing Checklist** _(Follow this exact order)_
 
-**DURING DEVELOPMENT** *(Test as you build each piece)*
+**DURING DEVELOPMENT** _(Test as you build each piece)_
+
 - [ ] **Unit Logic**: Test individual functions/components work in isolation
 - [ ] **Integration**: Test components work together correctly
 - [ ] **Error Handling**: Test error scenarios and edge cases
 
-**BEFORE COMMITTING** *(Required validation sequence)*
+**BEFORE COMMITTING** _(Required validation sequence)_
+
 - [ ] **Tests**: Run test suite - ensure all tests pass
 - [ ] **Linting**: Run linter - fix all style issues
 - [ ] **Functionality**: Manual test of the feature works as expected
@@ -194,16 +218,19 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 
 ---
 
-## **📊 Progress Tracking** *(AGENTS: Add entry when you complete YOUR task)*
+## **📊 Progress Tracking** _(AGENTS: Add entry when you complete YOUR task)_
 
-### **✅ Completed Tasks** *(Add entry when you finish your task)*
-- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - *Agent: [name]* - Next: TASK-YYY ready
-- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - *Agent: [name]* - Next: TASK-YYY ready
+### **✅ Completed Tasks** _(Add entry when you finish your task)_
 
-### **🚨 Task Blockers** *(Preventing next task pickup)*
-- 🚨 **TASK-XXX blocked**: [What's needed to unblock] - *Added [YYYY-MM-DD]*
+- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - _Agent: [name]_ - Next: TASK-YYY ready
+- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - _Agent: [name]_ - Next: TASK-YYY ready
 
-### **➡️ Handoff Status** *(What's ready for next agent)*
+### **🚨 Task Blockers** _(Preventing next task pickup)_
+
+- 🚨 **TASK-XXX blocked**: [What's needed to unblock] - _Added [YYYY-MM-DD]_
+
+### **➡️ Handoff Status** _(What's ready for next agent)_
+
 - **Ready Now**: TASK-XXX (no dependencies)
 - **Waiting**: TASK-YYY (needs TASK-XXX first)
 - **Future**: TASK-ZZZ (needs TASK-YYY first)
@@ -213,11 +240,13 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 ## **🔗 Technical References**
 
 ### **Key Files**
+
 - **Main Implementation**: `[key file paths]`
 - **Configuration**: `[config files]`
 - **Tests**: `[test file paths]`
 
 ### **Dependencies**
+
 - **Requires**: [Specifications this depends on]
 - **Enables**: [Specifications this unblocks]
 
@@ -229,37 +258,44 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 ## **Detailed Requirements**
 
 ### **REQ-001: [Category] - [Requirement Name]**
+
 **As a** [user type]  
 **I want** [capability]  
 **So that** [business value]
 
 **Acceptance Criteria**:
+
 - [ ] [Specific, testable criterion 1]
 - [ ] [Specific, testable criterion 2]
 - [ ] [Specific, testable criterion 3]
 
 ### **REQ-002: [Category] - [Requirement Name]**
+
 **As a** [user type]  
 **I want** [capability]  
 **So that** [business value]
 
 **Acceptance Criteria**:
+
 - [ ] [Specific, testable criterion 1]
 - [ ] [Specific, testable criterion 2]
 
 ## **Technical Design Details**
 
 ### **Architecture Overview**
+
 ```
 [Simple diagram showing data/component flow]
 ```
 
 ### **Key Technical Principles**
+
 1. **[Principle 1]**: [Brief description - why it matters]
 2. **[Principle 2]**: [Brief description - why it matters]
 3. **[Principle 3]**: [Brief description - why it matters]
 
 ### **Implementation Notes**
+
 - [Technical pattern or approach to use]
 - [Key considerations or gotchas]
 - [Dependencies or prerequisites]
@@ -267,16 +303,19 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 ## **Testing Strategy Details**
 
 ### **Unit Tests**
+
 - [ ] Core logic functions work correctly
 - [ ] Edge cases and error conditions handled
 - [ ] Input validation works as expected
 
 ### **Integration Tests**
+
 - [ ] Components work together correctly
 - [ ] Data flows through system properly
 - [ ] External dependencies handled correctly
 
 ### **User Acceptance Tests**
+
 - [ ] Feature meets all acceptance criteria
 - [ ] User workflows complete successfully
 - [ ] Performance meets requirements
@@ -285,17 +324,20 @@ Closure: For every task, complete the Task Closure Checklist inside the task (Va
 
 ---
 
-## **💡 Implementation Notes** *(Update as you learn)*
+## **💡 Implementation Notes** _(Update as you learn)_
 
 ### **Key Decisions**
+
 - [Important architectural or design decision made]
 - [Alternative considered and why this approach was chosen]
 
 ### **Gotchas & Learnings**
+
 - [Something tricky that others should know about]
 - [Pattern that worked well]
 - [Thing to avoid]
 
 ### **Future Improvements**
+
 - [Enhancement idea for later]
 - [Technical debt to address]

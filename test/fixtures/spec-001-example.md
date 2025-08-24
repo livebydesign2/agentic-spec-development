@@ -20,7 +20,7 @@ Implement a comprehensive user authentication system with login, registration, a
 - [ ] Add session management
 - [ ] Implement logout functionality
 
-### **✅ TASK-003** 🤖 **User Registration** 
+### **✅ TASK-003** 🤖 **User Registration**
 
 Registration system completed with email verification.
 

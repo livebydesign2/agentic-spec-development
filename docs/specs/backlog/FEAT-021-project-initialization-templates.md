@@ -1,4 +1,4 @@
-# FEAT-R04: Project Initialization & Templates
+# Project Initialization & Templates
 
 **Status**: Backlog  
 **Priority**: P2 (Medium) - Score: 13.0  
@@ -21,20 +21,23 @@ New users need an easy path to get started with the ASD CLI. Currently, users mu
 ## Business Value
 
 ### Strategic Benefits
+
 - **Adoption Acceleration**: Remove setup friction for new users
 - **Best Practice Distribution**: Embed proven workflows and structures
 - **Template Ecosystem**: Enable community-contributed templates
 - **Onboarding Experience**: Smooth developer onboarding reduces abandonment
 
 ### Success Metrics
+
 - **Setup Time**: <2 minutes from install to first roadmap view
-- **Template Usage**: 80%+ of new projects use provided templates  
+- **Template Usage**: 80%+ of new projects use provided templates
 - **Community Templates**: 3+ community-contributed templates within 6 months
 - **Documentation Quality**: Complete setup guide with video walkthrough
 
 ## Technical Architecture
 
 ### Project Templates
+
 ```
 templates/
 ├── basic/                    # Minimal setup for small projects
@@ -69,6 +72,7 @@ templates/
 ```
 
 ### Template Configuration Schema
+
 ```json
 {
   "template": {
@@ -89,7 +93,7 @@ templates/
     "configPath": "./.asdrc",
     "directories": [
       "docs/roadmap/features/active",
-      "docs/roadmap/features/backlog", 
+      "docs/roadmap/features/backlog",
       "docs/roadmap/features/done",
       "docs/roadmap/features/template"
     ]
@@ -99,7 +103,12 @@ templates/
     "priorityLevels": ["P0", "P1", "P2", "P3"],
     "statusTypes": ["active", "backlog", "done", "blocked"],
     "taskStatuses": ["ready", "in_progress", "completed", "blocked"],
-    "agents": ["Product-Manager", "Software-Architect", "UI-Developer", "Database-Engineer"]
+    "agents": [
+      "Product-Manager",
+      "Software-Architect",
+      "UI-Developer",
+      "Database-Engineer"
+    ]
   },
   "files": [
     {
@@ -109,7 +118,7 @@ templates/
       "variables": ["project_name", "author", "description"]
     },
     {
-      "source": "config/asd.json", 
+      "source": "config/asd.json",
       "destination": ".asdrc",
       "template": true,
       "merge_strategy": "deep"
@@ -123,6 +132,7 @@ templates/
 ```
 
 ### Initialization Commands
+
 ```bash
 # Interactive initialization
 asd init
@@ -148,6 +158,7 @@ asd init --import-existing --source ./legacy-features/
 ## Core Features
 
 ### Interactive Configuration Wizard
+
 ```bash
 asd init --interactive
 
@@ -156,11 +167,11 @@ asd init --interactive
 ? Description: AI-first product management for modern teams
 ? Data format: (Use arrow keys)
   ❯ Markdown (Human-readable, git-friendly)
-    JSON (Structured, API-friendly) 
+    JSON (Structured, API-friendly)
     YAML (Structured, readable)
     Auto-detect (Mixed formats)
 
-? Directory structure: (Use arrow keys) 
+? Directory structure: (Use arrow keys)
   ❯ Standard (./features/)
     ASD Standard (./docs/roadmap/features/)
     Custom (./roadmap/)
@@ -168,12 +179,12 @@ asd init --interactive
 
 ? Priority levels: P0 (Critical), P1 (High), P2 (Medium), P3 (Low)
 ? Include sample data? Yes
-? Setup git hooks? Yes  
+? Setup git hooks? Yes
 ? Enable schema validation? Strict
 
 Setting up project structure...
 ✓ Created directories
-✓ Generated configuration  
+✓ Generated configuration
 ✓ Added sample features
 ✓ Configured git hooks
 ✓ Validated setup
@@ -182,6 +193,7 @@ Setting up project structure...
 ```
 
 ### Template Management
+
 ```bash
 # List available templates
 asd template list --format table --include-description
@@ -200,6 +212,7 @@ asd template publish my-template --registry npm --public
 ```
 
 ### Project Migration & Import
+
 ```bash
 # Import from existing systems
 asd init --import-from github-issues --repo owner/repo --label roadmap
@@ -219,6 +232,7 @@ asd template export --name my-project-template --include-config --include-sample
 **FEAT-R04** ✅ **Project Initialization & Templates**
 
 **TASK-001** ⏳ **READY** - Template System Architecture | Agent: Software Architect
+
 - [ ] Design template configuration schema and validation
 - [ ] Implement template loading and processing engine
 - [ ] Create file templating system with variable substitution
@@ -226,6 +240,7 @@ asd template export --name my-project-template --include-config --include-sample
 - [ ] Add template versioning and update mechanisms
 
 **TASK-002** ⏳ **READY** - Interactive Initialization Wizard | Agent: UI/UX Developer
+
 - [ ] Build interactive CLI wizard with inquirer.js
 - [ ] Create smart defaults based on project detection
 - [ ] Implement step-by-step configuration flow
@@ -233,13 +248,15 @@ asd template export --name my-project-template --include-config --include-sample
 - [ ] Build rollback mechanisms for failed initialization
 
 **TASK-003** ⏳ **READY** - Core Project Templates | Agent: Technical Writer
+
 - [ ] Create "basic" template for simple projects
-- [ ] Build "asd-standard" template matching current conventions  
+- [ ] Build "asd-standard" template matching current conventions
 - [ ] Design "agile" template with sprint organization
 - [ ] Create "enterprise" template with governance features
 - [ ] Add comprehensive documentation and examples for each template
 
 **TASK-004** ⏳ **READY** - Template Management System | Agent: DevOps Engineer
+
 - [ ] Implement template discovery and listing
 - [ ] Build template installation from URLs and registries
 - [ ] Create template creation and publishing tools
@@ -247,6 +264,7 @@ asd template export --name my-project-template --include-config --include-sample
 - [ ] Build community template registry integration
 
 **TASK-005** ⏳ **READY** - Import & Migration Tools | Agent: Data Engineer
+
 - [ ] Build GitHub Issues import functionality
 - [ ] Implement Jira project import with field mapping
 - [ ] Create Linear integration for roadmap import
@@ -256,6 +274,7 @@ asd template export --name my-project-template --include-config --include-sample
 ## Advanced Features
 
 ### Smart Project Detection
+
 ```bash
 # Auto-detect project type and suggest appropriate template
 asd init --detect
@@ -268,6 +287,7 @@ asd init --detect
 ```
 
 ### Configuration Validation
+
 ```bash
 # Validate project setup
 asd doctor --fix-issues --report health-check.json
@@ -282,6 +302,7 @@ asd validate-setup --template asd-standard --strict
 ```
 
 ### Template Development Kit
+
 ```bash
 # Template development helpers
 asd template scaffold --name my-template --based-on basic
@@ -295,24 +316,28 @@ asd template preview --template ./my-template --dry-run --verbose
 ## Pre-Built Templates
 
 ### 1. Basic Template
+
 - **Use Case**: Small projects, personal roadmaps
 - **Structure**: Simple `./features/` directory
 - **Format**: Markdown with minimal configuration
 - **Features**: Essential commands, basic templates
 
-### 2. ASD Standard Template  
+### 2. ASD Standard Template
+
 - **Use Case**: Projects following ASD conventions
 - **Structure**: `./docs/roadmap/features/` with full hierarchy
 - **Format**: Markdown with YAML frontmatter
 - **Features**: AI agent assignments, priority scoring, task management
 
 ### 3. Agile Template
+
 - **Use Case**: Sprint-based development teams
 - **Structure**: Sprint-organized with backlog management
 - **Format**: JSON for structured data
 - **Features**: Sprint planning, velocity tracking, story points
 
 ### 4. Enterprise Template
+
 - **Use Case**: Large organizations with governance needs
 - **Structure**: Multi-level hierarchy with approvals
 - **Format**: YAML with extensive metadata
@@ -321,6 +346,7 @@ asd template preview --template ./my-template --dry-run --verbose
 ## Acceptance Criteria
 
 ### Initialization Experience
+
 - [ ] `asd init` completes project setup in under 2 minutes
 - [ ] Interactive wizard guides users through all key decisions
 - [ ] Non-interactive mode supports automation and scripting
@@ -328,6 +354,7 @@ asd template preview --template ./my-template --dry-run --verbose
 - [ ] Generated projects pass validation and work immediately
 
 ### Template System
+
 - [ ] At least 4 high-quality templates provided out-of-the-box
 - [ ] Template installation works from URLs and registries
 - [ ] Custom template creation documented and functional
@@ -335,6 +362,7 @@ asd template preview --template ./my-template --dry-run --verbose
 - [ ] Template versioning and updates work seamlessly
 
 ### Import & Migration
+
 - [ ] Import from GitHub Issues preserves all relevant data
 - [ ] Existing file migration works without data loss
 - [ ] Import validation prevents data corruption
@@ -342,6 +370,7 @@ asd template preview --template ./my-template --dry-run --verbose
 - [ ] Import performance suitable for large datasets (100+ items)
 
 ### Documentation & Onboarding
+
 - [ ] Complete setup documentation with examples
 - [ ] Video walkthrough available for common templates
 - [ ] Troubleshooting guide covers common initialization issues
@@ -351,6 +380,7 @@ asd template preview --template ./my-template --dry-run --verbose
 ## Success Validation
 
 ### User Testing
+
 ```bash
 # Test complete onboarding flow
 npm install -g asd-cli
@@ -361,6 +391,7 @@ asd create feature "Test Feature" --priority P1
 ```
 
 ### Template Testing
+
 - [ ] All provided templates initialize without errors
 - [ ] Generated projects pass validation
 - [ ] Sample data loads and displays correctly
@@ -369,13 +400,15 @@ asd create feature "Test Feature" --priority P1
 
 ## Dependencies & Risks
 
-### Dependencies  
+### Dependencies
+
 - **FEAT-R01**: Repository abstraction for configuration system
 - **FEAT-R03**: Multi-format support for template flexibility
 - **Technical Writer**: Template creation and documentation
 - **DevOps Engineer**: Template publishing and registry integration
 
 ### Risks & Mitigation
+
 - **Risk**: Template complexity overwhelming new users
   - **Mitigation**: Progressive disclosure, smart defaults, clear documentation
 - **Risk**: Template maintenance burden
@@ -386,12 +419,14 @@ asd create feature "Test Feature" --priority P1
 ## Future Enhancements
 
 ### Advanced Template Features
+
 - Template inheritance and composition
 - Dynamic template generation based on project analysis
 - Integration with package managers and project scaffolding tools
 - Template marketplace with ratings and reviews
 
 ### Enhanced Import Capabilities
+
 - Notion database import support
 - Azure DevOps and Monday.com integration
 - CSV/Excel import with field mapping

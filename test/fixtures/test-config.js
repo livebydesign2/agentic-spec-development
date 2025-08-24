@@ -7,5 +7,5 @@ module.exports = {
   defaultStatus: 'backlog',
   supportedTypes: ['SPEC', 'FEAT', 'BUG', 'SPIKE', 'MAINT', 'TEST'],
   statusFolders: ['active', 'backlog', 'done'],
-  priorities: ['P0', 'P1', 'P2', 'P3']
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 };

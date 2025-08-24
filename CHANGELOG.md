@@ -8,21 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Enhanced documentation and examples
 - VS Code integration examples
 - GitHub Actions workflow examples
 
 ### Changed
+
 - Improved error handling and user feedback
 - Enhanced terminal compatibility detection
 
 ### Fixed
+
 - Terminal size detection issues on some platforms
 - File watching stability improvements
 
 ## [1.0.0] - 2024-01-22
 
 ### Added
+
 - 🎉 **Initial release of Agentic Spec Development CLI**
 - Beautiful terminal user interface (TUI) for specification management
 - Multi-panel layout with real-time updates
@@ -41,12 +45,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Customizable branding and themes
 
 ### CLI Features
+
 - `asd init` - Initialize ASD in any project
 - `asd config` - View current configuration
 - `asd doctor` - Health check and diagnostics
 - `asd` - Start interactive terminal interface
 
 ### Configuration Support
+
 - Multiple config file formats (.asdrc, asd.config.js, package.json)
 - Legacy roadmap config compatibility
 - Flexible directory structures
@@ -54,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Specification type customization
 
 ### Terminal Interface
+
 - Four-panel layout (Main, Overview, Details, Recommended)
 - Keyboard navigation (Vim-style keys supported)
 - Real-time file watching and updates
@@ -62,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Help system (F1 or ?)
 
 ### File Format Support
+
 - Standard SPEC-XXX specification format
 - Legacy FEAT-XXX feature format
 - Markdown-based with frontmatter support
@@ -70,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Owner and timeline tracking
 
 ### Developer Features
+
 - Library mode for integration
 - Event system for custom handlers
 - Memory management and cleanup
@@ -78,6 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Terminal compatibility detection
 
 ### Documentation
+
 - Comprehensive README with examples
 - Configuration guides and best practices
 - API documentation for library usage
@@ -87,12 +97,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.9.0] - 2024-01-15 (Internal Release)
 
 ### Added
+
 - Core terminal UI framework
 - Basic specification parsing
 - Configuration management foundation
 - File system abstraction layer
 
 ### Internal
+
 - Project abstraction from Campfire roadmap tool
 - Architecture redesign for standalone usage
 - Package structure and build system

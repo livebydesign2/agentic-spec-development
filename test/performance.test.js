@@ -18,10 +18,10 @@ describe('Performance Tests', () => {
   describe('Large Dataset Performance', () => {
     const LARGE_DATASET_SIZE = 500;
     const PERFORMANCE_THRESHOLD = {
-      load: 5000,     // 5 seconds for loading
+      load: 5000, // 5 seconds for loading
       progress: 1000, // 1 second for progress calculation
-      ui: 2000,       // 2 seconds for UI rendering
-      memory: 100     // 100MB memory usage
+      ui: 2000, // 2 seconds for UI rendering
+      memory: 100, // 100MB memory usage
     };
 
     beforeEach(async () => {
@@ -44,29 +44,42 @@ describe('Performance Tests', () => {
 
         let tasksContent = '';
         for (let j = 1; j <= taskCount; j++) {
-          const taskStatus = ['complete', 'in_progress', 'ready', 'blocked'][j % 4];
+          const taskStatus = ['complete', 'in_progress', 'ready', 'blocked'][
+            j % 4
+          ];
           const emoji = {
             complete: '✅',
             in_progress: '🔄',
             ready: '⏳',
-            blocked: '⏸️'
+            blocked: '⏸️',
           }[taskStatus];
 
-          tasksContent += `### **${emoji} TASK-${j.toString().padStart(3, '0')}** 🤖 **Task ${j} for ${type}-${i}** | Agent: Developer-${j % 3 + 1}\n`;
+          tasksContent += `### **${emoji} TASK-${j
+            .toString()
+            .padStart(
+              3,
+              '0'
+            )}** 🤖 **Task ${j} for ${type}-${i}** | Agent: Developer-${
+            (j % 3) + 1
+          }\n`;
 
           // Add subtasks to some tasks
           if (j % 3 === 0) {
             const subtaskCount = Math.floor(Math.random() * 5) + 1;
             for (let k = 1; k <= subtaskCount; k++) {
               const completed = Math.random() > 0.5;
-              tasksContent += `- [${completed ? 'x' : ' '}] Subtask ${k} for task ${j}\n`;
+              tasksContent += `- [${
+                completed ? 'x' : ' '
+              }] Subtask ${k} for task ${j}\n`;
             }
           }
 
           tasksContent += '\n';
         }
 
-        const content = `# ${type}-${i.toString().padStart(3, '0')}: Performance Test Specification ${i}
+        const content = `# ${type}-${i
+          .toString()
+          .padStart(3, '0')}: Performance Test Specification ${i}
 
 **Priority:** ${priority}
 
@@ -101,8 +114,10 @@ ${tasksContent}
 - docs/testing/load-testing.md`;
 
         specs.push({
-          path: `docs/specs/${status}/${type}-${i.toString().padStart(3, '0')}-perf-test.md`,
-          content
+          path: `docs/specs/${status}/${type}-${i
+            .toString()
+            .padStart(3, '0')}-perf-test.md`,
+          content,
         });
       }
 
@@ -122,11 +137,12 @@ ${tasksContent}
       const startTime = Date.now();
       const startMemory = process.memoryUsage();
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const loadTime = Date.now() - startTime;
       const endMemory = process.memoryUsage();
-      const memoryUsed = (endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024; // MB
+      const memoryUsed =
+        (endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024; // MB
 
       const specs = specParser.getSpecs();
 
@@ -145,13 +161,15 @@ ${tasksContent}
       const specParser = new SpecParser(configManager);
       const progressCalc = new ProgressCalculator();
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
       const specs = specParser.getSpecs();
 
       const startTime = Date.now();
 
       // Calculate progress for all specifications
-      const progressResults = specs.map(spec => progressCalc.calculateProgress(spec));
+      const progressResults = specs.map((spec) =>
+        progressCalc.calculateProgress(spec)
+      );
       const overallProgress = progressCalc.calculateOverallProgress(specs);
 
       const progressTime = Date.now() - startTime;
@@ -174,7 +192,7 @@ ${tasksContent}
       const progressCalc = new ProgressCalculator();
       const ui = new UIComponents();
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
       const specs = specParser.getSpecs();
       const stats = specParser.getStats();
 
@@ -182,14 +200,14 @@ ${tasksContent}
 
       // Generate UI components
       const summaryStats = ui.createSummaryStats(stats);
-      const featureListItems = specs.map(spec => {
+      const featureListItems = specs.map((spec) => {
         const progress = progressCalc.calculateProgress(spec);
         return ui.createFeatureListItem(spec, progress, false);
       });
 
       const taskLists = specs
-        .filter(spec => spec.tasks && spec.tasks.length > 0)
-        .map(spec => ui.createTaskList(spec.tasks));
+        .filter((spec) => spec.tasks && spec.tasks.length > 0)
+        .map((spec) => ui.createTaskList(spec.tasks));
 
       const uiTime = Date.now() - startTime;
 
@@ -208,8 +226,8 @@ ${tasksContent}
       const specParser = new SpecParser(configManager);
       const progressCalc = new ProgressCalculator();
 
-      await specParser.loadFeatures();
-      const specs = specParser.getSpecs();
+      await specParser.loadSpecs();
+      // const specs = specParser.getSpecs();
 
       const startMemory = process.memoryUsage();
 
@@ -217,11 +235,11 @@ ${tasksContent}
       const iterations = 10;
       for (let i = 0; i < iterations; i++) {
         // Simulate typical operations
-        const stats = specParser.getStats();
+        // const _stats = specParser.getStats();
         const activeSpecs = specParser.getSpecsByStatus('active');
-        const p0Specs = specParser.getSpecsByPriority('P0');
+        // const _p0Specs = specParser.getSpecsByPriority('P0');
 
-        activeSpecs.forEach(spec => {
+        activeSpecs.forEach((spec) => {
           progressCalc.calculateProgress(spec);
           progressCalc.getNextAvailableTask(spec);
           progressCalc.getBlockedTasks(spec);
@@ -234,7 +252,8 @@ ${tasksContent}
       }
 
       const endMemory = process.memoryUsage();
-      const memoryGrowth = (endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024; // MB
+      const memoryGrowth =
+        (endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024; // MB
 
       console.log('Memory Test Results:');
       console.log(`- Performed ${iterations} iterations`);
@@ -248,8 +267,8 @@ ${tasksContent}
       const configManager = new ConfigManager(testDir);
       const specParser = new SpecParser(configManager);
 
-      await specParser.loadFeatures();
-      const specs = specParser.getSpecs();
+      await specParser.loadSpecs();
+      // const specs = specParser.getSpecs();
 
       const startTime = Date.now();
 
@@ -260,7 +279,7 @@ ${tasksContent}
         () => specParser.getSpecsByPriority('P0'),
         () => specParser.getSpecsByPriority('P1'),
         () => specParser.getStats(),
-        () => specParser.getCriticalReady()
+        () => specParser.getCriticalReady(),
       ];
 
       // Run operations concurrently multiple times
@@ -312,15 +331,12 @@ Valid task.`;
         '# INVALID-001\nInvalid type',
         '', // Empty file
         'Corrupted\nFile\nContent\n{broken',
-        '# SPEC-999\n**Priority:** INVALID\n## Broken\nBroken format'
+        '# SPEC-999\n**Priority:** INVALID\n## Broken\nBroken format',
       ];
 
       for (let i = 1; i <= malformedSpecs; i++) {
         const content = malformedContents[i % malformedContents.length];
-        global.createTestFile(
-          `docs/specs/active/malformed-${i}.md`,
-          content
-        );
+        global.createTestFile(`docs/specs/active/malformed-${i}.md`, content);
       }
 
       const configManager = new ConfigManager(testDir);
@@ -330,7 +346,7 @@ Valid task.`;
 
       const startTime = Date.now();
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const loadTime = Date.now() - startTime;
       const specs = specParser.getSpecs();
@@ -356,11 +372,17 @@ Valid task.`;
       // Create a specification with many tasks and subtasks
       const largeTasks = [];
       for (let i = 1; i <= 100; i++) {
-        largeTasks.push(`### **TASK-${i.toString().padStart(3, '0')}** 🤖 **Task ${i}** | Agent: Developer-${i % 10}`);
+        largeTasks.push(
+          `### **TASK-${i
+            .toString()
+            .padStart(3, '0')}** 🤖 **Task ${i}** | Agent: Developer-${i % 10}`
+        );
 
         // Add subtasks to every task
         for (let j = 1; j <= 20; j++) {
-          largeTasks.push(`- [${j % 2 === 0 ? 'x' : ' '}] Subtask ${j} for task ${i}`);
+          largeTasks.push(
+            `- [${j % 2 === 0 ? 'x' : ' '}] Subtask ${j} for task ${i}`
+          );
         }
         largeTasks.push('');
       }
@@ -393,25 +415,37 @@ ${Array.from({ length: 50 }, (_, i) => `- [ ] Test item ${i + 1}`).join('\n')}
 
 ## Required Reading
 
-${Array.from({ length: 20 }, (_, i) => `- docs/reference/doc-${i + 1}.md`).join('\n')}`;
+${Array.from({ length: 20 }, (_, i) => `- docs/reference/doc-${i + 1}.md`).join(
+  '\n'
+)}`;
 
-      global.createTestFile('docs/specs/active/SPEC-LARGE-test.md', largeContent);
+      global.createTestFile(
+        'docs/specs/active/SPEC-LARGE-test.md',
+        largeContent
+      );
 
       const configManager = new ConfigManager(testDir);
       const specParser = new SpecParser(configManager);
 
       const startTime = Date.now();
 
-      await specParser.loadFeatures();
+      await specParser.loadSpecs();
 
       const loadTime = Date.now() - startTime;
       const specs = specParser.getSpecs();
-      const largeSpec = specs.find(s => s.id === 'SPEC-LARGE');
+      const largeSpec = specs.find((s) => s.id === 'SPEC-LARGE');
 
       console.log('Large Spec Test Results:');
       console.log(`- Parse time: ${loadTime}ms`);
       console.log(`- Tasks parsed: ${largeSpec?.tasks?.length || 0}`);
-      console.log(`- Subtasks parsed: ${largeSpec?.tasks?.reduce((sum, t) => sum + (t.subtasks?.length || 0), 0) || 0}`);
+      console.log(
+        `- Subtasks parsed: ${
+          largeSpec?.tasks?.reduce(
+            (sum, t) => sum + (t.subtasks?.length || 0),
+            0
+          ) || 0
+        }`
+      );
 
       expect(largeSpec).toBeDefined();
       expect(largeSpec.tasks).toHaveLength(100);
@@ -453,9 +487,8 @@ ${Array.from({ length: 20 }, (_, i) => `- docs/reference/doc-${i + 1}.md`).join(
 
         // Array methods
         const arr = [1, 2, 3];
-        const result = arr.flatMap(x => [x, x * 2]);
+        const result = arr.flatMap((x) => [x, x * 2]);
         expect(result).toEqual([1, 2, 2, 4, 3, 6]);
-
       }).not.toThrow();
     });
   });

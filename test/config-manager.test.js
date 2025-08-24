@@ -36,27 +36,26 @@ describe('ConfigManager', () => {
     it('should return default config when no config file exists', () => {
       const config = configManager.loadConfig();
 
-      expect(config).toEqual({
-        featuresPath: expect.stringContaining('docs/specs'),
+      expect(config).toEqual(expect.objectContaining({
+        dataPath: expect.stringContaining('docs/specs'),
         templatePath: expect.stringContaining('docs/specs/template'),
-        legacyFeaturesPath: 'docs/product/features',
-        enforceSpec: false,
+        dataFormat: 'markdown',
         autoRefresh: true,
         refreshDebounce: 500,
         defaultPriority: 'P2',
         defaultStatus: 'backlog',
         supportedTypes: ['SPEC', 'FEAT', 'BUG', 'SPIKE', 'MAINT', 'RELEASE'],
         statusFolders: ['active', 'backlog', 'done'],
-        priorities: ['P0', 'P1', 'P2', 'P3']
-      });
+        priorities: ['P0', 'P1', 'P2', 'P3'],
+      }));
     });
 
     it('should load configuration from asd.config.js', () => {
       const configContent = `
         module.exports = {
-          featuresPath: 'custom/specs',
-          autoRefresh: false,
-          supportedTypes: ['SPEC', 'CUSTOM']
+          dataPath: 'custom/specs',
+          display: { autoRefresh: false },
+          cli: { supportedTypes: ['SPEC', 'CUSTOM'] }
         };
       `;
 
@@ -64,7 +63,7 @@ describe('ConfigManager', () => {
 
       const config = configManager.loadConfig();
 
-      expect(config.featuresPath).toContain('custom/specs');
+      expect(config.dataPath).toContain('custom/specs');
       expect(config.autoRefresh).toBe(false);
       expect(config.supportedTypes).toEqual(['SPEC', 'CUSTOM']);
     });
@@ -74,11 +73,14 @@ describe('ConfigManager', () => {
         name: 'test-project',
         asd: {
           featuresPath: 'src/specs',
-          defaultPriority: 'P1'
-        }
+          defaultPriority: 'P1',
+        },
       };
 
-      global.createTestFile('package.json', JSON.stringify(packageJson, null, 2));
+      global.createTestFile(
+        'package.json',
+        JSON.stringify(packageJson, null, 2)
+      );
 
       const config = configManager.loadConfig();
 
@@ -90,10 +92,13 @@ describe('ConfigManager', () => {
       const configContent = {
         featuresPath: 'docs/features',
         enforceSpec: true,
-        priorities: ['HIGH', 'MEDIUM', 'LOW']
+        priorities: ['HIGH', 'MEDIUM', 'LOW'],
       };
 
-      global.createTestFile('.asdrc.json', JSON.stringify(configContent, null, 2));
+      global.createTestFile(
+        '.asdrc.json',
+        JSON.stringify(configContent, null, 2)
+      );
 
       const config = configManager.loadConfig();
 
@@ -105,10 +110,13 @@ describe('ConfigManager', () => {
     it('should handle legacy roadmap configuration', () => {
       const configContent = {
         featuresPath: 'legacy/features',
-        autoRefresh: false
+        autoRefresh: false,
       };
 
-      global.createTestFile('.roadmaprc.json', JSON.stringify(configContent, null, 2));
+      global.createTestFile(
+        '.roadmaprc.json',
+        JSON.stringify(configContent, null, 2)
+      );
 
       const config = configManager.loadConfig();
 
@@ -133,13 +141,15 @@ describe('ConfigManager', () => {
       const config = testManager.loadConfig();
 
       // Should fall back to default configuration
-      expect(config).toEqual(expect.objectContaining({
-        featuresPath: expect.any(String),
-        autoRefresh: expect.any(Boolean),
-        defaultPriority: 'P2',
-        defaultStatus: 'backlog',
-        enforceSpec: false
-      }));
+      expect(config).toEqual(
+        expect.objectContaining({
+          featuresPath: expect.any(String),
+          autoRefresh: expect.any(Boolean),
+          defaultPriority: 'P2',
+          defaultStatus: 'backlog',
+          enforceSpec: false,
+        })
+      );
 
       // May or may not call console.warn depending on how cosmiconfig handles it
       // Don't enforce the exact console.warn call since it's implementation dependent
@@ -152,7 +162,7 @@ describe('ConfigManager', () => {
     it('should merge with defaults', () => {
       const userConfig = {
         featuresPath: 'custom/path',
-        customField: 'value'
+        customField: 'value',
       };
 
       const normalized = configManager.validateAndNormalizeConfig(userConfig);
@@ -165,29 +175,29 @@ describe('ConfigManager', () => {
     it('should convert relative paths to absolute', () => {
       const userConfig = {
         featuresPath: 'relative/path',
-        templatePath: 'relative/template'
+        templatePath: 'relative/template',
       };
 
       const normalized = configManager.validateAndNormalizeConfig(userConfig);
 
-      expect(path.isAbsolute(normalized.featuresPath)).toBe(true);
+      expect(path.isAbsolute(normalized.dataPath)).toBe(true);
       expect(path.isAbsolute(normalized.templatePath)).toBe(true);
     });
 
     it('should preserve absolute paths', () => {
       const absolutePath = '/absolute/path';
       const userConfig = {
-        featuresPath: absolutePath
+        featuresPath: absolutePath,
       };
 
       const normalized = configManager.validateAndNormalizeConfig(userConfig);
 
-      expect(normalized.featuresPath).toBe(absolutePath);
+      expect(normalized.dataPath).toBe(absolutePath);
     });
 
     it('should validate required fields', () => {
       const userConfig = {
-        featuresPath: null
+        featuresPath: null,
       };
 
       expect(() => {
@@ -199,13 +209,20 @@ describe('ConfigManager', () => {
       const userConfig = {
         supportedTypes: 'invalid',
         statusFolders: null,
-        priorities: ['P0']
+        priorities: ['P0'],
       };
 
       const normalized = configManager.validateAndNormalizeConfig(userConfig);
 
       // Invalid arrays should be replaced with defaults
-      expect(normalized.supportedTypes).toEqual(['SPEC', 'FEAT', 'BUG', 'SPIKE', 'MAINT', 'RELEASE']);
+      expect(normalized.supportedTypes).toEqual([
+        'SPEC',
+        'FEAT',
+        'BUG',
+        'SPIKE',
+        'MAINT',
+        'RELEASE',
+      ]);
       expect(normalized.statusFolders).toEqual(['active', 'backlog', 'done']);
       expect(normalized.priorities).toEqual(['P0']); // Valid array preserved
     });
@@ -244,11 +261,13 @@ describe('ConfigManager', () => {
     beforeEach(() => {
       const configContent = `
         module.exports = {
-          featuresPath: 'test/specs',
+          dataPath: 'test/specs',
           templatePath: 'test/template',
-          statusFolders: ['dev', 'test', 'prod'],
-          supportedTypes: ['SPEC', 'TEST'],
-          priorities: ['HIGH', 'LOW']
+          cli: {
+            statusFolders: ['dev', 'test', 'prod'],
+            supportedTypes: ['SPEC', 'TEST'],
+            priorities: ['HIGH', 'LOW']
+          }
         };
       `;
       global.createTestFile('asd.config.js', configContent);
@@ -256,8 +275,8 @@ describe('ConfigManager', () => {
       configManager = new ConfigManager(testDir);
     });
 
-    it('should return features path', () => {
-      const path = configManager.getFeaturesPath();
+    it('should return data path', () => {
+      const path = configManager.getDataPath();
       expect(path).toContain('test/specs');
     });
 
@@ -328,12 +347,12 @@ describe('ConfigManager', () => {
       expect(info).toEqual({
         configPath: null,
         config: expect.any(Object),
-        projectRoot: testDir
+        projectRoot: testDir,
       });
     });
 
     it('should return configuration info with config file', () => {
-      const configContent = 'module.exports = { featuresPath: \'test\' };';
+      const configContent = "module.exports = { featuresPath: 'test' };";
       global.createTestFile('asd.config.js', configContent);
 
       const info = configManager.getConfigInfo();
@@ -341,7 +360,7 @@ describe('ConfigManager', () => {
       expect(info).toEqual({
         configPath: expect.stringContaining('asd.config.js'),
         config: expect.any(Object),
-        projectRoot: testDir
+        projectRoot: testDir,
       });
     });
   });
@@ -350,12 +369,12 @@ describe('ConfigManager', () => {
     it('should prioritize asd.config.js over package.json', () => {
       // Create package.json config
       const packageJson = {
-        asd: { featuresPath: 'package-path' }
+        asd: { featuresPath: 'package-path' },
       };
       global.createTestFile('package.json', JSON.stringify(packageJson));
 
       // Create asd.config.js (should take precedence)
-      const configContent = 'module.exports = { featuresPath: \'config-path\' };';
+      const configContent = "module.exports = { featuresPath: 'config-path' };";
       global.createTestFile('asd.config.js', configContent);
 
       // Create fresh manager to load the new config
@@ -367,14 +386,20 @@ describe('ConfigManager', () => {
 
     it('should prioritize .asdrc.json over legacy .roadmaprc.json', () => {
       // Create legacy config
-      global.createTestFile('.roadmaprc.json', JSON.stringify({
-        featuresPath: 'legacy-path'
-      }));
+      global.createTestFile(
+        '.roadmaprc.json',
+        JSON.stringify({
+          featuresPath: 'legacy-path',
+        })
+      );
 
       // Create new config (should take precedence)
-      global.createTestFile('.asdrc.json', JSON.stringify({
-        featuresPath: 'new-path'
-      }));
+      global.createTestFile(
+        '.asdrc.json',
+        JSON.stringify({
+          featuresPath: 'new-path',
+        })
+      );
 
       const config = configManager.loadConfig();
 

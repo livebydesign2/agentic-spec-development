@@ -22,8 +22,8 @@ describe('ProgressCalculator', () => {
           mainTasks: 0,
           completedTasks: 0,
           totalSubtasks: 0,
-          completedSubtasks: 0
-        }
+          completedSubtasks: 0,
+        },
       });
     });
 
@@ -41,8 +41,8 @@ describe('ProgressCalculator', () => {
           mainTasks: 0,
           completedTasks: 0,
           totalSubtasks: 0,
-          completedSubtasks: 0
-        }
+          completedSubtasks: 0,
+        },
       });
     });
 
@@ -52,8 +52,8 @@ describe('ProgressCalculator', () => {
           { status: 'complete' },
           { status: 'complete' },
           { status: 'in_progress' },
-          { status: 'ready' }
-        ]
+          { status: 'ready' },
+        ],
       };
 
       const progress = calculator.calculateProgress(feature);
@@ -68,8 +68,8 @@ describe('ProgressCalculator', () => {
           mainTasks: 4,
           completedTasks: 2,
           totalSubtasks: 0,
-          completedSubtasks: 0
-        }
+          completedSubtasks: 0,
+        },
       });
     });
 
@@ -81,17 +81,14 @@ describe('ProgressCalculator', () => {
             subtasks: [
               { completed: true },
               { completed: true },
-              { completed: false }
-            ]
+              { completed: false },
+            ],
           },
           {
             status: 'ready',
-            subtasks: [
-              { completed: false },
-              { completed: false }
-            ]
-          }
-        ]
+            subtasks: [{ completed: false }, { completed: false }],
+          },
+        ],
       };
 
       const progress = calculator.calculateProgress(feature);
@@ -106,8 +103,8 @@ describe('ProgressCalculator', () => {
           mainTasks: 2,
           completedTasks: 0,
           totalSubtasks: 5,
-          completedSubtasks: 2
-        }
+          completedSubtasks: 2,
+        },
       });
     });
 
@@ -117,13 +114,10 @@ describe('ProgressCalculator', () => {
           { status: 'complete' }, // Complete task = 1 point
           {
             status: 'in_progress',
-            subtasks: [
-              { completed: true },
-              { completed: false }
-            ]
+            subtasks: [{ completed: true }, { completed: false }],
           }, // 50% complete = 0.5 points
-          { status: 'ready' } // Incomplete task = 0 points
-        ]
+          { status: 'ready' }, // Incomplete task = 0 points
+        ],
       };
 
       const progress = calculator.calculateProgress(feature);
@@ -138,8 +132,8 @@ describe('ProgressCalculator', () => {
           mainTasks: 3,
           completedTasks: 1,
           totalSubtasks: 2,
-          completedSubtasks: 1
-        }
+          completedSubtasks: 1,
+        },
       });
     });
 
@@ -154,10 +148,7 @@ describe('ProgressCalculator', () => {
 
     it('should calculate 100% progress correctly', () => {
       const feature = {
-        tasks: [
-          { status: 'complete' },
-          { status: 'complete' }
-        ]
+        tasks: [{ status: 'complete' }, { status: 'complete' }],
       };
 
       const progress = calculator.calculateProgress(feature);
@@ -176,11 +167,11 @@ describe('ProgressCalculator', () => {
             subtasks: [
               { completed: true },
               { completed: false },
-              { completed: false }
-            ]
+              { completed: false },
+            ],
           }, // 1/3 complete = 0.333... points
-          { status: 'ready' }
-        ]
+          { status: 'ready' },
+        ],
       };
 
       const progress = calculator.calculateProgress(feature);
@@ -195,19 +186,16 @@ describe('ProgressCalculator', () => {
     it('should calculate progress across multiple features', () => {
       const features = [
         {
-          tasks: [
-            { status: 'complete' },
-            { status: 'complete' }
-          ]
+          tasks: [{ status: 'complete' }, { status: 'complete' }],
         },
         {
           tasks: [
             { status: 'complete' },
             { status: 'in_progress' },
-            { status: 'ready' }
-          ]
+            { status: 'ready' },
+          ],
         },
-        { status: 'done' } // No tasks
+        { status: 'done' }, // No tasks
       ];
 
       const progress = calculator.calculateOverallProgress(features);
@@ -215,7 +203,7 @@ describe('ProgressCalculator', () => {
       expect(progress).toEqual({
         completed: 4, // 2 + 1 + 1
         total: 6, // 2 + 3 + 1
-        percentage: 67 // 4/6 = 66.7% rounded to 67%
+        percentage: 67, // 4/6 = 66.7% rounded to 67%
       });
     });
 
@@ -225,7 +213,7 @@ describe('ProgressCalculator', () => {
       expect(progress).toEqual({
         completed: 0,
         total: 0,
-        percentage: 0
+        percentage: 0,
       });
     });
   });
@@ -236,15 +224,15 @@ describe('ProgressCalculator', () => {
         tasks: [
           { status: 'complete', title: 'Done Task' },
           { status: 'ready', title: 'Ready Task 1' },
-          { status: 'ready', title: 'Ready Task 2' }
-        ]
+          { status: 'ready', title: 'Ready Task 2' },
+        ],
       };
 
       const nextTask = calculator.getNextAvailableTask(feature);
 
       expect(nextTask).toEqual({
         status: 'ready',
-        title: 'Ready Task 1'
+        title: 'Ready Task 1',
       });
     });
 
@@ -253,8 +241,8 @@ describe('ProgressCalculator', () => {
         tasks: [
           { status: 'complete' },
           { status: 'in_progress' },
-          { status: 'blocked' }
-        ]
+          { status: 'blocked' },
+        ],
       };
 
       const nextTask = calculator.getNextAvailableTask(feature);
@@ -277,8 +265,8 @@ describe('ProgressCalculator', () => {
           { status: 'complete', title: 'Done' },
           { status: 'blocked', title: 'Blocked 1' },
           { status: 'ready', title: 'Ready' },
-          { status: 'blocked', title: 'Blocked 2' }
-        ]
+          { status: 'blocked', title: 'Blocked 2' },
+        ],
       };
 
       const blockedTasks = calculator.getBlockedTasks(feature);
@@ -290,10 +278,7 @@ describe('ProgressCalculator', () => {
 
     it('should return empty array if no blocked tasks', () => {
       const feature = {
-        tasks: [
-          { status: 'complete' },
-          { status: 'ready' }
-        ]
+        tasks: [{ status: 'complete' }, { status: 'ready' }],
       };
 
       const blockedTasks = calculator.getBlockedTasks(feature);
@@ -309,8 +294,8 @@ describe('ProgressCalculator', () => {
           { status: 'complete', title: 'Done' },
           { status: 'in_progress', title: 'Working 1' },
           { status: 'ready', title: 'Ready' },
-          { status: 'in_progress', title: 'Working 2' }
-        ]
+          { status: 'in_progress', title: 'Working 2' },
+        ],
       };
 
       const inProgressTasks = calculator.getInProgressTasks(feature);
@@ -339,7 +324,7 @@ describe('ProgressCalculator', () => {
         { status: 'done', completedDate: '2024-01-15' }, // 16 days ago
         { status: 'done', completedDate: '2024-01-01' }, // 30 days ago
         { status: 'done', completedDate: '2023-12-01' }, // Too old
-        { status: 'active' } // Not done
+        { status: 'active' }, // Not done
       ];
 
       const velocity = calculator.getFeatureVelocity(features, 30);
@@ -347,14 +332,14 @@ describe('ProgressCalculator', () => {
       expect(velocity).toEqual({
         featuresCompleted: 4,
         averagePerWeek: expect.closeTo(0.93, 1), // 4 features / 30 days * 7 days
-        periodDays: 30
+        periodDays: 30,
       });
     });
 
     it('should handle features without completion dates', () => {
       const features = [
         { status: 'done' }, // No completedDate
-        { status: 'done', completedDate: '2024-01-30' }
+        { status: 'done', completedDate: '2024-01-30' },
       ];
 
       const velocity = calculator.getFeatureVelocity(features, 30);
@@ -363,9 +348,7 @@ describe('ProgressCalculator', () => {
     });
 
     it('should use default 30-day period', () => {
-      const features = [
-        { status: 'done', completedDate: '2024-01-30' }
-      ];
+      const features = [{ status: 'done', completedDate: '2024-01-30' }];
 
       const velocity = calculator.getFeatureVelocity(features);
 
@@ -391,21 +374,18 @@ describe('ProgressCalculator', () => {
           tasks: [
             { status: 'complete' },
             { status: 'ready' },
-            { status: 'ready' }
-          ]
+            { status: 'ready' },
+          ],
         },
         // Backlog features (all tasks needed)
         {
           status: 'backlog',
-          tasks: [
-            { status: 'ready' },
-            { status: 'ready' }
-          ]
+          tasks: [{ status: 'ready' }, { status: 'ready' }],
         },
         // Historical data for velocity
         { status: 'done', completedDate: '2024-01-30' },
         { status: 'done', completedDate: '2024-01-20' },
-        { status: 'done', completedDate: '2024-01-10' }
+        { status: 'done', completedDate: '2024-01-10' },
       ];
 
       const estimate = calculator.estimateCompletionTime(features);
@@ -415,7 +395,7 @@ describe('ProgressCalculator', () => {
         backlogTasks: 2, // 2 total tasks in backlog
         totalTasks: 4,
         estimatedWeeks: expect.any(Number),
-        tasksPerWeek: expect.any(Number)
+        tasksPerWeek: expect.any(Number),
       });
 
       expect(estimate.estimatedWeeks).toBeGreaterThan(0);
@@ -425,8 +405,8 @@ describe('ProgressCalculator', () => {
       const features = [
         {
           status: 'active',
-          tasks: [{ status: 'ready' }]
-        }
+          tasks: [{ status: 'ready' }],
+        },
       ];
 
       const estimate = calculator.estimateCompletionTime(features);
@@ -436,7 +416,7 @@ describe('ProgressCalculator', () => {
         backlogTasks: 0,
         totalTasks: 1,
         estimatedWeeks: null,
-        message: 'No historical data for estimation'
+        message: 'No historical data for estimation',
       });
     });
 
@@ -449,9 +429,9 @@ describe('ProgressCalculator', () => {
             { status: 'complete' },
             { status: 'in_progress' },
             { status: 'ready' },
-            { status: 'ready' }
-          ]
-        }
+            { status: 'ready' },
+          ],
+        },
       ];
 
       const estimate = calculator.estimateCompletionTime(features);
@@ -466,9 +446,9 @@ describe('ProgressCalculator', () => {
           tasks: [
             { status: 'ready' },
             { status: 'ready' },
-            { status: 'ready' }
-          ]
-        }
+            { status: 'ready' },
+          ],
+        },
       ];
 
       const estimate = calculator.estimateCompletionTime(features);
@@ -477,10 +457,7 @@ describe('ProgressCalculator', () => {
     });
 
     it('should handle features without tasks', () => {
-      const features = [
-        { status: 'active' },
-        { status: 'backlog' }
-      ];
+      const features = [{ status: 'active' }, { status: 'backlog' }];
 
       const estimate = calculator.estimateCompletionTime(features);
 
@@ -504,8 +481,8 @@ describe('ProgressCalculator', () => {
           { status: 'invalid_status' },
           null,
           undefined,
-          {}
-        ]
+          {},
+        ],
       };
 
       expect(() => calculator.calculateProgress(feature)).not.toThrow();
@@ -517,9 +494,7 @@ describe('ProgressCalculator', () => {
 
     it('should handle circular references safely', () => {
       const feature = {
-        tasks: [
-          { status: 'complete' }
-        ]
+        tasks: [{ status: 'complete' }],
       };
 
       // Create circular reference

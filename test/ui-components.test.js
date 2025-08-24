@@ -57,7 +57,9 @@ describe('UIComponents', () => {
 
     it('should handle edge case percentages', () => {
       expect(ui.createProgressBar(-5, 10)).toBe('[░░░░░░░░░░] {gray-fg}-5%{/}');
-      expect(ui.createProgressBar(150, 10)).toBe('[██████████] {green-fg}150%{/}');
+      expect(ui.createProgressBar(150, 10)).toBe(
+        '[██████████] {green-fg}150%{/}'
+      );
     });
   });
 
@@ -132,9 +134,13 @@ describe('UIComponents', () => {
 
   describe('getColoredTaskStatus', () => {
     it('should return colored task status with icon', () => {
-      expect(ui.getColoredTaskStatus('complete')).toBe('✅ {green-fg}COMPLETE{/}');
+      expect(ui.getColoredTaskStatus('complete')).toBe(
+        '✅ {green-fg}COMPLETE{/}'
+      );
       expect(ui.getColoredTaskStatus('ready')).toBe('⏳ {cyan-fg}READY{/}');
-      expect(ui.getColoredTaskStatus('in_progress')).toBe('🔄 {yellow-fg}IN_PROGRESS{/}');
+      expect(ui.getColoredTaskStatus('in_progress')).toBe(
+        '🔄 {yellow-fg}IN_PROGRESS{/}'
+      );
       expect(ui.getColoredTaskStatus('blocked')).toBe('⏸️ {red-fg}BLOCKED{/}');
     });
   });
@@ -173,10 +179,18 @@ describe('UIComponents', () => {
 
   describe('getColoredFeatureId', () => {
     it('should color feature IDs by type', () => {
-      expect(ui.getColoredFeatureId('FEAT-001', 'FEAT')).toBe('{cyan-fg}FEAT-001{/}');
-      expect(ui.getColoredFeatureId('BUG-002', 'BUG')).toBe('{red-fg}BUG-002{/}');
-      expect(ui.getColoredFeatureId('SPIKE-003', 'SPIKE')).toBe('{magenta-fg}SPIKE-003{/}');
-      expect(ui.getColoredFeatureId('MAINT-004', 'MAINT')).toBe('{yellow-fg}MAINT-004{/}');
+      expect(ui.getColoredFeatureId('FEAT-001', 'FEAT')).toBe(
+        '{cyan-fg}FEAT-001{/}'
+      );
+      expect(ui.getColoredFeatureId('BUG-002', 'BUG')).toBe(
+        '{red-fg}BUG-002{/}'
+      );
+      expect(ui.getColoredFeatureId('SPIKE-003', 'SPIKE')).toBe(
+        '{magenta-fg}SPIKE-003{/}'
+      );
+      expect(ui.getColoredFeatureId('MAINT-004', 'MAINT')).toBe(
+        '{yellow-fg}MAINT-004{/}'
+      );
     });
 
     it('should default to blue for unknown types', () => {
@@ -200,7 +214,8 @@ describe('UIComponents', () => {
     });
 
     it('should use default max length of 30', () => {
-      const title = 'This is a title that is longer than thirty characters and should be truncated';
+      const title =
+        'This is a title that is longer than thirty characters and should be truncated';
       const result = ui.formatFeatureTitle(title);
       expect(result).toBe('This is a title that is lo...');
       expect(result.length).toBe(30);
@@ -209,12 +224,13 @@ describe('UIComponents', () => {
 
   describe('formatText', () => {
     it('should wrap text to specified width', () => {
-      const text = 'This is a long sentence that should be wrapped at a specific width to ensure proper formatting.';
+      const text =
+        'This is a long sentence that should be wrapped at a specific width to ensure proper formatting.';
       const result = ui.formatText(text, 20);
 
       const lines = result.split('\n');
       expect(lines.length).toBeGreaterThan(1);
-      expect(lines.every(line => line.length <= 20)).toBe(true);
+      expect(lines.every((line) => line.length <= 20)).toBe(true);
     });
 
     it('should handle empty text', () => {
@@ -304,7 +320,7 @@ describe('UIComponents', () => {
         active: 3,
         backlog: 5,
         done: 2,
-        p0: 1
+        p0: 1,
       };
 
       const result = ui.createSummaryStats(stats);
@@ -322,7 +338,7 @@ describe('UIComponents', () => {
         active: 0,
         backlog: 0,
         done: 0,
-        p0: 0
+        p0: 0,
       };
 
       const result = ui.createSummaryStats(stats);
@@ -339,13 +355,13 @@ describe('UIComponents', () => {
         id: 'SPEC-001',
         title: 'Test Feature',
         status: 'active',
-        priority: 'P1'
+        priority: 'P1',
       };
 
       const progress = {
         completed: 2,
         total: 5,
-        percentage: 40
+        percentage: 40,
       };
 
       const result = ui.createFeatureListItem(feature, progress, false);
@@ -362,7 +378,7 @@ describe('UIComponents', () => {
         id: 'SPEC-001',
         title: 'Test',
         status: 'active',
-        priority: 'P1'
+        priority: 'P1',
       };
 
       const progress = { completed: 0, total: 1, percentage: 0 };
@@ -378,7 +394,7 @@ describe('UIComponents', () => {
         title: 'Test',
         status: 'done',
         priority: 'P1',
-        completedDate: '2024-01-30'
+        completedDate: '2024-01-30',
       };
 
       const progress = { completed: 1, total: 1, percentage: 100 };
@@ -395,14 +411,14 @@ describe('UIComponents', () => {
         {
           id: 'TASK-001',
           title: 'First Task',
-          status: 'complete'
+          status: 'complete',
         },
         {
           id: 'TASK-002',
           title: 'Second Task',
           status: 'ready',
-          assigneeRole: 'Developer'
-        }
+          assigneeRole: 'Developer',
+        },
       ];
 
       const result = ui.createTaskList(tasks);
@@ -458,7 +474,12 @@ describe('UIComponents', () => {
 
   describe('createRecommendedTabbedHeader', () => {
     it('should create recommended panel header', () => {
-      const result = ui.createRecommendedTabbedHeader('current', false, 'recommended', 50);
+      const result = ui.createRecommendedTabbedHeader(
+        'current',
+        false,
+        'recommended',
+        50
+      );
 
       expect(result).toContain('[4]');
       expect(result).toContain('Current Task');
@@ -466,8 +487,18 @@ describe('UIComponents', () => {
     });
 
     it('should highlight active tab when panel is focused', () => {
-      const focused = ui.createRecommendedTabbedHeader('current', false, 'recommended', 50);
-      const unfocused = ui.createRecommendedTabbedHeader('current', false, 'other', 50);
+      const focused = ui.createRecommendedTabbedHeader(
+        'current',
+        false,
+        'recommended',
+        50
+      );
+      const unfocused = ui.createRecommendedTabbedHeader(
+        'current',
+        false,
+        'other',
+        50
+      );
 
       expect(focused).toContain('{brightBlue-fg}Current Task{/}');
       expect(unfocused).toContain('{blue-fg}Current Task{/}');

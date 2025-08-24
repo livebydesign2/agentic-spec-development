@@ -56,10 +56,10 @@ global.setupTestDir = () => {
     'docs/specs/active',
     'docs/specs/backlog',
     'docs/specs/done',
-    'docs/specs/template'
+    'docs/specs/template',
   ];
 
-  dirs.forEach(dir => {
+  dirs.forEach((dir) => {
     fs.mkdirSync(path.join(global.TEST_DIR, dir), { recursive: true });
   });
 };
@@ -106,9 +106,9 @@ jest.mock('terminal-kit', () => ({
     brightGreen: jest.fn(),
     brightCyan: jest.fn(),
     bgCyan: {
-      black: jest.fn()
-    }
-  }
+      black: jest.fn(),
+    },
+  },
 }));
 
 // Clean up after all tests

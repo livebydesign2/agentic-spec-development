@@ -1,6 +1,7 @@
 # Specification Numbering Registry
 
 ## 🔢 NEXT AVAILABLE NUMBERS
+
 **SPEC-001** | **BUG-001** | **SPIKE-001** | **MAINT-001** | **RELEASE-001**
 
 ---
@@ -8,24 +9,27 @@
 ## 📋 QUICK REFERENCE COMMAND
 
 **Before creating any new specification/bug/spike/maint:**
+
 ```bash
 # Get next numbers quickly
 grep -r "SPEC-[0-9]" docs/specs/ | grep -o "SPEC-[0-9]*" | sort -V | tail -1
-grep -r "BUG-[0-9]" docs/specs/ | grep -o "BUG-[0-9]*" | sort -V | tail -1  
+grep -r "BUG-[0-9]" docs/specs/ | grep -o "BUG-[0-9]*" | sort -V | tail -1
 grep -r "SPIKE-[0-9]" docs/specs/ | grep -o "SPIKE-[0-9]*" | sort -V | tail -1
 grep -r "MAINT-[0-9]" docs/specs/ | grep -o "MAINT-[0-9]*" | sort -V | tail -1
 ```
 
 **For research spike investigations (RE-XXX):**
+
 ```bash
 # Find next available investigation in a SPIKE
 grep -A 5 "Next Available Investigation" docs/specs/*/SPIKE-XXX-*.md
 
-# Check current investigation status in a SPIKE  
+# Check current investigation status in a SPIKE
 grep -A 10 "Current State" docs/specs/*/SPIKE-XXX-*.md
 ```
 
 **Agent Instructions:**
+
 1. Run command above to get current highest number
 2. Add 1 to get your next number
 3. Update this file with new "NEXT AVAILABLE" after creating
@@ -36,6 +40,7 @@ grep -A 10 "Current State" docs/specs/*/SPIKE-XXX-*.md
 ## 📊 CURRENT INVENTORY (Updated: [DATE])
 
 ### Specifications (SPEC-XXX)
+
 - **Active**: [List active specs]
 - **Backlog**: [List backlog specs]
 - **Done**: [List completed specs]
@@ -43,6 +48,7 @@ grep -A 10 "Current State" docs/specs/*/SPIKE-XXX-*.md
 - **Next**: SPEC-001
 
 ### Bugs (BUG-XXX)
+
 - **Active**: [List active bugs]
 - **Backlog**: [List backlog bugs]
 - **Done**: [List completed bugs]
@@ -50,6 +56,7 @@ grep -A 10 "Current State" docs/specs/*/SPIKE-XXX-*.md
 - **Next**: BUG-001
 
 ### Research Spikes (SPIKE-XXX)
+
 - **Active**: [List active spikes]
 - **Backlog**: [List backlog spikes]
 - **Done**: [List completed spikes]
@@ -57,12 +64,14 @@ grep -A 10 "Current State" docs/specs/*/SPIKE-XXX-*.md
 - **Next**: SPIKE-001
 
 ### Research Sub-Investigations (RE-XXX)
+
 - **Structure**: RE-XXX numbers are scoped within each SPIKE-XXX
 - **Lifecycle**: Created and completed within parent spike, not tracked independently
 - **Usage**: RE-001, RE-002, RE-003 within each SPIKE document
 - **Note**: RE numbers reset for each new SPIKE (not globally unique)
 
 ### Maintenance (MAINT-XXX)
+
 - **Active**: [List active maintenance]
 - **Backlog**: [List backlog maintenance]
 - **Done**: [List completed maintenance]
@@ -70,6 +79,7 @@ grep -A 10 "Current State" docs/specs/*/SPIKE-XXX-*.md
 - **Next**: MAINT-001
 
 ### Releases (RELEASE-XXX)
+
 - **Created**: None yet
 - **Next**: RELEASE-001
 
@@ -78,19 +88,23 @@ grep -A 10 "Current State" docs/specs/*/SPIKE-XXX-*.md
 ## 🔬 TWO-TIER RESEARCH SPIKE NUMBERING SYSTEM
 
 ### **Overview**
+
 Research spikes use a hierarchical two-tier numbering system:
+
 - **SPIKE-XXX**: Main research spike (globally unique)
 - **RE-XXX**: Sub-investigations within each spike (scoped to parent spike)
 
 ### **When to Use SPIKE-XXX vs RE-XXX**
 
 #### **Use SPIKE-XXX for:**
+
 - **New major research topics** requiring investigation
 - **Independent research questions** that could be worked on separately
 - **Cross-cutting concerns** affecting multiple systems
 - **Strategic research** informing product direction
 
 #### **Use RE-XXX for:**
+
 - **Sub-investigations within a SPIKE** that cannot be done independently
 - **Sequential research steps** building on previous findings
 - **Focused research tasks** assigned to individual agents within a spike
@@ -99,14 +113,16 @@ Research spikes use a hierarchical two-tier numbering system:
 ### **Hierarchical Structure Examples**
 
 #### **Example 1: Architecture Research**
+
 ```
 SPIKE-002: System Architecture Analysis
 ├── RE-001: Current Architecture Analysis
-├── RE-002: Performance Requirements Investigation  
+├── RE-002: Performance Requirements Investigation
 └── RE-003: Recommendation & Implementation Plan
 ```
 
-#### **Example 2: Technology Research**  
+#### **Example 2: Technology Research**
+
 ```
 SPIKE-001: Framework Evaluation
 ├── RE-001: Current Technology Stack Analysis
@@ -125,6 +141,7 @@ SPIKE-001: Framework Evaluation
 ### **Agent Guidelines for Research Spikes**
 
 #### **Creating a New Research Investigation:**
+
 ```bash
 # Determine if this needs a new SPIKE or fits in existing SPIKE
 1. Is this a new major research topic? → Create SPIKE-XXX
@@ -138,6 +155,7 @@ SPIKE-007-topic-name.md
 ```
 
 #### **Working with Research Spikes:**
+
 1. **Read the SPIKE document first** to understand current investigation status
 2. **Find next available RE-XXX** (look for ⏳ or "Next Available Investigation")
 3. **Complete ONE RE investigation only**, then hand off
@@ -145,6 +163,7 @@ SPIKE-007-topic-name.md
 5. **Do not create separate files** for RE investigations - they live in the SPIKE
 
 ### **File Structure**
+
 ```
 docs/specs/
 ├── active/
@@ -164,6 +183,7 @@ docs/specs/
 ## 🤖 AI AGENT WORKFLOW
 
 ### Creating New Item
+
 1. **Check Current Numbers**: Read "NEXT AVAILABLE NUMBERS" section above
 2. **Use Next Number**: Take the next available number for your type
 3. **Create File**: Use format `TYPE-XXX-descriptive-name.md`
@@ -183,13 +203,15 @@ docs/specs/
 ## 🚨 CRITICAL RULES
 
 ### **General Numbering Rules**
+
 1. **Always check this file FIRST** before creating numbered items
-2. **Always update this file AFTER** creating numbered items  
+2. **Always update this file AFTER** creating numbered items
 3. **Use 3-digit zero-padding**: 001, 014, 099, 100
 4. **No skipping numbers**: Use the next sequential number always
 5. **Fix duplicates immediately**: Rename files to use next available number
 
 ### **Research Spike Specific Rules**
+
 6. **SPIKE-XXX are globally unique**: Follow main numbering sequence (SPIKE-007, SPIKE-008...)
 7. **RE-XXX are scoped to parent SPIKE**: Each SPIKE starts with RE-001, RE-002, RE-003...
 8. **No separate RE files**: RE investigations live within their parent SPIKE document
