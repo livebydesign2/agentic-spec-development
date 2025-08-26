@@ -9,6 +9,7 @@ const ContextInjector = require('../lib/context-injector');
 const ContextManager = require('../lib/context-manager');
 const ContextValidator = require('../lib/context-validator');
 const ContextTriggerSystem = require('../lib/context-triggers');
+const { TaskRecommendationAPI } = require('../lib/task-router');
 
 const program = new Command();
 
@@ -59,7 +60,7 @@ contextCommand
   .command('show')
   .description('Display context information')
   .option('--spec <spec-id>', 'Show spec context')
-  .option('--task <task-id>', 'Show task context') 
+  .option('--task <task-id>', 'Show task context')
   .option('--agent <agent-type>', 'Show agent-specific context')
   .option('--inject', 'Show full injected context for agent')
   .option('--layers', 'Show all context layers')
@@ -107,7 +108,7 @@ agentCommand
   .description('Customize agent workflows and requirements')
   .argument('<agent-type>', 'Agent type to customize')
   .option('--add-step <step>', 'Add workflow step')
-  .option('--add-requirement <req>', 'Add context requirement') 
+  .option('--add-requirement <req>', 'Add context requirement')
   .option('--add-capability <cap>', 'Add agent capability')
   .option('--remove-step <step>', 'Remove workflow step')
   .option('--edit', 'Open agent definition in editor')
@@ -123,7 +124,7 @@ agentCommand
     await handleAgentList(options);
   });
 
-// Process management commands  
+// Process management commands
 const processCommand = program
   .command('process')
   .description('Manage process templates and workflows');
@@ -146,19 +147,60 @@ processCommand
     await handleProcessList();
   });
 
+// Task routing and recommendation commands
+program
+  .command('next')
+  .description('Get next recommended task for an agent')
+  .requiredOption('--agent <agent-type>', 'Agent type (required)')
+  .option('--priority <priorities>', 'Filter by priority (P0,P1,P2,P3)', 'P0,P1,P2,P3')
+  .option('--phase <phases>', 'Filter by phase (PHASE-1A,PHASE-1B)', 'PHASE-1A,PHASE-1B')
+  .option('--spec-status <status>', 'Filter by spec status (active,ready,backlog)', 'active,ready')
+  .option('--show-alternatives', 'Show alternative task recommendations', false)
+  .option('--show-reasoning', 'Show detailed recommendation reasoning', false)
+  .option('--transparent', 'Show full scoring and constraint details', false)
+  .option('--limit <number>', 'Maximum number of tasks to return', '5')
+  .action(async (options) => {
+    await handleNextTask(options);
+  });
+
+program
+  .command('tasks')
+  .description('List available tasks with filtering')
+  .option('--agent <agent-type>', 'Filter by agent type')
+  .option('--priority <priorities>', 'Filter by priority (P0,P1,P2,P3)')
+  .option('--phase <phases>', 'Filter by phase')
+  .option('--spec-status <status>', 'Filter by spec status')
+  .option('--status <status>', 'Filter by task status (ready,blocked,complete)')
+  .option('--include-blocked', 'Include blocked tasks', false)
+  .option('--limit <number>', 'Maximum number of tasks to return', '10')
+  .action(async (options) => {
+    await handleTasksList(options);
+  });
+
+program
+  .command('validate-assignment')
+  .description('Validate if a task can be assigned to an agent')
+  .requiredOption('--task <task-id>', 'Task ID to validate')
+  .requiredOption('--agent <agent-type>', 'Agent type for assignment')
+  .option('--show-details', 'Show detailed validation information', false)
+  .action(async (options) => {
+    await handleValidateAssignment(options);
+  });
+
 // Task lifecycle commands with context updates
-const assignCommand = program
+program
   .command('assign')
-  .description('Assign task to agent with context update')
+  .description('Assign task to agent with context update and routing validation')
   .argument('<spec-id>', 'Specification ID')
   .argument('<task-id>', 'Task ID')
   .option('--agent <agent-type>', 'Agent type to assign')
   .option('--priority <priority>', 'Task priority (P0, P1, P2, P3)')
+  .option('--validate', 'Validate assignment before applying', true)
   .action(async (specId, taskId, options) => {
     await handleTaskAssign(specId, taskId, options);
   });
 
-const completeCommand = program
+program
   .command('complete')
   .description('Mark task as complete and update context')
   .argument('<spec-id>', 'Specification ID')
@@ -169,7 +211,7 @@ const completeCommand = program
     await handleTaskComplete(specId, taskId, options);
   });
 
-const researchCommand = program
+program
   .command('research')
   .description('Capture research findings and update context')
   .argument('<spec-id>', 'Specification ID')
@@ -334,7 +376,7 @@ async function handleContextAdd(options) {
     const contextManager = new ContextManager(configManager);
     const triggerSystem = new ContextTriggerSystem(configManager);
     await triggerSystem.initialize();
-    
+
     // Determine context type and ID
     let contextType, contextId;
     if (options.project) {
@@ -353,12 +395,12 @@ async function handleContextAdd(options) {
 
     // Build updates object
     const updates = { frontmatter: {} };
-    
+
     if (options.constraint) {
       updates.frontmatter.constraints = updates.frontmatter.constraints || [];
       updates.frontmatter.constraints.push(options.constraint);
     }
-    
+
     if (options.research) {
       updates.frontmatter.research_findings = updates.frontmatter.research_findings || [];
       updates.frontmatter.research_findings.push({
@@ -367,7 +409,7 @@ async function handleContextAdd(options) {
         source: 'manual'
       });
     }
-    
+
     if (options.decision) {
       updates.frontmatter.implementation_decisions = updates.frontmatter.implementation_decisions || [];
       updates.frontmatter.implementation_decisions.push({
@@ -376,7 +418,7 @@ async function handleContextAdd(options) {
         rationale: 'user input'
       });
     }
-    
+
     if (options.content) {
       updates.content = options.content;
     }
@@ -388,7 +430,7 @@ async function handleContextAdd(options) {
 
     // Update context and trigger system
     const success = await contextManager.updateContext(contextType, contextId, updates);
-    
+
     if (success) {
       // Fire trigger for context addition
       await triggerSystem.fireTrigger('context_add', {
@@ -397,13 +439,13 @@ async function handleContextAdd(options) {
         updates,
         source: 'cli_command'
       });
-      
+
       console.log(chalk.green(`✅ Updated ${contextType} context${contextId ? ` for ${contextId}` : ''}`));
     } else {
       console.error(chalk.red('❌ Failed to update context'));
       process.exit(1);
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Context add failed:'), error.message);
     process.exit(1);
@@ -414,7 +456,7 @@ async function handleContextUpdate(options) {
   try {
     const configManager = new ConfigManager(process.cwd());
     const contextManager = new ContextManager(configManager);
-    
+
     // Determine what to update
     if (!options.spec && !options.task) {
       console.error(chalk.red('❌ Must specify --spec <id> or --task <id>'));
@@ -423,17 +465,17 @@ async function handleContextUpdate(options) {
 
     const contextType = options.spec ? 'spec' : 'task';
     const contextId = options.spec || options.task;
-    
+
     const updates = { frontmatter: {} };
-    
+
     if (options.status) {
       updates.frontmatter.status = options.status;
     }
-    
+
     if (options.progress) {
       updates.frontmatter.progress = JSON.parse(options.progress);
     }
-    
+
     if (options.assign) {
       updates.frontmatter.assigned_agent = options.assign;
       updates.frontmatter.assigned_at = new Date().toISOString();
@@ -441,14 +483,14 @@ async function handleContextUpdate(options) {
 
     // Update context
     const success = await contextManager.updateContext(contextType, contextId, updates);
-    
+
     if (success) {
       console.log(chalk.green(`✅ Updated ${contextType} context for ${contextId}`));
     } else {
       console.error(chalk.red('❌ Failed to update context'));
       process.exit(1);
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Context update failed:'), error.message);
     process.exit(1);
@@ -458,7 +500,7 @@ async function handleContextUpdate(options) {
 async function handleContextShow(options) {
   try {
     const configManager = new ConfigManager(process.cwd());
-    
+
     if (options.inject && options.agent) {
       // Show full injected context for agent
       const contextInjector = new ContextInjector(configManager);
@@ -467,10 +509,10 @@ async function handleContextShow(options) {
         specId: options.spec,
         taskId: options.task
       });
-      
+
       console.log(chalk.cyan('🔄 Injected Context Preview'));
       console.log(chalk.gray('='.repeat(50)));
-      
+
       if (options.layers) {
         console.log(JSON.stringify(injectedContext, null, 2));
       } else {
@@ -478,11 +520,11 @@ async function handleContextShow(options) {
         console.log(chalk.white('Agent:'), chalk.yellow(injectedContext.metadata.agentType));
         console.log(chalk.white('Layers:'), chalk.cyan(Object.keys(injectedContext.layers).join(', ')));
         console.log(chalk.white('Performance:'), chalk.green(`${injectedContext.metadata.performance.total}ms`));
-        
+
         if (injectedContext.inheritance) {
           console.log(chalk.white('Inheritance:'), chalk.blue(injectedContext.inheritance.hierarchy.join(' → ')));
         }
-        
+
         if (injectedContext.relevanceScore) {
           console.log(chalk.white('Relevance:'), chalk.magenta(`${Math.round(injectedContext.relevanceScore * 100)}%`));
         }
@@ -492,11 +534,11 @@ async function handleContextShow(options) {
       const contextManager = new ContextManager(configManager);
       const contextType = options.spec ? 'spec' : 'task';
       const contextId = options.spec || options.task;
-      
-      const contextPath = contextType === 'spec' 
+
+      const contextPath = contextType === 'spec'
         ? path.join(configManager.getProjectRoot(), '.asd', 'context', 'specs', `${contextId}-context.md`)
         : path.join(configManager.getProjectRoot(), '.asd', 'context', 'tasks', `${contextId}-context.md`);
-      
+
       if (await contextManager.fileExists(contextPath)) {
         const fs = require('fs').promises;
         const content = await fs.readFile(contextPath, 'utf-8');
@@ -510,7 +552,7 @@ async function handleContextShow(options) {
       // Show general context info
       const contextManager = new ContextManager(configManager);
       const paths = contextManager.getContextPaths();
-      
+
       console.log(chalk.cyan('📋 Context System Overview'));
       console.log(chalk.gray('='.repeat(50)));
       console.log(chalk.white('Base Directory:'), chalk.yellow(paths.base));
@@ -518,7 +560,7 @@ async function handleContextShow(options) {
       console.log(chalk.white('Agents Path:'), chalk.yellow(paths.agents));
       console.log(chalk.white('Processes Path:'), chalk.yellow(paths.processes));
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Context show failed:'), error.message);
     process.exit(1);
@@ -529,37 +571,37 @@ async function handleContextValidate(options) {
   try {
     const configManager = new ConfigManager(process.cwd());
     const contextValidator = new ContextValidator(configManager);
-    
+
     if (options.files) {
       // Validate specific files using glob pattern
       const glob = require('glob');
       const filePaths = glob.sync(options.files);
-      
+
       if (filePaths.length === 0) {
         console.log(chalk.yellow(`⚠️  No files found matching pattern: ${options.files}`));
         return;
       }
-      
+
       const summary = await contextValidator.validateContextFiles(filePaths);
-      
+
       console.log(chalk.cyan('🔍 Context Validation Results'));
       console.log(chalk.gray('='.repeat(50)));
       console.log(chalk.white('Total Files:'), chalk.blue(summary.totalFiles));
       console.log(chalk.white('Valid Files:'), chalk.green(summary.validFiles));
       console.log(chalk.white('Invalid Files:'), summary.invalidFiles > 0 ? chalk.red(summary.invalidFiles) : chalk.green(summary.invalidFiles));
       console.log(chalk.white('Warnings:'), summary.warnings > 0 ? chalk.yellow(summary.warnings) : chalk.green(summary.warnings));
-      
+
       if (options.verbose) {
         summary.results.forEach(result => {
           console.log(chalk.gray('\n---'));
           console.log(chalk.white('File:'), result.filePath);
           console.log(chalk.white('Valid:'), result.isValid ? chalk.green('✓') : chalk.red('✗'));
-          
+
           if (result.errors.length > 0) {
             console.log(chalk.red('Errors:'));
             result.errors.forEach(error => console.log(chalk.red(`  • ${error}`)));
           }
-          
+
           if (result.warnings.length > 0) {
             console.log(chalk.yellow('Warnings:'));
             result.warnings.forEach(warning => console.log(chalk.yellow(`  • ${warning}`)));
@@ -571,16 +613,16 @@ async function handleContextValidate(options) {
       const glob = require('glob');
       const contextPaths = contextValidator.configManager.getProjectRoot();
       const allContextFiles = glob.sync(path.join(contextPaths, '.asd/**/*.md'));
-      
+
       const summary = await contextValidator.validateContextFiles(allContextFiles);
-      
+
       console.log(chalk.cyan('🔍 Full Context System Validation'));
       console.log(chalk.gray('='.repeat(50)));
       console.log(chalk.white('Total Files:'), chalk.blue(summary.totalFiles));
       console.log(chalk.white('Valid Files:'), chalk.green(summary.validFiles));
       console.log(chalk.white('Invalid Files:'), summary.invalidFiles > 0 ? chalk.red(summary.invalidFiles) : chalk.green(summary.invalidFiles));
       console.log(chalk.white('Warnings:'), summary.warnings > 0 ? chalk.yellow(summary.warnings) : chalk.green(summary.warnings));
-      
+
       if (summary.invalidFiles === 0 && summary.warnings === 0) {
         console.log(chalk.green('\n✅ Context system validation passed!'));
       } else if (summary.invalidFiles === 0) {
@@ -590,7 +632,7 @@ async function handleContextValidate(options) {
         process.exit(1);
       }
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Context validation failed:'), error.message);
     process.exit(1);
@@ -602,7 +644,7 @@ async function handleContextExport(options) {
     const configManager = new ConfigManager(process.cwd());
     const contextManager = new ContextManager(configManager);
     const paths = contextManager.getContextPaths();
-    
+
     const exportData = {
       timestamp: new Date().toISOString(),
       version: '1.0.0',
@@ -610,11 +652,11 @@ async function handleContextExport(options) {
       agents: {},
       processes: {}
     };
-    
+
     // Export context files
     const glob = require('glob');
     const fs = require('fs').promises;
-    
+
     const contextFiles = glob.sync(path.join(paths.context, '**/*.md'));
     for (const filePath of contextFiles) {
       const relativePath = path.relative(paths.context, filePath);
@@ -622,7 +664,7 @@ async function handleContextExport(options) {
       const parsed = contextManager.parseMarkdownWithFrontmatter(content);
       exportData.context[relativePath] = parsed;
     }
-    
+
     // Export agent definitions
     const agentFiles = glob.sync(path.join(paths.agents, '*.md'));
     for (const filePath of agentFiles) {
@@ -631,7 +673,7 @@ async function handleContextExport(options) {
       const parsed = contextManager.parseMarkdownWithFrontmatter(content);
       exportData.agents[filename] = parsed;
     }
-    
+
     // Export process templates
     const processFiles = glob.sync(path.join(paths.processes, '*.md'));
     for (const filePath of processFiles) {
@@ -640,27 +682,27 @@ async function handleContextExport(options) {
       const parsed = contextManager.parseMarkdownWithFrontmatter(content);
       exportData.processes[filename] = parsed;
     }
-    
+
     // Include state if requested
     if (options.includeState) {
       const dynamicContext = await contextManager.loadDynamicContext();
       exportData.state = dynamicContext;
     }
-    
+
     // Filter by spec if requested
     if (options.spec) {
       const specContext = exportData.context[`specs/${options.spec}-context.md`];
       exportData.context = specContext ? { [`specs/${options.spec}-context.md`]: specContext } : {};
     }
-    
+
     // Write export file
     await fs.writeFile(options.output, JSON.stringify(exportData, null, 2), 'utf-8');
-    
+
     console.log(chalk.green(`✅ Context exported to ${options.output}`));
     console.log(chalk.gray(`   Context files: ${Object.keys(exportData.context).length}`));
     console.log(chalk.gray(`   Agent files: ${Object.keys(exportData.agents).length}`));
     console.log(chalk.gray(`   Process files: ${Object.keys(exportData.processes).length}`));
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Context export failed:'), error.message);
     process.exit(1);
@@ -672,90 +714,90 @@ async function handleContextImport(file, options) {
     const configManager = new ConfigManager(process.cwd());
     const contextManager = new ContextManager(configManager);
     const paths = contextManager.getContextPaths();
-    
+
     const fs = require('fs').promises;
-    
+
     // Read import file
     const importData = JSON.parse(await fs.readFile(file, 'utf-8'));
-    
+
     if (options.dryRun) {
       console.log(chalk.cyan('🔍 Import Preview (Dry Run)'));
       console.log(chalk.gray('='.repeat(50)));
       console.log(chalk.white('Context files to import:'), chalk.blue(Object.keys(importData.context || {}).length));
       console.log(chalk.white('Agent files to import:'), chalk.blue(Object.keys(importData.agents || {}).length));
       console.log(chalk.white('Process files to import:'), chalk.blue(Object.keys(importData.processes || {}).length));
-      
+
       if (importData.state) {
         console.log(chalk.white('State data:'), chalk.yellow('included'));
       }
-      
+
       console.log(chalk.yellow('\nNo changes made (dry run)'));
       return;
     }
-    
+
     // Ensure directories exist
     await contextManager.initializeContextStructure();
-    
+
     let importedCount = 0;
-    
+
     // Import context files
     for (const [relativePath, parsed] of Object.entries(importData.context || {})) {
       const fullPath = path.join(paths.context, relativePath);
       await fs.mkdir(path.dirname(fullPath), { recursive: true });
-      
+
       const content = contextManager.serializeMarkdownWithFrontmatter(
         parsed.frontmatter || {},
         parsed.content || ''
       );
-      
+
       await fs.writeFile(fullPath, content, 'utf-8');
       importedCount++;
     }
-    
+
     // Import agent definitions
     for (const [filename, parsed] of Object.entries(importData.agents || {})) {
       const fullPath = path.join(paths.agents, filename);
-      
+
       const content = contextManager.serializeMarkdownWithFrontmatter(
         parsed.frontmatter || {},
         parsed.content || ''
       );
-      
+
       await fs.writeFile(fullPath, content, 'utf-8');
       importedCount++;
     }
-    
-    // Import process templates  
+
+    // Import process templates
     for (const [filename, parsed] of Object.entries(importData.processes || {})) {
       const fullPath = path.join(paths.processes, filename);
-      
+
       const content = contextManager.serializeMarkdownWithFrontmatter(
         parsed.frontmatter || {},
         parsed.content || ''
       );
-      
+
       await fs.writeFile(fullPath, content, 'utf-8');
       importedCount++;
     }
-    
+
     // Import state if present
     if (importData.state) {
       const assignmentsPath = path.join(paths.state, 'assignments.json');
       const progressPath = path.join(paths.state, 'progress.json');
-      
+
       if (importData.state.assignments) {
         await fs.writeFile(assignmentsPath, JSON.stringify(importData.state.assignments, null, 2), 'utf-8');
       }
-      
+
       if (importData.state.progress) {
         await fs.writeFile(progressPath, JSON.stringify(importData.state.progress, null, 2), 'utf-8');
       }
     }
-    
-    console.log(chalk.green(`✅ Context import completed`));
+
+    console.log(chalk.green('✅ Context import completed'));
     console.log(chalk.gray(`   Files imported: ${importedCount}`));
     console.log(chalk.gray(`   Source: ${file}`));
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Context import failed:'), error.message);
     process.exit(1);
@@ -766,25 +808,25 @@ async function handleAgentCustomize(agentType, options) {
   try {
     const configManager = new ConfigManager(process.cwd());
     const agentPath = path.join(configManager.getProjectRoot(), '.asd', 'agents', `${agentType}.md`);
-    
+
     const fs = require('fs').promises;
-    
+
     // Check if agent exists
     if (!(await fs.access(agentPath).then(() => true).catch(() => false))) {
       console.error(chalk.red(`❌ Agent definition not found: ${agentType}`));
       console.log(chalk.gray(`   Expected path: ${agentPath}`));
       process.exit(1);
     }
-    
+
     if (options.edit) {
       // Open in editor
       const { spawn } = require('child_process');
       const editor = process.env.EDITOR || 'nano';
-      
+
       const child = spawn(editor, [agentPath], {
         stdio: 'inherit'
       });
-      
+
       child.on('exit', (code) => {
         if (code === 0) {
           console.log(chalk.green(`✅ Agent definition updated: ${agentType}`));
@@ -798,16 +840,16 @@ async function handleAgentCustomize(agentType, options) {
       const content = await fs.readFile(agentPath, 'utf-8');
       const contextManager = new ContextManager(configManager);
       const parsed = contextManager.parseMarkdownWithFrontmatter(content);
-      
+
       let updated = false;
       const frontmatter = parsed.frontmatter || {};
-      
+
       if (options.addStep) {
         frontmatter.workflow_steps = frontmatter.workflow_steps || [];
         frontmatter.workflow_steps.push(options.addStep);
         updated = true;
       }
-      
+
       if (options.removeStep) {
         if (frontmatter.workflow_steps) {
           const index = frontmatter.workflow_steps.indexOf(options.removeStep);
@@ -817,19 +859,19 @@ async function handleAgentCustomize(agentType, options) {
           }
         }
       }
-      
+
       if (options.addRequirement) {
         frontmatter.context_requirements = frontmatter.context_requirements || [];
         frontmatter.context_requirements.push(options.addRequirement);
         updated = true;
       }
-      
+
       if (options.addCapability) {
         frontmatter.capabilities = frontmatter.capabilities || [];
         frontmatter.capabilities.push(options.addCapability);
         updated = true;
       }
-      
+
       if (updated) {
         const newContent = contextManager.serializeMarkdownWithFrontmatter(frontmatter, parsed.content);
         await fs.writeFile(agentPath, newContent, 'utf-8');
@@ -838,7 +880,7 @@ async function handleAgentCustomize(agentType, options) {
         console.log(chalk.yellow('⚠️  No updates specified'));
       }
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Agent customize failed:'), error.message);
     process.exit(1);
@@ -849,30 +891,30 @@ async function handleAgentList(options) {
   try {
     const configManager = new ConfigManager(process.cwd());
     const agentsPath = path.join(configManager.getProjectRoot(), '.asd', 'agents');
-    
+
     const fs = require('fs').promises;
     const glob = require('glob');
-    
+
     const agentFiles = glob.sync(path.join(agentsPath, '*.md'));
-    
+
     console.log(chalk.cyan('👥 Available Agents'));
     console.log(chalk.gray('='.repeat(50)));
-    
+
     if (agentFiles.length === 0) {
       console.log(chalk.yellow('⚠️  No agent definitions found'));
       return;
     }
-    
+
     const contextManager = new ContextManager(configManager);
-    
+
     for (const filePath of agentFiles) {
       const agentType = path.basename(filePath, '.md');
       const content = await fs.readFile(filePath, 'utf-8');
       const parsed = contextManager.parseMarkdownWithFrontmatter(content);
       const frontmatter = parsed.frontmatter || {};
-      
+
       console.log(chalk.white('\n• Agent:'), chalk.yellow(agentType));
-      
+
       if (options.details) {
         if (frontmatter.capabilities) {
           console.log(chalk.gray('  Capabilities:'), frontmatter.capabilities.slice(0, 3).join(', '));
@@ -885,7 +927,7 @@ async function handleAgentList(options) {
         }
       }
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Agent list failed:'), error.message);
     process.exit(1);
@@ -896,18 +938,18 @@ async function handleProcessUpdate(templateName, options) {
   try {
     const configManager = new ConfigManager(process.cwd());
     const processPath = path.join(configManager.getProjectRoot(), '.asd', 'processes', `${templateName}.md`);
-    
+
     const fs = require('fs').promises;
-    
+
     if (options.edit) {
       // Open in editor
       const { spawn } = require('child_process');
       const editor = process.env.EDITOR || 'nano';
-      
+
       const child = spawn(editor, [processPath], {
         stdio: 'inherit'
       });
-      
+
       child.on('exit', (code) => {
         if (code === 0) {
           console.log(chalk.green(`✅ Process template updated: ${templateName}`));
@@ -919,7 +961,7 @@ async function handleProcessUpdate(templateName, options) {
     } else {
       // Programmatic updates
       let content, parsed;
-      
+
       try {
         content = await fs.readFile(processPath, 'utf-8');
         const contextManager = new ContextManager(configManager);
@@ -928,22 +970,22 @@ async function handleProcessUpdate(templateName, options) {
         // File doesn't exist, create new
         parsed = { frontmatter: {}, content: '' };
       }
-      
+
       let updated = false;
       const frontmatter = parsed.frontmatter || {};
-      
+
       if (options.addRequirement) {
         frontmatter.validation_requirements = frontmatter.validation_requirements || [];
         frontmatter.validation_requirements.push(options.addRequirement);
         updated = true;
       }
-      
+
       if (options.addStep) {
         frontmatter.process_steps = frontmatter.process_steps || [];
         frontmatter.process_steps.push(options.addStep);
         updated = true;
       }
-      
+
       if (updated) {
         const contextManager = new ContextManager(configManager);
         const newContent = contextManager.serializeMarkdownWithFrontmatter(frontmatter, parsed.content);
@@ -953,7 +995,7 @@ async function handleProcessUpdate(templateName, options) {
         console.log(chalk.yellow('⚠️  No updates specified'));
       }
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Process update failed:'), error.message);
     process.exit(1);
@@ -964,39 +1006,39 @@ async function handleProcessList() {
   try {
     const configManager = new ConfigManager(process.cwd());
     const processesPath = path.join(configManager.getProjectRoot(), '.asd', 'processes');
-    
+
     const fs = require('fs').promises;
     const glob = require('glob');
-    
+
     const processFiles = glob.sync(path.join(processesPath, '*.md'));
-    
+
     console.log(chalk.cyan('📋 Available Process Templates'));
     console.log(chalk.gray('='.repeat(50)));
-    
+
     if (processFiles.length === 0) {
       console.log(chalk.yellow('⚠️  No process templates found'));
       return;
     }
-    
+
     const contextManager = new ContextManager(configManager);
-    
+
     for (const filePath of processFiles) {
       const templateName = path.basename(filePath, '.md');
       const content = await fs.readFile(filePath, 'utf-8');
       const parsed = contextManager.parseMarkdownWithFrontmatter(content);
       const frontmatter = parsed.frontmatter || {};
-      
+
       console.log(chalk.white('• Template:'), chalk.yellow(templateName));
-      
+
       if (frontmatter.process_type) {
         console.log(chalk.gray('  Type:'), frontmatter.process_type);
       }
-      
+
       if (frontmatter.validation_requirements && frontmatter.validation_requirements.length > 0) {
         console.log(chalk.gray('  Requirements:'), frontmatter.validation_requirements.length);
       }
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Process list failed:'), error.message);
     process.exit(1);
@@ -1009,12 +1051,57 @@ async function handleTaskAssign(specId, taskId, options) {
     const contextManager = new ContextManager(configManager);
     const triggerSystem = new ContextTriggerSystem(configManager);
     await triggerSystem.initialize();
-    
+
     if (!options.agent) {
       console.error(chalk.red('❌ Must specify --agent <agent-type>'));
       process.exit(1);
     }
-    
+
+    // Validate assignment using routing system if requested
+    if (options.validate !== false) {
+      console.log(chalk.blue('🔍 Validating assignment...'));
+
+      const taskAPI = new TaskRecommendationAPI(configManager);
+      const initialized = await taskAPI.initialize();
+
+      if (initialized) {
+        const validation = await taskAPI.validateAssignment({
+          taskId: taskId,
+          agentType: options.agent
+        });
+
+        if (validation.success && !validation.valid) {
+          console.error(chalk.red('❌ Assignment validation failed:'));
+          validation.issues.forEach(issue => {
+            console.error(chalk.red(`  • ${issue}`));
+          });
+
+          if (validation.warnings && validation.warnings.length > 0) {
+            console.warn(chalk.yellow('⚠️  Warnings:'));
+            validation.warnings.forEach(warning => {
+              console.warn(chalk.yellow(`  • ${warning}`));
+            });
+          }
+
+          console.log(chalk.gray('\n💡 Use --no-validate to skip validation'));
+          process.exit(1);
+        } else if (validation.success) {
+          console.log(chalk.green('✅ Assignment validation passed'));
+
+          if (validation.warnings && validation.warnings.length > 0) {
+            console.warn(chalk.yellow('⚠️  Validation warnings:'));
+            validation.warnings.forEach(warning => {
+              console.warn(chalk.yellow(`  • ${warning}`));
+            });
+          }
+        } else {
+          console.warn(chalk.yellow('⚠️  Could not validate assignment, proceeding anyway'));
+        }
+      } else {
+        console.warn(chalk.yellow('⚠️  Task routing system unavailable, skipping validation'));
+      }
+    }
+
     // Update task context with assignment
     const updates = {
       frontmatter: {
@@ -1023,21 +1110,21 @@ async function handleTaskAssign(specId, taskId, options) {
         status: 'in_progress'
       }
     };
-    
+
     if (options.priority) {
       updates.frontmatter.priority = options.priority;
     }
-    
+
     // Update task context
     const taskSuccess = await contextManager.updateContext('task', taskId, updates);
-    
+
     // Update dynamic state (assignments.json)
     const paths = contextManager.getContextPaths();
     const assignmentsPath = path.join(paths.state, 'assignments.json');
-    
+
     const fs = require('fs').promises;
     let assignments = {};
-    
+
     try {
       if (await contextManager.fileExists(assignmentsPath)) {
         const assignmentsContent = await fs.readFile(assignmentsPath, 'utf-8');
@@ -1046,7 +1133,7 @@ async function handleTaskAssign(specId, taskId, options) {
     } catch (error) {
       // Start fresh if file is corrupted
     }
-    
+
     // Update assignments
     assignments[specId] = assignments[specId] || {};
     assignments[specId][taskId] = {
@@ -1055,11 +1142,11 @@ async function handleTaskAssign(specId, taskId, options) {
       priority: options.priority || 'P2',
       status: 'in_progress'
     };
-    
+
     // Ensure state directory exists
     await fs.mkdir(paths.state, { recursive: true });
     await fs.writeFile(assignmentsPath, JSON.stringify(assignments, null, 2), 'utf-8');
-    
+
     if (taskSuccess) {
       // Fire trigger for task assignment
       await triggerSystem.fireTrigger('assign', {
@@ -1069,7 +1156,7 @@ async function handleTaskAssign(specId, taskId, options) {
         priority: options.priority || 'P2',
         source: 'cli_command'
       });
-      
+
       console.log(chalk.green(`✅ Assigned ${taskId} to ${options.agent}`));
       console.log(chalk.gray(`   Spec: ${specId}`));
       console.log(chalk.gray(`   Priority: ${options.priority || 'P2'}`));
@@ -1077,7 +1164,7 @@ async function handleTaskAssign(specId, taskId, options) {
       console.error(chalk.red('❌ Failed to update task context'));
       process.exit(1);
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Task assignment failed:'), error.message);
     process.exit(1);
@@ -1090,7 +1177,7 @@ async function handleTaskComplete(specId, taskId, options) {
     const contextManager = new ContextManager(configManager);
     const triggerSystem = new ContextTriggerSystem(configManager);
     await triggerSystem.initialize();
-    
+
     // Update task context with completion
     const updates = {
       frontmatter: {
@@ -1098,25 +1185,25 @@ async function handleTaskComplete(specId, taskId, options) {
         completed_at: new Date().toISOString()
       }
     };
-    
+
     if (options.notes) {
       updates.frontmatter.completion_notes = options.notes;
     }
-    
+
     if (options.handoff) {
       updates.frontmatter.handoff_to = options.handoff;
     }
-    
+
     // Update task context
     const taskSuccess = await contextManager.updateContext('task', taskId, updates);
-    
+
     // Update progress tracking
     const paths = contextManager.getContextPaths();
     const progressPath = path.join(paths.state, 'progress.json');
-    
+
     const fs = require('fs').promises;
     let progress = {};
-    
+
     try {
       if (await contextManager.fileExists(progressPath)) {
         const progressContent = await fs.readFile(progressPath, 'utf-8');
@@ -1125,7 +1212,7 @@ async function handleTaskComplete(specId, taskId, options) {
     } catch (error) {
       // Start fresh if file is corrupted
     }
-    
+
     // Update progress
     progress[specId] = progress[specId] || {};
     progress[specId][taskId] = {
@@ -1133,11 +1220,11 @@ async function handleTaskComplete(specId, taskId, options) {
       completed_at: new Date().toISOString(),
       completion_notes: options.notes || null
     };
-    
+
     // Ensure state directory exists
     await fs.mkdir(paths.state, { recursive: true });
     await fs.writeFile(progressPath, JSON.stringify(progress, null, 2), 'utf-8');
-    
+
     if (taskSuccess) {
       // Fire trigger for task completion
       await triggerSystem.fireTrigger('complete', {
@@ -1147,7 +1234,7 @@ async function handleTaskComplete(specId, taskId, options) {
         handoffTo: options.handoff,
         source: 'cli_command'
       });
-      
+
       console.log(chalk.green(`✅ Marked ${taskId} as complete`));
       console.log(chalk.gray(`   Spec: ${specId}`));
       if (options.notes) {
@@ -1160,7 +1247,7 @@ async function handleTaskComplete(specId, taskId, options) {
       console.error(chalk.red('❌ Failed to update task context'));
       process.exit(1);
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Task completion failed:'), error.message);
     process.exit(1);
@@ -1173,15 +1260,15 @@ async function handleResearchCapture(specId, options) {
     const contextManager = new ContextManager(configManager);
     const triggerSystem = new ContextTriggerSystem(configManager);
     await triggerSystem.initialize();
-    
+
     if (!options.finding) {
       console.error(chalk.red('❌ Must specify --finding <text>'));
       process.exit(1);
     }
-    
+
     const contextType = options.task ? 'task' : 'spec';
     const contextId = options.task || specId;
-    
+
     // Create research finding object
     const researchFinding = {
       finding: options.finding,
@@ -1189,16 +1276,16 @@ async function handleResearchCapture(specId, options) {
       source: options.source || 'manual',
       context: contextType === 'task' ? `${specId}:${options.task}` : specId
     };
-    
+
     // Update context with research finding
     const updates = {
       frontmatter: {
         research_findings: [researchFinding]
       }
     };
-    
+
     const success = await contextManager.updateContext(contextType, contextId, updates);
-    
+
     if (success) {
       // Fire trigger for research capture
       await triggerSystem.fireTrigger('research', {
@@ -1209,7 +1296,7 @@ async function handleResearchCapture(specId, options) {
         contextType,
         contextId
       });
-      
+
       console.log(chalk.green(`✅ Research finding captured for ${contextType} ${contextId}`));
       console.log(chalk.gray(`   Finding: ${options.finding.slice(0, 80)}${options.finding.length > 80 ? '...' : ''}`));
       if (options.source) {
@@ -1219,7 +1306,7 @@ async function handleResearchCapture(specId, options) {
       console.error(chalk.red('❌ Failed to capture research finding'));
       process.exit(1);
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Research capture failed:'), error.message);
     process.exit(1);
@@ -1261,6 +1348,421 @@ async function startASD(options) {
     }
 
     process.exit(1);
+  }
+}
+
+// Handler functions for task routing commands
+async function handleNextTask(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const taskAPI = new TaskRecommendationAPI(configManager);
+
+    // Initialize the API
+    const initialized = await taskAPI.initialize();
+    if (!initialized) {
+      console.error(chalk.red('❌ Failed to initialize task routing system'));
+      process.exit(1);
+    }
+
+    // Parse filter options
+    const priority = options.priority ? options.priority.split(',') : undefined;
+    const phase = options.phase ? options.phase.split(',') : undefined;
+    const specStatus = options.specStatus ? options.specStatus.split(',') : undefined;
+    const limit = parseInt(options.limit) || 5;
+
+    // Use transparent API if requested
+    if (options.transparent) {
+      const result = await taskAPI.getTransparentRecommendation({
+        agentType: options.agent,
+        filters: { priority, phase, specStatus }
+      });
+
+      if (!result.success) {
+        console.error(chalk.red('❌ Task recommendation failed:'), result.error);
+        process.exit(1);
+      }
+
+      displayTransparentRecommendation(result);
+      return;
+    }
+
+    // Get task recommendation
+    const result = await taskAPI.getNextTask({
+      agentType: options.agent,
+      priority,
+      phase,
+      specStatus,
+      includeReasoning: options.showReasoning,
+      includeAlternatives: options.showAlternatives
+    });
+
+    if (!result.success) {
+      console.error(chalk.red('❌ Task recommendation failed:'), result.error);
+      process.exit(1);
+    }
+
+    displayTaskRecommendation(result, options);
+
+  } catch (error) {
+    console.error(chalk.red('❌ Next task command failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleTasksList(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const taskAPI = new TaskRecommendationAPI(configManager);
+
+    const initialized = await taskAPI.initialize();
+    if (!initialized) {
+      console.error(chalk.red('❌ Failed to initialize task routing system'));
+      process.exit(1);
+    }
+
+    // Parse filter options
+    const priority = options.priority ? options.priority.split(',') : undefined;
+    const phase = options.phase ? options.phase.split(',') : undefined;
+    const specStatus = options.specStatus ? options.specStatus.split(',') : undefined;
+    const limit = parseInt(options.limit) || 10;
+
+    const result = await taskAPI.getAvailableTasks({
+      agentType: options.agent,
+      priority,
+      phase,
+      specStatus,
+      limit,
+      includeBlocked: options.includeBlocked
+    });
+
+    if (!result.success) {
+      console.error(chalk.red('❌ Failed to list tasks:'), result.error);
+      process.exit(1);
+    }
+
+    displayTasksList(result);
+
+  } catch (error) {
+    console.error(chalk.red('❌ Tasks list command failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleValidateAssignment(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const taskAPI = new TaskRecommendationAPI(configManager);
+
+    const initialized = await taskAPI.initialize();
+    if (!initialized) {
+      console.error(chalk.red('❌ Failed to initialize task routing system'));
+      process.exit(1);
+    }
+
+    const result = await taskAPI.validateAssignment({
+      taskId: options.task,
+      agentType: options.agent
+    });
+
+    if (!result.success) {
+      console.error(chalk.red('❌ Assignment validation failed:'), result.error);
+      process.exit(1);
+    }
+
+    displayValidationResult(result, options);
+
+  } catch (error) {
+    console.error(chalk.red('❌ Validate assignment command failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+function displayTaskRecommendation(result, options) {
+  console.log(chalk.cyan('🎯 Task Recommendation'));
+  console.log(chalk.gray('='.repeat(50)));
+
+  if (!result.task) {
+    console.log(chalk.yellow('⚠️  No task found matching criteria'));
+
+    if (result.reasoning) {
+      console.log(chalk.gray('\nReason:'), result.reasoning.summary);
+
+      if (result.reasoning.suggestion) {
+        console.log(chalk.blue('💡 Suggestion:'), result.reasoning.suggestion);
+      }
+
+      if (result.reasoning.availableAlternatives > 0) {
+        console.log(chalk.gray(`Available alternatives: ${result.reasoning.availableAlternatives}`));
+      }
+    }
+
+    console.log(chalk.gray('\nFilters applied:'));
+    console.log(chalk.gray(`  Agent: ${result.metadata.filters.agentType}`));
+    if (result.metadata.filters.priority) {
+      console.log(chalk.gray(`  Priority: ${Array.isArray(result.metadata.filters.priority) ? result.metadata.filters.priority.join(', ') : result.metadata.filters.priority}`));
+    }
+    if (result.metadata.filters.phase) {
+      console.log(chalk.gray(`  Phase: ${Array.isArray(result.metadata.filters.phase) ? result.metadata.filters.phase.join(', ') : result.metadata.filters.phase}`));
+    }
+
+    return;
+  }
+
+  // Main recommendation
+  console.log(chalk.green('✅ Recommended Task:'), chalk.yellow(result.task.id));
+  console.log(chalk.white('Title:'), result.task.title);
+  console.log(chalk.white('Spec:'), result.task.specId || 'N/A');
+  console.log(chalk.white('Priority:'), getPriorityDisplay(result.task.specPriority || result.task.priority));
+  console.log(chalk.white('Phase:'), result.task.phase || 'N/A');
+  console.log(chalk.white('Estimated Hours:'), result.task.estimated_hours || 'N/A');
+
+  if (result.task.agent_type) {
+    console.log(chalk.white('Required Agent:'), result.task.agent_type);
+  }
+
+  if (result.task.context_requirements && result.task.context_requirements.length > 0) {
+    console.log(chalk.white('Context Requirements:'), result.task.context_requirements.join(', '));
+  }
+
+  // Show score if available
+  if (result.task.score !== undefined) {
+    console.log(chalk.white('Recommendation Score:'), chalk.cyan(result.task.score));
+  }
+
+  // Show reasoning if requested
+  if (options.showReasoning && result.reasoning) {
+    console.log(chalk.blue('\n📋 Recommendation Reasoning:'));
+    console.log(chalk.gray(result.reasoning.summary));
+
+    if (result.reasoning.factors && result.reasoning.factors.length > 0) {
+      console.log(chalk.blue('\nScoring Factors:'));
+      result.reasoning.factors.forEach(factor => {
+        const impactColor = factor.impact === 'High' ? 'green' :
+                           factor.impact === 'Positive' ? 'cyan' :
+                           factor.impact === 'Negative' ? 'red' : 'gray';
+        console.log(chalk.gray(`  • ${factor.factor}: ${factor.value}`), chalk[impactColor](`(${factor.impact})`));
+      });
+    }
+
+    console.log(chalk.white('Confidence:'), getConfidenceDisplay(result.reasoning.confidence));
+    console.log(chalk.white('Recommendation:'), chalk.cyan(result.reasoning.recommendation));
+  }
+
+  // Show constraint validation if available
+  if (result.task.constraintValidation) {
+    const validation = result.task.constraintValidation;
+    console.log(chalk.blue('\n🔍 Constraint Validation:'));
+    console.log(chalk.white('Valid:'), validation.isValid ? chalk.green('✓') : chalk.red('✗'));
+
+    if (validation.violations && validation.violations.length > 0) {
+      console.log(chalk.red('Violations:'));
+      validation.violations.forEach(violation => {
+        console.log(chalk.red(`  • ${violation}`));
+      });
+    }
+
+    if (validation.warnings && validation.warnings.length > 0) {
+      console.log(chalk.yellow('Warnings:'));
+      validation.warnings.forEach(warning => {
+        console.log(chalk.yellow(`  • ${warning}`));
+      });
+    }
+  }
+
+  // Show alternatives if requested
+  if (options.showAlternatives && result.alternatives && result.alternatives.length > 0) {
+    console.log(chalk.blue('\n🔄 Alternative Tasks:'));
+    result.alternatives.slice(0, 3).forEach((alt, index) => {
+      console.log(chalk.gray(`${index + 1}. ${alt.id} - ${alt.title}`));
+      console.log(chalk.gray(`   Score: ${alt.score}, Priority: ${getPriorityDisplay(alt.specPriority || alt.priority)}`));
+    });
+  }
+
+  // Show performance and metadata
+  console.log(chalk.gray(`\nPerformance: ${result.metadata.performance.total}ms`));
+  console.log(chalk.gray(`Available tasks: ${result.metadata.totalAvailable}, Agent matches: ${result.metadata.agentMatches}`));
+}
+
+function displayTransparentRecommendation(result) {
+  console.log(chalk.cyan('🔍 Transparent Task Recommendation'));
+  console.log(chalk.gray('='.repeat(50)));
+
+  if (!result.recommendation.task) {
+    console.log(chalk.yellow('⚠️  No task found matching criteria'));
+    if (result.recommendation.transparency.reasoning) {
+      console.log(chalk.gray('\nReason:'), result.recommendation.transparency.reasoning.summary);
+    }
+    return;
+  }
+
+  const task = result.recommendation.task;
+  const transparency = result.recommendation.transparency;
+
+  // Basic task info
+  console.log(chalk.green('✅ Recommended Task:'), chalk.yellow(task.id));
+  console.log(chalk.white('Title:'), task.title);
+  console.log(chalk.white('Score:'), chalk.cyan(task.score));
+
+  // Scoring breakdown
+  if (transparency.scoring) {
+    console.log(chalk.blue('\n📊 Scoring Breakdown:'));
+    const breakdown = transparency.scoring.breakdown;
+    Object.entries(breakdown).forEach(([factor, data]) => {
+      if (data && typeof data === 'object' && data.multiplier !== undefined) {
+        console.log(chalk.gray(`  ${factor}:`), `${data.multiplier}x`, chalk.gray(`(${data.details})`));
+      }
+    });
+  }
+
+  // Constraint details
+  if (transparency.constraints) {
+    console.log(chalk.blue('\n🔒 Constraint Analysis:'));
+    console.log(chalk.white('Valid:'), transparency.constraints.isValid ? chalk.green('✓') : chalk.red('✗'));
+    console.log(chalk.white('Score Multiplier:'), chalk.cyan(transparency.constraints.score));
+
+    Object.entries(transparency.constraints.details).forEach(([constraint, details]) => {
+      console.log(chalk.gray(`  ${constraint}:`), details.isValid ? chalk.green('✓') : chalk.red('✗'));
+      if (details.details && typeof details.details === 'string') {
+        console.log(chalk.gray(`    ${details.details}`));
+      }
+    });
+  }
+
+  // Agent matching analysis
+  if (transparency.agentMatch) {
+    console.log(chalk.blue('\n👤 Agent Match Analysis:'));
+    console.log(chalk.white('Agent Type Match:'), transparency.agentMatch.agentTypeMatch ? chalk.green('✓') : chalk.gray('–'));
+    console.log(chalk.white('Match Quality:'), getMatchQualityDisplay(transparency.agentMatch.matchQuality));
+
+    if (transparency.agentMatch.requiredContexts && transparency.agentMatch.requiredContexts.length > 0) {
+      console.log(chalk.white('Required Contexts:'), transparency.agentMatch.requiredContexts.join(', '));
+    }
+
+    if (transparency.agentMatch.matchingContexts && transparency.agentMatch.matchingContexts.length > 0) {
+      console.log(chalk.white('Matching Contexts:'), chalk.green(transparency.agentMatch.matchingContexts.join(', ')));
+    }
+  }
+
+  // Algorithmic details
+  if (transparency.reasoning && transparency.reasoning.algorithmic) {
+    console.log(chalk.blue('\n⚙️  Algorithm Details:'));
+    const algo = transparency.reasoning.algorithmic;
+    console.log(chalk.gray('Scoring Method:'), algo.scoringMethod);
+    console.log(chalk.gray('Constraint Engine:'), algo.constraintEngine);
+    console.log(chalk.gray('Agent Matching:'), algo.agentMatching);
+  }
+
+  console.log(chalk.gray(`\nPerformance: ${result.metadata.performance.total}ms`));
+}
+
+function displayTasksList(result) {
+  console.log(chalk.cyan('📋 Available Tasks'));
+  console.log(chalk.gray('='.repeat(50)));
+
+  if (result.tasks.length === 0) {
+    console.log(chalk.yellow('⚠️  No tasks found matching criteria'));
+    return;
+  }
+
+  console.log(chalk.white(`Found ${result.tasks.length} tasks:`));
+  console.log();
+
+  result.tasks.forEach((task, index) => {
+    const status = task.blocked ? chalk.red('[BLOCKED]') :
+                   task.status === 'complete' ? chalk.green('[COMPLETE]') :
+                   task.status === 'in_progress' ? chalk.blue('[IN PROGRESS]') :
+                   chalk.green('[READY]');
+
+    console.log(chalk.white(`${index + 1}. ${task.id}`), status);
+    console.log(chalk.gray(`   Title: ${task.title}`));
+    console.log(chalk.gray(`   Spec: ${task.specId || 'N/A'}, Priority: ${getPriorityDisplay(task.specPriority || task.priority)}`));
+
+    if (task.agent_type) {
+      console.log(chalk.gray(`   Required Agent: ${task.agent_type}`));
+    }
+
+    if (task.estimated_hours) {
+      console.log(chalk.gray(`   Estimated Hours: ${task.estimated_hours}`));
+    }
+
+    if (task.blocked && task.blockedReason) {
+      console.log(chalk.red(`   Blocked: ${task.blockedReason}`));
+    }
+
+    console.log();
+  });
+
+  console.log(chalk.gray(`Performance: ${result.metadata.performance.total}ms`));
+  console.log(chalk.gray(`Total available: ${result.metadata.total}, Filters: ${JSON.stringify(result.metadata.filters)}`));
+}
+
+function displayValidationResult(result, _options) {
+  console.log(chalk.cyan('🔍 Assignment Validation'));
+  console.log(chalk.gray('='.repeat(50)));
+
+  console.log(chalk.white('Task:'), result.taskId || _options.task);
+  console.log(chalk.white('Agent:'), _options.agent);
+  console.log(chalk.white('Valid:'), result.valid ? chalk.green('✓ Valid') : chalk.red('✗ Invalid'));
+
+  if (result.issues && result.issues.length > 0) {
+    console.log(chalk.red('\nIssues:'));
+    result.issues.forEach(issue => {
+      console.log(chalk.red(`  • ${issue}`));
+    });
+  }
+
+  if (result.warnings && result.warnings.length > 0) {
+    console.log(chalk.yellow('\nWarnings:'));
+    result.warnings.forEach(warning => {
+      console.log(chalk.yellow(`  • ${warning}`));
+    });
+  }
+
+  if (_options.showDetails && result.details) {
+    console.log(chalk.blue('\n📊 Validation Details:'));
+    console.log(chalk.gray('Task Available:'), result.details.taskAvailable ? chalk.green('✓') : chalk.red('✗'));
+    console.log(chalk.gray('Agent Capable:'), result.details.agentCapable ? chalk.green('✓') : chalk.red('✗'));
+    console.log(chalk.gray('Constraints Passed:'), result.details.constraintsPassed ? chalk.green('✓') : chalk.red('✗'));
+  }
+
+  if (result.constraintDetails) {
+    console.log(chalk.blue('\n🔒 Constraint Details:'));
+    console.log(chalk.gray('Constraint Score:'), chalk.cyan(result.constraintDetails.score));
+
+    if (result.constraintDetails.details) {
+      Object.entries(result.constraintDetails.details).forEach(([constraint, details]) => {
+        console.log(chalk.gray(`  ${constraint}:`), details.isValid ? chalk.green('✓') : chalk.red('✗'));
+      });
+    }
+  }
+
+  console.log(chalk.gray(`\nValidation time: ${result.performance.total}ms`));
+}
+
+// Utility display functions
+function getPriorityDisplay(priority) {
+  switch (priority) {
+    case 'P0': return chalk.red('P0 (Critical)');
+    case 'P1': return chalk.yellow('P1 (High)');
+    case 'P2': return chalk.blue('P2 (Medium)');
+    case 'P3': return chalk.gray('P3 (Low)');
+    default: return chalk.gray(priority || 'N/A');
+  }
+}
+
+function getConfidenceDisplay(confidence) {
+  const percent = Math.round(confidence * 100);
+  const color = confidence >= 0.8 ? 'green' : confidence >= 0.6 ? 'yellow' : 'red';
+  return chalk[color](`${percent}%`);
+}
+
+function getMatchQualityDisplay(quality) {
+  switch (quality) {
+    case 'Excellent match': return chalk.green(quality);
+    case 'Good match': return chalk.cyan(quality);
+    case 'Partial match': return chalk.yellow(quality);
+    case 'Poor match': return chalk.red(quality);
+    default: return chalk.gray(quality);
   }
 }
 
