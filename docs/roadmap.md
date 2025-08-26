@@ -80,7 +80,7 @@ This roadmap outlines the development of ASD (Agentic Spec Development) from a b
 
 - [x] Repository abstraction complete (standalone npm package)
 - [x] Context injection provides 4-layer context to agents
-- [ ] Task routing matches agent capabilities with available work
+- [x] Task routing matches agent capabilities with available work
 - [ ] Workflow state updates automatically with inline documentation
 - [ ] **DOG FOOD MILESTONE**: ASD manages PHASE-1B development using itself
 

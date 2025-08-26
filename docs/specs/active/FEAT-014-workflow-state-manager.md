@@ -1,142 +1,166 @@
 ---
-id: "FEAT-014"
-title: "Workflow State Manager"
-type: "FEAT"
-phase: "PHASE-1A"
-priority: "P0"
-status: "active"
+id: FEAT-014
+title: Workflow State Manager
+type: FEAT
+phase: PHASE-1A
+priority: P0
+status: active
 created: "2024-08-24T17:15:00Z"
 estimated_hours: 20
-tags: ["workflow", "state-management", "handoffs", "progress-tracking"]
+tags:
+  - workflow
+  - state-management
+  - handoffs
+  - progress-tracking
 tasks:
-  - id: "TASK-001"
-    title: "Dynamic State Management Core"
-    agent_type: "backend-developer"
-    status: "completed"
+  - id: TASK-001
+    title: Dynamic State Management Core
+    agent_type: backend-developer
+    status: completed
     estimated_hours: 6
     completed_at: "2024-08-26T14:00:00Z"
-    completion_notes: "Implemented WorkflowStateManager with real-time assignment tracking, state persistence, and CLI integration. All core functionality working including handoff detection and progress tracking."
+    completion_notes: Implemented WorkflowStateManager with real-time assignment tracking, state persistence, and CLI integration. All core functionality working including handoff detection and progress tracking.
     context_requirements:
-      ["state-management-patterns", "file-system-operations"]
+      - state-management-patterns
+      - file-system-operations
     subtasks:
-      - id: "SUBTASK-001"
-        title: "Implement WorkflowStateManager class"
-        type: "implementation"
+      - id: SUBTASK-001
+        title: Implement WorkflowStateManager class
+        type: implementation
         estimated_minutes: 180
-        status: "completed"
-      - id: "SUBTASK-002"
-        title: "Add real-time assignment tracking"
-        type: "implementation"
+        status: completed
+      - id: SUBTASK-002
+        title: Add real-time assignment tracking
+        type: implementation
         estimated_minutes: 120
-        status: "completed"
-      - id: "SUBTASK-003"
-        title: "Validation & testing"
-        type: "validation"
+        status: completed
+      - id: SUBTASK-003
+        title: Validation & testing
+        type: validation
         estimated_minutes: 60
-        status: "completed"
-  - id: "TASK-002"
-    title: "Inline Documentation Updates"
-    agent_type: "backend-developer"
-    status: "ready"
+        status: completed
+  - id: TASK-002
+    title: Inline Documentation Updates
+    agent_type: backend-developer
+    status: completed
     estimated_hours: 4
-    context_requirements: ["yaml-frontmatter", "markdown-processing"]
-    depends_on: ["TASK-001"]
+    completed_at: "2025-08-26T21:02:00Z"
+    completion_notes: TASK-002 completed successfully. Implemented enhanced frontmatter update system with FrontmatterSync class providing atomic operations, YAML validation, backup/restore, and integration with WorkflowStateManager. All spec files now update automatically when task status changes.
+    context_requirements:
+      - yaml-frontmatter
+      - markdown-processing
+    depends_on:
+      - TASK-001
     subtasks:
-      - id: "SUBTASK-004"
-        title: "Implement frontmatter update system"
-        type: "implementation"
+      - id: SUBTASK-004
+        title: Implement frontmatter update system
+        type: implementation
         estimated_minutes: 150
-        status: "ready"
-      - id: "SUBTASK-005"
-        title: "Add spec file synchronization"
-        type: "implementation"
+        status: completed
+      - id: SUBTASK-005
+        title: Add spec file synchronization
+        type: implementation
         estimated_minutes: 90
-        status: "ready"
-      - id: "SUBTASK-006"
-        title: "Validation & testing"
-        type: "validation"
-        estimated_minutes: 0
-        status: "ready"
-  - id: "TASK-003"
-    title: "Agent Handoff Automation"
-    agent_type: "software-architect"
-    status: "blocked"
+        status: completed
+      - id: SUBTASK-006
+        title: Validation & testing
+        type: validation
+        estimated_minutes: 60
+        status: completed
+  - id: TASK-003
+    title: Agent Handoff Automation
+    agent_type: software-architect
+    status: blocked
     estimated_hours: 3
-    context_requirements: ["workflow-patterns", "agent-coordination"]
-    depends_on: ["TASK-002"]
+    context_requirements:
+      - workflow-patterns
+      - agent-coordination
+    depends_on:
+      - TASK-002
     subtasks:
-      - id: "SUBTASK-007"
-        title: "Implement handoff detection logic"
-        type: "implementation"
+      - id: SUBTASK-007
+        title: Implement handoff detection logic
+        type: implementation
         estimated_minutes: 90
-        status: "ready"
-      - id: "SUBTASK-008"
-        title: "Add next task preparation"
-        type: "implementation"
+        status: ready
+      - id: SUBTASK-008
+        title: Add next task preparation
+        type: implementation
         estimated_minutes: 90
-        status: "ready"
-      - id: "SUBTASK-009"
-        title: "Validation & testing"
-        type: "validation"
+        status: ready
+      - id: SUBTASK-009
+        title: Validation & testing
+        type: validation
         estimated_minutes: 0
-        status: "ready"
-  - id: "TASK-004"
-    title: "CLI Integration & Progress Commands"
-    agent_type: "cli-specialist"
-    status: "blocked"
+        status: ready
+  - id: TASK-004
+    title: CLI Integration & Progress Commands
+    agent_type: cli-specialist
+    status: blocked
     estimated_hours: 1
-    context_requirements: ["cli-patterns", "progress-tracking"]
-    depends_on: ["TASK-003"]
+    context_requirements:
+      - cli-patterns
+      - progress-tracking
+    depends_on:
+      - TASK-003
     subtasks:
-      - id: "SUBTASK-010"
-        title: "Implement progress tracking commands"
-        type: "implementation"
+      - id: SUBTASK-010
+        title: Implement progress tracking commands
+        type: implementation
         estimated_minutes: 30
-        status: "ready"
-      - id: "SUBTASK-011"
-        title: "Add handoff status commands"
-        type: "implementation"
+        status: ready
+      - id: SUBTASK-011
+        title: Add handoff status commands
+        type: implementation
         estimated_minutes: 30
-        status: "ready"
-      - id: "SUBTASK-012"
-        title: "Validation & testing"
-        type: "validation"
+        status: ready
+      - id: SUBTASK-012
+        title: Validation & testing
+        type: validation
         estimated_minutes: 0
-        status: "ready"
-  - id: "TASK-005"
-    title: "Temporary Documentation Management"
-    agent_type: "software-architect"
-    status: "blocked"
+        status: ready
+  - id: TASK-005
+    title: Temporary Documentation Management
+    agent_type: software-architect
+    status: blocked
     estimated_hours: 6
-    context_requirements: ["document-lifecycle", "cleanup-strategies", "agent-templates"]
-    depends_on: ["TASK-004"]
+    context_requirements:
+      - document-lifecycle
+      - cleanup-strategies
+      - agent-templates
+    depends_on:
+      - TASK-004
     subtasks:
-      - id: "SUBTASK-013"
-        title: "Implement ReportManager class with lifecycle management"
-        type: "implementation"
+      - id: SUBTASK-013
+        title: Implement ReportManager class with lifecycle management
+        type: implementation
         estimated_minutes: 180
-        status: "ready"
-      - id: "SUBTASK-014"
-        title: "Add agent template integration and cleanup automation"
-        type: "implementation"
+        status: ready
+      - id: SUBTASK-014
+        title: Add agent template integration and cleanup automation
+        type: implementation
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-015"
-        title: "CLI integration and validation"
-        type: "validation"
+        status: ready
+      - id: SUBTASK-015
+        title: CLI integration and validation
+        type: validation
         estimated_minutes: 120
-        status: "ready"
+        status: ready
 dependencies:
-  - "FEAT-013" # Task Router System for task assignment logic
+  - FEAT-013
 acceptance_criteria:
-  - "System tracks real-time task assignments and progress automatically"
-  - "Spec frontmatter updates inline (no separate completion documents)"
-  - "Agent handoffs are detected and next tasks prepared automatically"
-  - "Progress tracking provides accurate 'X of Y tasks complete' metrics"
-  - "CLI commands show current assignments and handoff readiness"
-  - "Agents can create structured temporary documentation with automatic lifecycle management"
-  - "Temporary reports auto-cleanup based on task/spec completion"
-  - "Report templates integrate with existing agent workflow patterns"
+  - System tracks real-time task assignments and progress automatically
+  - Spec frontmatter updates inline (no separate completion documents)
+  - Agent handoffs are detected and next tasks prepared automatically
+  - Progress tracking provides accurate 'X of Y tasks complete' metrics
+  - CLI commands show current assignments and handoff readiness
+  - Agents can create structured temporary documentation with automatic lifecycle management
+  - Temporary reports auto-cleanup based on task/spec completion
+  - Report templates integrate with existing agent workflow patterns
+test_field: Simple test from enhanced sync
+test_timestamp: "2025-08-26T21:00:57.684Z"
+last_updated: "2025-08-26T21:03:07.813Z"
+performance_test: "2025-08-26T21:03:07.812Z"
 ---
 
 # Workflow State Manager
@@ -153,17 +177,17 @@ acceptance_criteria:
 
 ### 🚀 AGENT PICKUP GUIDE
 
-**➡️ Next Available Task**: **TASK-002** - Inline Documentation Updates  
-**📋 Your Job**: Work on TASK-002 only, then update docs and hand off  
-**🚦 Dependencies**: None - TASK-001 complete, can proceed immediately
+**➡️ Next Available Task**: **TASK-003** - Agent Handoff Automation  
+**📋 Your Job**: Work on TASK-003 only, then update docs and hand off  
+**🚦 Dependencies**: None - TASK-002 complete, can proceed immediately
 
 ### 🚦 Current State _(AGENTS: Update this when you complete YOUR task)_
 
-- **Next Available Task**: TASK-002 - Inline Documentation Updates
-- **Current Task Status**: TASK-001 completed, TASK-002 ready for pickup
-- **Overall Progress**: 1 of 5 tasks complete (20% - Excellent progress on DOG FOOD MILESTONE!)
+- **Next Available Task**: TASK-003 - Agent Handoff Automation
+- **Current Task Status**: TASK-002 completed, TASK-003 ready for pickup  
+- **Overall Progress**: 2 of 5 tasks complete (40% - Great progress on DOG FOOD MILESTONE!)
 - **Blockers**: None
-- **Last Updated**: 2024-08-26 by Backend Developer
+- **Last Updated**: 2025-08-26 by Backend Developer
 
 ---
 
@@ -185,7 +209,7 @@ Implement WorkflowStateManager that tracks assignments in real-time, updates spe
 ### Success Criteria
 
 - [x] Real-time tracking of task assignments and progress
-- [ ] Spec frontmatter updates automatically (no separate completion documents)
+- [x] Spec frontmatter updates automatically (no separate completion documents)
 - [x] Agent handoffs detected and next tasks prepared automatically
 - [x] Progress metrics accurate across all specs ("X of Y tasks complete")
 - [x] CLI provides clear view of current assignments and handoff status
@@ -214,21 +238,22 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 - **Files**: `lib/workflow-state-manager.js`, state file schemas, CLI integration
 - **Completed**: 2024-08-26 - WorkflowStateManager fully functional with real-time tracking and CLI commands
 
-**TASK-002** 🤖 **Inline Documentation Updates** ⏳ **← READY FOR PICKUP** | Agent: Backend-Developer
+**TASK-002** 🤖 **Inline Documentation Updates** ✅ **← COMPLETED** | Agent: Backend-Developer
 
-- [ ] Implement frontmatter update system for spec files
-- [ ] Add task status synchronization (ready → in_progress → complete)
-- [ ] Create subtask progress tracking within task frontmatter
-- [ ] Add "current_task" and "next_available" field management
-- [ ] Implement atomic file updates to prevent corruption
-- [ ] Add rollback capability for failed updates
-- [ ] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
-- [ ] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
-- [ ] Product Handoff: notify next agent that inline updates are working
+- [x] Implement frontmatter update system for spec files
+- [x] Add task status synchronization (ready → in_progress → complete)  
+- [x] Create subtask progress tracking within task frontmatter
+- [x] Add "current_task" and "next_available" field management
+- [x] Implement atomic file updates to prevent corruption
+- [x] Add rollback capability for failed updates
+- [x] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
+- [x] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
+- [x] Product Handoff: notify next agent that inline updates are working
 - **Dependencies**: TASK-001 must be complete
-- **Files**: Frontmatter update utilities, file synchronization logic
+- **Files**: `lib/frontmatter-sync.js`, enhanced WorkflowStateManager integration, SpecParser filePath support
+- **Completed**: 2025-08-26 - FrontmatterSync system with atomic operations, YAML validation, backup/restore, and real-time sync
 
-**TASK-003** 🤖 **Agent Handoff Automation** ⏸️ **← BLOCKED (waiting for TASK-002)** | Agent: Software-Architect
+**TASK-003** 🤖 **Agent Handoff Automation** ⏳ **← READY FOR PICKUP** | Agent: Software-Architect
 
 - [ ] Implement handoff detection (when task/subtask completes)
 - [ ] Add next task preparation and context gathering
@@ -239,7 +264,7 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 - [ ] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
 - [ ] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
 - [ ] Product Handoff: notify CLI specialist that handoff system is ready
-- **Dependencies**: TASK-002 must be complete
+- **Dependencies**: TASK-002 complete ✅
 - **Files**: Handoff detection logic, next task calculation
 
 **TASK-004** 🤖 **CLI Integration & Progress Commands** ⏸️ **← BLOCKED (waiting for TASK-003)** | Agent: CLI-Specialist
@@ -321,6 +346,7 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 ### ✅ Completed Tasks _(Add entry when you finish your task)_
 
 - ✅ **[2024-08-26]** - **TASK-001** completed - _Agent: Backend Developer_ - Next: TASK-002 ready
+- ✅ **[2025-08-26]** - **TASK-002** completed - _Agent: Backend Developer_ - Next: TASK-003 ready
 
 ### 🚨 Task Blockers _(Preventing next task pickup)_
 
@@ -328,8 +354,8 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 
 ### ➡️ Handoff Status _(What's ready for next agent)_
 
-- **Ready Now**: TASK-002 (dependencies met, TASK-001 complete)
-- **Waiting**: TASK-003 through TASK-005 (sequential dependencies)
+- **Ready Now**: TASK-003 (dependencies met, TASK-002 complete)
+- **Waiting**: TASK-004 and TASK-005 (sequential dependencies)
 
 ---
 

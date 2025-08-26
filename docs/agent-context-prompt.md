@@ -51,22 +51,24 @@ You are working on the **ASD (Agentic Spec Development) CLI** - a tool for manag
 - Agent definition system with customizable workflows
 - Context management CLI commands (`asd context`, `asd agent`, `asd assign`)
 - Automatic context updates based on task lifecycle events
+- Task routing and recommendations (`asd next` command with sophisticated filtering)
+- Priority and constraint system with workload balancing
+- Task assignment validation and dependency checking
 
 **NOT YET IMPLEMENTED** ❌:
-- Task routing and recommendations (`asd next` command)
-- Workflow state management
-- Advanced CLI commands for project management
+- Workflow state management and real-time progress tracking
+- Advanced CLI commands for project management and reporting
 
 ## 🎯 NEXT TASK ASSIGNMENT
 
-**YOUR TASK**: Implement **FEAT-013: Task Router System**
+**YOUR TASK**: Implement **FEAT-014: Workflow State Manager**
 
 - **Priority**: P0 (Critical)
 - **Status**: Ready to start
-- **Spec File**: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/active/FEAT-013-task-router-system.md`
-- **First Sub-task**: TASK-001 - Task Routing Engine Architecture
+- **Spec File**: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/active/FEAT-014-workflow-state-manager.md`
+- **First Sub-task**: TASK-001 - Workflow State Engine Architecture
 
-**Dependencies**: ✅ FEAT-012 Context Injection System (COMPLETED) - foundation is ready
+**Dependencies**: ✅ FEAT-012 Context Injection (COMPLETED) + FEAT-013 Task Router (COMPLETED) - foundation is ready
 
 Read the specification file above to understand the full requirements, then follow the Task Execution Guide below.
 
@@ -77,14 +79,14 @@ Read the specification file above to understand the full requirements, then foll
 - Multi-layer context for agent handoffs
 - File: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/done/FEAT-012-context-injection-system.md`
 
-**FEAT-013**: Task Router System (P0) - _CURRENTLY ASSIGNED_
+**FEAT-013**: Task Router System (P0) - ✅ _COMPLETED_
 
-- Intelligent task recommendations
-- File: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/active/FEAT-013-task-router-system.md`
+- Intelligent task recommendations with `asd next` command
+- File: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/done/FEAT-013-task-router-system.md`
 
-**FEAT-014**: Workflow State Manager (P0) - _DEPENDS ON FEAT-013_
+**FEAT-014**: Workflow State Manager (P0) - _CURRENTLY ASSIGNED_
 
-- Real-time progress tracking
+- Real-time progress tracking and state management
 - File: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/active/FEAT-014-workflow-state-manager.md`
 
 ### Codebase Structure
