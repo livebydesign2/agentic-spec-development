@@ -10,6 +10,7 @@ const ContextManager = require('../lib/context-manager');
 const ContextValidator = require('../lib/context-validator');
 const ContextTriggerSystem = require('../lib/context-triggers');
 const { TaskRecommendationAPI } = require('../lib/task-router');
+const WorkflowStateManager = require('../lib/workflow-state-manager');
 
 const program = new Command();
 
@@ -220,6 +221,47 @@ program
   .option('--source <source>', 'Source of research')
   .action(async (specId, options) => {
     await handleResearchCapture(specId, options);
+  });
+
+// Workflow state management commands
+const workflowCommand = program
+  .command('workflow')
+  .description('Manage workflow state and progress tracking');
+
+workflowCommand
+  .command('status')
+  .description('Show current workflow status and assignments')
+  .option('--agent <agent-type>', 'Filter by agent type')
+  .option('--verbose', 'Show detailed status information')
+  .action(async (options) => {
+    await handleWorkflowStatus(options);
+  });
+
+workflowCommand
+  .command('progress')
+  .description('Show project progress breakdown')
+  .option('--spec <spec-id>', 'Show progress for specific spec')
+  .option('--phase <phase>', 'Filter by phase')
+  .option('--detailed', 'Show detailed progress breakdown')
+  .action(async (options) => {
+    await handleWorkflowProgress(options);
+  });
+
+workflowCommand
+  .command('handoffs')
+  .description('Show ready handoffs and handoff history')
+  .option('--ready-only', 'Show only ready handoffs')
+  .option('--history', 'Show handoff history')
+  .action(async (options) => {
+    await handleWorkflowHandoffs(options);
+  });
+
+workflowCommand
+  .command('validate')
+  .description('Validate workflow state consistency')
+  .option('--fix', 'Attempt to fix consistency issues')
+  .action(async (options) => {
+    await handleWorkflowValidate(options);
   });
 
 program
@@ -1763,6 +1805,220 @@ function getMatchQualityDisplay(quality) {
     case 'Partial match': return chalk.yellow(quality);
     case 'Poor match': return chalk.red(quality);
     default: return chalk.gray(quality);
+  }
+}
+
+// Workflow state management handler functions
+async function handleWorkflowStatus(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const stateManager = new WorkflowStateManager(configManager, specParser);
+    await stateManager.initialize();
+
+    const assignments = await stateManager.getCurrentAssignments();
+    
+    console.log(chalk.cyan('📊 Current Workflow Status'));
+    console.log(chalk.gray('='.repeat(50)));
+    
+    if (assignments.current_assignments.length === 0) {
+      console.log(chalk.yellow('⚠️  No active assignments'));
+      return;
+    }
+
+    console.log(chalk.white(`Active Assignments: ${assignments.total_active_assignments}`));
+    console.log();
+
+    for (const assignment of assignments.current_assignments) {
+      if (!options.agent || assignment.assigned_agent === options.agent) {
+        console.log(chalk.white(`• ${assignment.spec_id}:${assignment.task_id}`));
+        console.log(chalk.gray(`  Agent: ${assignment.assigned_agent}`));
+        console.log(chalk.gray(`  Started: ${new Date(assignment.started_at).toLocaleString()}`));
+        console.log(chalk.gray(`  Priority: ${getPriorityDisplay(assignment.priority)}`));
+        
+        if (options.verbose) {
+          console.log(chalk.gray(`  Estimated Hours: ${assignment.estimated_hours || 'N/A'}`));
+          const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 100) / 100;
+          console.log(chalk.gray(`  Duration: ${duration}h`));
+        }
+        console.log();
+      }
+    }
+
+    // Show agent workloads
+    if (Object.keys(assignments.agent_workloads).length > 0) {
+      console.log(chalk.blue('👥 Agent Workloads:'));
+      for (const [agent, workload] of Object.entries(assignments.agent_workloads)) {
+        if (!options.agent || agent === options.agent) {
+          console.log(chalk.gray(`  ${agent}: ${workload.current_tasks} tasks, ${workload.total_hours}h total`));
+        }
+      }
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Workflow status failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleWorkflowProgress(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const stateManager = new WorkflowStateManager(configManager, specParser);
+    await stateManager.initialize();
+
+    if (options.spec) {
+      const specProgress = await stateManager.getSpecProgress(options.spec);
+      
+      console.log(chalk.cyan(`📈 Progress for ${options.spec}`));
+      console.log(chalk.gray('='.repeat(50)));
+      
+      console.log(chalk.white(`Total Tasks: ${specProgress.total_tasks || 0}`));
+      console.log(chalk.white(`Completed Tasks: ${specProgress.completed_tasks || 0}`));
+      console.log(chalk.white(`Completion: ${Math.round(specProgress.completion_percentage || 0)}%`));
+      console.log(chalk.white(`Active Assignments: ${specProgress.active_assignments?.length || 0}`));
+      
+      if (options.detailed && specProgress.active_assignments && specProgress.active_assignments.length > 0) {
+        console.log(chalk.blue('\nActive Assignments:'));
+        for (const assignment of specProgress.active_assignments) {
+          console.log(chalk.gray(`  • ${assignment.task_id} → ${assignment.assigned_agent}`));
+        }
+      }
+    } else {
+      const progress = await stateManager.getProjectProgress();
+      
+      console.log(chalk.cyan('📈 Project Progress Overview'));
+      console.log(chalk.gray('='.repeat(50)));
+      
+      console.log(chalk.white(`Total Specs: ${progress.overall.total_specs}`));
+      console.log(chalk.white(`Active Specs: ${progress.overall.active_specs}`));
+      console.log(chalk.white(`Completed Specs: ${progress.overall.completed_specs}`));
+      console.log(chalk.white(`Total Tasks: ${progress.overall.total_tasks}`));
+      console.log(chalk.white(`Completed Tasks: ${progress.overall.completed_tasks}`));
+      console.log(chalk.white(`Overall Completion: ${Math.round(progress.overall.completion_percentage)}%`));
+      console.log(chalk.white(`Active Assignments: ${progress.active_assignments || 0}`));
+      
+      if (options.detailed && progress.by_phase && Object.keys(progress.by_phase).length > 0) {
+        console.log(chalk.blue('\nProgress by Phase:'));
+        for (const [phase, phaseData] of Object.entries(progress.by_phase)) {
+          if (!options.phase || phase === options.phase) {
+            console.log(chalk.gray(`  ${phase}: ${phaseData.completed_specs}/${phaseData.specs} specs (${Math.round(phaseData.completion_percentage)}%)`));
+          }
+        }
+      }
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Workflow progress failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleWorkflowHandoffs(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const stateManager = new WorkflowStateManager(configManager, specParser);
+    await stateManager.initialize();
+
+    const handoffStatus = await stateManager.getHandoffStatus();
+    
+    console.log(chalk.cyan('🔄 Workflow Handoffs'));
+    console.log(chalk.gray('='.repeat(50)));
+    
+    if (!options.history) {
+      console.log(chalk.white(`Ready Handoffs: ${handoffStatus.ready_handoffs.length}`));
+      
+      if (handoffStatus.ready_handoffs.length > 0) {
+        console.log(chalk.blue('\nReady for Handoff:'));
+        for (const handoff of handoffStatus.ready_handoffs) {
+          console.log(chalk.white(`• ${handoff.spec_id}: ${handoff.from_task} → ${handoff.to_task}`));
+          console.log(chalk.gray(`  Next Agent: ${handoff.next_agent}`));
+          console.log(chalk.gray(`  Ready Since: ${new Date(handoff.ready_at).toLocaleString()}`));
+          console.log(chalk.gray(`  Reason: ${handoff.handoff_reason || handoff.reason}`));
+          console.log();
+        }
+      } else {
+        console.log(chalk.gray('\nNo handoffs ready at this time'));
+      }
+    }
+    
+    if (options.history && handoffStatus.handoff_history.length > 0) {
+      console.log(chalk.blue('\nRecent Handoff History:'));
+      for (const historyItem of handoffStatus.handoff_history) {
+        console.log(chalk.gray(`• ${historyItem.spec_id}: ${historyItem.from_task} → ${historyItem.to_task}`));
+        console.log(chalk.gray(`  Completed: ${new Date(historyItem.completed_at).toLocaleString()}`));
+      }
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Workflow handoffs failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleWorkflowValidate(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const stateManager = new WorkflowStateManager(configManager, specParser);
+    await stateManager.initialize();
+
+    console.log(chalk.cyan('🔍 Validating Workflow State'));
+    console.log(chalk.gray('='.repeat(50)));
+    
+    const validation = await stateManager.validateState();
+    
+    console.log(chalk.white('Valid:'), validation.isValid ? chalk.green('✓') : chalk.red('✗'));
+    console.log(chalk.white('Validation Time:'), chalk.cyan(`${validation.performance.total}ms`));
+    
+    if (validation.statistics) {
+      console.log(chalk.blue('\nStatistics:'));
+      console.log(chalk.gray(`  Total Assignments: ${validation.statistics.total_assignments}`));
+      console.log(chalk.gray(`  Total Specs: ${validation.statistics.total_specs}`));
+      console.log(chalk.gray(`  Ready Handoffs: ${validation.statistics.ready_handoffs}`));
+    }
+    
+    if (validation.errors && validation.errors.length > 0) {
+      console.log(chalk.red('\nErrors:'));
+      validation.errors.forEach(error => {
+        console.log(chalk.red(`  • ${error}`));
+      });
+    }
+    
+    if (validation.warnings && validation.warnings.length > 0) {
+      console.log(chalk.yellow('\nWarnings:'));
+      validation.warnings.forEach(warning => {
+        console.log(chalk.yellow(`  • ${warning}`));
+      });
+    }
+    
+    if (validation.isValid) {
+      console.log(chalk.green('\n✅ Workflow state validation passed!'));
+    } else {
+      console.log(chalk.red('\n❌ Workflow state validation failed'));
+      if (options.fix) {
+        console.log(chalk.yellow('🔧 Automatic fixing not yet implemented'));
+      }
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Workflow validation failed:'), error.message);
+    process.exit(1);
   }
 }
 
