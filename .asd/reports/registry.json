@@ -1,0 +1,36 @@
+{
+  "reports": [
+    {
+      "id": "ANA-FEAT-014-1756244783564-i53bvo",
+      "type": "analysis",
+      "title": "Test Analysis Report",
+      "specId": "FEAT-014",
+      "taskId": "TASK-005",
+      "agentType": "software-architect",
+      "createdAt": "2025-08-26T21:46:23.564Z",
+      "lifecycle": "task_completion",
+      "retentionHours": 72,
+      "status": "active",
+      "path": "/Users/tylerbarnard/Developer/Apps/asd/.asd/reports/analysis/ANA-FEAT-014-1756244783564-i53bvo.md",
+      "context": {
+        "testData": "sample"
+      }
+    },
+    {
+      "id": "FIN-FEAT-014-1756244793877-lit8af",
+      "type": "findings",
+      "title": "TASK-005 Implementation Findings",
+      "specId": "FEAT-014",
+      "taskId": "TASK-005",
+      "agentType": "software-architect",
+      "createdAt": "2025-08-26T21:46:33.877Z",
+      "lifecycle": "spec_completion",
+      "retentionHours": 168,
+      "status": "active",
+      "path": "/Users/tylerbarnard/Developer/Apps/asd/.asd/reports/findings/FIN-FEAT-014-1756244793877-lit8af.md",
+      "context": {}
+    }
+  ],
+  "lastUpdated": "2025-08-26T21:46:33.878Z",
+  "version": "1.0.0"
+}

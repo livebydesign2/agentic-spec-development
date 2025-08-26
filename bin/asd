@@ -11,6 +11,8 @@ const ContextValidator = require('../lib/context-validator');
 const ContextTriggerSystem = require('../lib/context-triggers');
 const { TaskRecommendationAPI } = require('../lib/task-router');
 const WorkflowStateManager = require('../lib/workflow-state-manager');
+const HandoffAutomationEngine = require('../lib/handoff-automation-engine');
+const DocumentationTemplateManager = require('../lib/documentation-template-manager');
 const UIComponents = require('../lib/ui-components');
 
 const program = new Command();
@@ -304,6 +306,132 @@ workflowCommand
   .option('--timeline', 'Show assignment timeline')
   .action(async (options) => {
     await handleWorkflowAssignments(options);
+  });
+
+// Handoff automation commands
+workflowCommand
+  .command('handoff')
+  .description('Manage automated agent handoffs')
+  .command('trigger')
+  .description('Trigger manual handoff for a task')
+  .argument('<spec-id>', 'Specification ID')
+  .argument('<task-id>', 'Task ID to hand off')
+  .argument('<to-agent>', 'Target agent type')
+  .option('--from-agent <agent>', 'Source agent type')
+  .option('--reason <reason>', 'Reason for handoff')
+  .option('--next-task <task-id>', 'Specific next task (optional)')
+  .action(async (specId, taskId, toAgent, options) => {
+    await handleHandoffTrigger(specId, taskId, toAgent, options);
+  });
+
+workflowCommand
+  .command('handoff-status')
+  .description('Show handoff automation system status')
+  .option('--active', 'Show active handoffs only')
+  .option('--history', 'Show handoff history')
+  .option('--health', 'Show system health status')
+  .option('--performance', 'Show performance metrics')
+  .action(async (options) => {
+    await handleHandoffStatus(options);
+  });
+
+workflowCommand
+  .command('complete-task')
+  .description('Complete task and trigger automatic handoff')
+  .argument('<spec-id>', 'Specification ID')
+  .argument('<task-id>', 'Task ID to complete')
+  .option('--notes <notes>', 'Completion notes')
+  .option('--handoff', 'Force handoff evaluation')
+  .action(async (specId, taskId, options) => {
+    await handleCompleteTaskWithHandoff(specId, taskId, options);
+  });
+
+// Documentation template management commands
+const reportCommand = program
+  .command('report')
+  .description('Manage structured temporary documentation with automatic lifecycle management');
+
+reportCommand
+  .command('create')
+  .description('Create a new report from template')
+  .argument('<type>', 'Report type: analysis, findings, recommendations, handoff, audit')
+  .argument('<title>', 'Report title')
+  .argument('<spec-id>', 'Associated specification ID')
+  .option('--task-id <task-id>', 'Associated task ID')
+  .option('--agent <agent-type>', 'Agent type creating the report', 'software-architect')
+  .option('--context <json>', 'Additional context data as JSON')
+  .option('--metadata <json>', 'Additional metadata as JSON')
+  .action(async (type, title, specId, options) => {
+    await handleReportCreate(type, title, specId, options);
+  });
+
+reportCommand
+  .command('list')
+  .description('List reports with filtering options')
+  .option('--type <type>', 'Filter by report type')
+  .option('--spec <spec-id>', 'Filter by specification ID')
+  .option('--task <task-id>', 'Filter by task ID')
+  .option('--agent <agent-type>', 'Filter by agent type')
+  .option('--status <status>', 'Filter by status (active, archived)')
+  .option('--sort <field>', 'Sort by field: createdAt, title, type', 'createdAt')
+  .option('--order <order>', 'Sort order: asc, desc', 'desc')
+  .option('--limit <n>', 'Maximum number of reports to show', '20')
+  .option('--verbose', 'Show detailed report information')
+  .action(async (options) => {
+    await handleReportList(options);
+  });
+
+reportCommand
+  .command('show')
+  .description('Show report content and metadata')
+  .argument('<report-id>', 'Report ID to show')
+  .option('--metadata-only', 'Show only metadata, not content')
+  .action(async (reportId, options) => {
+    await handleReportShow(reportId, options);
+  });
+
+reportCommand
+  .command('update')
+  .description('Update existing report')
+  .argument('<report-id>', 'Report ID to update')
+  .option('--content <content>', 'New content for the report')
+  .option('--metadata <json>', 'Updated metadata as JSON')
+  .option('--edit', 'Open report in editor')
+  .action(async (reportId, options) => {
+    await handleReportUpdate(reportId, options);
+  });
+
+reportCommand
+  .command('cleanup')
+  .description('Execute cleanup based on lifecycle rules')
+  .option('--dry-run', 'Show what would be cleaned up without making changes')
+  .option('--completed-tasks <task-ids>', 'Comma-separated list of completed task IDs')
+  .option('--completed-specs <spec-ids>', 'Comma-separated list of completed spec IDs')
+  .option('--force', 'Force cleanup regardless of retention rules')
+  .option('--respect-retention', 'Only cleanup reports past retention time', true)
+  .action(async (options) => {
+    await handleReportCleanup(options);
+  });
+
+reportCommand
+  .command('templates')
+  .description('Manage report templates')
+  .option('--list', 'List available templates')
+  .option('--show <type>', 'Show template content for specific type')
+  .option('--validate', 'Validate all templates')
+  .action(async (options) => {
+    await handleReportTemplates(options);
+  });
+
+reportCommand
+  .command('stats')
+  .description('Show documentation system statistics and health')
+  .option('--detailed', 'Show detailed statistics')
+  .option('--by-type', 'Group statistics by report type')
+  .option('--by-agent', 'Group statistics by agent type')
+  .option('--cleanup-preview', 'Show upcoming cleanup candidates')
+  .action(async (options) => {
+    await handleReportStats(options);
   });
 
 program
@@ -2658,6 +2786,758 @@ async function handleWorkflowAssignments(options) {
 
   } catch (error) {
     console.error(chalk.red('❌ Workflow assignments failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+// Handoff automation handler functions
+async function handleHandoffTrigger(specId, taskId, toAgent, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const handoffEngine = new HandoffAutomationEngine(configManager);
+    await handoffEngine.initialize();
+
+    console.log(chalk.cyan('🤝 Triggering Manual Handoff'));
+    console.log(chalk.gray('='.repeat(60)));
+    console.log(chalk.white(`From Task: ${chalk.yellow(specId)}:${chalk.cyan(taskId)}`));
+    console.log(chalk.white(`To Agent: ${chalk.magenta(toAgent)}`));
+    
+    if (options.fromAgent) {
+      console.log(chalk.white(`From Agent: ${chalk.magenta(options.fromAgent)}`));
+    }
+    
+    if (options.reason) {
+      console.log(chalk.white(`Reason: ${chalk.gray(options.reason)}`));
+    }
+
+    const result = await handoffEngine.triggerManualHandoff(specId, taskId, toAgent, {
+      fromAgent: options.fromAgent,
+      reason: options.reason,
+      nextTask: options.nextTask
+    });
+
+    console.log();
+    if (result.success && result.handoffNeeded) {
+      console.log(chalk.green('✅ Handoff executed successfully!'));
+      
+      if (result.nextTask) {
+        console.log(chalk.white(`Next Task: ${chalk.yellow(result.nextTask)}`));
+      }
+      
+      if (result.nextAgent) {
+        console.log(chalk.white(`Next Agent: ${chalk.magenta(result.nextAgent)}`));
+      }
+
+      if (result.performance?.total) {
+        console.log(chalk.gray(`Performance: ${result.performance.total}ms`));
+      }
+
+      if (result.context?.handoffContext) {
+        console.log(chalk.blue('\n📋 Context Prepared:'));
+        console.log(chalk.gray(`• Agent Context: ${result.context.handoffContext.assignment.agentType}`));
+        console.log(chalk.gray(`• Task Context: ${result.context.handoffContext.assignment.taskId}`));
+        console.log(chalk.gray(`• Ready for Work: ${result.context.handoffContext.workflow.readyForWork ? 'Yes' : 'No'}`));
+      }
+
+    } else if (result.success && !result.handoffNeeded) {
+      console.log(chalk.yellow('ℹ️  No handoff needed'));
+      console.log(chalk.gray(`Reason: ${result.reason}`));
+      
+    } else {
+      console.log(chalk.red('❌ Handoff failed'));
+      console.log(chalk.red(`Error: ${result.error}`));
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Handoff trigger failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleHandoffStatus(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const handoffEngine = new HandoffAutomationEngine(configManager);
+    await handoffEngine.initialize();
+
+    const status = await handoffEngine.getHandoffStatus();
+
+    console.log(chalk.cyan('🔄 Handoff Automation Status'));
+    console.log(chalk.gray('='.repeat(70)));
+
+    // Show system health if requested
+    if (options.health) {
+      console.log(chalk.blue('🏥 System Health:'));
+      const health = status.systemHealth;
+      
+      console.log(chalk.white(`Overall: ${health.overall ? chalk.green('Healthy') : chalk.red('Unhealthy')}`));
+      console.log(chalk.white(`Workflow State Manager: ${health.workflowStateManager ? chalk.green('✓') : chalk.red('✗')}`));
+      console.log(chalk.white(`Context Injector: ${health.contextInjector ? chalk.green('✓') : chalk.red('✗')}`));
+      console.log(chalk.white(`Task Router API: ${health.taskRecommendationAPI ? chalk.green('✓') : chalk.red('✗')}`));
+      console.log(chalk.white(`Handoff Engine: ${health.handoffEngine ? chalk.green('✓') : chalk.red('✗')}`));
+      
+      if (health.issues && health.issues.length > 0) {
+        console.log(chalk.red('\n⚠️  Issues:'));
+        health.issues.forEach(issue => console.log(chalk.red(`  • ${issue}`)));
+      }
+      console.log();
+    }
+
+    // Show active handoffs
+    if (!options.history && (options.active || status.active.length > 0)) {
+      console.log(chalk.blue('⏳ Active Handoffs:'));
+      
+      if (status.active.length === 0) {
+        console.log(chalk.gray('  No active handoffs'));
+      } else {
+        status.active.forEach(handoff => {
+          console.log(`  🔄 ${chalk.yellow(handoff.id)} (${chalk.cyan(handoff.status)})`);
+          console.log(`     Started: ${chalk.gray(handoff.startedAt)}`);
+          if (handoff.trigger) {
+            console.log(`     Trigger: ${chalk.magenta(handoff.trigger.type)} - ${handoff.trigger.specId}:${handoff.trigger.taskId}`);
+          }
+        });
+      }
+      console.log();
+    }
+
+    // Show handoff history if requested
+    if (options.history) {
+      console.log(chalk.blue('📜 Recent Handoff History:'));
+      
+      if (status.recentHistory.length === 0) {
+        console.log(chalk.gray('  No handoff history'));
+      } else {
+        status.recentHistory.forEach(handoff => {
+          const statusIcon = handoff.status === 'completed' ? '✅' : handoff.status === 'failed' ? '❌' : '🔄';
+          console.log(`  ${statusIcon} ${chalk.yellow(handoff.id)} (${chalk.cyan(handoff.status)})`);
+          console.log(`     ${chalk.gray(handoff.startedAt)} → ${chalk.gray(handoff.completedAt || 'ongoing')}`);
+          
+          if (handoff.performance?.total) {
+            console.log(`     Performance: ${chalk.gray(handoff.performance.total + 'ms')}`);
+          }
+          
+          if (handoff.error) {
+            console.log(`     Error: ${chalk.red(handoff.error)}`);
+          }
+        });
+      }
+      console.log();
+    }
+
+    // Show performance metrics if requested
+    if (options.performance) {
+      console.log(chalk.blue('📊 Performance Metrics:'));
+      const stats = status.statistics;
+      
+      console.log(chalk.white(`Total Handoffs: ${chalk.cyan(stats.totalHandoffs)}`));
+      console.log(chalk.white(`Successful: ${chalk.green(stats.successfulHandoffs)}`));
+      console.log(chalk.white(`Failed: ${chalk.red(stats.failedHandoffs)}`));
+      console.log(chalk.white(`Success Rate: ${chalk.cyan(Math.round((stats.successfulHandoffs / Math.max(stats.totalHandoffs, 1)) * 100))}%`));
+      console.log(chalk.white(`Average Time: ${chalk.cyan(stats.averageHandoffTime)}ms`));
+      console.log(chalk.white(`Active Transitions: ${chalk.cyan(stats.activeTransitions)}`));
+      console.log();
+    }
+
+    // Default summary view
+    if (!options.active && !options.history && !options.health && !options.performance) {
+      console.log(chalk.white(`📊 Summary:`));
+      console.log(chalk.white(`  Active Handoffs: ${chalk.cyan(status.active.length)}`));
+      console.log(chalk.white(`  Total Completed: ${chalk.green(status.statistics.successfulHandoffs)}`));
+      console.log(chalk.white(`  System Health: ${status.systemHealth.overall ? chalk.green('Healthy') : chalk.red('Unhealthy')}`));
+      
+      if (status.queue && status.queue.length > 0) {
+        console.log(chalk.white(`  Queued Handoffs: ${chalk.yellow(status.queue.length)}`));
+      }
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Failed to get handoff status:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleCompleteTaskWithHandoff(specId, taskId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const handoffEngine = new HandoffAutomationEngine(configManager);
+    await handoffEngine.initialize();
+
+    console.log(chalk.cyan('✅ Completing Task with Handoff'));
+    console.log(chalk.gray('='.repeat(60)));
+    console.log(chalk.white(`Task: ${chalk.yellow(specId)}:${chalk.cyan(taskId)}`));
+    
+    if (options.notes) {
+      console.log(chalk.white(`Notes: ${chalk.gray(options.notes)}`));
+    }
+
+    // Complete the task first using WorkflowStateManager
+    const stateManager = new WorkflowStateManager(configManager, specParser);
+    await stateManager.initialize();
+
+    const completionResult = await stateManager.completeTask(specId, taskId, {
+      notes: options.notes || "Task completed via CLI"
+    });
+
+    if (!completionResult.success) {
+      console.log(chalk.red('❌ Task completion failed'));
+      console.log(chalk.red(`Error: ${completionResult.error}`));
+      process.exit(1);
+    }
+
+    console.log(chalk.green('✅ Task completed successfully'));
+
+    // Trigger handoff if one was detected or if forced
+    if (completionResult.handoff || options.handoff) {
+      console.log(chalk.blue('\n🔄 Triggering automatic handoff...'));
+
+      const handoffResult = await handoffEngine.executeHandoff({
+        type: 'task_completed',
+        specId: specId,
+        taskId: taskId,
+        fromAgent: completionResult.completion?.assigned_agent,
+        context: {
+          completionNotes: options.notes,
+          completedAt: completionResult.completion?.completed_at
+        }
+      });
+
+      console.log();
+      if (handoffResult.success && handoffResult.handoffNeeded) {
+        console.log(chalk.green('🤝 Handoff executed successfully!'));
+        
+        if (handoffResult.nextTask) {
+          console.log(chalk.white(`Next Task: ${chalk.yellow(handoffResult.nextTask)}`));
+        }
+        
+        if (handoffResult.nextAgent) {
+          console.log(chalk.white(`Next Agent: ${chalk.magenta(handoffResult.nextAgent)}`));
+        }
+
+        if (handoffResult.performance?.total) {
+          console.log(chalk.gray(`Handoff Time: ${handoffResult.performance.total}ms`));
+        }
+
+      } else if (handoffResult.success && !handoffResult.handoffNeeded) {
+        console.log(chalk.yellow('ℹ️  No handoff needed'));
+        console.log(chalk.gray(`Reason: ${handoffResult.reason}`));
+        
+      } else {
+        console.log(chalk.red('❌ Handoff failed'));
+        console.log(chalk.red(`Error: ${handoffResult.error}`));
+      }
+    } else {
+      console.log(chalk.yellow('ℹ️  No handoff opportunity detected'));
+    }
+
+    // Show updated progress
+    console.log(chalk.blue('\n📊 Updated Progress:'));
+    const progress = await stateManager.getProjectProgress();
+    console.log(chalk.white(`Overall: ${chalk.cyan(progress.overall.completion_percentage.toFixed(1))}% (${progress.overall.completed_tasks}/${progress.overall.total_tasks})`));
+
+  } catch (error) {
+    console.error(chalk.red('❌ Task completion with handoff failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+// Report management handler functions
+
+async function handleReportCreate(type, title, specId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const reportManager = new DocumentationTemplateManager(configManager);
+    await reportManager.initialize();
+
+    console.log(chalk.cyan('📝 Creating Report'));
+    console.log(chalk.gray('='.repeat(40)));
+
+    // Parse JSON options if provided
+    let context = {};
+    let metadata = {};
+
+    if (options.context) {
+      try {
+        context = JSON.parse(options.context);
+      } catch (error) {
+        console.error(chalk.red('❌ Invalid JSON in --context option'));
+        process.exit(1);
+      }
+    }
+
+    if (options.metadata) {
+      try {
+        metadata = JSON.parse(options.metadata);
+      } catch (error) {
+        console.error(chalk.red('❌ Invalid JSON in --metadata option'));
+        process.exit(1);
+      }
+    }
+
+    const createOptions = {
+      type,
+      title,
+      specId,
+      taskId: options.taskId,
+      agentType: options.agent,
+      context,
+      metadata
+    };
+
+    const result = await reportManager.createReport(createOptions);
+
+    if (result.success) {
+      console.log(chalk.green('✅ Report created successfully!'));
+      console.log(chalk.white('Report ID:'), chalk.yellow(result.reportId));
+      console.log(chalk.white('File Path:'), chalk.cyan(result.reportPath));
+      console.log(chalk.white('Type:'), chalk.magenta(result.metadata.type));
+      console.log(chalk.white('Lifecycle:'), chalk.blue(result.metadata.lifecycle));
+      
+      if (result.metadata.retentionHours) {
+        console.log(chalk.white('Retention:'), chalk.gray(`${result.metadata.retentionHours} hours`));
+      }
+      
+      if (result.performance.total > 50) {
+        console.log(chalk.yellow(`⚠️  Creation took ${result.performance.total}ms`));
+      }
+    } else {
+      console.error(chalk.red('❌ Report creation failed:'), result.error);
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Report create failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleReportList(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const reportManager = new DocumentationTemplateManager(configManager);
+    await reportManager.initialize();
+
+    console.log(chalk.cyan('📋 Documentation Reports'));
+    console.log(chalk.gray('='.repeat(50)));
+
+    const filters = {
+      type: options.type,
+      specId: options.spec,
+      taskId: options.task,
+      agentType: options.agent,
+      status: options.status,
+      sortBy: options.sort,
+      sortOrder: options.order,
+      limit: parseInt(options.limit) || 20
+    };
+
+    const result = await reportManager.listReports(filters);
+
+    if (result.success) {
+      if (result.reports.length === 0) {
+        console.log(chalk.yellow('📄 No reports found matching filters'));
+        return;
+      }
+
+      console.log(chalk.white(`Found ${chalk.cyan(result.total)} reports (showing ${chalk.cyan(result.reports.length)})`));
+      console.log();
+
+      for (const report of result.reports) {
+        const age = Math.round((Date.now() - new Date(report.createdAt)) / (1000 * 60 * 60));
+        
+        console.log(chalk.white(`• ${chalk.yellow(report.id)}`));
+        console.log(chalk.gray(`  Title: ${report.title}`));
+        console.log(chalk.gray(`  Type: ${chalk.magenta(report.type)} | Agent: ${chalk.blue(report.agentType)}`));
+        console.log(chalk.gray(`  Spec: ${chalk.cyan(report.specId)}${report.taskId ? ` | Task: ${chalk.green(report.taskId)}` : ''}`));
+        console.log(chalk.gray(`  Created: ${age}h ago | Status: ${report.status === 'active' ? chalk.green(report.status) : chalk.yellow(report.status)}`));
+        
+        if (options.verbose) {
+          console.log(chalk.gray(`  Path: ${report.path}`));
+          if (report.lifecycle !== 'manual') {
+            console.log(chalk.gray(`  Lifecycle: ${report.lifecycle} (${report.retentionHours}h retention)`));
+          }
+        }
+        console.log();
+      }
+
+    } else {
+      console.error(chalk.red('❌ Report listing failed:'), result.error);
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Report list failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleReportShow(reportId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const reportManager = new DocumentationTemplateManager(configManager);
+    await reportManager.initialize();
+
+    const result = await reportManager.getReport(reportId, {
+      includeContent: !options.metadataOnly
+    });
+
+    if (result.success) {
+      const report = result.metadata;
+      
+      console.log(chalk.cyan(`📄 Report: ${report.title}`));
+      console.log(chalk.gray('='.repeat(50)));
+      
+      // Show metadata
+      console.log(chalk.white('ID:'), chalk.yellow(report.id));
+      console.log(chalk.white('Type:'), chalk.magenta(report.type));
+      console.log(chalk.white('Status:'), report.status === 'active' ? chalk.green(report.status) : chalk.yellow(report.status));
+      console.log(chalk.white('Agent:'), chalk.blue(report.agentType));
+      console.log(chalk.white('Spec:'), chalk.cyan(report.specId));
+      
+      if (report.taskId) {
+        console.log(chalk.white('Task:'), chalk.green(report.taskId));
+      }
+      
+      console.log(chalk.white('Created:'), chalk.gray(new Date(report.createdAt).toLocaleString()));
+      
+      if (report.lastModified) {
+        console.log(chalk.white('Modified:'), chalk.gray(new Date(report.lastModified).toLocaleString()));
+      }
+      
+      console.log(chalk.white('Lifecycle:'), chalk.blue(report.lifecycle));
+      
+      if (report.retentionHours) {
+        console.log(chalk.white('Retention:'), chalk.gray(`${report.retentionHours} hours`));
+      }
+      
+      console.log(chalk.white('Path:'), chalk.gray(report.path));
+
+      // Show content if requested
+      if (result.content && !options.metadataOnly) {
+        console.log(chalk.white('\nContent:'));
+        console.log(chalk.gray('='.repeat(30)));
+        console.log(result.content);
+      }
+
+    } else {
+      console.error(chalk.red('❌ Report not found:'), result.error);
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Report show failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleReportUpdate(reportId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const reportManager = new DocumentationTemplateManager(configManager);
+    await reportManager.initialize();
+
+    if (options.edit) {
+      // Open in editor
+      const reportResult = await reportManager.getReport(reportId, { includeContent: false });
+      if (!reportResult.success) {
+        console.error(chalk.red('❌ Report not found:'), reportResult.error);
+        process.exit(1);
+      }
+
+      const { spawn } = require('child_process');
+      const editor = process.env.EDITOR || 'nano';
+
+      const child = spawn(editor, [reportResult.metadata.path], {
+        stdio: 'inherit'
+      });
+
+      child.on('exit', (code) => {
+        if (code === 0) {
+          console.log(chalk.green(`✅ Report updated: ${reportId}`));
+        } else {
+          console.error(chalk.red('❌ Editor exited with error'));
+          process.exit(1);
+        }
+      });
+      return;
+    }
+
+    const updates = {};
+
+    if (options.content) {
+      updates.content = options.content;
+    }
+
+    if (options.metadata) {
+      try {
+        updates.metadata = JSON.parse(options.metadata);
+      } catch (error) {
+        console.error(chalk.red('❌ Invalid JSON in --metadata option'));
+        process.exit(1);
+      }
+    }
+
+    if (!updates.content && !updates.metadata) {
+      console.error(chalk.red('❌ Must specify --content, --metadata, or --edit'));
+      process.exit(1);
+    }
+
+    const result = await reportManager.updateReport(reportId, updates);
+
+    if (result.success) {
+      console.log(chalk.green('✅ Report updated successfully!'));
+      console.log(chalk.white('Report ID:'), chalk.yellow(result.reportId));
+      
+      if (result.performance.total > 50) {
+        console.log(chalk.yellow(`⚠️  Update took ${result.performance.total}ms`));
+      }
+    } else {
+      console.error(chalk.red('❌ Report update failed:'), result.error);
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Report update failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleReportCleanup(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const reportManager = new DocumentationTemplateManager(configManager);
+    await reportManager.initialize();
+
+    console.log(chalk.cyan('🧹 Report Cleanup'));
+    console.log(chalk.gray('='.repeat(40)));
+
+    const cleanupOptions = {
+      respectRetentionTime: options.respectRetention,
+      forceCleanup: options.force
+    };
+
+    if (options.completedTasks) {
+      cleanupOptions.completedTaskIds = options.completedTasks.split(',').map(id => id.trim());
+    }
+
+    if (options.completedSpecs) {
+      cleanupOptions.completedSpecIds = options.completedSpecs.split(',').map(id => id.trim());
+    }
+
+    if (options.dryRun) {
+      console.log(chalk.blue('🔍 Dry run mode - no changes will be made'));
+      console.log();
+    }
+
+    const result = await reportManager.executeCleanup(cleanupOptions);
+
+    if (result.success) {
+      const cleanup = result.cleanup;
+      
+      console.log(chalk.white('Cleanup Results:'));
+      console.log(chalk.green(`✅ Cleaned: ${cleanup.totalCleaned} reports`));
+      
+      if (cleanup.totalErrors > 0) {
+        console.log(chalk.red(`❌ Errors: ${cleanup.totalErrors} reports`));
+      }
+
+      if (cleanup.cleaned.length > 0) {
+        console.log(chalk.white('\nCleaned Reports:'));
+        for (const cleaned of cleanup.cleaned) {
+          console.log(chalk.gray(`  • ${chalk.yellow(cleaned.reportId)} (${cleaned.type}) - ${cleaned.reason}`));
+        }
+      }
+
+      if (cleanup.errors.length > 0) {
+        console.log(chalk.red('\nCleanup Errors:'));
+        for (const error of cleanup.errors) {
+          console.log(chalk.red(`  • ${error.reportId}: ${error.error}`));
+        }
+      }
+
+      if (cleanup.totalCleaned === 0 && cleanup.totalErrors === 0) {
+        console.log(chalk.yellow('ℹ️  No reports eligible for cleanup'));
+      }
+
+    } else {
+      console.error(chalk.red('❌ Cleanup execution failed:'), result.error);
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Report cleanup failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleReportTemplates(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const reportManager = new DocumentationTemplateManager(configManager);
+    await reportManager.initialize();
+
+    if (options.show) {
+      // Show specific template
+      console.log(chalk.cyan(`📄 Template: ${options.show}`));
+      console.log(chalk.gray('='.repeat(50)));
+      
+      const templates = await reportManager.getAvailableTemplates();
+      if (templates.success && templates.templates[options.show]) {
+        const template = templates.templates[options.show];
+        console.log(chalk.white('Name:'), chalk.yellow(template.name));
+        console.log(chalk.white('Description:'), chalk.gray(template.description));
+        console.log(chalk.white('Lifecycle:'), chalk.blue(template.lifecycle));
+        console.log(chalk.white('Retention:'), template.retention_hours ? `${template.retention_hours}h` : chalk.gray('manual'));
+        console.log(chalk.white('Status:'), template.templateExists ? chalk.green('available') : chalk.red('missing'));
+        
+        if (template.templateContent) {
+          console.log(chalk.white('\nTemplate Content:'));
+          console.log(chalk.gray('='.repeat(30)));
+          console.log(template.templateContent);
+        }
+      } else {
+        console.error(chalk.red(`❌ Template '${options.show}' not found`));
+        process.exit(1);
+      }
+      return;
+    }
+
+    // List all templates
+    console.log(chalk.cyan('📋 Available Report Templates'));
+    console.log(chalk.gray('='.repeat(50)));
+
+    const result = await reportManager.getAvailableTemplates();
+
+    if (result.success) {
+      for (const [type, template] of Object.entries(result.templates)) {
+        const status = template.templateExists ? chalk.green('✓') : chalk.red('✗');
+        
+        console.log(`${status} ${chalk.white(type)}: ${chalk.yellow(template.name)}`);
+        console.log(chalk.gray(`   ${template.description}`));
+        console.log(chalk.gray(`   Lifecycle: ${template.lifecycle} | Retention: ${template.retention_hours ? template.retention_hours + 'h' : 'manual'}`));
+        console.log();
+      }
+
+      if (options.validate) {
+        console.log(chalk.blue('🔍 Template Validation:'));
+        let allValid = true;
+        
+        for (const [type, template] of Object.entries(result.templates)) {
+          if (!template.templateExists) {
+            console.log(chalk.red(`❌ Missing template: ${type}`));
+            allValid = false;
+          }
+        }
+        
+        if (allValid) {
+          console.log(chalk.green('✅ All templates are available'));
+        }
+      }
+
+    } else {
+      console.error(chalk.red('❌ Template listing failed:'), result.error);
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Report templates failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleReportStats(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const reportManager = new DocumentationTemplateManager(configManager);
+    await reportManager.initialize();
+
+    console.log(chalk.cyan('📊 Documentation System Statistics'));
+    console.log(chalk.gray('='.repeat(50)));
+
+    const result = await reportManager.getSystemStats();
+
+    if (result.success) {
+      const stats = result.stats;
+      
+      // Overall statistics
+      console.log(chalk.white('Overall Statistics:'));
+      console.log(chalk.gray(`  Total Reports: ${chalk.cyan(stats.totalReports)}`));
+      console.log(chalk.gray(`  Active Reports: ${chalk.green(stats.activeReports)}`));
+      console.log(chalk.gray(`  Upcoming Cleanups: ${chalk.yellow(stats.upcomingCleanups)}`));
+      
+      if (stats.averageRetentionHours > 0) {
+        console.log(chalk.gray(`  Average Retention: ${chalk.blue(Math.round(stats.averageRetentionHours))}h`));
+      }
+      
+      console.log();
+
+      // By type breakdown
+      if (options.byType && Object.keys(stats.reportsByType).length > 0) {
+        console.log(chalk.white('Reports by Type:'));
+        for (const [type, count] of Object.entries(stats.reportsByType)) {
+          console.log(chalk.gray(`  ${chalk.magenta(type)}: ${count}`));
+        }
+        console.log();
+      }
+
+      // By agent breakdown
+      if (options.byAgent && Object.keys(stats.reportsByAgent).length > 0) {
+        console.log(chalk.white('Reports by Agent:'));
+        for (const [agent, count] of Object.entries(stats.reportsByAgent)) {
+          console.log(chalk.gray(`  ${chalk.blue(agent)}: ${count}`));
+        }
+        console.log();
+      }
+
+      // By spec breakdown
+      if (options.detailed && Object.keys(stats.reportsBySpec).length > 0) {
+        console.log(chalk.white('Reports by Specification:'));
+        const specEntries = Object.entries(stats.reportsBySpec)
+          .sort(([,a], [,b]) => b - a)
+          .slice(0, 10); // Show top 10
+        
+        for (const [spec, count] of specEntries) {
+          console.log(chalk.gray(`  ${chalk.cyan(spec)}: ${count}`));
+        }
+        console.log();
+      }
+
+      // Age information
+      if (stats.oldestReport && stats.newestReport) {
+        const oldestAge = Math.round((Date.now() - new Date(stats.oldestReport.createdAt)) / (1000 * 60 * 60 * 24));
+        const newestAge = Math.round((Date.now() - new Date(stats.newestReport.createdAt)) / (1000 * 60 * 60));
+        
+        console.log(chalk.white('Age Range:'));
+        console.log(chalk.gray(`  Oldest: ${oldestAge} days (${stats.oldestReport.type})`));
+        console.log(chalk.gray(`  Newest: ${newestAge}h (${stats.newestReport.type})`));
+        console.log();
+      }
+
+      // Cleanup preview
+      if (options.cleanupPreview) {
+        console.log(chalk.yellow('🧹 Upcoming Cleanup Candidates:'));
+        if (stats.upcomingCleanups > 0) {
+          console.log(chalk.gray(`  ${stats.upcomingCleanups} reports eligible for cleanup within 24 hours`));
+          console.log(chalk.gray(`  Run 'asd report cleanup --dry-run' for details`));
+        } else {
+          console.log(chalk.gray('  No reports eligible for cleanup in the next 24 hours'));
+        }
+      }
+
+      console.log(chalk.gray(`Generated at: ${result.generatedAt}`));
+
+    } else {
+      console.error(chalk.red('❌ Stats generation failed:'), result.error);
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Report stats failed:'), error.message);
     process.exit(1);
   }
 }

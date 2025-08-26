@@ -1,112 +1,128 @@
 ---
-id: "FEAT-012"
-title: "Context Injection System"
-type: "FEAT"
-phase: "PHASE-1A"
-priority: "P0"
-status: "complete"
+id: FEAT-012
+title: Context Injection System
+type: FEAT
+phase: PHASE-1A
+priority: P0
+status: complete
 created: "2024-08-24T16:00:00Z"
 estimated_hours: 32
-tags: ["context", "agents", "workflow", "core-system"]
+tags:
+  - context
+  - agents
+  - workflow
+  - core-system
 tasks:
-  - id: "TASK-001"
-    title: "Core Context Storage & File Structure"
-    agent_type: "software-architect"
-    status: "ready"
+  - id: TASK-001
+    title: Core Context Storage & File Structure
+    agent_type: software-architect
+    status: ready
     estimated_hours: 8
-    context_requirements: ["architecture-patterns", "file-system-design"]
+    context_requirements:
+      - architecture-patterns
+      - file-system-design
     subtasks:
-      - id: "SUBTASK-001"
-        title: "Design .asd/ directory structure"
-        type: "implementation"
+      - id: SUBTASK-001
+        title: Design .asd/ directory structure
+        type: implementation
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-002"
-        title: "Create context file schemas"
-        type: "implementation"
+        status: ready
+      - id: SUBTASK-002
+        title: Create context file schemas
+        type: implementation
         estimated_minutes: 180
-        status: "ready"
-      - id: "SUBTASK-003"
-        title: "Validation & testing"
-        type: "validation"
+        status: ready
+      - id: SUBTASK-003
+        title: Validation & testing
+        type: validation
         estimated_minutes: 120
-        status: "ready"
-  - id: "TASK-002"
-    title: "Context Injection Engine"
-    agent_type: "backend-specialist"
-    status: "ready"
+        status: ready
+  - id: TASK-002
+    title: Context Injection Engine
+    agent_type: backend-specialist
+    status: ready
     estimated_hours: 10
-    context_requirements: ["task-routing", "yaml-processing"]
-    depends_on: ["TASK-001"]
+    context_requirements:
+      - task-routing
+      - yaml-processing
+    depends_on:
+      - TASK-001
     subtasks:
-      - id: "SUBTASK-004"
-        title: "Implement multi-layer context loading"
-        type: "implementation"
+      - id: SUBTASK-004
+        title: Implement multi-layer context loading
+        type: implementation
         estimated_minutes: 360
-        status: "ready"
-      - id: "SUBTASK-005"
-        title: "Agent-specific filtering logic"
-        type: "implementation"
+        status: ready
+      - id: SUBTASK-005
+        title: Agent-specific filtering logic
+        type: implementation
         estimated_minutes: 180
-        status: "ready"
-      - id: "SUBTASK-006"
-        title: "Validation & testing"
-        type: "validation"
+        status: ready
+      - id: SUBTASK-006
+        title: Validation & testing
+        type: validation
         estimated_minutes: 120
-        status: "ready"
-  - id: "TASK-003"
-    title: "CLI Commands & Update Triggers"
-    agent_type: "cli-specialist"
-    status: "ready"
+        status: ready
+  - id: TASK-003
+    title: CLI Commands & Update Triggers
+    agent_type: cli-specialist
+    status: ready
     estimated_hours: 8
-    context_requirements: ["cli-patterns", "commander-js"]
-    depends_on: ["TASK-002"]
+    context_requirements:
+      - cli-patterns
+      - commander-js
+    depends_on:
+      - TASK-002
     subtasks:
-      - id: "SUBTASK-007"
-        title: "Context management CLI commands"
-        type: "implementation"
+      - id: SUBTASK-007
+        title: Context management CLI commands
+        type: implementation
         estimated_minutes: 240
-        status: "ready"
-      - id: "SUBTASK-008"
-        title: "Auto-update trigger system"
-        type: "implementation"
+        status: ready
+      - id: SUBTASK-008
+        title: Auto-update trigger system
+        type: implementation
         estimated_minutes: 180
-        status: "ready"
-      - id: "SUBTASK-009"
-        title: "Validation & testing"
-        type: "validation"
+        status: ready
+      - id: SUBTASK-009
+        title: Validation & testing
+        type: validation
         estimated_minutes: 60
-        status: "ready"
-  - id: "TASK-004"
-    title: "Agent Definition System & Templates"
-    agent_type: "software-architect"
-    status: "complete"
+        status: ready
+  - id: TASK-004
+    title: Agent Definition System & Templates
+    agent_type: software-architect
+    status: complete
     estimated_hours: 6
-    context_requirements: ["agent-patterns", "yaml-frontmatter"]
-    depends_on: ["TASK-003"]
+    context_requirements:
+      - agent-patterns
+      - yaml-frontmatter
+    depends_on:
+      - TASK-003
     subtasks:
-      - id: "SUBTASK-010"
-        title: "Agent definition file format"
-        type: "implementation"
+      - id: SUBTASK-010
+        title: Agent definition file format
+        type: implementation
         estimated_minutes: 180
-        status: "complete"
-      - id: "SUBTASK-011"
-        title: "Process template system"
-        type: "implementation"
+        status: complete
+      - id: SUBTASK-011
+        title: Process template system
+        type: implementation
         estimated_minutes: 120
-        status: "complete"
-      - id: "SUBTASK-012"
-        title: "Validation & testing"
-        type: "validation"
+        status: complete
+      - id: SUBTASK-012
+        title: Validation & testing
+        type: validation
         estimated_minutes: 60
-        status: "complete"
+        status: complete
 dependencies: []
 acceptance_criteria:
-  - "Agents receive 4-layer context injection (critical, task-specific, agent-specific, process)"
-  - "Context files auto-update based on CLI command triggers"
-  - "Users can customize agent workflows via MD files with YAML frontmatter"
-  - "Context system is self-maintaining and accumulates learning over time"
-  - "CLI commands support both automated and manual context management"
+  - Agents receive 4-layer context injection (critical, task-specific, agent-specific, process)
+  - Context files auto-update based on CLI command triggers
+  - Users can customize agent workflows via MD files with YAML frontmatter
+  - Context system is self-maintaining and accumulates learning over time
+  - CLI commands support both automated and manual context management
+last_updated: "2025-08-26T21:37:56.262Z"
 ---
 
 # Context Injection System
