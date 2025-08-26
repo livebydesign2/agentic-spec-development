@@ -56,7 +56,11 @@
           "api-specifications",
           "data-models",
           "integration-requirements",
-          "performance-constraints"
+          "performance-constraints",
+          "spec-parsing",
+          "agent-capabilities",
+          "dependency-tracking",
+          "system-architecture"
         ],
         "typical_tasks": [
           "API implementation",

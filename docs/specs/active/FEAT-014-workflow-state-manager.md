@@ -6,12 +6,12 @@ phase: "PHASE-1A"
 priority: "P0"
 status: "active"
 created: "2024-08-24T17:15:00Z"
-estimated_hours: 14
+estimated_hours: 20
 tags: ["workflow", "state-management", "handoffs", "progress-tracking"]
 tasks:
   - id: "TASK-001"
     title: "Dynamic State Management Core"
-    agent_type: "backend-specialist"
+    agent_type: "backend-developer"
     status: "ready"
     estimated_hours: 6
     context_requirements:
@@ -34,7 +34,7 @@ tasks:
         status: "ready"
   - id: "TASK-002"
     title: "Inline Documentation Updates"
-    agent_type: "backend-specialist"
+    agent_type: "backend-developer"
     status: "blocked"
     estimated_hours: 4
     context_requirements: ["yaml-frontmatter", "markdown-processing"]
@@ -101,6 +101,29 @@ tasks:
         type: "validation"
         estimated_minutes: 0
         status: "ready"
+  - id: "TASK-005"
+    title: "Temporary Documentation Management"
+    agent_type: "software-architect"
+    status: "blocked"
+    estimated_hours: 6
+    context_requirements: ["document-lifecycle", "cleanup-strategies", "agent-templates"]
+    depends_on: ["TASK-004"]
+    subtasks:
+      - id: "SUBTASK-013"
+        title: "Implement ReportManager class with lifecycle management"
+        type: "implementation"
+        estimated_minutes: 180
+        status: "ready"
+      - id: "SUBTASK-014"
+        title: "Add agent template integration and cleanup automation"
+        type: "implementation"
+        estimated_minutes: 120
+        status: "ready"
+      - id: "SUBTASK-015"
+        title: "CLI integration and validation"
+        type: "validation"
+        estimated_minutes: 120
+        status: "ready"
 dependencies:
   - "FEAT-013" # Task Router System for task assignment logic
 acceptance_criteria:
@@ -109,6 +132,9 @@ acceptance_criteria:
   - "Agent handoffs are detected and next tasks prepared automatically"
   - "Progress tracking provides accurate 'X of Y tasks complete' metrics"
   - "CLI commands show current assignments and handoff readiness"
+  - "Agents can create structured temporary documentation with automatic lifecycle management"
+  - "Temporary reports auto-cleanup based on task/spec completion"
+  - "Report templates integrate with existing agent workflow patterns"
 ---
 
 # Workflow State Manager
@@ -224,9 +250,24 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 - [ ] Add filtering by spec, agent, or status
 - [ ] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
 - [ ] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
-- [ ] Product Handoff: notify product management that workflow state system is complete
+- [ ] Product Handoff: notify software architect that CLI integration is ready for temp docs
 - **Dependencies**: TASK-003 must be complete
 - **Files**: CLI command implementations, progress visualization
+
+**TASK-005** 🤖 **Temporary Documentation Management** ⏸️ **← BLOCKED (waiting for TASK-004)** | Agent: Software-Architect
+
+- [ ] Implement ReportManager class with structured document lifecycle management
+- [ ] Create .asd/reports/ directory structure (audits/, summaries/, analysis/, temp/)
+- [ ] Add agent template integration for common report types (audit, summary, analysis)
+- [ ] Implement automatic cleanup based on task/spec completion lifecycle
+- [ ] Build report creation API with metadata and context linking
+- [ ] Add CLI commands: "asd report create", "asd report list", "asd report cleanup"
+- [ ] Integrate with existing WorkflowStateManager for lifecycle events
+- [ ] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
+- [ ] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
+- [ ] Product Handoff: notify product management that temporary documentation system is complete
+- **Dependencies**: TASK-004 must be complete
+- **Files**: `lib/report-manager.js`, CLI report commands, agent templates, cleanup automation
 
 **Legend**: ⏳ Ready for pickup | 🔄 In progress | ✅ Complete | ⏸️ Blocked
 
@@ -268,6 +309,8 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 - [ ] **Progress Updates**: Test progress calculation across all specs
 - [ ] **Handoff Detection**: Confirm handoffs are detected and next tasks prepared
 - [ ] **CLI Integration**: Test status and progress commands work correctly
+- [ ] **Report Management**: Test temporary documentation creation and lifecycle management
+- [ ] **Cleanup Automation**: Verify reports auto-cleanup when tasks/specs complete
 
 ---
 
@@ -284,7 +327,7 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 ### ➡️ Handoff Status _(What's ready for next agent)_
 
 - **Ready Now**: TASK-001 (no dependencies)
-- **Waiting**: TASK-002 through TASK-004 (sequential dependencies)
+- **Waiting**: TASK-002 through TASK-005 (sequential dependencies)
 
 ---
 
@@ -539,5 +582,5 @@ asd handoff history                 # Handoff history
 ---
 
 **Priority**: P0 - Core workflow management system  
-**Effort**: 14 hours across state management, inline updates, handoffs, and CLI
-**Impact**: Enables seamless agent workflows with automatic progress tracking and handoffs
+**Effort**: 20 hours across state management, inline updates, handoffs, CLI, and temporary documentation
+**Impact**: Enables seamless agent workflows with automatic progress tracking, handoffs, and structured temporary documentation management
