@@ -113,7 +113,7 @@ acceptance_criteria:
 
 **Status**: Backlog | **Priority**: P1 (High) | **Owner**: Software Architect
 
-## 🎯 Quick Start *(30 seconds)*
+## 🎯 Quick Start _(30 seconds)_
 
 **What**: Comprehensive validation system with quality gates, auto-fixing, and consistency checking for specs, tasks, and workflows
 
@@ -122,23 +122,27 @@ acceptance_criteria:
 **Impact**: Quality assurance system - catches issues early, auto-fixes common problems, maintains system consistency
 
 ### 🚀 AGENT PICKUP GUIDE
+
 **➡️ Next Available Task**: **TASK-001** - Core Validation Framework  
 **📋 Your Job**: Work on TASK-001 only, then update docs and hand off  
 **🚦 Dependencies**: None - standalone validation system
 
-### 🚦 Current State *(AGENTS: Update this when you complete YOUR task)*
+### 🚦 Current State _(AGENTS: Update this when you complete YOUR task)_
+
 - **Next Available Task**: TASK-001 - Core Validation Framework
-- **Current Task Status**: None - ready for pickup  
+- **Current Task Status**: None - ready for pickup
 - **Overall Progress**: 0 of 4 tasks complete
 - **Blockers**: None
 - **Last Updated**: 2024-08-24 by System Architect
 
 ---
 
-## 📋 Work Definition *(What needs to be built)*
+## 📋 Work Definition _(What needs to be built)_
 
 ### Problem Statement
+
 Currently, there's no systematic validation of spec files, task structures, or workflow consistency. This can lead to:
+
 - Malformed spec files that break the UI or parsing
 - Invalid task dependencies and circular references
 - Inconsistent data across specs (duplicate IDs, missing required fields)
@@ -146,9 +150,11 @@ Currently, there's no systematic validation of spec files, task structures, or w
 - Poor data quality affecting system reliability
 
 ### Solution Approach
+
 Implement ValidationManager with comprehensive validation rules, auto-fixing capabilities, quality gate enforcement, and clear error reporting to maintain system integrity.
 
 ### Success Criteria
+
 - [ ] Comprehensive validation of all spec files and task structures
 - [ ] Auto-fixing capability for common formatting and structural issues
 - [ ] Quality gates prevent invalid task assignments and workflow violations
@@ -161,9 +167,10 @@ Implement ValidationManager with comprehensive validation rules, auto-fixing cap
 ## 🏗️ Implementation Plan
 
 ### Technical Approach
+
 Create ValidationManager with pluggable validation rules, auto-fixing system, quality gate enforcement, and integration with CLI and workflow systems.
 
-### Implementation Tasks *(Each task = one agent handoff)*
+### Implementation Tasks _(Each task = one agent handoff)_
 
 **TASK-001** 🤖 **Core Validation Framework** ⏳ **← READY FOR PICKUP** | Agent: Software-Architect
 
@@ -203,7 +210,7 @@ Create ValidationManager with pluggable validation rules, auto-fixing system, qu
 - [ ] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
 - [ ] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
 - [ ] Product Handoff: notify CLI specialist that validation system is ready for integration
-- **Dependencies**: TASK-002 must be complete  
+- **Dependencies**: TASK-002 must be complete
 - **Files**: Auto-fixing system, quality gates, validation hooks
 
 **TASK-004** 🤖 **CLI Integration & Reporting** ⏸️ **← BLOCKED (waiting for TASK-003)** | Agent: CLI-Specialist
@@ -226,23 +233,26 @@ Create ValidationManager with pluggable validation rules, auto-fixing system, qu
 
 ## ✅ Validation Requirements
 
-### 📝 Documentation Checklist *(REQUIRED before committing YOUR task)*
+### 📝 Documentation Checklist _(REQUIRED before committing YOUR task)_
+
 - [ ] **Your Task Status**: Mark your task ✅ and update all subtasks to `- [x]`
 - [ ] **Current State**: Update "Next Available Task" to show what task is ready next
 - [ ] **Success Criteria**: Check off any criteria your task completed
 - [ ] **Handoff**: Clear what the next agent should pick up
 - [ ] **Architecture Updates**: Update architecture.md with ValidationManager details
 
-### 🧪 Testing Checklist *(Follow this exact order)*
+### 🧪 Testing Checklist _(Follow this exact order)_
 
-**DURING DEVELOPMENT** *(Test as you build each piece)*
+**DURING DEVELOPMENT** _(Test as you build each piece)_
+
 - [ ] **Rule Engine**: Test validation rules with valid and invalid spec files
 - [ ] **Auto-Fixing**: Test auto-fixing doesn't corrupt valid files
 - [ ] **Quality Gates**: Test quality gates prevent invalid operations
 - [ ] **Performance**: Test validation performance with large spec sets
 - [ ] **Error Reporting**: Test error messages are clear and actionable
 
-**BEFORE COMMITTING** *(Required validation sequence)*
+**BEFORE COMMITTING** _(Required validation sequence)_
+
 - [ ] **Validation Suite**: Test comprehensive validation of all spec types
 - [ ] **Integration**: Test ValidationManager integration with existing systems
 - [ ] **CLI Commands**: Test validation CLI commands work correctly
@@ -251,7 +261,8 @@ Create ValidationManager with pluggable validation rules, auto-fixing system, qu
 - [ ] **Unit Tests**: Test individual validation components
 - [ ] **Performance**: Verify validation completes within 2s for 100+ specs
 
-### 🌱 Validation System Impact Check *(Required for validation functionality)*
+### 🌱 Validation System Impact Check _(Required for validation functionality)_
+
 - [ ] **Spec Validation**: Test validation catches common spec file errors
 - [ ] **Task Validation**: Test task dependency and structure validation
 - [ ] **Auto-Fixing**: Test auto-fixing resolves common issues correctly
@@ -259,15 +270,18 @@ Create ValidationManager with pluggable validation rules, auto-fixing system, qu
 
 ---
 
-## 📊 Progress Tracking *(AGENTS: Add entry when you complete YOUR task)*
+## 📊 Progress Tracking _(AGENTS: Add entry when you complete YOUR task)_
 
-### ✅ Completed Tasks *(Add entry when you finish your task)*
-- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - *Agent: [name]* - Next: TASK-YYY ready
+### ✅ Completed Tasks _(Add entry when you finish your task)_
 
-### 🚨 Task Blockers *(Preventing next task pickup)*
+- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - _Agent: [name]_ - Next: TASK-YYY ready
+
+### 🚨 Task Blockers _(Preventing next task pickup)_
+
 - No blockers currently identified
 
-### ➡️ Handoff Status *(What's ready for next agent)*
+### ➡️ Handoff Status _(What's ready for next agent)_
+
 - **Ready Now**: TASK-001 (no dependencies)
 - **Waiting**: TASK-002 through TASK-004 (sequential dependencies)
 
@@ -275,17 +289,20 @@ Create ValidationManager with pluggable validation rules, auto-fixing system, qu
 
 ## 🔗 Technical References
 
-### Architecture Documents  
+### Architecture Documents
+
 - **System Architecture**: `docs/architecture.md` (ValidationManager component)
 - **Existing Code**: `lib/feature-parser.js` (spec parsing), `lib/config-manager.js` (validation patterns)
 - **Quality Standards**: Existing test suites for validation patterns
 
 ### Implementation Patterns
+
 - **Validation Rules**: Pluggable rule system with clear interfaces
 - **Error Reporting**: Detailed error messages with file locations and fix suggestions
 - **Auto-Fixing**: Safe transformations with user confirmation for non-trivial changes
 
 ### Dependencies
+
 - **Requires**: SpecParser for loading specs, ConfigManager for validation config
 - **Enables**: System reliability, quality assurance, automated problem detection
 
@@ -297,11 +314,13 @@ Create ValidationManager with pluggable validation rules, auto-fixing system, qu
 ## Detailed Requirements
 
 ### REQ-001: Comprehensive Spec Validation
+
 **As a** system user  
 **I want** all spec files to be validated for correctness and consistency  
 **So that** the system remains reliable and agents receive valid data
 
 **Acceptance Criteria**:
+
 - [ ] Validation covers all spec file types (FEAT, BUG, SPEC, SPIKE, MAINT)
 - [ ] Required fields validation (id, title, type, status, priority)
 - [ ] Format validation (priority levels, status values, date formats)
@@ -309,11 +328,13 @@ Create ValidationManager with pluggable validation rules, auto-fixing system, qu
 - [ ] Cross-reference validation (dependencies, phase references)
 
 ### REQ-002: Task Structure Validation
+
 **As a** system user  
 **I want** task structures to be validated for completeness and consistency  
 **So that** task routing and assignment work correctly
 
 **Acceptance Criteria**:
+
 - [ ] Task dependency validation (valid references, no cycles)
 - [ ] Agent type validation (valid agent types, capability matching)
 - [ ] Subtask structure validation (required fields, status consistency)
@@ -321,11 +342,13 @@ Create ValidationManager with pluggable validation rules, auto-fixing system, qu
 - [ ] Estimated hours and time tracking validation
 
 ### REQ-003: Auto-Fixing Capability
+
 **As a** system user  
 **I want** common formatting and structural issues to be fixed automatically  
 **So that** I don't need to manually correct trivial problems
 
 **Acceptance Criteria**:
+
 - [ ] Format cleanup (whitespace, YAML indentation, date formats)
 - [ ] Missing field population (creation dates, default priorities)
 - [ ] ID format standardization (consistent prefixes, numbering)
@@ -333,11 +356,13 @@ Create ValidationManager with pluggable validation rules, auto-fixing system, qu
 - [ ] User confirmation required for non-trivial changes
 
 ### REQ-004: Quality Gate Enforcement
+
 **As a** system operator  
 **I want** invalid operations to be prevented before they cause problems  
 **So that** the system maintains integrity during workflow operations
 
 **Acceptance Criteria**:
+
 - [ ] Task assignment validation (agent capabilities, task readiness)
 - [ ] Workflow transition validation (valid status changes, prerequisites)
 - [ ] Dependency validation before task marking as ready
@@ -347,6 +372,7 @@ Create ValidationManager with pluggable validation rules, auto-fixing system, qu
 ## Technical Design Details
 
 ### ValidationManager Class Architecture
+
 ```javascript
 class ValidationManager {
   constructor(specParser, configManager) {
@@ -380,7 +406,7 @@ class ValidationManager {
   // Reporting
   generateReport(validationResults, format)    // Generate validation reports
   getSummary(validationResults)                // Brief summary of issues
-  
+
   // Internal methods
   _loadRules()                                 // Load validation rules
   _validateWithRule(rule, data, context)       // Apply single rule
@@ -389,12 +415,13 @@ class ValidationManager {
 ```
 
 ### Validation Rule Interface
+
 ```javascript
 class ValidationRule {
   constructor(name, category, severity) {
     this.name = name;
-    this.category = category;      // 'spec', 'task', 'workflow', 'consistency'
-    this.severity = severity;      // 'error', 'warning', 'info'
+    this.category = category; // 'spec', 'task', 'workflow', 'consistency'
+    this.severity = severity; // 'error', 'warning', 'info'
   }
 
   // Rule implementation
@@ -425,14 +452,15 @@ class ValidationRule {
 ### Common Validation Rules
 
 **Spec Validation Rules**:
+
 ```javascript
 // Required fields validation
 class RequiredFieldsRule extends ValidationRule {
   validate(spec) {
-    const required = ['id', 'title', 'type', 'status', 'priority'];
-    const missing = required.filter(field => !spec[field]);
+    const required = ["id", "title", "type", "status", "priority"];
+    const missing = required.filter((field) => !spec[field]);
     if (missing.length > 0) {
-      return new ValidationError('missing_required_fields', missing);
+      return new ValidationError("missing_required_fields", missing);
     }
     return ValidationResult.success();
   }
@@ -443,7 +471,7 @@ class IDFormatRule extends ValidationRule {
   validate(spec) {
     const pattern = /^(FEAT|BUG|SPEC|SPIKE|MAINT|RELEASE)-\d{3}$/;
     if (!pattern.test(spec.id)) {
-      return new ValidationError('invalid_id_format', spec.id);
+      return new ValidationError("invalid_id_format", spec.id);
     }
     return ValidationResult.success();
   }
@@ -452,9 +480,9 @@ class IDFormatRule extends ValidationRule {
 // Priority validation
 class PriorityValidation extends ValidationRule {
   validate(spec) {
-    const validPriorities = ['P0', 'P1', 'P2', 'P3'];
+    const validPriorities = ["P0", "P1", "P2", "P3"];
     if (!validPriorities.includes(spec.priority)) {
-      return new ValidationError('invalid_priority', spec.priority);
+      return new ValidationError("invalid_priority", spec.priority);
     }
     return ValidationResult.success();
   }
@@ -462,24 +490,25 @@ class PriorityValidation extends ValidationRule {
 ```
 
 **Task Validation Rules**:
+
 ```javascript
 // Dependency validation
 class TaskDependencyRule extends ValidationRule {
   validate(task, context) {
     if (!task.depends_on) return ValidationResult.success();
-    
+
     const allTasks = context.getAllTasks();
-    const invalidDeps = task.depends_on.filter(dep => !allTasks.has(dep));
-    
+    const invalidDeps = task.depends_on.filter((dep) => !allTasks.has(dep));
+
     if (invalidDeps.length > 0) {
-      return new ValidationError('invalid_dependencies', invalidDeps);
+      return new ValidationError("invalid_dependencies", invalidDeps);
     }
-    
+
     // Check for circular dependencies
     if (this.hasCircularDependency(task, allTasks)) {
-      return new ValidationError('circular_dependency', task.id);
+      return new ValidationError("circular_dependency", task.id);
     }
-    
+
     return ValidationResult.success();
   }
 }
@@ -489,7 +518,7 @@ class AgentTypeValidation extends ValidationRule {
   validate(task, context) {
     const validAgentTypes = context.getAgentTypes();
     if (!validAgentTypes.includes(task.agent_type)) {
-      return new ValidationError('invalid_agent_type', task.agent_type);
+      return new ValidationError("invalid_agent_type", task.agent_type);
     }
     return ValidationResult.success();
   }
@@ -497,6 +526,7 @@ class AgentTypeValidation extends ValidationRule {
 ```
 
 ### CLI Command Examples
+
 ```bash
 # Project validation
 asd validate                        # Full project validation
@@ -520,12 +550,13 @@ asd validate transition FEAT-012 backlog active     # Test status change
 ```
 
 ### Validation Report Example
+
 ```
 🔍 ASD Validation Report
 
 📊 Summary
   ✅ 45 specs validated
-  ❌ 8 errors found  
+  ❌ 8 errors found
   ⚠️  3 warnings
   💡 2 info messages
 
@@ -556,18 +587,21 @@ asd validate transition FEAT-012 backlog active     # Test status change
 ## Testing Strategy Details
 
 ### Unit Tests
+
 - Individual validation rules with various input scenarios
 - Auto-fixing logic with edge cases and error conditions
 - Quality gate enforcement with invalid operations
 - Validation result reporting and formatting
 
-### Integration Tests  
+### Integration Tests
+
 - Full project validation with complex spec hierarchies
 - ValidationManager integration with SpecParser and WorkflowStateManager
 - CLI command integration with validation system
 - Performance testing with large spec datasets
 
 ### Rule-Specific Tests
+
 - Each validation rule with comprehensive test cases
 - Auto-fixing rules with before/after validation
 - Quality gate rules with workflow operation scenarios
@@ -577,19 +611,22 @@ asd validate transition FEAT-012 backlog active     # Test status change
 
 ---
 
-## 💡 Implementation Notes *(Update as you learn)*
+## 💡 Implementation Notes _(Update as you learn)_
 
 ### Key Decisions
+
 - Pluggable validation rule system allows easy extension and customization
 - Auto-fixing requires user confirmation for non-trivial changes to prevent data loss
 - Quality gates integrate with workflow operations to prevent invalid states
 
-### Gotchas & Learnings  
+### Gotchas & Learnings
+
 - Validation performance critical for large projects - implement caching and optimization
 - Auto-fixing must preserve file formatting and comments where possible
 - Error messages should include file locations and specific fix suggestions
 
 ### Future Improvements
+
 - Machine learning for intelligent error detection and fixing suggestions
 - Custom validation rule creation through configuration
 - Integration with external quality tools and CI/CD pipelines

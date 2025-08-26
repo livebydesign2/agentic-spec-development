@@ -101,9 +101,9 @@ tasks:
         estimated_minutes: 0
         status: "ready"
 dependencies:
-  - "FEAT-013"  # Task Router System  
-  - "FEAT-014"  # Workflow State Manager
-  - "FEAT-012"  # Context Injection System
+  - "FEAT-013" # Task Router System
+  - "FEAT-014" # Workflow State Manager
+  - "FEAT-012" # Context Injection System
 acceptance_criteria:
   - "Complete CLI interface for all spec and task operations"
   - "Feature creation, listing, and management via CLI commands"
@@ -116,7 +116,7 @@ acceptance_criteria:
 
 **Status**: Backlog | **Priority**: P1 (High) | **Owner**: CLI Specialist
 
-## 🎯 Quick Start *(30 seconds)*
+## 🎯 Quick Start _(30 seconds)_
 
 **What**: Comprehensive CLI interface with advanced commands for feature management, task operations, workflow automation, and context management
 
@@ -125,23 +125,27 @@ acceptance_criteria:
 **Impact**: Complete CLI interface - turns ASD into fully-featured command-line tool for AI-first development workflows
 
 ### 🚀 AGENT PICKUP GUIDE
+
 **➡️ Next Available Task**: **READY WHEN DEPENDENCIES COMPLETE** - Waiting for core systems  
 **📋 Your Job**: Build comprehensive CLI interface on top of core systems  
 **🚦 Dependencies**: Task Router (FEAT-013), Workflow State Manager (FEAT-014), Context Injection (FEAT-012)
 
-### 🚦 Current State *(AGENTS: Update this when you complete YOUR task)*
+### 🚦 Current State _(AGENTS: Update this when you complete YOUR task)_
+
 - **Next Available Task**: Waiting for dependencies to complete
-- **Current Task Status**: Blocked - awaiting foundation systems  
+- **Current Task Status**: Blocked - awaiting foundation systems
 - **Overall Progress**: 0 of 4 tasks complete
 - **Blockers**: Missing TaskRouter, WorkflowStateManager, ContextInjector
 - **Last Updated**: 2024-08-24 by System Architect
 
 ---
 
-## 📋 Work Definition *(What needs to be built)*
+## 📋 Work Definition _(What needs to be built)_
 
 ### Problem Statement
+
 Current CLI interface is minimal with only basic commands (init, start). Missing comprehensive CLI for:
+
 - Feature and spec management (create, list, show, update, move)
 - Task operations (assign, start, complete, progress tracking)
 - Workflow automation (next task, handoffs, validation)
@@ -149,9 +153,11 @@ Current CLI interface is minimal with only basic commands (init, start). Missing
 - Agent coordination and project management
 
 ### Solution Approach
+
 Build comprehensive CLI command suite that leverages TaskRouter, WorkflowStateManager, and ContextInjector to provide full command-line interface for all ASD operations.
 
 ### Success Criteria
+
 - [ ] Complete feature management via CLI (create, list, show, update, move)
 - [ ] Full task lifecycle management (assign, start, complete, progress)
 - [ ] Workflow automation commands (next, handoff, validate)
@@ -164,9 +170,10 @@ Build comprehensive CLI command suite that leverages TaskRouter, WorkflowStateMa
 ## 🏗️ Implementation Plan
 
 ### Technical Approach
+
 Extend existing CLI framework with advanced command structure, integrate with core systems (TaskRouter, WorkflowStateManager, ContextInjector), and provide multiple output formats and comprehensive help.
 
-### Implementation Tasks *(Each task = one agent handoff)*
+### Implementation Tasks _(Each task = one agent handoff)_
 
 **TASK-001** 🤖 **Core CLI Command Framework** ⏸️ **← BLOCKED (waiting for dependencies)** | Agent: CLI-Specialist
 
@@ -206,7 +213,7 @@ Extend existing CLI framework with advanced command structure, integrate with co
 - [ ] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
 - [ ] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
 - [ ] Product Handoff: notify next agent that task management is ready for workflow commands
-- **Dependencies**: TASK-002 must be complete  
+- **Dependencies**: TASK-002 must be complete
 - **Files**: Task management CLI commands, integration with TaskRouter and WorkflowStateManager
 
 **TASK-004** 🤖 **Workflow & Context Commands** ⏸️ **← BLOCKED (waiting for TASK-003)** | Agent: CLI-Specialist
@@ -229,23 +236,26 @@ Extend existing CLI framework with advanced command structure, integrate with co
 
 ## ✅ Validation Requirements
 
-### 📝 Documentation Checklist *(REQUIRED before committing YOUR task)*
+### 📝 Documentation Checklist _(REQUIRED before committing YOUR task)_
+
 - [ ] **Your Task Status**: Mark your task ✅ and update all subtasks to `- [x]`
 - [ ] **Current State**: Update "Next Available Task" to show what task is ready next
 - [ ] **Success Criteria**: Check off any criteria your task completed
 - [ ] **Handoff**: Clear what the next agent should pick up
 - [ ] **CLI Documentation**: Update help system with new commands and examples
 
-### 🧪 Testing Checklist *(Follow this exact order)*
+### 🧪 Testing Checklist _(Follow this exact order)_
 
-**DURING DEVELOPMENT** *(Test as you build each piece)*
+**DURING DEVELOPMENT** _(Test as you build each piece)_
+
 - [ ] **Command Parsing**: Test all commands with valid and invalid arguments
 - [ ] **Output Formats**: Verify table, JSON, CSV outputs work correctly
 - [ ] **Integration**: Test CLI integration with TaskRouter, WorkflowStateManager, ContextInjector
 - [ ] **Help System**: Test help text is clear and includes working examples
 - [ ] **Error Handling**: Test error messages are helpful and actionable
 
-**BEFORE COMMITTING** *(Required validation sequence)*
+**BEFORE COMMITTING** _(Required validation sequence)_
+
 - [ ] **End-to-End Tests**: Test complete workflows from feature creation to completion
 - [ ] **CLI Integration**: Test all commands work with real spec data
 - [ ] **Output Validation**: Verify all output formats parse correctly in consuming tools
@@ -254,7 +264,8 @@ Extend existing CLI framework with advanced command structure, integrate with co
 - [ ] **CLI Tests**: Test comprehensive CLI command suite
 - [ ] **Performance**: Verify CLI commands respond quickly (< 2s for most operations)
 
-### 🌱 CLI System Impact Check *(Required for CLI functionality)*
+### 🌱 CLI System Impact Check _(Required for CLI functionality)_
+
 - [ ] **Feature Management**: Test create, list, show, update commands work
 - [ ] **Task Management**: Test assign, start, complete commands work
 - [ ] **Workflow Commands**: Test next, status, progress commands work
@@ -262,17 +273,20 @@ Extend existing CLI framework with advanced command structure, integrate with co
 
 ---
 
-## 📊 Progress Tracking *(AGENTS: Add entry when you complete YOUR task)*
+## 📊 Progress Tracking _(AGENTS: Add entry when you complete YOUR task)_
 
-### ✅ Completed Tasks *(Add entry when you finish your task)*
-- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - *Agent: [name]* - Next: TASK-YYY ready
+### ✅ Completed Tasks _(Add entry when you finish your task)_
 
-### 🚨 Task Blockers *(Preventing next task pickup)*
+- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - _Agent: [name]_ - Next: TASK-YYY ready
+
+### 🚨 Task Blockers _(Preventing next task pickup)_
+
 - **FEAT-013** (Task Router System) - Required for `asd next` and task assignment commands
-- **FEAT-014** (Workflow State Manager) - Required for `asd status` and progress commands  
+- **FEAT-014** (Workflow State Manager) - Required for `asd status` and progress commands
 - **FEAT-012** (Context Injection System) - Required for `asd context` commands
 
-### ➡️ Handoff Status *(What's ready for next agent)*
+### ➡️ Handoff Status _(What's ready for next agent)_
+
 - **Ready When**: Dependencies complete (FEAT-012, FEAT-013, FEAT-014)
 - **Waiting**: All tasks blocked until foundation systems implemented
 
@@ -280,18 +294,21 @@ Extend existing CLI framework with advanced command structure, integrate with co
 
 ## 🔗 Technical References
 
-### Architecture Documents  
+### Architecture Documents
+
 - **CLI Architecture**: Current `bin/asd` for command structure patterns
 - **System Integration**: `docs/architecture.md` for component integration
 - **Advanced CLI Spec**: `docs/specs/backlog/FEAT-011-advanced-cli-commands.md` (original analysis)
 
 ### Integration Points
+
 - **TaskRouter**: For `asd next`, `asd assign` commands
 - **WorkflowStateManager**: For `asd status`, `asd progress`, `asd complete` commands
 - **ContextInjector**: For `asd context`, `asd research` commands
 - **SpecParser**: For `asd list`, `asd show`, `asd create` commands
 
 ### Dependencies
+
 - **Requires**: Core systems (FEAT-012, FEAT-013, FEAT-014) must be complete
 - **Enables**: Full CLI-driven agentic workflows, automation scripting, CI/CD integration
 
@@ -319,7 +336,7 @@ asd list specs --assignee ui-developer --format json
 asd show FEAT-012 --format detailed
 asd show FEAT-012 --format json --include-tasks --include-context
 
-# Update and manage  
+# Update and manage
 asd update FEAT-012 --status active --priority P0
 asd move FEAT-012 --to-phase PHASE-1B --validate-deps
 asd retag FEAT-012 --add-tag mobile --remove-tag desktop
@@ -407,6 +424,7 @@ asd backup --output asd-backup.tar.gz --include-context
 ## Output Format Examples
 
 ### Table Format (Default)
+
 ```
 ┌──────────┬─────────────────────┬─────────┬─────────┬──────────────┬──────────┐
 │ ID       │ Title               │ Status  │ Priority│ Assignee     │ Progress │
@@ -418,6 +436,7 @@ asd backup --output asd-backup.tar.gz --include-context
 ```
 
 ### JSON Format
+
 ```json
 {
   "specs": [
@@ -446,6 +465,7 @@ asd backup --output asd-backup.tar.gz --include-context
 ```
 
 ### Summary Format
+
 ```
 📊 Project Status Summary
 
@@ -465,19 +485,22 @@ Phase 1A: 8/12 specs (67% complete)
 
 ---
 
-## 💡 Implementation Notes *(Update as you learn)*
+## 💡 Implementation Notes _(Update as you learn)_
 
 ### Key Decisions
+
 - Build on existing commander.js framework rather than replacing CLI structure
 - Multiple output formats (table, JSON, CSV) for integration with external tools
 - Comprehensive help system with working examples for all commands
 
-### Gotchas & Learnings  
+### Gotchas & Learnings
+
 - CLI argument validation must match underlying system constraints
 - Output formatting needs to handle empty results and error states gracefully
 - Help system should include real examples that work with sample data
 
 ### Future Improvements
+
 - Auto-completion support for bash/zsh/fish shells
 - Interactive CLI mode for guided workflows
 - Plugin system for custom commands and integrations

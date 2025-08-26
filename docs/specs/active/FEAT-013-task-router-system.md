@@ -14,7 +14,8 @@ tasks:
     agent_type: "backend-specialist"
     status: "ready"
     estimated_hours: 6
-    context_requirements: ["spec-parsing", "agent-capabilities", "dependency-tracking"]
+    context_requirements:
+      ["spec-parsing", "agent-capabilities", "dependency-tracking"]
     subtasks:
       - id: "SUBTASK-001"
         title: "Implement TaskRouter class with dependency resolution"
@@ -113,7 +114,7 @@ acceptance_criteria:
 
 **Status**: Active | **Priority**: P0 (Critical) | **Owner**: Backend Specialist
 
-## 🎯 Quick Start *(30 seconds)*
+## 🎯 Quick Start _(30 seconds)_
 
 **What**: Intelligent task routing system that matches available tasks to agent capabilities with dependency validation and priority weighting
 
@@ -122,32 +123,38 @@ acceptance_criteria:
 **Impact**: Core system enabling agent automation - agents can get next task without human intervention
 
 ### 🚀 AGENT PICKUP GUIDE
+
 **➡️ Next Available Task**: **TASK-001** - Core Task Routing Engine  
 **📋 Your Job**: Work on TASK-001 only, then update docs and hand off  
 **🚦 Dependencies**: None - foundational system component
 
-### 🚦 Current State *(AGENTS: Update this when you complete YOUR task)*
+### 🚦 Current State _(AGENTS: Update this when you complete YOUR task)_
+
 - **Next Available Task**: TASK-001 - Core Task Routing Engine
-- **Current Task Status**: None - ready for pickup  
+- **Current Task Status**: None - ready for pickup
 - **Overall Progress**: 0 of 4 tasks complete
 - **Blockers**: None
 - **Last Updated**: 2024-08-24 by System Architect
 
 ---
 
-## 📋 Work Definition *(What needs to be built)*
+## 📋 Work Definition _(What needs to be built)_
 
 ### Problem Statement
+
 Currently, there's no systematic way for agents to determine what task to work on next. The system can parse specs and track progress, but lacks:
+
 - Intelligent task recommendation based on agent capabilities
 - Dependency validation to prevent blocked task assignment
 - Priority weighting and constraint filtering
 - Agent capability matching for appropriate task assignment
 
 ### Solution Approach
+
 Implement TaskRouter class that analyzes available tasks, validates dependencies, matches agent capabilities, and provides intelligent recommendations with priority weighting and filtering support.
 
 ### Success Criteria
+
 - [ ] Agents can request next available task via "asd next" command
 - [ ] Task dependencies prevent assignment of blocked tasks
 - [ ] Agent capability matching ensures appropriate task assignment
@@ -160,9 +167,10 @@ Implement TaskRouter class that analyzes available tasks, validates dependencies
 ## 🏗️ Implementation Plan
 
 ### Technical Approach
+
 Create TaskRouter class that loads all specs, analyzes task states, validates dependencies, matches agent capabilities, and provides filtered recommendations through CLI commands and programmatic API.
 
-### Implementation Tasks *(Each task = one agent handoff)*
+### Implementation Tasks _(Each task = one agent handoff)_
 
 **TASK-001** 🤖 **Core Task Routing Engine** ⏳ **← READY FOR PICKUP** | Agent: Backend-Specialist
 
@@ -202,7 +210,7 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 - [ ] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
 - [ ] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
 - [ ] Product Handoff: notify CLI specialist that routing API is ready for command integration
-- **Dependencies**: TASK-002 must be complete  
+- **Dependencies**: TASK-002 must be complete
 - **Files**: Task recommendation API, ranking algorithms, caching layer
 
 **TASK-004** 🤖 **CLI Integration & Commands** ⏸️ **← BLOCKED (waiting for TASK-003)** | Agent: CLI-Specialist
@@ -225,23 +233,26 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 
 ## ✅ Validation Requirements
 
-### 📝 Documentation Checklist *(REQUIRED before committing YOUR task)*
+### 📝 Documentation Checklist _(REQUIRED before committing YOUR task)_
+
 - [ ] **Your Task Status**: Mark your task ✅ and update all subtasks to `- [x]`
 - [ ] **Current State**: Update "Next Available Task" to show what task is ready next
 - [ ] **Success Criteria**: Check off any criteria your task completed
 - [ ] **Handoff**: Clear what the next agent should pick up
 - [ ] **Architecture Updates**: Update architecture.md with TaskRouter implementation details
 
-### 🧪 Testing Checklist *(Follow this exact order)*
+### 🧪 Testing Checklist _(Follow this exact order)_
 
-**DURING DEVELOPMENT** *(Test as you build each piece)*
+**DURING DEVELOPMENT** _(Test as you build each piece)_
+
 - [ ] **Dependency Validation**: Test task dependency resolution with various scenarios
 - [ ] **Agent Matching**: Verify agent capability matching works correctly
 - [ ] **Priority Sorting**: Test priority weighting with different P0-P3 combinations
 - [ ] **Constraint Filtering**: Test phase and agent type filtering
 - [ ] **Performance**: Verify routing performance with large spec datasets
 
-**BEFORE COMMITTING** *(Required validation sequence)*
+**BEFORE COMMITTING** _(Required validation sequence)_
+
 - [ ] **Integration Tests**: Test TaskRouter integration with existing SpecParser
 - [ ] **CLI Commands**: Test all routing commands with various filter combinations
 - [ ] **Edge Cases**: Test with empty specs, missing dependencies, invalid agent types
@@ -250,7 +261,8 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 - [ ] **Unit Tests**: Test individual routing components in isolation
 - [ ] **Performance**: Verify routing stays under 200ms for 100+ spec projects
 
-### 🌱 Task Routing Impact Check *(Required for routing functionality)*
+### 🌱 Task Routing Impact Check _(Required for routing functionality)_
+
 - [ ] **Next Command**: Verify "asd next" returns appropriate task for different agent types
 - [ ] **Dependency Blocking**: Test that blocked tasks are not recommended
 - [ ] **Priority Ordering**: Confirm P0 tasks are prioritized over lower priorities
@@ -258,15 +270,18 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 
 ---
 
-## 📊 Progress Tracking *(AGENTS: Add entry when you complete YOUR task)*
+## 📊 Progress Tracking _(AGENTS: Add entry when you complete YOUR task)_
 
-### ✅ Completed Tasks *(Add entry when you finish your task)*
-- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - *Agent: [name]* - Next: TASK-YYY ready
+### ✅ Completed Tasks _(Add entry when you finish your task)_
 
-### 🚨 Task Blockers *(Preventing next task pickup)*
+- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - _Agent: [name]_ - Next: TASK-YYY ready
+
+### 🚨 Task Blockers _(Preventing next task pickup)_
+
 - No blockers currently identified
 
-### ➡️ Handoff Status *(What's ready for next agent)*
+### ➡️ Handoff Status _(What's ready for next agent)_
+
 - **Ready Now**: TASK-001 (no dependencies)
 - **Waiting**: TASK-002 through TASK-004 (sequential dependencies)
 
@@ -274,17 +289,20 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 
 ## 🔗 Technical References
 
-### Architecture Documents  
+### Architecture Documents
+
 - **System Architecture**: `docs/architecture.md` (TaskRouter component)
 - **Existing Code**: `lib/feature-parser.js` (spec parsing), `lib/config-manager.js` (configuration)
 - **CLI Patterns**: `bin/asd` (existing command structure)
 
 ### Implementation Patterns
+
 - **Spec Parsing**: Use existing SpecParser for loading task data
 - **Configuration**: Integrate with ConfigManager for agent capabilities
 - **CLI Commands**: Follow existing commander.js patterns in bin/asd
 
 ### Dependencies
+
 - **Requires**: SpecParser, ConfigManager, existing spec structure
 - **Enables**: Agent automation, "asd next" workflow, intelligent task assignment
 
@@ -296,11 +314,13 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 ## Detailed Requirements
 
 ### REQ-001: Intelligent Task Recommendation
+
 **As a** AI agent  
 **I want** to get the next most appropriate task for my capabilities  
 **So that** I can work efficiently without manual task assignment
 
 **Acceptance Criteria**:
+
 - [ ] TaskRouter analyzes all available tasks and recommends best match
 - [ ] Recommendations consider agent type, capabilities, and context requirements
 - [ ] Blocked tasks (missing dependencies) are never recommended
@@ -308,11 +328,13 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 - [ ] System provides reasoning for why a task was recommended
 
 ### REQ-002: Dependency Validation
+
 **As a** system user  
 **I want** task dependencies to be validated before assignment  
 **So that** agents don't work on tasks that can't be completed
 
 **Acceptance Criteria**:
+
 - [ ] Tasks with unmet dependencies are marked as blocked
 - [ ] Dependency chains are resolved correctly (A depends on B depends on C)
 - [ ] Circular dependencies are detected and flagged
@@ -320,11 +342,13 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 - [ ] Clear error messages explain why tasks are blocked
 
 ### REQ-003: Agent Capability Matching
+
 **As a** project manager  
 **I want** tasks assigned only to agents with appropriate capabilities  
 **So that** work quality remains high and tasks are completed successfully
 
 **Acceptance Criteria**:
+
 - [ ] Tasks specify required agent types (product-manager, ui-developer, etc.)
 - [ ] Tasks specify context requirements (strategic-vision, technical-patterns, etc.)
 - [ ] Agent capability profiles define what each agent type can handle
@@ -332,11 +356,13 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 - [ ] System suggests alternative agents when primary choice unavailable
 
 ### REQ-004: Performance & Scalability
+
 **As a** system user  
 **I want** task routing to be fast and responsive  
 **So that** agent workflows aren't slowed down by routing overhead
 
 **Acceptance Criteria**:
+
 - [ ] Task routing completes in < 200ms for projects with 100+ specs
 - [ ] Caching optimizes repeated routing requests
 - [ ] Memory usage stays reasonable for large spec sets
@@ -346,6 +372,7 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 ## Technical Design Details
 
 ### TaskRouter Class Architecture
+
 ```javascript
 class TaskRouter {
   constructor(specParser, configManager) {
@@ -377,36 +404,38 @@ class TaskRouter {
 ```
 
 ### Priority Weighting Algorithm
+
 ```javascript
 const priorityWeights = {
-  'P0': 1000,  // Critical - always prioritized
-  'P1': 100,   // High - important work
-  'P2': 10,    // Medium - normal priority
-  'P3': 1      // Low - background tasks
+  P0: 1000, // Critical - always prioritized
+  P1: 100, // High - important work
+  P2: 10, // Medium - normal priority
+  P3: 1, // Low - background tasks
 };
 
 const calculateTaskScore = (task, agentType, constraints) => {
   let score = priorityWeights[task.priority] || 1;
-  
+
   // Boost for perfect agent match
   if (task.agent_type === agentType) score *= 2;
-  
+
   // Boost for phase alignment
   if (constraints.phase && task.phase === constraints.phase) score *= 1.5;
-  
+
   // Penalty for context mismatch
   const requiredContext = task.context_requirements || [];
   const agentCapabilities = this.getAgentCapabilities(agentType);
-  const contextMatch = requiredContext.every(req => 
+  const contextMatch = requiredContext.every((req) =>
     agentCapabilities.context_requirements.includes(req)
   );
   if (!contextMatch) score *= 0.5;
-  
+
   return score;
 };
 ```
 
 ### CLI Command Examples
+
 ```bash
 # Basic next task
 asd next --agent product-manager
@@ -428,18 +457,21 @@ asd dependencies --task TASK-001 --depth 2
 ## Testing Strategy Details
 
 ### Unit Tests
+
 - TaskRouter core methods with various agent types and constraints
 - Dependency validation with complex dependency chains
 - Priority weighting algorithm with different scenarios
 - Agent capability matching logic
 
-### Integration Tests  
+### Integration Tests
+
 - TaskRouter integration with SpecParser and ConfigManager
 - End-to-end task recommendation workflow
 - CLI command integration with routing system
 - Performance testing with large spec datasets
 
 ### Edge Case Tests
+
 - Empty spec sets and missing tasks
 - Circular dependencies and invalid references
 - Agent types with no matching tasks
@@ -449,19 +481,22 @@ asd dependencies --task TASK-001 --depth 2
 
 ---
 
-## 💡 Implementation Notes *(Update as you learn)*
+## 💡 Implementation Notes _(Update as you learn)_
 
 ### Key Decisions
+
 - TaskRouter integrates with existing SpecParser rather than reimplementing parsing
 - Caching layer improves performance for repeated routing requests
 - Agent capability matching uses context_requirements field from task definitions
 
-### Gotchas & Learnings  
+### Gotchas & Learnings
+
 - Dependency validation must handle circular references gracefully
 - Priority weighting needs to balance urgency with agent capability fit
 - Performance critical for large projects - caching and optimization required
 
 ### Future Improvements
+
 - Machine learning for recommendation quality improvement
 - Agent workload balancing and capacity planning
 - Cross-project task routing and resource sharing

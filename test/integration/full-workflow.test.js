@@ -1,11 +1,11 @@
-const path = require('path');
-const fs = require('fs').promises;
-const ConfigManager = require('../../lib/config-manager');
-const SpecParser = require('../../lib/feature-parser');
-const ProgressCalculator = require('../../lib/progress-calc');
-const UIComponents = require('../../lib/ui-components');
+const path = require("path");
+const fs = require("fs").promises;
+const ConfigManager = require("../../lib/config-manager");
+const SpecParser = require("../../lib/feature-parser");
+const ProgressCalculator = require("../../lib/progress-calc");
+const UIComponents = require("../../lib/ui-components");
 
-describe('Full Workflow Integration Tests', () => {
+describe("Full Workflow Integration Tests", () => {
   let testDir;
   let configManager;
   let specParser;
@@ -41,13 +41,13 @@ describe('Full Workflow Integration Tests', () => {
         priorities: ['P0', 'P1', 'P2', 'P3']
       };
     `;
-    global.createTestFile('asd.config.js', configContent);
+    global.createTestFile("asd.config.js", configContent);
 
     // Create comprehensive spec files
     const specs = [
       // Active P0 feature with mixed task progress
       {
-        path: 'docs/specs/active/SPEC-001-critical-auth.md',
+        path: "docs/specs/active/SPEC-001-critical-auth.md",
         content: `# Critical Authentication System
 **Priority:** P0
 
@@ -75,7 +75,7 @@ Login form and user interface.
 
       // Backlog P0 feature (critical ready)
       {
-        path: 'docs/specs/backlog/BUG-001-login-failure.md',
+        path: "docs/specs/backlog/BUG-001-login-failure.md",
         content: `# Critical Login Failure
 **Priority:** P0
 **Severity:** Critical
@@ -110,7 +110,7 @@ Add token cleanup job.`,
 
       // Active P1 feature
       {
-        path: 'docs/specs/active/FEAT-010-user-profiles.md',
+        path: "docs/specs/active/FEAT-010-user-profiles.md",
         content: `# User Profile Management
 **Priority:** P1
 
@@ -133,7 +133,7 @@ User interface for profile management.`,
 
       // Research spike
       {
-        path: 'docs/specs/active/SPIKE-005-performance.md',
+        path: "docs/specs/active/SPIKE-005-performance.md",
         content: `# Database Performance Research
 **Priority:** P2
 **Research Type:** Performance Analysis
@@ -160,7 +160,7 @@ Implement and test different strategies.`,
 
       // Maintenance task
       {
-        path: 'docs/specs/backlog/MAINT-001-dependency-updates.md',
+        path: "docs/specs/backlog/MAINT-001-dependency-updates.md",
         content: `# Quarterly Dependency Updates
 **Priority:** P3
 
@@ -186,7 +186,7 @@ Update all project dependencies to latest stable versions.
 
       // Completed feature
       {
-        path: 'docs/specs/done/SPEC-100-email-system.md',
+        path: "docs/specs/done/SPEC-100-email-system.md",
         content: `# Email Notification System
 **Priority:** P1
 
@@ -210,8 +210,8 @@ User notification preferences and triggers.`,
     }
   }
 
-  describe('Complete ASD Workflow', () => {
-    it('should load and parse all specifications correctly', async () => {
+  describe("Complete ASD Workflow", () => {
+    it("should load and parse all specifications correctly", async () => {
       await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
@@ -219,18 +219,18 @@ User notification preferences and triggers.`,
 
       // Verify spec types
       const specTypes = specs.map((s) => s.type);
-      expect(specTypes).toContain('SPEC');
-      expect(specTypes).toContain('BUG');
-      expect(specTypes).toContain('FEAT');
-      expect(specTypes).toContain('SPIKE');
-      expect(specTypes).toContain('MAINT');
+      expect(specTypes).toContain("SPEC");
+      expect(specTypes).toContain("BUG");
+      expect(specTypes).toContain("FEAT");
+      expect(specTypes).toContain("SPIKE");
+      expect(specTypes).toContain("MAINT");
 
       // Verify priorities
-      const p0Specs = specs.filter((s) => s.priority === 'P0');
+      const p0Specs = specs.filter((s) => s.priority === "P0");
       expect(p0Specs).toHaveLength(2);
     });
 
-    it('should calculate progress across all features correctly', async () => {
+    it("should calculate progress across all features correctly", async () => {
       await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
@@ -242,18 +242,18 @@ User notification preferences and triggers.`,
       expect(overallProgress.percentage).toBeLessThanOrEqual(100);
     });
 
-    it('should identify critical ready features', async () => {
+    it("should identify critical ready features", async () => {
       await specParser.loadSpecs();
 
       const criticalReady = specParser.getCriticalReady();
 
       expect(criticalReady).toHaveLength(1);
-      expect(criticalReady[0].id).toBe('BUG-001');
-      expect(criticalReady[0].priority).toBe('P0');
-      expect(criticalReady[0].status).toBe('backlog');
+      expect(criticalReady[0].id).toBe("BUG-001");
+      expect(criticalReady[0].priority).toBe("P0");
+      expect(criticalReady[0].status).toBe("backlog");
     });
 
-    it('should track task assignments to agents', async () => {
+    it("should track task assignments to agents", async () => {
       await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
@@ -264,12 +264,12 @@ User notification preferences and triggers.`,
       expect(tasksWithAgents.length).toBeGreaterThan(0);
 
       const agentRoles = tasksWithAgents.map((t) => t.assigneeRole);
-      expect(agentRoles).toContain('Database-Engineer');
-      expect(agentRoles).toContain('Backend-Developer');
-      expect(agentRoles).toContain('Frontend-Developer');
+      expect(agentRoles).toContain("Database-Engineer");
+      expect(agentRoles).toContain("Backend-Developer");
+      expect(agentRoles).toContain("Frontend-Developer");
     });
 
-    it('should handle different task status formats', async () => {
+    it("should handle different task status formats", async () => {
       await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
@@ -285,11 +285,11 @@ User notification preferences and triggers.`,
       expect(statusCounts.ready).toBeGreaterThan(0);
     });
 
-    it('should parse subtasks and calculate partial progress', async () => {
+    it("should parse subtasks and calculate partial progress", async () => {
       await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
-      const authSpec = specs.find((s) => s.id === 'SPEC-001');
+      const authSpec = specs.find((s) => s.id === "SPEC-001");
 
       expect(authSpec).toBeDefined();
       expect(authSpec.tasks).toHaveLength(3);
@@ -308,26 +308,26 @@ User notification preferences and triggers.`,
       expect(progress.total).toBe(3);
     });
 
-    it('should support different specification types with specific fields', async () => {
+    it("should support different specification types with specific fields", async () => {
       await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
 
       // Bug spec should have bug-specific fields
-      const bugSpec = specs.find((s) => s.type === 'BUG');
-      expect(bugSpec.bugSeverity).toBe('Critical');
+      const bugSpec = specs.find((s) => s.type === "BUG");
+      expect(bugSpec.bugSeverity).toBe("Critical");
       expect(bugSpec.reproductionSteps).toHaveLength(5);
-      expect(bugSpec.rootCause).toContain('Password reset tokens');
-      expect(bugSpec.proposedSolution).toContain('token lifecycle');
+      expect(bugSpec.rootCause).toContain("Password reset tokens");
+      expect(bugSpec.proposedSolution).toContain("token lifecycle");
 
       // Spike spec should have research fields
-      const spikeSpec = specs.find((s) => s.type === 'SPIKE');
-      expect(spikeSpec.researchType).toBe('Performance Analysis');
-      expect(spikeSpec.researchQuestion).toContain('indexing strategies');
+      const spikeSpec = specs.find((s) => s.type === "SPIKE");
+      expect(spikeSpec.researchType).toBe("Performance Analysis");
+      expect(spikeSpec.researchQuestion).toContain("indexing strategies");
       expect(spikeSpec.researchFindings).toHaveLength(4);
     });
 
-    it('should generate comprehensive statistics', async () => {
+    it("should generate comprehensive statistics", async () => {
       await specParser.loadSpecs();
 
       const stats = specParser.getStats();
@@ -342,13 +342,13 @@ User notification preferences and triggers.`,
 
       // Verify stats match actual data
       const specs = specParser.getSpecs();
-      expect(specs.filter((s) => s.status === 'active')).toHaveLength(3);
-      expect(specs.filter((s) => s.status === 'backlog')).toHaveLength(2);
-      expect(specs.filter((s) => s.status === 'done')).toHaveLength(1);
-      expect(specs.filter((s) => s.priority === 'P0')).toHaveLength(2);
+      expect(specs.filter((s) => s.status === "active")).toHaveLength(3);
+      expect(specs.filter((s) => s.status === "backlog")).toHaveLength(2);
+      expect(specs.filter((s) => s.status === "done")).toHaveLength(1);
+      expect(specs.filter((s) => s.priority === "P0")).toHaveLength(2);
     });
 
-    it('should create formatted UI output for all components', async () => {
+    it("should create formatted UI output for all components", async () => {
       await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
@@ -356,12 +356,12 @@ User notification preferences and triggers.`,
 
       // Test summary stats
       const summaryStats = ui.createSummaryStats(stats);
-      expect(summaryStats).toContain('6 total features');
-      expect(summaryStats).toContain('Active: 3');
-      expect(summaryStats).toContain('Critical (P0): 2');
+      expect(summaryStats).toContain("6 total features");
+      expect(summaryStats).toContain("Active: 3");
+      expect(summaryStats).toContain("Critical (P0): 2");
 
       // Test feature list items
-      const activeSpecs = specs.filter((s) => s.status === 'active');
+      const activeSpecs = specs.filter((s) => s.status === "active");
       for (const spec of activeSpecs) {
         const progress = progressCalc.calculateProgress(spec);
         const listItem = ui.createFeatureListItem(spec, progress, false);
@@ -374,19 +374,19 @@ User notification preferences and triggers.`,
       for (const spec of specs) {
         if (spec.tasks && spec.tasks.length > 0) {
           const taskList = ui.createTaskList(spec.tasks);
-          expect(taskList).toContain('TASK-');
+          expect(taskList).toContain("TASK-");
 
           // Check for agent assignments
           const tasksWithAgents = spec.tasks.filter((t) => t.assigneeRole);
           if (tasksWithAgents.length > 0) {
-            expect(taskList).toContain('[');
-            expect(taskList).toContain(']');
+            expect(taskList).toContain("[");
+            expect(taskList).toContain("]");
           }
         }
       }
     });
 
-    it('should handle velocity and completion estimates', async () => {
+    it("should handle velocity and completion estimates", async () => {
       await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
@@ -403,7 +403,7 @@ User notification preferences and triggers.`,
       expect(estimate.totalTasks).toBeGreaterThan(0);
     });
 
-    it('should find next available tasks across all features', async () => {
+    it("should find next available tasks across all features", async () => {
       await specParser.loadSpecs();
 
       const specs = specParser.getSpecs();
@@ -420,11 +420,11 @@ User notification preferences and triggers.`,
 
       // Should include the ready tasks from various specs
       const taskTitles = nextTasks.map((t) => t.title);
-      expect(taskTitles).toContain('Frontend Integration');
-      expect(taskTitles).toContain('Profile Data Model');
+      expect(taskTitles).toContain("Frontend Integration");
+      expect(taskTitles).toContain("Profile Data Model");
     });
 
-    it('should handle configuration overrides', async () => {
+    it("should handle configuration overrides", async () => {
       // Create custom configuration
       const customConfig = `
         module.exports = {
@@ -434,43 +434,43 @@ User notification preferences and triggers.`,
           priorities: ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']
         };
       `;
-      global.createTestFile('custom.config.js', customConfig);
+      global.createTestFile("custom.config.js", customConfig);
 
       // Create new managers with custom config
       const customConfigManager = new ConfigManager(testDir);
       // const _customSpecParser = new SpecParser(customConfigManager);
 
       // Override config path
-      customConfigManager.configPath = path.join(testDir, 'custom.config.js');
+      customConfigManager.configPath = path.join(testDir, "custom.config.js");
       customConfigManager.config = null; // Clear cache
 
       const config = customConfigManager.loadConfig();
 
-      expect(config.supportedTypes).toEqual(['SPEC', 'CUSTOM']);
+      expect(config.supportedTypes).toEqual(["SPEC", "CUSTOM"]);
       expect(config.statusFolders).toEqual([
-        'active',
-        'backlog',
-        'done',
-        'review',
+        "active",
+        "backlog",
+        "done",
+        "review",
       ]);
-      expect(config.priorities).toEqual(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']);
+      expect(config.priorities).toEqual(["CRITICAL", "HIGH", "MEDIUM", "LOW"]);
     });
   });
 
-  describe('Error Resilience', () => {
-    it('should handle malformed spec files gracefully', async () => {
+  describe("Error Resilience", () => {
+    it("should handle malformed spec files gracefully", async () => {
       // Add some malformed files
       global.createTestFile(
-        'docs/specs/active/malformed-no-id.md',
-        'Invalid content without ID'
+        "docs/specs/active/malformed-no-id.md",
+        "Invalid content without ID"
       );
       global.createTestFile(
-        'docs/specs/active/INVALID-FORMAT.md',
-        '# Invalid\nNo proper format'
+        "docs/specs/active/INVALID-FORMAT.md",
+        "# Invalid\nNo proper format"
       );
-      global.createTestFile('docs/specs/active/empty-file.md', '');
+      global.createTestFile("docs/specs/active/empty-file.md", "");
 
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
 
       await specParser.loadSpecs();
 
@@ -485,13 +485,13 @@ User notification preferences and triggers.`,
       consoleSpy.mockRestore();
     });
 
-    it('should handle missing directories', async () => {
+    it("should handle missing directories", async () => {
       // Remove one status directory
-      await fs.rmdir(path.join(testDir, 'docs/specs/done'), {
+      await fs.rmdir(path.join(testDir, "docs/specs/done"), {
         recursive: true,
       });
 
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
 
       await specParser.loadSpecs();
 
@@ -499,30 +499,30 @@ User notification preferences and triggers.`,
 
       // Should still load specs from existing directories
       expect(specs.length).toBeGreaterThan(0);
-      expect(specs.filter((s) => s.status === 'done')).toHaveLength(0);
+      expect(specs.filter((s) => s.status === "done")).toHaveLength(0);
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Warning: Could not read folder done:',
+        "Warning: Could not read folder done:",
         expect.any(String)
       );
 
       consoleSpy.mockRestore();
     });
 
-    it('should handle corrupted config files', async () => {
-      global.createTestFile('asd.config.js', 'corrupted javascript content {');
+    it("should handle corrupted config files", async () => {
+      global.createTestFile("asd.config.js", "corrupted javascript content {");
 
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
 
       const newConfigManager = new ConfigManager(testDir);
       const config = newConfigManager.loadConfig();
 
       // Should fall back to defaults
       expect(config.featuresPath).toBeDefined();
-      expect(config.supportedTypes).toContain('SPEC');
+      expect(config.supportedTypes).toContain("SPEC");
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Warning: Failed to load configuration, using defaults:',
+        "Warning: Failed to load configuration, using defaults:",
         expect.any(String)
       );
 
@@ -530,8 +530,8 @@ User notification preferences and triggers.`,
     });
   });
 
-  describe('Performance with Large Dataset', () => {
-    it('should handle large number of specifications efficiently', async () => {
+  describe("Performance with Large Dataset", () => {
+    it("should handle large number of specifications efficiently", async () => {
       // Create many spec files
       const largeDataset = [];
       for (let i = 1; i <= 100; i++) {
@@ -548,11 +548,11 @@ Implementation task for spec ${i}.
 ### **TASK-002** 🤖 **Testing ${i}**
 Testing task for spec ${i}.`;
 
-        const status = ['active', 'backlog', 'done'][i % 3];
+        const status = ["active", "backlog", "done"][i % 3];
         largeDataset.push({
           path: `docs/specs/${status}/SPEC-${i
             .toString()
-            .padStart(3, '0')}-test.md`,
+            .padStart(3, "0")}-test.md`,
           content,
         });
       }
@@ -587,19 +587,19 @@ Testing task for spec ${i}.`;
     });
   });
 
-  describe('Multi-Project Structure Support', () => {
-    it('should work with different project structures', async () => {
+  describe("Multi-Project Structure Support", () => {
+    it("should work with different project structures", async () => {
       // Create alternative project structure
       const altStructure = [
         {
-          path: 'features/current/SPEC-200-alt.md',
+          path: "features/current/SPEC-200-alt.md",
           content:
-            '# Alternative Structure\n**Priority:** P1\n## Description\nAlternative project structure.',
+            "# Alternative Structure\n**Priority:** P1\n## Description\nAlternative project structure.",
         },
         {
-          path: 'features/planned/FEAT-201-alt.md',
+          path: "features/planned/FEAT-201-alt.md",
           content:
-            '# Alternative Feature\n**Priority:** P2\n## Description\nFeature in alternative structure.',
+            "# Alternative Feature\n**Priority:** P2\n## Description\nFeature in alternative structure.",
         },
       ];
 
@@ -615,11 +615,11 @@ Testing task for spec ${i}.`;
           supportedTypes: ['SPEC', 'FEAT']
         };
       `;
-      global.createTestFile('alt.config.js', altConfig);
+      global.createTestFile("alt.config.js", altConfig);
 
       // Test with alternative structure
       const altConfigManager = new ConfigManager(testDir);
-      altConfigManager.configPath = path.join(testDir, 'alt.config.js');
+      altConfigManager.configPath = path.join(testDir, "alt.config.js");
       altConfigManager.config = null; // Clear cache
 
       const altSpecParser = new SpecParser(altConfigManager);
@@ -629,8 +629,8 @@ Testing task for spec ${i}.`;
       const altSpecs = altSpecParser.getSpecs();
 
       expect(altSpecs.length).toBeGreaterThanOrEqual(2);
-      expect(altSpecs.some((s) => s.id === 'SPEC-200')).toBe(true);
-      expect(altSpecs.some((s) => s.id === 'FEAT-201')).toBe(true);
+      expect(altSpecs.some((s) => s.id === "SPEC-200")).toBe(true);
+      expect(altSpecs.some((s) => s.id === "FEAT-201")).toBe(true);
     });
   });
 });

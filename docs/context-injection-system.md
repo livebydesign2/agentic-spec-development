@@ -70,24 +70,25 @@ The context injection system provides multi-layer context to AI agents based on 
 
 ### Automatic Update Triggers
 
-| **CLI Command** | **Files Updated** | **Update Type** |
-|----------------|------------------|-----------------|
-| `asd start task FEAT-037 TASK-001 --agent product-manager` | `.asd/state/assignments.json`, `.asd/context/tasks/TASK-001.md`, spec frontmatter | Real-time |
-| `asd complete subtask FEAT-037 TASK-001 SUBTASK-002` | `.asd/state/assignments.json`, task context, spec frontmatter | Real-time |
-| `asd research add --task TASK-001 "Performance data"` | `.asd/context/tasks/TASK-001.md`, `.asd/context/specs/FEAT-037.md` | Immediate |
-| `asd complete task FEAT-037 TASK-001` | Multiple: state, context, handoff preparation | Batched |
+| **CLI Command**                                            | **Files Updated**                                                                 | **Update Type** |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------- |
+| `asd start task FEAT-037 TASK-001 --agent product-manager` | `.asd/state/assignments.json`, `.asd/context/tasks/TASK-001.md`, spec frontmatter | Real-time       |
+| `asd complete subtask FEAT-037 TASK-001 SUBTASK-002`       | `.asd/state/assignments.json`, task context, spec frontmatter                     | Real-time       |
+| `asd research add --task TASK-001 "Performance data"`      | `.asd/context/tasks/TASK-001.md`, `.asd/context/specs/FEAT-037.md`                | Immediate       |
+| `asd complete task FEAT-037 TASK-001`                      | Multiple: state, context, handoff preparation                                     | Batched         |
 
 ### CLI-Triggered Updates
 
-| **CLI Command** | **Purpose** | **Files Updated** |
-|----------------|-------------|------------------|
-| `asd context add --spec FEAT-037 --constraint "Mobile performance critical"` | Add spec context | `.asd/context/specs/FEAT-037.md` |
-| `asd agent customize product-manager --add-step "Performance validation"` | Customize workflow | `.asd/agents/product-manager.md` |
+| **CLI Command**                                                              | **Purpose**          | **Files Updated**                        |
+| ---------------------------------------------------------------------------- | -------------------- | ---------------------------------------- |
+| `asd context add --spec FEAT-037 --constraint "Mobile performance critical"` | Add spec context     | `.asd/context/specs/FEAT-037.md`         |
+| `asd agent customize product-manager --add-step "Performance validation"`    | Customize workflow   | `.asd/agents/product-manager.md`         |
 | `asd process update validation-checklist --add-step "Accessibility testing"` | Update quality gates | `.asd/processes/validation-checklist.md` |
 
 ### Manual Edit Support
 
 Users can directly edit any `.asd/` files for advanced customization:
+
 - `.asd/agents/product-manager.md` - Modify agent workflow and context requirements
 - `.asd/processes/validation-checklist.md` - Update quality gates and testing requirements
 - `.asd/context/project.md` - Add project constraints and learned patterns
@@ -99,16 +100,19 @@ Users can directly edit any `.asd/` files for advanced customization:
 When an agent starts a task, context is injected in priority order:
 
 1. **Critical Context** (Always injected)
+
    - Success criteria from spec
    - Documentation rules and handoff process
    - Project constraints and tech stack
 
 2. **Task-Specific Context** (Per task requirements)
+
    - Required reading lists
    - Focus areas and deliverables
    - Task dependencies and prerequisites
 
 3. **Agent-Specific Context** (Filtered by agent type)
+
    - Agent capabilities and validation focus
    - Previous work patterns and learnings
    - Specialized tools and approaches
@@ -125,6 +129,7 @@ asd start task FEAT-037 TASK-001 --agent product-manager
 ```
 
 Results in context injection:
+
 ```json
 {
   "critical": {
@@ -147,7 +152,11 @@ Results in context injection:
     }
   },
   "process_templates": {
-    "validation_checklist": ["Mark task complete", "Update next task", "Commit changes"]
+    "validation_checklist": [
+      "Mark task complete",
+      "Update next task",
+      "Commit changes"
+    ]
   }
 }
 ```
@@ -157,6 +166,7 @@ Results in context injection:
 Following Claude's sub-agent pattern, each agent is defined in a markdown file:
 
 **`.asd/agents/product-manager.md`**:
+
 ```yaml
 ---
 id: "product-manager"
@@ -198,6 +208,7 @@ Responsible for feature definition, user research, and strategic alignment of pr
 ## Context Update Lifecycle
 
 ### Task Start → Context Creation
+
 ```
 asd start task FEAT-037 TASK-001 --agent product-manager
 │
@@ -207,6 +218,7 @@ asd start task FEAT-037 TASK-001 --agent product-manager
 ```
 
 ### Research → Context Accumulation
+
 ```
 asd research add --task TASK-001 "Dashboard engagement: 3+ min target achievable"
 │
@@ -215,6 +227,7 @@ asd research add --task TASK-001 "Dashboard engagement: 3+ min target achievable
 ```
 
 ### Task Complete → Knowledge Transfer
+
 ```
 asd complete task FEAT-037 TASK-001 --handoff "PRD complete, ready for UI development"
 │
@@ -227,6 +240,7 @@ asd complete task FEAT-037 TASK-001 --handoff "PRD complete, ready for UI develo
 ## CLI Commands
 
 ### Context Management
+
 ```bash
 # Add context to different levels
 asd context add --project --constraint "Performance budget: 2s max load time"
@@ -241,6 +255,7 @@ asd context pattern --create "dashboard-widgets" --from-task TASK-001
 ```
 
 ### Agent Management
+
 ```bash
 # List agent capabilities and requirements
 asd agent list --capabilities --context-requirements
@@ -251,6 +266,7 @@ asd agent customize ui-developer --context-requirement "accessibility-guidelines
 ```
 
 ### Process Management
+
 ```bash
 # Update workflow templates
 asd process update validation-checklist --add-step "Performance testing"
@@ -259,6 +275,7 @@ asd process apply custom-validation --to-agent backend-specialist
 ```
 
 ### State Management
+
 ```bash
 # Task assignment and progress
 asd assign task FEAT-037 TASK-001 --agent product-manager
@@ -271,6 +288,7 @@ asd handoff ready FEAT-037 TASK-001 --next-agent ui-developer
 ### User Wants to Modify Agent Workflow
 
 **Option 1: CLI Customization** (Common changes)
+
 ```bash
 asd agent customize product-manager \
   --add-step "Strategic alignment validation" \
@@ -278,40 +296,46 @@ asd agent customize product-manager \
 ```
 
 **Option 2: Direct File Edit** (Advanced)
+
 ```bash
 code .asd/agents/product-manager.md  # Modify workflow steps, context requirements
 ```
 
 **Option 3: Project Configuration** (Permanent changes)
+
 ```javascript
 // asd.config.js
 module.exports = {
   agents: {
     "product-manager": {
       workflow_overrides: {
-        validation_steps: ["strategic-check", "user-research-complete"]
-      }
-    }
-  }
+        validation_steps: ["strategic-check", "user-research-complete"],
+      },
+    },
+  },
 };
 ```
 
 ## Benefits
 
 ### Claude-Style Flexibility
+
 - **MD + YAML files** provide human readability + programmatic interface
 - **CLI commands** handle common operations
 - **Manual editing** enables deep customization
 - **Automatic updates** maintain state consistency
 
 ### Layered Context System
+
 - **Static**: Project setup, rarely changes
 - **Dynamic**: Real-time workflow state
 - **Semi-Dynamic**: Research and learning accumulation
 - **Process**: Customizable workflow templates
 
 ### Self-Maintaining Context
+
 The system becomes more intelligent over time as:
+
 - Research findings accumulate in context files
 - Implementation decisions create reusable patterns
 - Agent workflows adapt based on project learnings

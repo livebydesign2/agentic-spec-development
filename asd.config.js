@@ -4,30 +4,30 @@ module.exports = {
   dataFormat: "markdown",
   structure: {
     active: "active",
-    backlog: "backlog", 
-    done: "done"
+    backlog: "backlog",
+    done: "done",
   },
   parsing: {
     filePattern: "**/*.md",
     frontMatterRequired: false,
-    taskFormat: "asd"
+    taskFormat: "asd",
   },
   display: {
     priorityColors: {
       P0: "red",
-      P1: "yellow", 
+      P1: "yellow",
       P2: "cyan",
-      P3: "gray"
+      P3: "gray",
     },
     theme: "default",
     autoRefresh: true,
-    refreshDebounce: 500
+    refreshDebounce: 500,
   },
   cli: {
     defaultPriority: "P2",
     defaultStatus: "backlog",
     supportedTypes: ["SPEC", "FEAT", "BUG", "SPIKE", "MAINT", "RELEASE"],
     statusFolders: ["active", "backlog", "done"],
-    priorities: ["P0", "P1", "P2", "P3"]
-  }
+    priorities: ["P0", "P1", "P2", "P3"],
+  },
 };

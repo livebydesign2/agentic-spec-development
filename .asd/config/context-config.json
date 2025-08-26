@@ -1,0 +1,127 @@
+{
+  "context_system": {
+    "version": "1.0.0",
+    "enabled": true,
+    "performance": {
+      "injection_timeout_ms": 500,
+      "cache_enabled": true,
+      "cache_ttl_seconds": 300,
+      "lazy_loading": true
+    }
+  },
+  "directory_structure": {
+    "base_dir": ".asd",
+    "agents_dir": "agents",
+    "processes_dir": "processes",
+    "context_dir": "context",
+    "state_dir": "state",
+    "config_dir": "config",
+    "logs_dir": "logs",
+    "cache_dir": "cache"
+  },
+  "context_layers": {
+    "critical": {
+      "priority": 1,
+      "max_size_kb": 50,
+      "sources": ["project.md", "urgent-constraints.md"]
+    },
+    "task_specific": {
+      "priority": 2,
+      "max_size_kb": 100,
+      "sources": ["specs/{spec_id}-context.md", "tasks/{task_id}-context.md"]
+    },
+    "agent_specific": {
+      "priority": 3,
+      "max_size_kb": 75,
+      "sources": ["agents/{agent_type}.md"]
+    },
+    "process": {
+      "priority": 4,
+      "max_size_kb": 25,
+      "sources": [
+        "processes/task-handoff-template.md",
+        "processes/validation-checklist.md"
+      ]
+    }
+  },
+  "agent_types": {
+    "software-architect": {
+      "specializations": [
+        "architecture",
+        "system-design",
+        "technical-planning"
+      ],
+      "context_requirements": [
+        "architecture-patterns",
+        "system-constraints",
+        "technical-dependencies"
+      ],
+      "max_context_size_kb": 200
+    },
+    "backend-developer": {
+      "specializations": [
+        "api-development",
+        "database-design",
+        "server-architecture"
+      ],
+      "context_requirements": [
+        "api-specifications",
+        "data-models",
+        "integration-requirements"
+      ],
+      "max_context_size_kb": 180
+    },
+    "cli-specialist": {
+      "specializations": [
+        "command-line-interfaces",
+        "terminal-ui",
+        "user-experience"
+      ],
+      "context_requirements": [
+        "cli-patterns",
+        "user-workflows",
+        "command-specifications"
+      ],
+      "max_context_size_kb": 150
+    },
+    "qa-engineer": {
+      "specializations": ["testing", "quality-assurance", "validation"],
+      "context_requirements": [
+        "test-scenarios",
+        "quality-standards",
+        "validation-requirements"
+      ],
+      "max_context_size_kb": 160
+    }
+  },
+  "update_triggers": {
+    "task_lifecycle": {
+      "task_start": ["create_task_context", "update_agent_assignment"],
+      "task_progress": ["update_task_context", "log_progress"],
+      "task_complete": [
+        "finalize_task_context",
+        "update_spec_context",
+        "trigger_handoff"
+      ]
+    },
+    "cli_commands": {
+      "asd_context_add": ["append_to_context"],
+      "asd_assign": ["update_assignments"],
+      "asd_complete": ["update_completion_status"],
+      "asd_research": ["capture_research_findings"]
+    }
+  },
+  "validation": {
+    "schema_validation": true,
+    "file_format_validation": true,
+    "context_consistency_checks": true,
+    "performance_monitoring": true
+  },
+  "file_formats": {
+    "agent_definitions": "markdown_with_yaml_frontmatter",
+    "context_files": "markdown_with_yaml_frontmatter",
+    "process_templates": "markdown_with_yaml_frontmatter",
+    "state_files": "json",
+    "config_files": "json"
+  }
+}

@@ -4,7 +4,7 @@
   "templatePath": "./templates",
   "structure": {
     "active": "active",
-    "backlog": "backlog", 
+    "backlog": "backlog",
     "done": "done"
   },
   "parsing": {
@@ -15,7 +15,7 @@
   "display": {
     "priorityColors": {
       "P0": "red",
-      "P1": "yellow", 
+      "P1": "yellow",
       "P2": "cyan",
       "P3": "gray"
     },

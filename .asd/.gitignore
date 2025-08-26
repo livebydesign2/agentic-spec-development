@@ -1,0 +1,10 @@
+# Context system generated files
+state/
+logs/
+cache/
+
+# Keep structure but ignore dynamic content
+!agents/
+!processes/
+!context/
+!config/

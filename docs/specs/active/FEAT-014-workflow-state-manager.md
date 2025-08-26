@@ -14,7 +14,8 @@ tasks:
     agent_type: "backend-specialist"
     status: "ready"
     estimated_hours: 6
-    context_requirements: ["state-management-patterns", "file-system-operations"]
+    context_requirements:
+      ["state-management-patterns", "file-system-operations"]
     subtasks:
       - id: "SUBTASK-001"
         title: "Implement WorkflowStateManager class"
@@ -100,8 +101,8 @@ tasks:
         type: "validation"
         estimated_minutes: 0
         status: "ready"
-dependencies: 
-  - "FEAT-013"  # Task Router System for task assignment logic
+dependencies:
+  - "FEAT-013" # Task Router System for task assignment logic
 acceptance_criteria:
   - "System tracks real-time task assignments and progress automatically"
   - "Spec frontmatter updates inline (no separate completion documents)"
@@ -114,7 +115,7 @@ acceptance_criteria:
 
 **Status**: Active | **Priority**: P0 (Critical) | **Owner**: Backend Specialist
 
-## 🎯 Quick Start *(30 seconds)*
+## 🎯 Quick Start _(30 seconds)_
 
 **What**: Dynamic state management system for real-time task assignments, progress tracking, and automated agent handoffs
 
@@ -123,32 +124,38 @@ acceptance_criteria:
 **Impact**: Core workflow engine - tracks all agent work, updates progress, prepares handoffs automatically
 
 ### 🚀 AGENT PICKUP GUIDE
+
 **➡️ Next Available Task**: **TASK-001** - Dynamic State Management Core  
 **📋 Your Job**: Work on TASK-001 only, then update docs and hand off  
 **🚦 Dependencies**: None - can work independently of other systems
 
-### 🚦 Current State *(AGENTS: Update this when you complete YOUR task)*
+### 🚦 Current State _(AGENTS: Update this when you complete YOUR task)_
+
 - **Next Available Task**: TASK-001 - Dynamic State Management Core
-- **Current Task Status**: None - ready for pickup  
+- **Current Task Status**: None - ready for pickup
 - **Overall Progress**: 0 of 4 tasks complete
 - **Blockers**: None
 - **Last Updated**: 2024-08-24 by System Architect
 
 ---
 
-## 📋 Work Definition *(What needs to be built)*
+## 📋 Work Definition _(What needs to be built)_
 
 ### Problem Statement
+
 Currently, there's no systematic way to track agent work in real-time or manage handoffs between agents. The system lacks:
+
 - Real-time tracking of who's working on what task
 - Automatic progress updates in spec frontmatter (currently requires manual updates)
 - Agent handoff detection and next task preparation
 - Consolidated view of project progress and assignment status
 
 ### Solution Approach
+
 Implement WorkflowStateManager that tracks assignments in real-time, updates spec files inline, detects completion and handoffs, and maintains progress state for all active work.
 
 ### Success Criteria
+
 - [ ] Real-time tracking of task assignments and progress
 - [ ] Spec frontmatter updates automatically (no separate completion documents)
 - [ ] Agent handoffs detected and next tasks prepared automatically
@@ -161,9 +168,10 @@ Implement WorkflowStateManager that tracks assignments in real-time, updates spe
 ## 🏗️ Implementation Plan
 
 ### Technical Approach
+
 Create WorkflowStateManager that maintains dynamic state files, provides real-time assignment tracking, updates spec frontmatter inline, detects handoff conditions, and prepares context for next agents.
 
-### Implementation Tasks *(Each task = one agent handoff)*
+### Implementation Tasks _(Each task = one agent handoff)_
 
 **TASK-001** 🤖 **Dynamic State Management Core** ⏳ **← READY FOR PICKUP** | Agent: Backend-Specialist
 
@@ -203,7 +211,7 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 - [ ] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
 - [ ] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
 - [ ] Product Handoff: notify CLI specialist that handoff system is ready
-- **Dependencies**: TASK-002 must be complete  
+- **Dependencies**: TASK-002 must be complete
 - **Files**: Handoff detection logic, next task calculation
 
 **TASK-004** 🤖 **CLI Integration & Progress Commands** ⏸️ **← BLOCKED (waiting for TASK-003)** | Agent: CLI-Specialist
@@ -226,23 +234,26 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 
 ## ✅ Validation Requirements
 
-### 📝 Documentation Checklist *(REQUIRED before committing YOUR task)*
+### 📝 Documentation Checklist _(REQUIRED before committing YOUR task)_
+
 - [ ] **Your Task Status**: Mark your task ✅ and update all subtasks to `- [x]`
 - [ ] **Current State**: Update "Next Available Task" to show what task is ready next
 - [ ] **Success Criteria**: Check off any criteria your task completed
 - [ ] **Handoff**: Clear what the next agent should pick up
 - [ ] **Architecture Updates**: Update architecture.md with WorkflowStateManager details
 
-### 🧪 Testing Checklist *(Follow this exact order)*
+### 🧪 Testing Checklist _(Follow this exact order)_
 
-**DURING DEVELOPMENT** *(Test as you build each piece)*
+**DURING DEVELOPMENT** _(Test as you build each piece)_
+
 - [ ] **State Persistence**: Test state files are created and updated correctly
 - [ ] **Concurrent Access**: Test multiple CLI operations don't corrupt state
 - [ ] **Frontmatter Updates**: Verify spec file frontmatter updates work reliably
 - [ ] **Progress Calculation**: Test progress metrics accuracy across multiple specs
 - [ ] **Handoff Detection**: Test handoff triggers work correctly
 
-**BEFORE COMMITTING** *(Required validation sequence)*
+**BEFORE COMMITTING** _(Required validation sequence)_
+
 - [ ] **Integration Tests**: Test WorkflowStateManager with existing spec system
 - [ ] **File Integrity**: Verify spec files aren't corrupted by inline updates
 - [ ] **State Consistency**: Test state files remain consistent across operations
@@ -251,7 +262,8 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 - [ ] **Unit Tests**: Test individual state management components
 - [ ] **Performance**: Verify state updates complete within 100ms
 
-### 🌱 Workflow State Impact Check *(Required for state management)*
+### 🌱 Workflow State Impact Check _(Required for state management)_
+
 - [ ] **Assignment Tracking**: Verify current assignments are tracked accurately
 - [ ] **Progress Updates**: Test progress calculation across all specs
 - [ ] **Handoff Detection**: Confirm handoffs are detected and next tasks prepared
@@ -259,15 +271,18 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 
 ---
 
-## 📊 Progress Tracking *(AGENTS: Add entry when you complete YOUR task)*
+## 📊 Progress Tracking _(AGENTS: Add entry when you complete YOUR task)_
 
-### ✅ Completed Tasks *(Add entry when you finish your task)*
-- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - *Agent: [name]* - Next: TASK-YYY ready
+### ✅ Completed Tasks _(Add entry when you finish your task)_
 
-### 🚨 Task Blockers *(Preventing next task pickup)*
+- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - _Agent: [name]_ - Next: TASK-YYY ready
+
+### 🚨 Task Blockers _(Preventing next task pickup)_
+
 - No blockers currently identified
 
-### ➡️ Handoff Status *(What's ready for next agent)*
+### ➡️ Handoff Status _(What's ready for next agent)_
+
 - **Ready Now**: TASK-001 (no dependencies)
 - **Waiting**: TASK-002 through TASK-004 (sequential dependencies)
 
@@ -275,17 +290,20 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 
 ## 🔗 Technical References
 
-### Architecture Documents  
+### Architecture Documents
+
 - **System Architecture**: `docs/architecture.md` (WorkflowStateManager component)
 - **Context System**: `docs/context-injection-system.md` (state integration patterns)
 - **Existing Code**: `lib/feature-parser.js` (spec parsing), `lib/progress-calc.js` (progress logic)
 
 ### Implementation Patterns
+
 - **State Management**: Use JSON files for performance, atomic updates for consistency
 - **Frontmatter Updates**: js-yaml for parsing/writing YAML frontmatter safely
 - **CLI Integration**: Commander.js patterns from existing bin/asd
 
 ### Dependencies
+
 - **Requires**: SpecParser for loading specs, existing progress calculation
 - **Enables**: Real-time workflow tracking, agent handoffs, automated progress
 
@@ -297,23 +315,27 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 ## Detailed Requirements
 
 ### REQ-001: Real-Time Assignment Tracking
+
 **As a** project manager  
 **I want** to see who's working on what task in real-time  
 **So that** I can track progress and avoid assignment conflicts
 
 **Acceptance Criteria**:
+
 - [ ] System tracks current task assignments with timestamps
 - [ ] Assignment state persists across CLI session restarts
 - [ ] Multiple agents can work on different tasks without conflicts
 - [ ] Assignment history is maintained for debugging and analysis
 - [ ] Clear indication of task start times and estimated completion
 
-### REQ-002: Inline Documentation Updates  
+### REQ-002: Inline Documentation Updates
+
 **As a** system user  
 **I want** spec files to update automatically without separate documents  
 **So that** the spec files remain the single source of truth
 
 **Acceptance Criteria**:
+
 - [ ] Spec frontmatter updates automatically when task status changes
 - [ ] No separate completion documents are created
 - [ ] "Current task" and "next available task" fields update correctly
@@ -321,11 +343,13 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 - [ ] File updates are atomic and don't corrupt existing content
 
 ### REQ-003: Agent Handoff Automation
+
 **As a** AI agent  
 **I want** handoffs to be prepared automatically when I complete tasks  
 **So that** the next agent can start work immediately
 
 **Acceptance Criteria**:
+
 - [ ] System detects when all subtasks in a task are complete
 - [ ] Next task is automatically marked as "ready" when dependencies are met
 - [ ] Handoff context is prepared for the next assigned agent
@@ -333,11 +357,13 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 - [ ] Clear notifications indicate when handoffs are ready
 
 ### REQ-004: Progress Tracking & Visibility
+
 **As a** project stakeholder  
 **I want** clear visibility into project progress across all specs  
 **So that** I can understand project status and plan accordingly
 
 **Acceptance Criteria**:
+
 - [ ] Progress calculation is accurate across all specs and tasks
 - [ ] CLI commands provide multiple views of progress (overall, by spec, by agent)
 - [ ] Progress visualization is clear and informative
@@ -347,6 +373,7 @@ Create WorkflowStateManager that maintains dynamic state files, provides real-ti
 ## Technical Design Details
 
 ### WorkflowStateManager Class Architecture
+
 ```javascript
 class WorkflowStateManager {
   constructor(specParser, configManager) {
@@ -367,15 +394,15 @@ class WorkflowStateManager {
   getSpecProgress(specId)                      // Get progress for specific spec
   validateState()                              // Check state consistency
 
-  // Handoff management  
+  // Handoff management
   detectHandoffs()                             // Find ready handoffs
   prepareNextTask(specId, taskId)              // Prepare context for next task
   getHandoffStatus()                           // Get handoff readiness
-  
+
   // Inline documentation
   updateSpecFrontmatter(specPath, updates)     // Update spec YAML frontmatter
   syncSpecState(specId)                        // Sync state with spec file
-  
+
   // Internal methods
   _loadState()                                 // Load state from files
   _saveState()                                 // Save state to files
@@ -384,13 +411,14 @@ class WorkflowStateManager {
 ```
 
 ### State File Schemas
+
 ```javascript
 // .asd/state/assignments.json
 {
   "current_assignments": {
     "FEAT-012": {
       "current_task": "TASK-001",
-      "assigned_agent": "backend-specialist", 
+      "assigned_agent": "backend-specialist",
       "started_at": "2024-08-24T14:00:00Z",
       "progress": "2 of 3 subtasks complete",
       "next_available": "TASK-002"
@@ -413,7 +441,7 @@ class WorkflowStateManager {
     {
       "from_task": "TASK-001",
       "to_task": "TASK-002",
-      "spec_id": "FEAT-012", 
+      "spec_id": "FEAT-012",
       "next_agent": "ui-developer",
       "ready_at": "2024-08-24T16:30:00Z",
       "context_prepared": true
@@ -442,6 +470,7 @@ class WorkflowStateManager {
 ```
 
 ### CLI Command Examples
+
 ```bash
 # Assignment and progress
 asd assign FEAT-012 TASK-001 --agent backend-specialist
@@ -463,18 +492,21 @@ asd handoff history                 # Handoff history
 ## Testing Strategy Details
 
 ### Unit Tests
+
 - WorkflowStateManager core methods with various scenarios
-- Frontmatter update logic with different YAML structures  
+- Frontmatter update logic with different YAML structures
 - Progress calculation with complex task hierarchies
 - Handoff detection with various completion states
 
-### Integration Tests  
+### Integration Tests
+
 - WorkflowStateManager integration with SpecParser
 - End-to-end assignment and completion workflow
 - Concurrent state updates and file access
 - CLI command integration with state management
 
 ### Performance Tests
+
 - State update performance with large numbers of specs
 - Frontmatter update performance with large files
 - Concurrent access performance and safety
@@ -484,19 +516,22 @@ asd handoff history                 # Handoff history
 
 ---
 
-## 💡 Implementation Notes *(Update as you learn)*
+## 💡 Implementation Notes _(Update as you learn)_
 
 ### Key Decisions
+
 - Use JSON files for state storage (performance) with atomic updates for consistency
 - Update spec frontmatter inline rather than creating separate completion documents
 - Handoff detection based on subtask completion rather than manual triggers
 
-### Gotchas & Learnings  
+### Gotchas & Learnings
+
 - Frontmatter updates must preserve existing YAML structure and comments
 - Concurrent CLI operations require careful state file locking
 - Progress calculation needs to handle partial task completion accurately
 
 ### Future Improvements
+
 - Real-time websocket updates for multi-user scenarios
 - Advanced progress visualization and reporting
 - Integration with external project management tools

@@ -24,59 +24,66 @@ You are working on the **ASD (Agentic Spec Development) CLI** - a tool for manag
 ### Essential Documents to Read
 
 **MUST READ FIRST** (in this order):
+
 1. `/Users/tylerbarnard/Developer/Apps/asd/docs/roadmap.md` - Complete development plan and phases
 2. `/Users/tylerbarnard/Developer/Apps/asd/docs/architecture.md` - System architecture and data flow
 3. `/Users/tylerbarnard/Developer/Apps/asd/docs/context-injection-system.md` - Context system design
 
 **FOR CURRENT TASK** (read the specific spec you're assigned):
+
 - Active specs: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/active/`
 - Backlog specs: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/backlog/`
 
-**FOR CODE UNDERSTANDING**:
-4. `/Users/tylerbarnard/Developer/Apps/asd/asd.config.js` - Current configuration
-5. `/Users/tylerbarnard/Developer/Apps/asd/lib/index.js` - Main entry point
-6. `/Users/tylerbarnard/Developer/Apps/asd/lib/config-manager.js` - Configuration system
-7. `/Users/tylerbarnard/Developer/Apps/asd/lib/feature-parser.js` - Spec parsing (modernized)
+**FOR CODE UNDERSTANDING**: 4. `/Users/tylerbarnard/Developer/Apps/asd/asd.config.js` - Current configuration 5. `/Users/tylerbarnard/Developer/Apps/asd/lib/index.js` - Main entry point 6. `/Users/tylerbarnard/Developer/Apps/asd/lib/config-manager.js` - Configuration system 7. `/Users/tylerbarnard/Developer/Apps/asd/lib/feature-parser.js` - Spec parsing (modernized)
 
 ### Current System Capabilities
 
 **WORKING** ✅:
+
 - Basic CLI commands (`asd status`, `asd list`, `asd show`)
 - Spec parsing with YAML frontmatter + markdown
 - Multi-format support (JSON, YAML, Markdown)
 - Configuration management
 - Terminal UI with terminal-kit integration
 
+**RECENTLY IMPLEMENTED** ✅:
+- Context injection system with 4-layer context (critical, task, agent, process)
+- Agent definition system with customizable workflows
+- Context management CLI commands (`asd context`, `asd agent`, `asd assign`)
+- Automatic context updates based on task lifecycle events
+
 **NOT YET IMPLEMENTED** ❌:
-- Context injection system
-- Task routing and recommendations
+- Task routing and recommendations (`asd next` command)
 - Workflow state management
-- Agent assignment and handoffs
-- Advanced CLI commands
+- Advanced CLI commands for project management
 
 ## 🎯 NEXT TASK ASSIGNMENT
 
-**YOUR TASK**: Implement **FEAT-012: Context Injection System**
+**YOUR TASK**: Implement **FEAT-013: Task Router System**
+
 - **Priority**: P0 (Critical)
 - **Status**: Ready to start
-- **Spec File**: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/active/FEAT-012-context-injection-system.md`
-- **First Sub-task**: TASK-001 - Context Engine Architecture
+- **Spec File**: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/active/FEAT-013-task-router-system.md`
+- **First Sub-task**: TASK-001 - Task Routing Engine Architecture
 
-**Dependencies**: ✅ None - this is the foundation task that enables everything else
+**Dependencies**: ✅ FEAT-012 Context Injection System (COMPLETED) - foundation is ready
 
 Read the specification file above to understand the full requirements, then follow the Task Execution Guide below.
 
 ### Active Specifications (PHASE-1A)
 
-**FEAT-012**: Context Injection System (P0) - *CURRENTLY ASSIGNED*
-- Multi-layer context for agent handoffs
-- File: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/active/FEAT-012-context-injection-system.md`
+**FEAT-012**: Context Injection System (P0) - ✅ _COMPLETED_
 
-**FEAT-013**: Task Router System (P0) - *DEPENDS ON FEAT-012*
+- Multi-layer context for agent handoffs
+- File: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/done/FEAT-012-context-injection-system.md`
+
+**FEAT-013**: Task Router System (P0) - _CURRENTLY ASSIGNED_
+
 - Intelligent task recommendations
 - File: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/active/FEAT-013-task-router-system.md`
 
-**FEAT-014**: Workflow State Manager (P0) - *DEPENDS ON FEAT-012*
+**FEAT-014**: Workflow State Manager (P0) - _DEPENDS ON FEAT-013_
+
 - Real-time progress tracking
 - File: `/Users/tylerbarnard/Developer/Apps/asd/docs/specs/active/FEAT-014-workflow-state-manager.md`
 
@@ -87,7 +94,7 @@ Read the specification file above to understand the full requirements, then foll
 ├── docs/
 │   ├── specs/
 │   │   ├── active/          # PHASE-1A specifications
-│   │   ├── backlog/         # PHASE-1B & 2A specifications  
+│   │   ├── backlog/         # PHASE-1B & 2A specifications
 │   │   └── done/            # Completed specifications
 │   ├── roadmap.md           # Development roadmap
 │   ├── architecture.md      # System architecture
@@ -127,14 +134,16 @@ npm run dev        # Development mode
 ### 1. Starting a New Task
 
 **BEFORE CODING**:
+
 1. Read the specification document for your assigned task
-2. Understand the acceptance criteria and success metrics  
+2. Understand the acceptance criteria and success metrics
 3. Check dependencies - ensure prerequisite tasks are complete
 4. Review the task breakdown and understand scope
 5. Mark the task as `in_progress` in the specification
 
 **CREATE TODO LIST**:
 Use the TodoWrite tool to track your work:
+
 ```
 todos: [
   { content: "Read specification and understand requirements", status: "completed", activeForm: "Reading specification" },
@@ -155,7 +164,7 @@ todos: [
 
 ### 3. Code Quality Standards
 
-- **Linting**: All code must pass `npm run lint` 
+- **Linting**: All code must pass `npm run lint`
 - **Testing**: New functionality requires tests
 - **Documentation**: Public methods need JSDoc comments
 - **Error Handling**: Graceful error handling with user-friendly messages
@@ -164,6 +173,7 @@ todos: [
 ### 4. Closing Out a Task
 
 **BEFORE MARKING COMPLETE**:
+
 1. ✅ All acceptance criteria met
 2. ✅ Tests pass (`npm test`)
 3. ✅ Linting passes (`npm run lint`)
@@ -171,12 +181,14 @@ todos: [
 5. ✅ Manual testing completed
 
 **UPDATE SPECIFICATION**:
+
 1. Mark task as completed in the spec file
 2. Update any status or progress indicators
 3. Add any learnings or implementation notes
 4. Update dependencies if they changed
 
 **UPDATE TRACKING**:
+
 1. Mark TodoWrite tasks as completed
 2. Update roadmap progress if milestone reached
 3. Identify any follow-up tasks discovered during implementation
@@ -186,12 +198,14 @@ todos: [
 When finishing work that another agent will continue:
 
 **HANDOFF DOCUMENTATION**:
+
 1. Update the specification with current status
 2. Document any implementation decisions made
 3. Note any blockers or challenges discovered
 4. Provide clear next steps for the next agent
 
 **CONTEXT PRESERVATION**:
+
 1. Update relevant architecture documentation
 2. Add code comments explaining complex decisions
 3. Update configuration or examples if needed
@@ -212,12 +226,14 @@ If you encounter issues:
 Your work contributes to these phase goals:
 
 **PHASE-1A Success Criteria**:
+
 - [ ] Context injection provides 4-layer context to agents
-- [ ] Task routing matches agent capabilities with available work  
+- [ ] Task routing matches agent capabilities with available work
 - [ ] Workflow state updates automatically with inline documentation
 - [ ] **DOG FOOD MILESTONE**: ASD manages PHASE-1B development using itself
 
 **Quality Standards**:
+
 - All tests pass
 - Code follows established patterns
 - Documentation is current and accurate

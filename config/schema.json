@@ -16,7 +16,7 @@
       "default": "markdown"
     },
     "templatePath": {
-      "type": "string", 
+      "type": "string",
       "description": "Path to template files for new specifications",
       "default": "./templates"
     },
@@ -30,13 +30,13 @@
           "default": "active"
         },
         "backlog": {
-          "type": "string", 
+          "type": "string",
           "description": "Folder name for backlog specifications",
           "default": "backlog"
         },
         "done": {
           "type": "string",
-          "description": "Folder name for completed specifications", 
+          "description": "Folder name for completed specifications",
           "default": "done"
         }
       },
@@ -67,17 +67,17 @@
       "additionalProperties": false
     },
     "display": {
-      "type": "object", 
+      "type": "object",
       "description": "UI display configuration",
       "properties": {
         "priorityColors": {
           "type": "object",
           "description": "Color mapping for priority levels",
           "properties": {
-            "P0": {"type": "string"},
-            "P1": {"type": "string"},
-            "P2": {"type": "string"},
-            "P3": {"type": "string"}
+            "P0": { "type": "string" },
+            "P1": { "type": "string" },
+            "P2": { "type": "string" },
+            "P3": { "type": "string" }
           },
           "additionalProperties": false
         },
@@ -111,7 +111,7 @@
           "default": "P2"
         },
         "defaultStatus": {
-          "type": "string", 
+          "type": "string",
           "enum": ["active", "backlog", "done"],
           "description": "Default status for new specifications",
           "default": "backlog"
@@ -127,13 +127,13 @@
         },
         "statusFolders": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": { "type": "string" },
           "description": "Valid status folder names",
           "default": ["active", "backlog", "done"]
         },
         "priorities": {
           "type": "array",
-          "items": {"type": "string"}, 
+          "items": { "type": "string" },
           "description": "Valid priority levels",
           "default": ["P0", "P1", "P2", "P3"]
         }

@@ -1,0 +1,380 @@
+{
+  "agent_capabilities": {
+    "version": "1.0.0",
+    "last_updated": "2024-08-26",
+    "agents": {
+      "software-architect": {
+        "capabilities": [
+          "Design system architecture and component relationships",
+          "Create technical specifications and implementation plans",
+          "Evaluate technology choices and architectural patterns",
+          "Plan integration points and data flow",
+          "Identify technical risks and mitigation strategies"
+        ],
+        "specialization_areas": [
+          "system-design",
+          "architecture-patterns",
+          "technical-planning",
+          "integration-design",
+          "risk-assessment"
+        ],
+        "context_requirements": [
+          "architecture-patterns",
+          "system-constraints",
+          "technical-dependencies",
+          "performance-requirements"
+        ],
+        "typical_tasks": [
+          "System architecture design",
+          "Technical specification creation",
+          "Component interface definition",
+          "Implementation planning",
+          "Technology evaluation"
+        ],
+        "handoff_patterns": {
+          "to_backend_developer": "Provides technical specs and API definitions",
+          "to_cli_specialist": "Provides command structure and interface design",
+          "to_qa_engineer": "Provides architecture validation requirements"
+        }
+      },
+      "backend-developer": {
+        "capabilities": [
+          "Implement server-side logic and APIs",
+          "Design and optimize database schemas and queries",
+          "Build data processing and transformation systems",
+          "Create integration adapters and middleware",
+          "Implement caching and performance optimizations"
+        ],
+        "specialization_areas": [
+          "api-development",
+          "database-design",
+          "server-architecture",
+          "data-processing",
+          "integration-development"
+        ],
+        "context_requirements": [
+          "api-specifications",
+          "data-models",
+          "integration-requirements",
+          "performance-constraints"
+        ],
+        "typical_tasks": [
+          "API implementation",
+          "Database schema creation",
+          "Data processing logic",
+          "Integration development",
+          "Performance optimization"
+        ],
+        "handoff_patterns": {
+          "to_cli_specialist": "Provides APIs and data access patterns",
+          "to_qa_engineer": "Provides test data and API documentation",
+          "from_software_architect": "Receives technical specs and requirements"
+        }
+      },
+      "cli-specialist": {
+        "capabilities": [
+          "Design intuitive command-line interfaces",
+          "Implement terminal UI components and interactions",
+          "Create automation scripts and workflow tools",
+          "Build help systems and documentation",
+          "Optimize CLI performance and usability"
+        ],
+        "specialization_areas": [
+          "command-line-interfaces",
+          "terminal-ui",
+          "user-experience",
+          "automation",
+          "cli-performance"
+        ],
+        "context_requirements": [
+          "cli-patterns",
+          "user-workflows",
+          "command-specifications",
+          "terminal-constraints"
+        ],
+        "typical_tasks": [
+          "CLI command implementation",
+          "Terminal UI development",
+          "Help system creation",
+          "User workflow optimization",
+          "CLI performance tuning"
+        ],
+        "handoff_patterns": {
+          "to_qa_engineer": "Provides CLI testing scenarios and user workflows",
+          "from_backend_developer": "Receives API integrations and data access",
+          "from_software_architect": "Receives command structure and interface design"
+        }
+      },
+      "qa-engineer": {
+        "capabilities": [
+          "Design comprehensive test strategies and test cases",
+          "Implement automated testing frameworks and scripts",
+          "Perform manual testing and user acceptance testing",
+          "Validate system performance and reliability",
+          "Create quality assurance processes and standards"
+        ],
+        "specialization_areas": [
+          "test-automation",
+          "quality-assurance",
+          "performance-testing",
+          "user-acceptance-testing",
+          "test-strategy"
+        ],
+        "context_requirements": [
+          "test-scenarios",
+          "quality-standards",
+          "validation-requirements",
+          "performance-criteria"
+        ],
+        "typical_tasks": [
+          "Test case creation",
+          "Automated test implementation",
+          "Performance validation",
+          "Quality gate definition",
+          "Testing documentation"
+        ],
+        "handoff_patterns": {
+          "to_product_manager": "Provides quality reports and validation results",
+          "from_cli_specialist": "Receives CLI testing requirements",
+          "from_backend_developer": "Receives API testing specifications"
+        }
+      },
+      "product-manager": {
+        "capabilities": [
+          "Define product vision and strategy",
+          "Gather and analyze requirements from stakeholders",
+          "Prioritize features based on business value and user impact",
+          "Create user stories and acceptance criteria",
+          "Coordinate product development and release planning"
+        ],
+        "specialization_areas": [
+          "product-strategy",
+          "requirements-analysis",
+          "stakeholder-management",
+          "feature-prioritization",
+          "user-research"
+        ],
+        "context_requirements": [
+          "business-objectives",
+          "user-needs",
+          "market-requirements",
+          "stakeholder-feedback"
+        ],
+        "typical_tasks": [
+          "Requirements gathering",
+          "User story creation",
+          "Feature prioritization",
+          "Stakeholder communication",
+          "Release planning"
+        ],
+        "handoff_patterns": {
+          "to_software_architect": "Provides requirements and business context",
+          "to_qa_engineer": "Provides acceptance criteria and validation requirements",
+          "from_stakeholders": "Receives business requirements and feedback"
+        }
+      },
+      "ui-developer": {
+        "capabilities": [
+          "Design and implement terminal user interfaces",
+          "Create intuitive interaction patterns and workflows",
+          "Implement responsive and accessible CLI experiences",
+          "Optimize terminal UI performance and rendering",
+          "Design visual layouts for terminal-based applications"
+        ],
+        "specialization_areas": [
+          "terminal-ui-design",
+          "user-experience",
+          "interaction-patterns",
+          "visual-design",
+          "accessibility"
+        ],
+        "context_requirements": [
+          "ui-specifications",
+          "user-workflows",
+          "design-patterns",
+          "accessibility-requirements"
+        ],
+        "typical_tasks": [
+          "Terminal UI implementation",
+          "User experience optimization",
+          "Interactive component development",
+          "Accessibility enhancement",
+          "Visual design implementation"
+        ],
+        "handoff_patterns": {
+          "to_cli_specialist": "Provides UI components and interaction patterns",
+          "from_product_manager": "Receives UI requirements and user workflows",
+          "to_qa_engineer": "Provides UI testing scenarios and specifications"
+        }
+      },
+      "devops-engineer": {
+        "capabilities": [
+          "Design and implement CI/CD pipelines for automated builds and deployments",
+          "Manage infrastructure as code and environment provisioning",
+          "Implement monitoring, logging, and observability solutions",
+          "Ensure security compliance and vulnerability management",
+          "Optimize deployment processes and system reliability"
+        ],
+        "specialization_areas": [
+          "ci-cd-automation",
+          "deployment-orchestration",
+          "infrastructure-management",
+          "monitoring-observability",
+          "security-compliance"
+        ],
+        "context_requirements": [
+          "deployment-requirements",
+          "infrastructure-constraints",
+          "security-policies",
+          "monitoring-needs"
+        ],
+        "typical_tasks": [
+          "CI/CD pipeline implementation",
+          "Infrastructure automation",
+          "Monitoring setup",
+          "Security implementation",
+          "Deployment optimization"
+        ],
+        "handoff_patterns": {
+          "from_backend_developer": "Receives deployment artifacts and requirements",
+          "to_qa_engineer": "Provides testing environments and validation pipelines",
+          "from_software_architect": "Receives infrastructure and deployment architecture"
+        }
+      }
+    }
+  },
+  "task_matching": {
+    "capability_keywords": {
+      "architecture": ["software-architect"],
+      "api": ["backend-developer"],
+      "cli": ["cli-specialist"],
+      "testing": ["qa-engineer"],
+      "database": ["backend-developer"],
+      "ui": ["ui-developer", "cli-specialist"],
+      "performance": ["backend-developer", "qa-engineer"],
+      "validation": ["qa-engineer"],
+      "integration": ["backend-developer", "software-architect"],
+      "product": ["product-manager"],
+      "requirements": ["product-manager"],
+      "deployment": ["devops-engineer"],
+      "infrastructure": ["devops-engineer"],
+      "cicd": ["devops-engineer"],
+      "monitoring": ["devops-engineer"],
+      "terminal": ["ui-developer", "cli-specialist"],
+      "user-experience": ["ui-developer", "product-manager"],
+      "automation": ["devops-engineer", "cli-specialist"]
+    },
+    "priority_matching": {
+      "P0": "Assign most experienced agent type",
+      "P1": "Assign appropriate specialist",
+      "P2": "Allow cross-training opportunities",
+      "P3": "Flexible assignment based on availability"
+    }
+  },
+  "context_filtering": {
+    "software-architect": {
+      "include_patterns": [
+        "architecture.*",
+        "system.*design.*",
+        "technical.*constraint.*",
+        "integration.*point.*",
+        "performance.*requirement.*"
+      ],
+      "exclude_patterns": [
+        "implementation.*detail.*",
+        "specific.*test.*case.*",
+        "ui.*styling.*"
+      ]
+    },
+    "backend-developer": {
+      "include_patterns": [
+        "api.*specification.*",
+        "database.*schema.*",
+        "data.*model.*",
+        "integration.*requirement.*",
+        "performance.*constraint.*"
+      ],
+      "exclude_patterns": [
+        "ui.*design.*",
+        "high.*level.*architecture.*",
+        "business.*process.*"
+      ]
+    },
+    "cli-specialist": {
+      "include_patterns": [
+        "cli.*pattern.*",
+        "user.*workflow.*",
+        "command.*specification.*",
+        "terminal.*ui.*",
+        "user.*experience.*"
+      ],
+      "exclude_patterns": [
+        "database.*implementation.*",
+        "api.*internal.*",
+        "system.*architecture.*"
+      ]
+    },
+    "qa-engineer": {
+      "include_patterns": [
+        "test.*scenario.*",
+        "quality.*standard.*",
+        "validation.*requirement.*",
+        "acceptance.*criteria.*",
+        "performance.*target.*"
+      ],
+      "exclude_patterns": [
+        "implementation.*detail.*",
+        "architecture.*decision.*",
+        "business.*strategy.*"
+      ]
+    },
+    "product-manager": {
+      "include_patterns": [
+        "business.*objective.*",
+        "user.*need.*",
+        "requirement.*",
+        "stakeholder.*",
+        "feature.*priority.*",
+        "market.*requirement.*"
+      ],
+      "exclude_patterns": [
+        "technical.*implementation.*",
+        "code.*detail.*",
+        "database.*schema.*",
+        "api.*endpoint.*"
+      ]
+    },
+    "ui-developer": {
+      "include_patterns": [
+        "ui.*specification.*",
+        "user.*workflow.*",
+        "terminal.*interface.*",
+        "interaction.*pattern.*",
+        "visual.*design.*",
+        "accessibility.*"
+      ],
+      "exclude_patterns": [
+        "backend.*logic.*",
+        "database.*operation.*",
+        "api.*implementation.*",
+        "deployment.*process.*"
+      ]
+    },
+    "devops-engineer": {
+      "include_patterns": [
+        "deployment.*requirement.*",
+        "infrastructure.*",
+        "ci.*cd.*",
+        "monitoring.*",
+        "security.*policy.*",
+        "automation.*pipeline.*"
+      ],
+      "exclude_patterns": [
+        "business.*requirement.*",
+        "user.*interface.*",
+        "feature.*specification.*",
+        "test.*case.*detail.*"
+      ]
+    }
+  }
+}

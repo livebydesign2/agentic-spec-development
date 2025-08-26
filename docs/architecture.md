@@ -60,6 +60,7 @@ ASD is designed as a modular, terminal-based application optimized for AI agent 
 The architecture follows a strict atomic hierarchy: **Roadmap → Phases → Specs → Tasks → Sub-tasks**, with each level optimized for different types of agent work and context injection.
 
 **Human-Readable Project Structure**:
+
 ```
 docs/
 ├── roadmap.md                           # Project roadmap with phase definitions
@@ -75,6 +76,7 @@ docs/
 ```
 
 **Agent Operational Data (Machine-Readable)**:
+
 ```
 .asd/
 ├── context/
@@ -99,6 +101,7 @@ docs/
 ### 2. Atomic Hierarchy Specification Formats
 
 **Roadmap Level (roadmap.md)**: Project organization and phase definitions
+
 ```yaml
 ---
 id: "PROJECT-ROADMAP"
@@ -136,7 +139,6 @@ constraints:
   - "Performance: < 2s response time"
   - "Node.js 18+ required"
 ---
-
 # Project Roadmap
 
 ## Phase 1A: Core Infrastructure
@@ -144,6 +146,7 @@ constraints:
 ```
 
 **Spec Level (FEAT-012-notifications.md)**: Feature with phase tagging and task breakdown
+
 ```yaml
 ---
 id: "FEAT-012"
@@ -234,6 +237,7 @@ As a chat user, I want instant notifications for new messages so I can respond q
 **Purpose**: Standardizes agent workflows, validation checklists, and context requirements across specifications.
 
 **Key Features**:
+
 - Agent-specific workflow templates (product-manager, ui-developer, etc.)
 - Reusable validation checklists by task type
 - Context requirement patterns for consistent agent experience
@@ -249,6 +253,7 @@ class ProcessTemplateManager {
 ```
 
 **Real-world Example** (from FEAT-037 PRD analysis):
+
 ```json
 {
   "product-manager": {
@@ -274,6 +279,7 @@ class ProcessTemplateManager {
 **Purpose**: Manages real-time workflow state, task handoffs, and inline documentation updates.
 
 **Key Features**:
+
 - Dynamic "next available task" calculation
 - Inline frontmatter updates (no separate completion docs)
 - Agent handoff detection and automation
@@ -289,22 +295,23 @@ class WorkflowStateManager {
 ```
 
 **State Management Pattern**:
+
 ```javascript
 // Updates spec frontmatter directly
 const stateUpdate = {
   tasks: [
     {
       id: "TASK-001",
-      status: "completed",      // Changed from "in_progress"
-      completed_at: "2024-08-24T15:30:00Z"
+      status: "completed", // Changed from "in_progress"
+      completed_at: "2024-08-24T15:30:00Z",
     },
     {
-      id: "TASK-002", 
-      status: "ready"           // Auto-updated when TASK-001 completes
-    }
+      id: "TASK-002",
+      status: "ready", // Auto-updated when TASK-001 completes
+    },
   ],
-  current_task: "TASK-002",     // Auto-calculated next available
-  progress: "1 of 4 tasks complete"
+  current_task: "TASK-002", // Auto-calculated next available
+  progress: "1 of 4 tasks complete",
 };
 ```
 
@@ -314,6 +321,7 @@ const stateUpdate = {
 **Purpose**: Sophisticated context injection with layered relevance and agent-specific filtering.
 
 **Context Layers** (by injection priority):
+
 1. **Critical Context**: Always injected (success criteria, documentation rules)
 2. **Task-Specific Context**: Required reading and focus areas for current task
 3. **Agent-Specific Context**: Context filtered by agent type requirements
@@ -329,13 +337,14 @@ class ContextInjector {
       process_templates: this.getProcessContext(taskType)
     };
   }
-  
+
   filterByRelevance(context, agentType, taskType)  // Smart filtering
   getRequiredReading(taskId, agentType)           // Dynamic reading lists
 }
 ```
 
 **Context Injection Example** (TASK-001: Product Manager):
+
 ```json
 {
   "critical": {
@@ -358,7 +367,11 @@ class ContextInjector {
     }
   },
   "process_templates": {
-    "validation_checklist": ["Mark task complete", "Update next task", "Commit changes"]
+    "validation_checklist": [
+      "Mark task complete",
+      "Update next task",
+      "Commit changes"
+    ]
   }
 }
 ```
@@ -371,6 +384,7 @@ class ContextInjector {
 **Purpose**: Central application controller orchestrating all components.
 
 **Enhanced Responsibilities**:
+
 - Application lifecycle management
 - Agentic workflow coordination
 - Context-aware UI rendering
@@ -382,6 +396,7 @@ class ContextInjector {
 **Purpose**: Intelligent task recommendation and routing system.
 
 **Key Features**:
+
 - Agent capability matching
 - Dependency-aware scheduling
 - Priority-based recommendations
@@ -397,6 +412,7 @@ class TaskRouter {
 ```
 
 **Task Selection Algorithm**:
+
 ```
 Input: Agent Type + Constraints
 ↓
@@ -413,8 +429,9 @@ Input: Agent Type + Constraints
 **Purpose**: Research continuity and context preservation across agent handoffs.
 
 **Context Layers**:
+
 1. **Project Context**: Tech stack, standards, constraints
-2. **Feature Context**: Research, user stories, acceptance criteria  
+2. **Feature Context**: Research, user stories, acceptance criteria
 3. **Task Context**: Prerequisites, implementation notes, blockers
 4. **Agent Context**: Previous work, patterns, learned approaches
 
@@ -428,13 +445,14 @@ class ContextInjector {
 ```
 
 **Context Relevance Scoring**:
+
 ```javascript
 const relevanceScore = {
-  directDependency: 1.0,      // Prerequisite task output
-  featureResearch: 0.9,       // Same feature research
-  projectConstraint: 0.8,     // Project-wide rules
-  similarPattern: 0.7,        // Related implementation
-  agentHistory: 0.6           // Agent's previous work
+  directDependency: 1.0, // Prerequisite task output
+  featureResearch: 0.9, // Same feature research
+  projectConstraint: 0.8, // Project-wide rules
+  similarPattern: 0.7, // Related implementation
+  agentHistory: 0.6, // Agent's previous work
 };
 ```
 
@@ -444,6 +462,7 @@ const relevanceScore = {
 **Purpose**: Robust parsing with bulletproof error handling.
 
 **Parsing Pipeline**:
+
 ```
 Specification File
 ↓
@@ -457,6 +476,7 @@ Structured Specification Object
 ```
 
 **Error Handling Strategy**:
+
 - **Critical Data**: Always from frontmatter (never fails)
 - **Optional Data**: Markdown parsing with fallbacks
 - **UI Protection**: Never crash on malformed files
@@ -477,27 +497,28 @@ class SpecParser {
 **Purpose**: Clean, modern configuration management.
 
 **Configuration Schema**:
+
 ```javascript
 const modernConfig = {
-  dataPath: "docs/specs",           // Specification storage
-  templatePath: "docs/templates",   // Spec templates
-  dataFormat: "markdown",           // Primary format
+  dataPath: "docs/specs", // Specification storage
+  templatePath: "docs/templates", // Spec templates
+  dataFormat: "markdown", // Primary format
   structure: {
     active: "active",
-    backlog: "backlog", 
-    done: "done"
+    backlog: "backlog",
+    done: "done",
   },
   cli: {
     defaultPriority: "P2",
     supportedTypes: ["SPEC", "FEAT", "BUG", "SPIKE", "MAINT"],
     statusFolders: ["active", "backlog", "done"],
-    priorities: ["P0", "P1", "P2", "P3"]
+    priorities: ["P0", "P1", "P2", "P3"],
   },
   workflow: {
     autoAssignTasks: true,
     contextDepth: 2,
-    cacheRecommendations: true
-  }
+    cacheRecommendations: true,
+  },
 };
 ```
 
@@ -508,6 +529,7 @@ const modernConfig = {
 ### 1. Atomic Hierarchy CLI Commands
 
 **Roadmap Level Commands**:
+
 ```bash
 # Project roadmap management
 asd roadmap status                 # Show overall project status
@@ -518,6 +540,7 @@ asd roadmap next-ready --current PHASE-1A  # Find specs ready for next phase
 ```
 
 **Spec Level Commands**:
+
 ```bash
 # Feature/spec management with phase tagging
 asd create spec "Feature Name" --phase PHASE-1A --priority P1
@@ -529,6 +552,7 @@ asd list specs --phase PHASE-1A,PHASE-1B --priority P0  # Cross-phase filtering
 ```
 
 **Task Level Commands**:
+
 ```bash
 # Task workflow (context-rich agent handoffs with phase awareness)
 asd next task --agent research-specialist --phase PHASE-1A
@@ -539,6 +563,7 @@ asd create subtasks FEAT-012 TASK-001 --template standard
 ```
 
 **Sub-task Level Commands**:
+
 ```bash
 # Granular work management
 asd next subtask --agent current --task TASK-001
@@ -547,11 +572,12 @@ asd status subtasks --task TASK-001 --type validation
 ```
 
 **Context Injection Commands**:
+
 ```bash
 # Multi-level context management with phase context
 asd context roadmap                # Project-level constraints & phase definitions
 asd context phase PHASE-1A         # Phase-specific goals & success criteria
-asd context spec FEAT-012          # Feature research & decisions  
+asd context spec FEAT-012          # Feature research & decisions
 asd context task FEAT-012 TASK-001 # Task-specific context
 asd research add --task TASK-001 "Performance benchmarks"
 ```
@@ -559,6 +585,7 @@ asd research add --task TASK-001 "Performance benchmarks"
 ### 2. Atomic Hierarchy Workflow States
 
 **Multi-Level State Management**:
+
 ```
 Spec Level:    backlog → active → done
 Task Level:    ready → assigned → in_progress → complete
@@ -568,23 +595,27 @@ Sub-task Level: ready → in_progress → validation → complete
 **State Transitions by Level**:
 
 **Spec States**:
+
 - `backlog`: Waiting for phase activation
 - `active`: Tasks being worked on
 - `done`: All tasks completed
 
 **Task States** (Agent handoff points):
+
 - `ready`: Available for agent assignment
 - `assigned`: Allocated to specific agent type
 - `in_progress`: Agent working with injected context
 - `complete`: Finished with research/findings captured
 
 **Sub-task States** (Granular progress tracking):
+
 - `ready`: Available within active task
 - `in_progress`: Current focus of agent work
 - `validation`: Being tested/reviewed
 - `complete`: Finished and validated
 
 **Standard Sub-task Template** (Applied to every task):
+
 - Implementation sub-task (core work)
 - Validation sub-task (testing/review)
 - Product management sub-task (documentation/handoff)
@@ -596,6 +627,7 @@ Sub-task Level: ready → in_progress → validation → complete
 **Multi-Layer Context Injection Overview**:
 
 **Multi-Layer Context Injection Flow** (Based on real-world PRD analysis):
+
 ```
 asd start task FEAT-037 TASK-001 --agent product-manager
 ↓
@@ -613,17 +645,19 @@ asd start task FEAT-037 TASK-001 --agent product-manager
 ```
 
 **Context Prioritization Strategy**:
+
 ```javascript
 const contextPriority = {
-  critical: 1.0,           // Success criteria, core workflow rules
-  task_specific: 0.9,      // Required reading, focus areas
-  agent_specific: 0.8,     // Agent type requirements, deliverables  
-  process_templates: 0.7,  // Validation checklists, quality gates
-  reference: 0.5           // Background material, debugging info
+  critical: 1.0, // Success criteria, core workflow rules
+  task_specific: 0.9, // Required reading, focus areas
+  agent_specific: 0.8, // Agent type requirements, deliverables
+  process_templates: 0.7, // Validation checklists, quality gates
+  reference: 0.5, // Background material, debugging info
 };
 ```
 
 **Task → Sub-task Context Inheritance** (With process templates):
+
 ```
 asd next subtask --task TASK-001 --type implementation
 ↓
@@ -640,6 +674,7 @@ asd next subtask --task TASK-001 --type implementation
 ```
 
 **Standard Sub-task Templates** (Applied to every task):
+
 ```yaml
 subtask_templates:
   implementation:
@@ -648,15 +683,17 @@ subtask_templates:
     validation_required: ["unit tests", "integration tests", "type checking"]
   validation:
     focus: "Testing, quality assurance, performance"
-    typical_duration: "15-25% of task estimate" 
+    typical_duration: "15-25% of task estimate"
     validation_required: ["E2E tests", "performance tests", "accessibility"]
   product_management:
     focus: "Documentation, handoffs, progress tracking"
     typical_duration: "5-15% of task estimate"
-    validation_required: ["inline doc updates", "next task preparation", "handoff notes"]
+    validation_required:
+      ["inline doc updates", "next task preparation", "handoff notes"]
 ```
 
 **Multi-Level Context Storage**:
+
 ```javascript
 // .asd/context/tasks/TASK-001.json
 {
@@ -688,7 +725,7 @@ subtask_templates:
   },
   "subtasks_created": [
     {"id": "SUBTASK-001", "type": "implementation"},
-    {"id": "SUBTASK-002", "type": "validation"},  
+    {"id": "SUBTASK-002", "type": "validation"},
     {"id": "SUBTASK-003", "type": "product_management"}
   ],
   "research_findings": []
@@ -700,6 +737,7 @@ subtask_templates:
 ### 1. Multi-Level Agent Workflow Initialization
 
 **Spec-Level Agent Assignment**:
+
 ```
 Agent Request: "Get next spec to work on"
 ↓
@@ -712,11 +750,12 @@ Spec Context Preparation:
 - Project constraints & goals
 - Phase objectives & timeline
 - Related spec research
-↓ 
+↓
 Spec Assignment with Multi-Layer Context
 ```
 
 **Task-Level Agent Handoff** (Most common):
+
 ```
 Agent Request: "Get next task" --agent research-specialist
 ↓
@@ -734,6 +773,7 @@ Task Assignment with Hierarchical Context
 ```
 
 **Sub-task Workflow** (Granular execution):
+
 ```
 Current Agent: "Get next sub-task" --task TASK-001
 ↓
@@ -748,12 +788,13 @@ Sub-task Execution with Process Context
 ### 2. Hierarchical Context-Aware Execution
 
 **Task Execution with Multi-Level Context**:
+
 ```
 Agent Starts Task (e.g., research-specialist on TASK-001)
 ↓
 Hierarchical Context Loading:
 - Roadmap Level: project constraints, tech stack
-- Phase Level: objectives, timeline, dependencies  
+- Phase Level: objectives, timeline, dependencies
 - Spec Level: feature goals, acceptance criteria, research
 - Task Level: specific requirements, agent type needs
 ↓
@@ -770,6 +811,7 @@ Context-Rich Task Execution
 ```
 
 **Sub-task Execution Pattern**:
+
 ```
 Agent Works on Sub-task (e.g., SUBTASK-001: "Evaluate WebSocket libraries")
 ↓
@@ -789,6 +831,7 @@ Sub-task Completion → Next Sub-task (validation)
 ### 3. Multi-Level Knowledge Accumulation
 
 **Sub-task → Task Knowledge Roll-up**:
+
 ```
 Sub-task Completion (SUBTASK-001: WebSocket library evaluation)
 ↓
@@ -804,6 +847,7 @@ Task Context Update:
 ```
 
 **Task → Spec Knowledge Roll-up**:
+
 ```
 Task Completion (TASK-001: Research complete)
 ↓
@@ -819,6 +863,7 @@ Spec Context Update:
 ```
 
 **Spec → Phase Knowledge Roll-up**:
+
 ```
 Spec Completion (FEAT-012: Notifications complete)
 ↓
@@ -836,18 +881,21 @@ Phase & Project Context Update:
 ## Performance Considerations
 
 ### 1. Context Loading Optimization
+
 - **Lazy Loading**: Context loaded only when needed
 - **Relevance Filtering**: Only high-relevance context included
 - **Caching Strategy**: Frequently accessed context cached
 - **Size Limits**: Context summaries to prevent prompt bloat
 
 ### 2. File System Efficiency
+
 - **Structured Storage**: JSON for structured data, markdown for content
 - **Selective Watching**: Monitor only active specifications
 - **Batch Operations**: Group file system operations
 - **Cache Invalidation**: Smart cache updates on file changes
 
 ### 3. Memory Management
+
 - **Context Cleanup**: Remove stale context data
 - **Cache Rotation**: Expire old recommendations
 - **Workflow Garbage Collection**: Archive completed workflows
@@ -856,18 +904,21 @@ Phase & Project Context Update:
 ## Security and Safety
 
 ### 1. File System Safety
+
 - **Path Validation**: Prevent directory traversal
 - **Sandbox Operations**: Limit file system access
 - **Permission Checking**: Validate write permissions
 - **Backup Strategy**: Automated backups before modifications
 
 ### 2. Context Privacy
+
 - **Sensitive Data Filtering**: Remove credentials from context
 - **Access Control**: Context scoped to relevant agents
 - **Audit Logging**: Track context access patterns
 - **Data Retention**: Automatic cleanup of old context
 
 ### 3. Agent Safety
+
 - **Input Validation**: Sanitize all agent inputs
 - **Command Restrictions**: Whitelist allowed operations
 - **Resource Limits**: Prevent resource exhaustion
@@ -876,24 +927,28 @@ Phase & Project Context Update:
 ## Atomic Workflow Features
 
 ### 1. Smart Agent Assignment & Context Matching
+
 - **Agent Capability Profiles**: Track specializations and performance patterns
 - **Context Requirement Matching**: Auto-assign based on `context_requirements` field
 - **Learning from Handoffs**: Improve agent-task matching from completion data
 - **Multi-Agent Coordination**: Handle dependencies between concurrent tasks
 
 ### 2. Hierarchical Context Management
+
 - **Context Inheritance Optimization**: Smart filtering of relevant context layers
 - **Agent-Specific Context Templates**: Pre-configured context sets by agent type
-- **Research Continuity**: Seamless knowledge transfer between agent handoffs  
+- **Research Continuity**: Seamless knowledge transfer between agent handoffs
 - **Cross-Spec Pattern Recognition**: Identify reusable approaches across features
 
 ### 3. Process Template System
+
 - **Customizable Sub-task Templates**: Beyond standard implementation/validation/PM
 - **Agent Process Workflows**: Specialized procedures for different agent types
 - **Quality Gates**: Automated validation between sub-task transitions
 - **Time Estimation Learning**: Improve estimates from actual completion data
 
 ### 4. Atomic Hierarchy Extensions
+
 - **Epic Level**: For multi-phase initiatives spanning releases
 - **Cross-Phase Dependencies**: Manage dependencies between phase boundaries
 - **Phase Transition Automation**: Auto-promote specs based on completion criteria
@@ -902,6 +957,7 @@ Phase & Project Context Update:
 This atomic hierarchy architecture provides a robust foundation for agentic development workflows with clear separation of concerns at each level. The hierarchical storage model ensures optimal context injection for different types of agent work while maintaining human readability and git-friendly collaboration.
 
 **Key Documentation**:
+
 - [Context Injection System](./context-injection-system.md) - Complete context workflow, file structures, and CLI commands
 - This document (architecture.md) - High-level system architecture and component relationships
 

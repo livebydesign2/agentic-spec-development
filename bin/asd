@@ -5,6 +5,10 @@ const path = require('path');
 const chalk = require('chalk');
 const ASDClient = require('../lib/index');
 const ConfigManager = require('../lib/config-manager');
+const ContextInjector = require('../lib/context-injector');
+const ContextManager = require('../lib/context-manager');
+const ContextValidator = require('../lib/context-validator');
+const ContextTriggerSystem = require('../lib/context-triggers');
 
 const program = new Command();
 
@@ -19,6 +23,162 @@ program
   .option('--app-name <name>', 'Custom application name')
   .option('--app-icon <icon>', 'Custom application icon')
   .option('--debug', 'Enable debug output');
+
+// Context management commands
+const contextCommand = program
+  .command('context')
+  .description('Manage context files and injection system');
+
+contextCommand
+  .command('add')
+  .description('Add content to context files')
+  .option('--project', 'Add to project-level context')
+  .option('--spec <spec-id>', 'Add to spec context')
+  .option('--task <task-id>', 'Add to task context')
+  .option('--constraint <text>', 'Add constraint')
+  .option('--research <text>', 'Add research finding')
+  .option('--decision <text>', 'Add implementation decision')
+  .option('--content <text>', 'Add markdown content')
+  .action(async (options) => {
+    await handleContextAdd(options);
+  });
+
+contextCommand
+  .command('update')
+  .description('Update existing context files')
+  .option('--spec <spec-id>', 'Update spec context')
+  .option('--task <task-id>', 'Update task context')
+  .option('--status <status>', 'Update status')
+  .option('--progress <progress>', 'Update progress information')
+  .option('--assign <agent-type>', 'Assign agent to task')
+  .action(async (options) => {
+    await handleContextUpdate(options);
+  });
+
+contextCommand
+  .command('show')
+  .description('Display context information')
+  .option('--spec <spec-id>', 'Show spec context')
+  .option('--task <task-id>', 'Show task context') 
+  .option('--agent <agent-type>', 'Show agent-specific context')
+  .option('--inject', 'Show full injected context for agent')
+  .option('--layers', 'Show all context layers')
+  .action(async (options) => {
+    await handleContextShow(options);
+  });
+
+contextCommand
+  .command('validate')
+  .description('Validate context files and system consistency')
+  .option('--fix-issues', 'Attempt to fix validation issues')
+  .option('--files <pattern>', 'Validate specific files (glob pattern)')
+  .option('--verbose', 'Show detailed validation results')
+  .action(async (options) => {
+    await handleContextValidate(options);
+  });
+
+contextCommand
+  .command('export')
+  .description('Export context data for backup or sharing')
+  .option('--output <path>', 'Output file path', './context-export.json')
+  .option('--spec <spec-id>', 'Export specific spec context')
+  .option('--include-state', 'Include dynamic state data')
+  .action(async (options) => {
+    await handleContextExport(options);
+  });
+
+contextCommand
+  .command('import')
+  .description('Import context data from backup')
+  .argument('<file>', 'Context export file to import')
+  .option('--merge', 'Merge with existing context (default: replace)')
+  .option('--dry-run', 'Show what would be imported without making changes')
+  .action(async (file, options) => {
+    await handleContextImport(file, options);
+  });
+
+// Agent customization commands
+const agentCommand = program
+  .command('agent')
+  .description('Manage agent definitions and customization');
+
+agentCommand
+  .command('customize')
+  .description('Customize agent workflows and requirements')
+  .argument('<agent-type>', 'Agent type to customize')
+  .option('--add-step <step>', 'Add workflow step')
+  .option('--add-requirement <req>', 'Add context requirement') 
+  .option('--add-capability <cap>', 'Add agent capability')
+  .option('--remove-step <step>', 'Remove workflow step')
+  .option('--edit', 'Open agent definition in editor')
+  .action(async (agentType, options) => {
+    await handleAgentCustomize(agentType, options);
+  });
+
+agentCommand
+  .command('list')
+  .description('List available agents and their capabilities')
+  .option('--details', 'Show detailed agent information')
+  .action(async (options) => {
+    await handleAgentList(options);
+  });
+
+// Process management commands  
+const processCommand = program
+  .command('process')
+  .description('Manage process templates and workflows');
+
+processCommand
+  .command('update')
+  .description('Update process templates')
+  .argument('<template-name>', 'Process template to update')
+  .option('--add-requirement <req>', 'Add validation requirement')
+  .option('--add-step <step>', 'Add process step')
+  .option('--edit', 'Open template in editor')
+  .action(async (templateName, options) => {
+    await handleProcessUpdate(templateName, options);
+  });
+
+processCommand
+  .command('list')
+  .description('List available process templates')
+  .action(async () => {
+    await handleProcessList();
+  });
+
+// Task lifecycle commands with context updates
+const assignCommand = program
+  .command('assign')
+  .description('Assign task to agent with context update')
+  .argument('<spec-id>', 'Specification ID')
+  .argument('<task-id>', 'Task ID')
+  .option('--agent <agent-type>', 'Agent type to assign')
+  .option('--priority <priority>', 'Task priority (P0, P1, P2, P3)')
+  .action(async (specId, taskId, options) => {
+    await handleTaskAssign(specId, taskId, options);
+  });
+
+const completeCommand = program
+  .command('complete')
+  .description('Mark task as complete and update context')
+  .argument('<spec-id>', 'Specification ID')
+  .argument('<task-id>', 'Task ID')
+  .option('--notes <notes>', 'Completion notes')
+  .option('--handoff <next-task>', 'Next task to hand off to')
+  .action(async (specId, taskId, options) => {
+    await handleTaskComplete(specId, taskId, options);
+  });
+
+const researchCommand = program
+  .command('research')
+  .description('Capture research findings and update context')
+  .argument('<spec-id>', 'Specification ID')
+  .option('--task <task-id>', 'Specific task ID')
+  .option('--finding <text>', 'Research finding to record')
+  .option('--source <source>', 'Source of research')
+  .action(async (specId, options) => {
+    await handleResearchCapture(specId, options);
+  });
 
 program
   .command('init')
@@ -75,7 +235,7 @@ program
     }
 
     console.log(chalk.white('Project root:'), chalk.yellow(configInfo.projectRoot));
-    console.log(chalk.white('Specs path:'), chalk.yellow(configInfo.config.featuresPath));
+    console.log(chalk.white('Specs path:'), chalk.yellow(configInfo.config.dataPath));
     console.log(chalk.white('Auto refresh:'), configInfo.config.autoRefresh ? chalk.green('enabled') : chalk.red('disabled'));
     console.log(chalk.white('Supported types:'), chalk.cyan(configInfo.config.supportedTypes.join(', ')));
     console.log(chalk.white('Status folders:'), chalk.cyan(configInfo.config.statusFolders.join(', ')));
@@ -96,16 +256,16 @@ program
 
     // Check if specs directory exists
     try {
-      await fs.access(config.featuresPath);
-      console.log(chalk.green('✅ Specs directory exists:'), chalk.yellow(config.featuresPath));
+      await fs.access(config.dataPath);
+      console.log(chalk.green('✅ Specs directory exists:'), chalk.yellow(config.dataPath));
     } catch (error) {
-      console.log(chalk.red('❌ Specs directory missing:'), chalk.yellow(config.featuresPath));
+      console.log(chalk.red('❌ Specs directory missing:'), chalk.yellow(config.dataPath));
       allGood = false;
     }
 
     // Check if status folders exist
     for (const folder of config.statusFolders) {
-      const folderPath = path.join(config.featuresPath, folder);
+      const folderPath = path.join(config.dataPath, folder);
       try {
         await fs.access(folderPath);
         console.log(chalk.green('✅ Status folder exists:'), chalk.gray(folder));
@@ -118,7 +278,7 @@ program
     // Check for spec files
     let totalSpecs = 0;
     for (const folder of config.statusFolders) {
-      const folderPath = path.join(config.featuresPath, folder);
+      const folderPath = path.join(config.dataPath, folder);
       try {
         const files = await fs.readdir(folderPath);
         const mdFiles = files.filter(file => file.endsWith('.md'));
@@ -166,6 +326,905 @@ program.action(async () => {
   const options = program.opts();
   await startASD(options);
 });
+
+// Handler functions for context commands
+async function handleContextAdd(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    const triggerSystem = new ContextTriggerSystem(configManager);
+    await triggerSystem.initialize();
+    
+    // Determine context type and ID
+    let contextType, contextId;
+    if (options.project) {
+      contextType = 'project';
+      contextId = null;
+    } else if (options.spec) {
+      contextType = 'spec';
+      contextId = options.spec;
+    } else if (options.task) {
+      contextType = 'task';
+      contextId = options.task;
+    } else {
+      console.error(chalk.red('❌ Must specify --project, --spec <id>, or --task <id>'));
+      process.exit(1);
+    }
+
+    // Build updates object
+    const updates = { frontmatter: {} };
+    
+    if (options.constraint) {
+      updates.frontmatter.constraints = updates.frontmatter.constraints || [];
+      updates.frontmatter.constraints.push(options.constraint);
+    }
+    
+    if (options.research) {
+      updates.frontmatter.research_findings = updates.frontmatter.research_findings || [];
+      updates.frontmatter.research_findings.push({
+        finding: options.research,
+        timestamp: new Date().toISOString(),
+        source: 'manual'
+      });
+    }
+    
+    if (options.decision) {
+      updates.frontmatter.implementation_decisions = updates.frontmatter.implementation_decisions || [];
+      updates.frontmatter.implementation_decisions.push({
+        decision: options.decision,
+        timestamp: new Date().toISOString(),
+        rationale: 'user input'
+      });
+    }
+    
+    if (options.content) {
+      updates.content = options.content;
+    }
+
+    if (Object.keys(updates.frontmatter).length === 0 && !updates.content) {
+      console.error(chalk.red('❌ Must provide --constraint, --research, --decision, or --content'));
+      process.exit(1);
+    }
+
+    // Update context and trigger system
+    const success = await contextManager.updateContext(contextType, contextId, updates);
+    
+    if (success) {
+      // Fire trigger for context addition
+      await triggerSystem.fireTrigger('context_add', {
+        contextType,
+        contextId,
+        updates,
+        source: 'cli_command'
+      });
+      
+      console.log(chalk.green(`✅ Updated ${contextType} context${contextId ? ` for ${contextId}` : ''}`));
+    } else {
+      console.error(chalk.red('❌ Failed to update context'));
+      process.exit(1);
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Context add failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleContextUpdate(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    
+    // Determine what to update
+    if (!options.spec && !options.task) {
+      console.error(chalk.red('❌ Must specify --spec <id> or --task <id>'));
+      process.exit(1);
+    }
+
+    const contextType = options.spec ? 'spec' : 'task';
+    const contextId = options.spec || options.task;
+    
+    const updates = { frontmatter: {} };
+    
+    if (options.status) {
+      updates.frontmatter.status = options.status;
+    }
+    
+    if (options.progress) {
+      updates.frontmatter.progress = JSON.parse(options.progress);
+    }
+    
+    if (options.assign) {
+      updates.frontmatter.assigned_agent = options.assign;
+      updates.frontmatter.assigned_at = new Date().toISOString();
+    }
+
+    // Update context
+    const success = await contextManager.updateContext(contextType, contextId, updates);
+    
+    if (success) {
+      console.log(chalk.green(`✅ Updated ${contextType} context for ${contextId}`));
+    } else {
+      console.error(chalk.red('❌ Failed to update context'));
+      process.exit(1);
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Context update failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleContextShow(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    
+    if (options.inject && options.agent) {
+      // Show full injected context for agent
+      const contextInjector = new ContextInjector(configManager);
+      const injectedContext = await contextInjector.injectContext({
+        agentType: options.agent,
+        specId: options.spec,
+        taskId: options.task
+      });
+      
+      console.log(chalk.cyan('🔄 Injected Context Preview'));
+      console.log(chalk.gray('='.repeat(50)));
+      
+      if (options.layers) {
+        console.log(JSON.stringify(injectedContext, null, 2));
+      } else {
+        // Show condensed view
+        console.log(chalk.white('Agent:'), chalk.yellow(injectedContext.metadata.agentType));
+        console.log(chalk.white('Layers:'), chalk.cyan(Object.keys(injectedContext.layers).join(', ')));
+        console.log(chalk.white('Performance:'), chalk.green(`${injectedContext.metadata.performance.total}ms`));
+        
+        if (injectedContext.inheritance) {
+          console.log(chalk.white('Inheritance:'), chalk.blue(injectedContext.inheritance.hierarchy.join(' → ')));
+        }
+        
+        if (injectedContext.relevanceScore) {
+          console.log(chalk.white('Relevance:'), chalk.magenta(`${Math.round(injectedContext.relevanceScore * 100)}%`));
+        }
+      }
+    } else if (options.spec || options.task) {
+      // Show specific context
+      const contextManager = new ContextManager(configManager);
+      const contextType = options.spec ? 'spec' : 'task';
+      const contextId = options.spec || options.task;
+      
+      const contextPath = contextType === 'spec' 
+        ? path.join(configManager.getProjectRoot(), '.asd', 'context', 'specs', `${contextId}-context.md`)
+        : path.join(configManager.getProjectRoot(), '.asd', 'context', 'tasks', `${contextId}-context.md`);
+      
+      if (await contextManager.fileExists(contextPath)) {
+        const fs = require('fs').promises;
+        const content = await fs.readFile(contextPath, 'utf-8');
+        console.log(chalk.cyan(`📄 ${contextType.charAt(0).toUpperCase() + contextType.slice(1)} Context: ${contextId}`));
+        console.log(chalk.gray('='.repeat(50)));
+        console.log(content);
+      } else {
+        console.log(chalk.yellow(`⚠️  No ${contextType} context found for ${contextId}`));
+      }
+    } else {
+      // Show general context info
+      const contextManager = new ContextManager(configManager);
+      const paths = contextManager.getContextPaths();
+      
+      console.log(chalk.cyan('📋 Context System Overview'));
+      console.log(chalk.gray('='.repeat(50)));
+      console.log(chalk.white('Base Directory:'), chalk.yellow(paths.base));
+      console.log(chalk.white('Context Path:'), chalk.yellow(paths.context));
+      console.log(chalk.white('Agents Path:'), chalk.yellow(paths.agents));
+      console.log(chalk.white('Processes Path:'), chalk.yellow(paths.processes));
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Context show failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleContextValidate(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextValidator = new ContextValidator(configManager);
+    
+    if (options.files) {
+      // Validate specific files using glob pattern
+      const glob = require('glob');
+      const filePaths = glob.sync(options.files);
+      
+      if (filePaths.length === 0) {
+        console.log(chalk.yellow(`⚠️  No files found matching pattern: ${options.files}`));
+        return;
+      }
+      
+      const summary = await contextValidator.validateContextFiles(filePaths);
+      
+      console.log(chalk.cyan('🔍 Context Validation Results'));
+      console.log(chalk.gray('='.repeat(50)));
+      console.log(chalk.white('Total Files:'), chalk.blue(summary.totalFiles));
+      console.log(chalk.white('Valid Files:'), chalk.green(summary.validFiles));
+      console.log(chalk.white('Invalid Files:'), summary.invalidFiles > 0 ? chalk.red(summary.invalidFiles) : chalk.green(summary.invalidFiles));
+      console.log(chalk.white('Warnings:'), summary.warnings > 0 ? chalk.yellow(summary.warnings) : chalk.green(summary.warnings));
+      
+      if (options.verbose) {
+        summary.results.forEach(result => {
+          console.log(chalk.gray('\n---'));
+          console.log(chalk.white('File:'), result.filePath);
+          console.log(chalk.white('Valid:'), result.isValid ? chalk.green('✓') : chalk.red('✗'));
+          
+          if (result.errors.length > 0) {
+            console.log(chalk.red('Errors:'));
+            result.errors.forEach(error => console.log(chalk.red(`  • ${error}`)));
+          }
+          
+          if (result.warnings.length > 0) {
+            console.log(chalk.yellow('Warnings:'));
+            result.warnings.forEach(warning => console.log(chalk.yellow(`  • ${warning}`)));
+          }
+        });
+      }
+    } else {
+      // Validate entire context system
+      const glob = require('glob');
+      const contextPaths = contextValidator.configManager.getProjectRoot();
+      const allContextFiles = glob.sync(path.join(contextPaths, '.asd/**/*.md'));
+      
+      const summary = await contextValidator.validateContextFiles(allContextFiles);
+      
+      console.log(chalk.cyan('🔍 Full Context System Validation'));
+      console.log(chalk.gray('='.repeat(50)));
+      console.log(chalk.white('Total Files:'), chalk.blue(summary.totalFiles));
+      console.log(chalk.white('Valid Files:'), chalk.green(summary.validFiles));
+      console.log(chalk.white('Invalid Files:'), summary.invalidFiles > 0 ? chalk.red(summary.invalidFiles) : chalk.green(summary.invalidFiles));
+      console.log(chalk.white('Warnings:'), summary.warnings > 0 ? chalk.yellow(summary.warnings) : chalk.green(summary.warnings));
+      
+      if (summary.invalidFiles === 0 && summary.warnings === 0) {
+        console.log(chalk.green('\n✅ Context system validation passed!'));
+      } else if (summary.invalidFiles === 0) {
+        console.log(chalk.yellow('\n⚠️  Context system validation passed with warnings'));
+      } else {
+        console.log(chalk.red('\n❌ Context system validation failed'));
+        process.exit(1);
+      }
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Context validation failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleContextExport(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    const paths = contextManager.getContextPaths();
+    
+    const exportData = {
+      timestamp: new Date().toISOString(),
+      version: '1.0.0',
+      context: {},
+      agents: {},
+      processes: {}
+    };
+    
+    // Export context files
+    const glob = require('glob');
+    const fs = require('fs').promises;
+    
+    const contextFiles = glob.sync(path.join(paths.context, '**/*.md'));
+    for (const filePath of contextFiles) {
+      const relativePath = path.relative(paths.context, filePath);
+      const content = await fs.readFile(filePath, 'utf-8');
+      const parsed = contextManager.parseMarkdownWithFrontmatter(content);
+      exportData.context[relativePath] = parsed;
+    }
+    
+    // Export agent definitions
+    const agentFiles = glob.sync(path.join(paths.agents, '*.md'));
+    for (const filePath of agentFiles) {
+      const filename = path.basename(filePath);
+      const content = await fs.readFile(filePath, 'utf-8');
+      const parsed = contextManager.parseMarkdownWithFrontmatter(content);
+      exportData.agents[filename] = parsed;
+    }
+    
+    // Export process templates
+    const processFiles = glob.sync(path.join(paths.processes, '*.md'));
+    for (const filePath of processFiles) {
+      const filename = path.basename(filePath);
+      const content = await fs.readFile(filePath, 'utf-8');
+      const parsed = contextManager.parseMarkdownWithFrontmatter(content);
+      exportData.processes[filename] = parsed;
+    }
+    
+    // Include state if requested
+    if (options.includeState) {
+      const dynamicContext = await contextManager.loadDynamicContext();
+      exportData.state = dynamicContext;
+    }
+    
+    // Filter by spec if requested
+    if (options.spec) {
+      const specContext = exportData.context[`specs/${options.spec}-context.md`];
+      exportData.context = specContext ? { [`specs/${options.spec}-context.md`]: specContext } : {};
+    }
+    
+    // Write export file
+    await fs.writeFile(options.output, JSON.stringify(exportData, null, 2), 'utf-8');
+    
+    console.log(chalk.green(`✅ Context exported to ${options.output}`));
+    console.log(chalk.gray(`   Context files: ${Object.keys(exportData.context).length}`));
+    console.log(chalk.gray(`   Agent files: ${Object.keys(exportData.agents).length}`));
+    console.log(chalk.gray(`   Process files: ${Object.keys(exportData.processes).length}`));
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Context export failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleContextImport(file, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    const paths = contextManager.getContextPaths();
+    
+    const fs = require('fs').promises;
+    
+    // Read import file
+    const importData = JSON.parse(await fs.readFile(file, 'utf-8'));
+    
+    if (options.dryRun) {
+      console.log(chalk.cyan('🔍 Import Preview (Dry Run)'));
+      console.log(chalk.gray('='.repeat(50)));
+      console.log(chalk.white('Context files to import:'), chalk.blue(Object.keys(importData.context || {}).length));
+      console.log(chalk.white('Agent files to import:'), chalk.blue(Object.keys(importData.agents || {}).length));
+      console.log(chalk.white('Process files to import:'), chalk.blue(Object.keys(importData.processes || {}).length));
+      
+      if (importData.state) {
+        console.log(chalk.white('State data:'), chalk.yellow('included'));
+      }
+      
+      console.log(chalk.yellow('\nNo changes made (dry run)'));
+      return;
+    }
+    
+    // Ensure directories exist
+    await contextManager.initializeContextStructure();
+    
+    let importedCount = 0;
+    
+    // Import context files
+    for (const [relativePath, parsed] of Object.entries(importData.context || {})) {
+      const fullPath = path.join(paths.context, relativePath);
+      await fs.mkdir(path.dirname(fullPath), { recursive: true });
+      
+      const content = contextManager.serializeMarkdownWithFrontmatter(
+        parsed.frontmatter || {},
+        parsed.content || ''
+      );
+      
+      await fs.writeFile(fullPath, content, 'utf-8');
+      importedCount++;
+    }
+    
+    // Import agent definitions
+    for (const [filename, parsed] of Object.entries(importData.agents || {})) {
+      const fullPath = path.join(paths.agents, filename);
+      
+      const content = contextManager.serializeMarkdownWithFrontmatter(
+        parsed.frontmatter || {},
+        parsed.content || ''
+      );
+      
+      await fs.writeFile(fullPath, content, 'utf-8');
+      importedCount++;
+    }
+    
+    // Import process templates  
+    for (const [filename, parsed] of Object.entries(importData.processes || {})) {
+      const fullPath = path.join(paths.processes, filename);
+      
+      const content = contextManager.serializeMarkdownWithFrontmatter(
+        parsed.frontmatter || {},
+        parsed.content || ''
+      );
+      
+      await fs.writeFile(fullPath, content, 'utf-8');
+      importedCount++;
+    }
+    
+    // Import state if present
+    if (importData.state) {
+      const assignmentsPath = path.join(paths.state, 'assignments.json');
+      const progressPath = path.join(paths.state, 'progress.json');
+      
+      if (importData.state.assignments) {
+        await fs.writeFile(assignmentsPath, JSON.stringify(importData.state.assignments, null, 2), 'utf-8');
+      }
+      
+      if (importData.state.progress) {
+        await fs.writeFile(progressPath, JSON.stringify(importData.state.progress, null, 2), 'utf-8');
+      }
+    }
+    
+    console.log(chalk.green(`✅ Context import completed`));
+    console.log(chalk.gray(`   Files imported: ${importedCount}`));
+    console.log(chalk.gray(`   Source: ${file}`));
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Context import failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleAgentCustomize(agentType, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const agentPath = path.join(configManager.getProjectRoot(), '.asd', 'agents', `${agentType}.md`);
+    
+    const fs = require('fs').promises;
+    
+    // Check if agent exists
+    if (!(await fs.access(agentPath).then(() => true).catch(() => false))) {
+      console.error(chalk.red(`❌ Agent definition not found: ${agentType}`));
+      console.log(chalk.gray(`   Expected path: ${agentPath}`));
+      process.exit(1);
+    }
+    
+    if (options.edit) {
+      // Open in editor
+      const { spawn } = require('child_process');
+      const editor = process.env.EDITOR || 'nano';
+      
+      const child = spawn(editor, [agentPath], {
+        stdio: 'inherit'
+      });
+      
+      child.on('exit', (code) => {
+        if (code === 0) {
+          console.log(chalk.green(`✅ Agent definition updated: ${agentType}`));
+        } else {
+          console.error(chalk.red('❌ Editor exited with error'));
+          process.exit(1);
+        }
+      });
+    } else {
+      // Programmatic updates
+      const content = await fs.readFile(agentPath, 'utf-8');
+      const contextManager = new ContextManager(configManager);
+      const parsed = contextManager.parseMarkdownWithFrontmatter(content);
+      
+      let updated = false;
+      const frontmatter = parsed.frontmatter || {};
+      
+      if (options.addStep) {
+        frontmatter.workflow_steps = frontmatter.workflow_steps || [];
+        frontmatter.workflow_steps.push(options.addStep);
+        updated = true;
+      }
+      
+      if (options.removeStep) {
+        if (frontmatter.workflow_steps) {
+          const index = frontmatter.workflow_steps.indexOf(options.removeStep);
+          if (index > -1) {
+            frontmatter.workflow_steps.splice(index, 1);
+            updated = true;
+          }
+        }
+      }
+      
+      if (options.addRequirement) {
+        frontmatter.context_requirements = frontmatter.context_requirements || [];
+        frontmatter.context_requirements.push(options.addRequirement);
+        updated = true;
+      }
+      
+      if (options.addCapability) {
+        frontmatter.capabilities = frontmatter.capabilities || [];
+        frontmatter.capabilities.push(options.addCapability);
+        updated = true;
+      }
+      
+      if (updated) {
+        const newContent = contextManager.serializeMarkdownWithFrontmatter(frontmatter, parsed.content);
+        await fs.writeFile(agentPath, newContent, 'utf-8');
+        console.log(chalk.green(`✅ Agent definition updated: ${agentType}`));
+      } else {
+        console.log(chalk.yellow('⚠️  No updates specified'));
+      }
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Agent customize failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleAgentList(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const agentsPath = path.join(configManager.getProjectRoot(), '.asd', 'agents');
+    
+    const fs = require('fs').promises;
+    const glob = require('glob');
+    
+    const agentFiles = glob.sync(path.join(agentsPath, '*.md'));
+    
+    console.log(chalk.cyan('👥 Available Agents'));
+    console.log(chalk.gray('='.repeat(50)));
+    
+    if (agentFiles.length === 0) {
+      console.log(chalk.yellow('⚠️  No agent definitions found'));
+      return;
+    }
+    
+    const contextManager = new ContextManager(configManager);
+    
+    for (const filePath of agentFiles) {
+      const agentType = path.basename(filePath, '.md');
+      const content = await fs.readFile(filePath, 'utf-8');
+      const parsed = contextManager.parseMarkdownWithFrontmatter(content);
+      const frontmatter = parsed.frontmatter || {};
+      
+      console.log(chalk.white('\n• Agent:'), chalk.yellow(agentType));
+      
+      if (options.details) {
+        if (frontmatter.capabilities) {
+          console.log(chalk.gray('  Capabilities:'), frontmatter.capabilities.slice(0, 3).join(', '));
+        }
+        if (frontmatter.specialization_areas) {
+          console.log(chalk.gray('  Specializations:'), frontmatter.specialization_areas.slice(0, 3).join(', '));
+        }
+        if (frontmatter.context_requirements) {
+          console.log(chalk.gray('  Context Needs:'), frontmatter.context_requirements.slice(0, 2).join(', '));
+        }
+      }
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Agent list failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleProcessUpdate(templateName, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const processPath = path.join(configManager.getProjectRoot(), '.asd', 'processes', `${templateName}.md`);
+    
+    const fs = require('fs').promises;
+    
+    if (options.edit) {
+      // Open in editor
+      const { spawn } = require('child_process');
+      const editor = process.env.EDITOR || 'nano';
+      
+      const child = spawn(editor, [processPath], {
+        stdio: 'inherit'
+      });
+      
+      child.on('exit', (code) => {
+        if (code === 0) {
+          console.log(chalk.green(`✅ Process template updated: ${templateName}`));
+        } else {
+          console.error(chalk.red('❌ Editor exited with error'));
+          process.exit(1);
+        }
+      });
+    } else {
+      // Programmatic updates
+      let content, parsed;
+      
+      try {
+        content = await fs.readFile(processPath, 'utf-8');
+        const contextManager = new ContextManager(configManager);
+        parsed = contextManager.parseMarkdownWithFrontmatter(content);
+      } catch (error) {
+        // File doesn't exist, create new
+        parsed = { frontmatter: {}, content: '' };
+      }
+      
+      let updated = false;
+      const frontmatter = parsed.frontmatter || {};
+      
+      if (options.addRequirement) {
+        frontmatter.validation_requirements = frontmatter.validation_requirements || [];
+        frontmatter.validation_requirements.push(options.addRequirement);
+        updated = true;
+      }
+      
+      if (options.addStep) {
+        frontmatter.process_steps = frontmatter.process_steps || [];
+        frontmatter.process_steps.push(options.addStep);
+        updated = true;
+      }
+      
+      if (updated) {
+        const contextManager = new ContextManager(configManager);
+        const newContent = contextManager.serializeMarkdownWithFrontmatter(frontmatter, parsed.content);
+        await fs.writeFile(processPath, newContent, 'utf-8');
+        console.log(chalk.green(`✅ Process template updated: ${templateName}`));
+      } else {
+        console.log(chalk.yellow('⚠️  No updates specified'));
+      }
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Process update failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleProcessList() {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const processesPath = path.join(configManager.getProjectRoot(), '.asd', 'processes');
+    
+    const fs = require('fs').promises;
+    const glob = require('glob');
+    
+    const processFiles = glob.sync(path.join(processesPath, '*.md'));
+    
+    console.log(chalk.cyan('📋 Available Process Templates'));
+    console.log(chalk.gray('='.repeat(50)));
+    
+    if (processFiles.length === 0) {
+      console.log(chalk.yellow('⚠️  No process templates found'));
+      return;
+    }
+    
+    const contextManager = new ContextManager(configManager);
+    
+    for (const filePath of processFiles) {
+      const templateName = path.basename(filePath, '.md');
+      const content = await fs.readFile(filePath, 'utf-8');
+      const parsed = contextManager.parseMarkdownWithFrontmatter(content);
+      const frontmatter = parsed.frontmatter || {};
+      
+      console.log(chalk.white('• Template:'), chalk.yellow(templateName));
+      
+      if (frontmatter.process_type) {
+        console.log(chalk.gray('  Type:'), frontmatter.process_type);
+      }
+      
+      if (frontmatter.validation_requirements && frontmatter.validation_requirements.length > 0) {
+        console.log(chalk.gray('  Requirements:'), frontmatter.validation_requirements.length);
+      }
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Process list failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleTaskAssign(specId, taskId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    const triggerSystem = new ContextTriggerSystem(configManager);
+    await triggerSystem.initialize();
+    
+    if (!options.agent) {
+      console.error(chalk.red('❌ Must specify --agent <agent-type>'));
+      process.exit(1);
+    }
+    
+    // Update task context with assignment
+    const updates = {
+      frontmatter: {
+        assigned_agent: options.agent,
+        assigned_at: new Date().toISOString(),
+        status: 'in_progress'
+      }
+    };
+    
+    if (options.priority) {
+      updates.frontmatter.priority = options.priority;
+    }
+    
+    // Update task context
+    const taskSuccess = await contextManager.updateContext('task', taskId, updates);
+    
+    // Update dynamic state (assignments.json)
+    const paths = contextManager.getContextPaths();
+    const assignmentsPath = path.join(paths.state, 'assignments.json');
+    
+    const fs = require('fs').promises;
+    let assignments = {};
+    
+    try {
+      if (await contextManager.fileExists(assignmentsPath)) {
+        const assignmentsContent = await fs.readFile(assignmentsPath, 'utf-8');
+        assignments = JSON.parse(assignmentsContent);
+      }
+    } catch (error) {
+      // Start fresh if file is corrupted
+    }
+    
+    // Update assignments
+    assignments[specId] = assignments[specId] || {};
+    assignments[specId][taskId] = {
+      agent: options.agent,
+      assigned_at: new Date().toISOString(),
+      priority: options.priority || 'P2',
+      status: 'in_progress'
+    };
+    
+    // Ensure state directory exists
+    await fs.mkdir(paths.state, { recursive: true });
+    await fs.writeFile(assignmentsPath, JSON.stringify(assignments, null, 2), 'utf-8');
+    
+    if (taskSuccess) {
+      // Fire trigger for task assignment
+      await triggerSystem.fireTrigger('assign', {
+        specId,
+        taskId,
+        agentType: options.agent,
+        priority: options.priority || 'P2',
+        source: 'cli_command'
+      });
+      
+      console.log(chalk.green(`✅ Assigned ${taskId} to ${options.agent}`));
+      console.log(chalk.gray(`   Spec: ${specId}`));
+      console.log(chalk.gray(`   Priority: ${options.priority || 'P2'}`));
+    } else {
+      console.error(chalk.red('❌ Failed to update task context'));
+      process.exit(1);
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Task assignment failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleTaskComplete(specId, taskId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    const triggerSystem = new ContextTriggerSystem(configManager);
+    await triggerSystem.initialize();
+    
+    // Update task context with completion
+    const updates = {
+      frontmatter: {
+        status: 'completed',
+        completed_at: new Date().toISOString()
+      }
+    };
+    
+    if (options.notes) {
+      updates.frontmatter.completion_notes = options.notes;
+    }
+    
+    if (options.handoff) {
+      updates.frontmatter.handoff_to = options.handoff;
+    }
+    
+    // Update task context
+    const taskSuccess = await contextManager.updateContext('task', taskId, updates);
+    
+    // Update progress tracking
+    const paths = contextManager.getContextPaths();
+    const progressPath = path.join(paths.state, 'progress.json');
+    
+    const fs = require('fs').promises;
+    let progress = {};
+    
+    try {
+      if (await contextManager.fileExists(progressPath)) {
+        const progressContent = await fs.readFile(progressPath, 'utf-8');
+        progress = JSON.parse(progressContent);
+      }
+    } catch (error) {
+      // Start fresh if file is corrupted
+    }
+    
+    // Update progress
+    progress[specId] = progress[specId] || {};
+    progress[specId][taskId] = {
+      status: 'completed',
+      completed_at: new Date().toISOString(),
+      completion_notes: options.notes || null
+    };
+    
+    // Ensure state directory exists
+    await fs.mkdir(paths.state, { recursive: true });
+    await fs.writeFile(progressPath, JSON.stringify(progress, null, 2), 'utf-8');
+    
+    if (taskSuccess) {
+      // Fire trigger for task completion
+      await triggerSystem.fireTrigger('complete', {
+        specId,
+        taskId,
+        completionNotes: options.notes,
+        handoffTo: options.handoff,
+        source: 'cli_command'
+      });
+      
+      console.log(chalk.green(`✅ Marked ${taskId} as complete`));
+      console.log(chalk.gray(`   Spec: ${specId}`));
+      if (options.notes) {
+        console.log(chalk.gray(`   Notes: ${options.notes}`));
+      }
+      if (options.handoff) {
+        console.log(chalk.yellow(`   🔄 Handoff to: ${options.handoff}`));
+      }
+    } else {
+      console.error(chalk.red('❌ Failed to update task context'));
+      process.exit(1);
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Task completion failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleResearchCapture(specId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    const triggerSystem = new ContextTriggerSystem(configManager);
+    await triggerSystem.initialize();
+    
+    if (!options.finding) {
+      console.error(chalk.red('❌ Must specify --finding <text>'));
+      process.exit(1);
+    }
+    
+    const contextType = options.task ? 'task' : 'spec';
+    const contextId = options.task || specId;
+    
+    // Create research finding object
+    const researchFinding = {
+      finding: options.finding,
+      timestamp: new Date().toISOString(),
+      source: options.source || 'manual',
+      context: contextType === 'task' ? `${specId}:${options.task}` : specId
+    };
+    
+    // Update context with research finding
+    const updates = {
+      frontmatter: {
+        research_findings: [researchFinding]
+      }
+    };
+    
+    const success = await contextManager.updateContext(contextType, contextId, updates);
+    
+    if (success) {
+      // Fire trigger for research capture
+      await triggerSystem.fireTrigger('research', {
+        specId,
+        taskId: options.task,
+        finding: options.finding,
+        source: options.source,
+        contextType,
+        contextId
+      });
+      
+      console.log(chalk.green(`✅ Research finding captured for ${contextType} ${contextId}`));
+      console.log(chalk.gray(`   Finding: ${options.finding.slice(0, 80)}${options.finding.length > 80 ? '...' : ''}`));
+      if (options.source) {
+        console.log(chalk.gray(`   Source: ${options.source}`));
+      }
+    } else {
+      console.error(chalk.red('❌ Failed to capture research finding'));
+      process.exit(1);
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Research capture failed:'), error.message);
+    process.exit(1);
+  }
+}
 
 async function startASD(options) {
   try {
