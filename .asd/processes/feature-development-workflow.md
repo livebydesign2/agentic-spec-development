@@ -4,7 +4,7 @@ version: "1.0"
 applies_to: ["all-agents"]
 phases:
   - "discovery"
-  - "planning" 
+  - "planning"
   - "implementation"
   - "validation"
   - "release"
@@ -35,19 +35,22 @@ Research      Planning     Review     UAT       Support
 **Supporting Agents**: Software Architect, UI Developer
 
 ### Objectives
+
 - Understand business requirements and user needs
 - Validate feature concept and value proposition
 - Define success criteria and acceptance conditions
 - Assess technical feasibility and constraints
 
 ### Key Activities
+
 - [ ] **Stakeholder Interviews**: Gather requirements from stakeholders and users
-- [ ] **Market Research**: Analyze competitive landscape and industry best practices  
+- [ ] **Market Research**: Analyze competitive landscape and industry best practices
 - [ ] **User Story Creation**: Define user stories with clear acceptance criteria
 - [ ] **Technical Feasibility**: Initial assessment of technical requirements and constraints
 - [ ] **Success Metrics**: Define measurable success criteria and KPIs
 
 ### Deliverables
+
 - **Requirements Document**: Clear, testable requirements with acceptance criteria
 - **User Stories**: Well-defined user stories following established format
 - **Success Metrics**: Quantifiable measures of feature success
@@ -55,6 +58,7 @@ Research      Planning     Review     UAT       Support
 - **Stakeholder Sign-off**: Approval to proceed to planning phase
 
 ### Exit Criteria
+
 - [ ] All requirements are documented and stakeholder-approved
 - [ ] User stories have clear acceptance criteria
 - [ ] Success metrics are defined and measurable
@@ -67,12 +71,14 @@ Research      Planning     Review     UAT       Support
 **Supporting Agents**: Backend Developer, CLI Specialist, UI Developer, DevOps Engineer
 
 ### Objectives
+
 - Design technical architecture and implementation approach
 - Plan development tasks and dependencies
 - Establish integration points and data flows
 - Create development timeline and resource allocation
 
 ### Key Activities
+
 - [ ] **Architecture Design**: System design, component relationships, and integration points
 - [ ] **Technical Specification**: Detailed technical requirements and implementation approach
 - [ ] **Task Breakdown**: Decompose feature into implementable tasks with dependencies
@@ -80,6 +86,7 @@ Research      Planning     Review     UAT       Support
 - [ ] **Risk Assessment**: Identify technical risks and mitigation strategies
 
 ### Deliverables
+
 - **Technical Architecture**: System design with component relationships and data flow
 - **Implementation Plan**: Detailed tasks with dependencies and effort estimates
 - **API Specifications**: Interface definitions and data contracts
@@ -87,6 +94,7 @@ Research      Planning     Review     UAT       Support
 - **Risk Mitigation Plan**: Identified risks with mitigation strategies
 
 ### Exit Criteria
+
 - [ ] Architecture is designed and reviewed
 - [ ] Implementation tasks are defined with clear boundaries
 - [ ] Integration points are specified and validated
@@ -99,12 +107,14 @@ Research      Planning     Review     UAT       Support
 **Supporting Agents**: Software Architect, QA Engineer
 
 ### Objectives
+
 - Implement feature according to specifications
 - Ensure code quality and maintainability standards
 - Create comprehensive test coverage
 - Validate implementation against requirements
 
 ### Key Activities
+
 - [ ] **Core Development**: Implement feature functionality according to specifications
 - [ ] **Code Review**: Thorough peer review following established quality standards
 - [ ] **Unit Testing**: Comprehensive test coverage for new functionality
@@ -112,6 +122,7 @@ Research      Planning     Review     UAT       Support
 - [ ] **Documentation**: Code documentation and implementation notes
 
 ### Deliverables
+
 - **Feature Implementation**: Complete, tested, and reviewed code
 - **Test Suite**: Unit and integration tests with adequate coverage
 - **Code Documentation**: Clear documentation for maintainability
@@ -119,6 +130,7 @@ Research      Planning     Review     UAT       Support
 - **Implementation Notes**: Key decisions and approaches documented
 
 ### Exit Criteria
+
 - [ ] All acceptance criteria are implementable and functional
 - [ ] Code passes quality standards and peer review
 - [ ] Test coverage meets minimum requirements (>80% for new code)
@@ -131,12 +143,14 @@ Research      Planning     Review     UAT       Support
 **Supporting Agents**: Product Manager, UI Developer, CLI Specialist
 
 ### Objectives
+
 - Validate feature meets all acceptance criteria
 - Ensure quality standards and performance requirements
 - Conduct user acceptance testing
 - Verify system reliability and stability
 
 ### Key Activities
+
 - [ ] **Functional Testing**: Validate all acceptance criteria are met
 - [ ] **Performance Testing**: Ensure performance requirements are satisfied
 - [ ] **User Acceptance Testing**: Stakeholder validation of feature functionality
@@ -144,6 +158,7 @@ Research      Planning     Review     UAT       Support
 - [ ] **Documentation Validation**: Verify all documentation is accurate and complete
 
 ### Deliverables
+
 - **Test Results**: Comprehensive test execution results and metrics
 - **Performance Validation**: Confirmation that performance requirements are met
 - **UAT Sign-off**: Stakeholder approval that feature meets business requirements
@@ -151,6 +166,7 @@ Research      Planning     Review     UAT       Support
 - **Release Readiness**: Confirmation that feature is ready for production deployment
 
 ### Exit Criteria
+
 - [ ] All acceptance criteria pass functional testing
 - [ ] Performance requirements are validated and met
 - [ ] User acceptance testing is completed with stakeholder approval
@@ -163,12 +179,14 @@ Research      Planning     Review     UAT       Support
 **Supporting Agents**: Backend Developer, QA Engineer, Product Manager
 
 ### Objectives
+
 - Deploy feature safely to production environment
 - Monitor system health and performance post-deployment
 - Ensure proper rollback procedures are available
 - Gather initial user feedback and usage metrics
 
 ### Key Activities
+
 - [ ] **Deployment Planning**: Plan deployment approach and rollback procedures
 - [ ] **Production Deployment**: Execute controlled deployment to production
 - [ ] **Health Monitoring**: Monitor system health and performance post-deployment
@@ -176,6 +194,7 @@ Research      Planning     Review     UAT       Support
 - [ ] **Feedback Collection**: Gather initial user feedback and usage data
 
 ### Deliverables
+
 - **Deployment Plan**: Step-by-step deployment and rollback procedures
 - **Monitoring Dashboard**: Real-time visibility into feature performance
 - **User Communication**: Release notes and feature announcements
@@ -183,6 +202,7 @@ Research      Planning     Review     UAT       Support
 - **Support Documentation**: Troubleshooting and support procedures
 
 ### Exit Criteria
+
 - [ ] Feature is successfully deployed to production
 - [ ] System health and performance are stable post-deployment
 - [ ] Users have been notified and have access to feature
@@ -192,18 +212,21 @@ Research      Planning     Review     UAT       Support
 ## 🔄 Cross-Phase Activities
 
 ### Continuous Integration
+
 - **Automated Testing**: CI/CD pipeline runs comprehensive test suites
 - **Code Quality Gates**: Automated quality checks prevent regression
 - **Security Scanning**: Continuous security vulnerability assessment
 - **Performance Monitoring**: Ongoing performance validation throughout development
 
 ### Documentation Management
+
 - **Living Documentation**: Documentation updated throughout development process
 - **Architecture Updates**: System architecture updated to reflect changes
 - **User Documentation**: User-facing documentation updated as needed
 - **API Documentation**: Interface documentation maintained and current
 
 ### Stakeholder Communication
+
 - **Regular Updates**: Stakeholders receive regular progress updates
 - **Demo Sessions**: Periodic demonstrations of feature progress
 - **Feedback Incorporation**: Stakeholder feedback integrated throughout process
@@ -212,6 +235,7 @@ Research      Planning     Review     UAT       Support
 ## ⚠️ Risk Management & Escalation
 
 ### Common Risk Scenarios
+
 - **Scope Creep**: Requirements change or expand during development
 - **Technical Blockers**: Unexpected technical challenges or dependencies
 - **Resource Constraints**: Key team members unavailable or overcommitted
@@ -219,12 +243,14 @@ Research      Planning     Review     UAT       Support
 - **Performance Problems**: Feature doesn't meet performance requirements
 
 ### Escalation Procedures
+
 1. **Team Level**: Development team attempts resolution with available resources
 2. **Technical Leadership**: Software Architect provides guidance and alternative approaches
 3. **Product Management**: Product Manager evaluates scope and priority adjustments
 4. **Stakeholder Escalation**: Senior leadership involvement for significant issues
 
 ### Mitigation Strategies
+
 - **Regular Risk Reviews**: Periodic assessment of project risks and mitigation effectiveness
 - **Buffer Time**: Include adequate buffer in estimates for unexpected challenges
 - **Alternative Approaches**: Identify backup implementation approaches early
@@ -233,18 +259,21 @@ Research      Planning     Review     UAT       Support
 ## 📊 Success Metrics & Quality Gates
 
 ### Development Quality Metrics
+
 - **Code Coverage**: >80% test coverage for new functionality
 - **Code Review Coverage**: 100% of changes reviewed by qualified peers
 - **Defect Density**: <1 critical defect per 1000 lines of new code
 - **Performance Standards**: All performance requirements met or exceeded
 
 ### Process Efficiency Metrics
+
 - **Cycle Time**: Time from feature request to production deployment
 - **Lead Time**: Time from stakeholder request to user availability
 - **Rework Rate**: Percentage of work requiring significant revision
 - **Deployment Success Rate**: Percentage of deployments completed without issues
 
 ### Business Value Metrics
+
 - **User Adoption**: Percentage of target users actively using new feature
 - **User Satisfaction**: User feedback scores and qualitative responses
 - **Business Impact**: Measurable business outcomes from feature deployment
@@ -253,12 +282,14 @@ Research      Planning     Review     UAT       Support
 ## 🎯 Continuous Improvement
 
 ### Retrospective Process
+
 - **Phase Retrospectives**: Brief retrospectives after each phase completion
 - **Feature Retrospectives**: Comprehensive retrospective after feature deployment
 - **Process Refinement**: Regular updates to workflow based on lessons learned
 - **Tool Enhancement**: Continuous improvement of development tools and processes
 
 ### Knowledge Management
+
 - **Lessons Learned**: Document key learnings for future feature development
 - **Best Practices**: Share effective approaches across development teams
 - **Anti-Patterns**: Document what doesn't work to avoid future mistakes

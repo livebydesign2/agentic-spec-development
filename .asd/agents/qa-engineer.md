@@ -4,9 +4,9 @@ specializations:
   [
     "test-automation",
     "quality-assurance",
-    "performance-testing", 
+    "performance-testing",
     "user-acceptance-testing",
-    "test-strategy"
+    "test-strategy",
   ]
 context_requirements:
   - "test-scenarios"

@@ -15,7 +15,9 @@ describe("WorkflowStateManager", () => {
     testDir = path.join(__dirname, "temp", "workflow-state-test");
     await fs.mkdir(testDir, { recursive: true });
     await fs.mkdir(path.join(testDir, ".asd", "state"), { recursive: true });
-    await fs.mkdir(path.join(testDir, "docs", "specs", "active"), { recursive: true });
+    await fs.mkdir(path.join(testDir, "docs", "specs", "active"), {
+      recursive: true,
+    });
 
     // Create test spec file
     const testSpecContent = `---
@@ -58,18 +60,15 @@ Test feature for WorkflowStateManager validation.
   autoRefresh: true
 };`;
 
-    await fs.writeFile(
-      path.join(testDir, "asd.config.js"),
-      testConfigContent
-    );
+    await fs.writeFile(path.join(testDir, "asd.config.js"), testConfigContent);
 
     // Create config for test
     configManager = new ConfigManager(testDir);
     specParser = new SpecParser(configManager);
-    
+
     // Load specs explicitly for testing
     await specParser.loadSpecs();
-    
+
     stateManager = new WorkflowStateManager(configManager, specParser);
 
     // Initialize the state manager
@@ -88,12 +87,17 @@ Test feature for WorkflowStateManager validation.
   describe("Initialization", () => {
     test("should initialize state directory structure", async () => {
       const stateDir = path.join(testDir, ".asd", "state");
-      const statFiles = ["assignments.json", "progress.json", "handoffs.json", "metadata.json"];
-      
+      const statFiles = [
+        "assignments.json",
+        "progress.json",
+        "handoffs.json",
+        "metadata.json",
+      ];
+
       for (const file of statFiles) {
         const filePath = path.join(stateDir, file);
         await expect(fs.access(filePath)).resolves.toBeUndefined();
-        
+
         // Verify JSON structure is valid
         const content = await fs.readFile(filePath, "utf-8");
         expect(() => JSON.parse(content)).not.toThrow();
@@ -102,10 +106,13 @@ Test feature for WorkflowStateManager validation.
 
     test("should initialize within performance timeout", async () => {
       const startTime = Date.now();
-      const newStateManager = new WorkflowStateManager(configManager, specParser);
+      const newStateManager = new WorkflowStateManager(
+        configManager,
+        specParser
+      );
       await newStateManager.initialize();
       const duration = Date.now() - startTime;
-      
+
       expect(duration).toBeLessThan(200); // Allow 200ms for test environment
     });
   });
@@ -127,21 +134,31 @@ Test feature for WorkflowStateManager validation.
     });
 
     test("should track assignments in current_assignments", async () => {
-      await stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer");
-      
+      await stateManager.assignTask(
+        "FEAT-TEST",
+        "TASK-001",
+        "backend-developer"
+      );
+
       const assignments = await stateManager.getCurrentAssignments();
-      
+
       expect(assignments.current_assignments).toHaveLength(1);
       expect(assignments.current_assignments[0].task_id).toBe("TASK-001");
       expect(assignments.agent_workloads["backend-developer"]).toBeDefined();
-      expect(assignments.agent_workloads["backend-developer"].current_tasks).toBe(1);
+      expect(
+        assignments.agent_workloads["backend-developer"].current_tasks
+      ).toBe(1);
     });
 
     test("should add assignment to history", async () => {
-      await stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer");
-      
+      await stateManager.assignTask(
+        "FEAT-TEST",
+        "TASK-001",
+        "backend-developer"
+      );
+
       const assignmentsState = await stateManager.loadState("assignments");
-      
+
       expect(assignmentsState.assignment_history).toHaveLength(1);
       expect(assignmentsState.assignment_history[0].action).toBe("assigned");
       expect(assignmentsState.assignment_history[0].task_id).toBe("TASK-001");
@@ -151,24 +168,32 @@ Test feature for WorkflowStateManager validation.
   describe("Task Completion", () => {
     test("should complete task successfully", async () => {
       // First assign the task
-      await stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer");
-      
-      // Then complete it
-      const result = await stateManager.completeTask(
+      await stateManager.assignTask(
         "FEAT-TEST",
         "TASK-001",
-        { notes: "Task completed successfully" }
+        "backend-developer"
       );
+
+      // Then complete it
+      const result = await stateManager.completeTask("FEAT-TEST", "TASK-001", {
+        notes: "Task completed successfully",
+      });
 
       expect(result.success).toBe(true);
       expect(result.completion.status).toBe("completed");
-      expect(result.completion.completion_notes).toBe("Task completed successfully");
+      expect(result.completion.completion_notes).toBe(
+        "Task completed successfully"
+      );
       expect(result.performance.total).toBeLessThan(100);
     });
 
     test("should detect handoff opportunities", async () => {
       // Assign and complete TASK-001
-      await stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer");
+      await stateManager.assignTask(
+        "FEAT-TEST",
+        "TASK-001",
+        "backend-developer"
+      );
       const result = await stateManager.completeTask("FEAT-TEST", "TASK-001");
 
       // Should detect TASK-002 as handoff opportunity
@@ -178,11 +203,15 @@ Test feature for WorkflowStateManager validation.
     });
 
     test("should update progress tracking", async () => {
-      await stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer");
+      await stateManager.assignTask(
+        "FEAT-TEST",
+        "TASK-001",
+        "backend-developer"
+      );
       await stateManager.completeTask("FEAT-TEST", "TASK-001");
-      
+
       const progress = await stateManager.getSpecProgress("FEAT-TEST");
-      
+
       expect(progress.completed_tasks).toBe(1);
       expect(progress.completion_percentage).toBeGreaterThan(0);
     });
@@ -191,7 +220,7 @@ Test feature for WorkflowStateManager validation.
   describe("Progress Tracking", () => {
     test("should calculate project progress accurately", async () => {
       const progress = await stateManager.getProjectProgress();
-      
+
       expect(progress.overall.total_specs).toBeGreaterThan(0);
       expect(progress.overall.total_tasks).toBeGreaterThan(0);
       expect(progress.overall.completion_percentage).toBeGreaterThanOrEqual(0);
@@ -199,19 +228,23 @@ Test feature for WorkflowStateManager validation.
 
     test("should track progress by phase", async () => {
       const progress = await stateManager.getProjectProgress();
-      
+
       expect(progress.by_phase["PHASE-1A"]).toBeDefined();
       expect(progress.by_phase["PHASE-1A"].specs).toBeGreaterThan(0);
     });
 
     test("should update progress when tasks complete", async () => {
       const initialProgress = await stateManager.getProjectProgress();
-      
-      await stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer");
+
+      await stateManager.assignTask(
+        "FEAT-TEST",
+        "TASK-001",
+        "backend-developer"
+      );
       await stateManager.completeTask("FEAT-TEST", "TASK-001");
-      
+
       const updatedProgress = await stateManager.getProjectProgress();
-      
+
       expect(updatedProgress.overall.completed_tasks).toBeGreaterThan(
         initialProgress.overall.completed_tasks
       );
@@ -236,18 +269,25 @@ Test feature for WorkflowStateManager validation.
   describe("Handoff Management", () => {
     test("should get handoff status", async () => {
       // Create a handoff scenario
-      await stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer");
+      await stateManager.assignTask(
+        "FEAT-TEST",
+        "TASK-001",
+        "backend-developer"
+      );
       await stateManager.completeTask("FEAT-TEST", "TASK-001");
-      
+
       const handoffStatus = await stateManager.getHandoffStatus();
-      
+
       expect(handoffStatus.ready_handoffs).toBeDefined();
       expect(handoffStatus.agent_availability).toBeDefined();
     });
 
     test("should prepare next task context", async () => {
-      const context = await stateManager.prepareNextTask("FEAT-TEST", "TASK-002");
-      
+      const context = await stateManager.prepareNextTask(
+        "FEAT-TEST",
+        "TASK-002"
+      );
+
       expect(context.task.id).toBe("TASK-002");
       expect(context.spec.id).toBe("FEAT-TEST");
       expect(context.prepared_at).toBeDefined();
@@ -257,10 +297,14 @@ Test feature for WorkflowStateManager validation.
   describe("State Validation", () => {
     test("should validate state consistency", async () => {
       // Create some state
-      await stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer");
-      
+      await stateManager.assignTask(
+        "FEAT-TEST",
+        "TASK-001",
+        "backend-developer"
+      );
+
       const validation = await stateManager.validateState();
-      
+
       expect(validation.isValid).toBe(true);
       expect(validation.performance.total).toBeLessThan(100);
       expect(validation.statistics).toBeDefined();
@@ -273,17 +317,17 @@ Test feature for WorkflowStateManager validation.
           "FEAT-TEST": {
             "TASK-001": {
               // Missing required fields
-              status: "in_progress"
-            }
-          }
+              status: "in_progress",
+            },
+          },
         },
-        assignment_history: []
+        assignment_history: [],
       };
-      
+
       await stateManager.saveState("assignments", corruptedState);
-      
+
       const validation = await stateManager.validateState();
-      
+
       expect(validation.isValid).toBe(false);
       expect(validation.errors.length).toBeGreaterThan(0);
     });
@@ -292,7 +336,7 @@ Test feature for WorkflowStateManager validation.
   describe("Spec Synchronization", () => {
     test("should sync spec state with file contents", async () => {
       const result = await stateManager.syncSpecState("FEAT-TEST");
-      
+
       expect(result.success).toBe(true);
       expect(result.synchronized_data.total_tasks).toBe(2); // TASK-001 and TASK-002
     });
@@ -301,11 +345,12 @@ Test feature for WorkflowStateManager validation.
   describe("Performance Requirements", () => {
     test("should complete operations under 100ms", async () => {
       const operations = [
-        () => stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer"),
+        () =>
+          stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer"),
         () => stateManager.getCurrentAssignments(),
         () => stateManager.getProjectProgress(),
         () => stateManager.getSpecProgress("FEAT-TEST"),
-        () => stateManager.validateState()
+        () => stateManager.validateState(),
       ];
 
       for (const operation of operations) {
@@ -319,14 +364,16 @@ Test feature for WorkflowStateManager validation.
     test("should handle concurrent operations safely", async () => {
       const concurrentAssignments = [
         stateManager.assignTask("FEAT-TEST", "TASK-001", "backend-developer"),
-        stateManager.updateTaskProgress("FEAT-TEST", "TASK-001", { progress: 50 }),
-        stateManager.getProjectProgress()
+        stateManager.updateTaskProgress("FEAT-TEST", "TASK-001", {
+          progress: 50,
+        }),
+        stateManager.getProjectProgress(),
       ];
 
       const results = await Promise.all(concurrentAssignments);
-      
+
       // All operations should complete successfully
-      results.forEach(result => {
+      results.forEach((result) => {
         if (result.success !== undefined) {
           expect(result.success).toBe(true);
         }
@@ -339,7 +386,7 @@ Test feature for WorkflowStateManager validation.
       // Load state multiple times
       await stateManager.loadState("assignments");
       await stateManager.loadState("assignments");
-      
+
       const cacheStats = stateManager.getCacheStats();
       expect(cacheStats.size).toBeGreaterThan(0);
     });
@@ -355,7 +402,7 @@ Test feature for WorkflowStateManager validation.
     test("should handle missing spec gracefully", async () => {
       const result = await stateManager.assignTask(
         "NONEXISTENT-SPEC",
-        "TASK-001", 
+        "TASK-001",
         "backend-developer"
       );
 
@@ -365,11 +412,19 @@ Test feature for WorkflowStateManager validation.
 
     test("should handle corrupted state files", async () => {
       // Corrupt a state file
-      const corruptedPath = path.join(testDir, ".asd", "state", "assignments.json");
+      const corruptedPath = path.join(
+        testDir,
+        ".asd",
+        "state",
+        "assignments.json"
+      );
       await fs.writeFile(corruptedPath, "invalid json content");
-      
+
       // Should handle gracefully by recreating the file
-      const newStateManager = new WorkflowStateManager(configManager, specParser);
+      const newStateManager = new WorkflowStateManager(
+        configManager,
+        specParser
+      );
       await expect(newStateManager.initialize()).resolves.not.toThrow();
     });
   });
@@ -378,9 +433,9 @@ Test feature for WorkflowStateManager validation.
     test("should work with SpecParser", async () => {
       const specs = specParser.getSpecs();
       expect(specs.length).toBeGreaterThan(0);
-      
+
       // Should be able to assign tasks from parsed specs
-      const testSpec = specs.find(s => s.id === "FEAT-TEST");
+      const testSpec = specs.find((s) => s.id === "FEAT-TEST");
       expect(testSpec).toBeDefined();
       expect(testSpec.tasks.length).toBe(2);
     });
@@ -388,7 +443,7 @@ Test feature for WorkflowStateManager validation.
     test("should integrate with ConfigManager", () => {
       const projectRoot = configManager.getProjectRoot();
       expect(projectRoot).toBe(testDir);
-      
+
       const stateDir = path.join(projectRoot, ".asd", "state");
       expect(stateManager.stateDir).toBe(stateDir);
     });

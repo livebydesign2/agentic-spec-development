@@ -155,12 +155,12 @@ Implement TaskRouter class that analyzes available tasks, validates dependencies
 
 ### Success Criteria
 
-- [x] ~~Agents can request next available task via "asd next" command~~ *(Core TaskRouter API implemented)*
-- [x] ~~Task dependencies prevent assignment of blocked tasks~~ *(Dependency validation implemented)*
-- [x] ~~Agent capability matching ensures appropriate task assignment~~ *(Capability matching with context requirements)*
-- [x] ~~Priority weighting considers P0/P1/P2/P3 levels and phase constraints~~ *(Priority scoring implemented)*
-- [x] ~~System supports filtering by agent type, priority, and phase~~ *(Comprehensive filtering system)*
-- [x] ~~Performance: Task routing completes in < 200ms for projects with 100+ specs~~ *(All operations under 200ms target)*
+- [x] ~~Agents can request next available task via "asd next" command~~ _(Core TaskRouter API implemented)_
+- [x] ~~Task dependencies prevent assignment of blocked tasks~~ _(Dependency validation implemented)_
+- [x] ~~Agent capability matching ensures appropriate task assignment~~ _(Capability matching with context requirements)_
+- [x] ~~Priority weighting considers P0/P1/P2/P3 levels and phase constraints~~ _(Priority scoring implemented)_
+- [x] ~~System supports filtering by agent type, priority, and phase~~ _(Comprehensive filtering system)_
+- [x] ~~Performance: Task routing completes in < 200ms for projects with 100+ specs~~ _(All operations under 200ms target)_
 
 ---
 
@@ -174,58 +174,58 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 
 **TASK-001** 🤖 **Core Task Routing Engine** ✅ **← COMPLETED** | Agent: Backend-Developer
 
-- [x] ~~Implement TaskRouter class with core routing logic~~ *(lib/task-router.js created)*
-- [x] ~~Add dependency resolution system (task depends_on validation)~~ *(isTaskBlocked method implemented)*
-- [x] ~~Create agent capability matching based on agent_type and context_requirements~~ *(validateAgentCapability with context matching)*
-- [x] ~~Build task state filtering (ready/blocked/in_progress/complete)~~ *(comprehensive filtering system)*
-- [x] ~~Add integration with existing SpecParser for loading task data~~ *(YAML frontmatter task extraction added)*
-- [x] ~~Create task availability validation (not assigned, dependencies met)~~ *(isTaskAvailable with constraint validation)*
-- [x] ~~Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit~~ *(spec updated)*
-- [x] ~~Product Handoff: notify next agent that core routing engine is ready~~ *(TASK-002 unblocked and ready)*
+- [x] ~~Implement TaskRouter class with core routing logic~~ _(lib/task-router.js created)_
+- [x] ~~Add dependency resolution system (task depends_on validation)~~ _(isTaskBlocked method implemented)_
+- [x] ~~Create agent capability matching based on agent_type and context_requirements~~ _(validateAgentCapability with context matching)_
+- [x] ~~Build task state filtering (ready/blocked/in_progress/complete)~~ _(comprehensive filtering system)_
+- [x] ~~Add integration with existing SpecParser for loading task data~~ _(YAML frontmatter task extraction added)_
+- [x] ~~Create task availability validation (not assigned, dependencies met)~~ _(isTaskAvailable with constraint validation)_
+- [x] ~~Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit~~ _(spec updated)_
+- [x] ~~Product Handoff: notify next agent that core routing engine is ready~~ _(TASK-002 unblocked and ready)_
 - **Files**: `lib/task-router.js`, integration with existing spec parser
 - **Agent Instructions**: Focus on correctness and dependency validation, integrate with existing code patterns
 
 **TASK-002** 🤖 **Priority & Constraint System** ✅ **← COMPLETED** | Agent: Backend-Developer
 
-- [x] ~~Implement priority weighting algorithm with sophisticated scoring factors~~ *(Enhanced calculateTaskScore with multiple factors)*
-- [x] ~~Add constraint validation system for agent workload and availability~~ *(PriorityConstraintEngine with workload validation)*
-- [x] ~~Create agent workload balancing (avoid over-assignment)~~ *(Workload tracking and capacity limits)*
-- [x] ~~Add estimated hours and complexity consideration for task selection~~ *(Size/complexity scoring integrated)*
-- [x] ~~Implement time-based constraints and deadline awareness~~ *(Deadline urgency scoring and validation)*
-- [x] ~~Add resource allocation and capacity planning considerations~~ *(Resource constraint validation)*
-- [x] ~~Create advanced filtering with multiple constraint types~~ *(Advanced filtering methods for workload, skills, resources)*
-- [x] ~~Add PriorityConstraintEngine class for complex constraint solving~~ *(Comprehensive constraint engine implemented)*
-- [x] ~~Test constraint system with complex multi-constraint scenarios~~ *(Validation testing completed)*
-- [x] ~~Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit~~ *(Documentation updated)*
-- [x] ~~Product Handoff: notify next agent that priority system is ready for API integration~~ *(TASK-003 unblocked)*
+- [x] ~~Implement priority weighting algorithm with sophisticated scoring factors~~ _(Enhanced calculateTaskScore with multiple factors)_
+- [x] ~~Add constraint validation system for agent workload and availability~~ _(PriorityConstraintEngine with workload validation)_
+- [x] ~~Create agent workload balancing (avoid over-assignment)~~ _(Workload tracking and capacity limits)_
+- [x] ~~Add estimated hours and complexity consideration for task selection~~ _(Size/complexity scoring integrated)_
+- [x] ~~Implement time-based constraints and deadline awareness~~ _(Deadline urgency scoring and validation)_
+- [x] ~~Add resource allocation and capacity planning considerations~~ _(Resource constraint validation)_
+- [x] ~~Create advanced filtering with multiple constraint types~~ _(Advanced filtering methods for workload, skills, resources)_
+- [x] ~~Add PriorityConstraintEngine class for complex constraint solving~~ _(Comprehensive constraint engine implemented)_
+- [x] ~~Test constraint system with complex multi-constraint scenarios~~ _(Validation testing completed)_
+- [x] ~~Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit~~ _(Documentation updated)_
+- [x] ~~Product Handoff: notify next agent that priority system is ready for API integration~~ _(TASK-003 unblocked)_
 - **Dependencies**: TASK-001 complete ✓
 - **Files**: Enhanced `lib/task-router.js` with PriorityConstraintEngine class
 
 **TASK-003** 🤖 **Next Task Recommendation API** ✅ **← COMPLETED** | Agent: Backend-Specialist
 
-- [x] ~~Build getNextTask(agentType, constraints) API method~~ *(TaskRecommendationAPI class implemented)*
-- [x] ~~Implement task filtering by agent type, priority, phase, status~~ *(Comprehensive filtering options added)*
-- [x] ~~Add batch recommendation support (getNextTasks with limit)~~ *(getBatchRecommendations method implemented)*
-- [x] ~~Create task ranking algorithm combining priority, dependencies, agent fit~~ *(Multi-factor scoring with constraint validation)*
-- [x] ~~Add "reason" metadata explaining why task was recommended~~ *(Detailed reasoning and transparency features)*
-- [x] ~~Implement caching for performance with large spec sets~~ *(Integrated with existing TaskRouter caching)*
-- [x] ~~Validate (types, lint, tests, DB/RLS) per "Validation Requirements"~~ *(Integration tests completed)*
-- [x] ~~Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit~~ *(Specification updated)*
-- [x] ~~Product Handoff: notify CLI specialist that routing API is ready for command integration~~ *(TASK-004 unblocked)*
+- [x] ~~Build getNextTask(agentType, constraints) API method~~ _(TaskRecommendationAPI class implemented)_
+- [x] ~~Implement task filtering by agent type, priority, phase, status~~ _(Comprehensive filtering options added)_
+- [x] ~~Add batch recommendation support (getNextTasks with limit)~~ _(getBatchRecommendations method implemented)_
+- [x] ~~Create task ranking algorithm combining priority, dependencies, agent fit~~ _(Multi-factor scoring with constraint validation)_
+- [x] ~~Add "reason" metadata explaining why task was recommended~~ _(Detailed reasoning and transparency features)_
+- [x] ~~Implement caching for performance with large spec sets~~ _(Integrated with existing TaskRouter caching)_
+- [x] ~~Validate (types, lint, tests, DB/RLS) per "Validation Requirements"~~ _(Integration tests completed)_
+- [x] ~~Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit~~ _(Specification updated)_
+- [x] ~~Product Handoff: notify CLI specialist that routing API is ready for command integration~~ _(TASK-004 unblocked)_
 - **Dependencies**: TASK-002 complete ✓
 - **Files**: Enhanced `lib/task-router.js` with TaskRecommendationAPI class, integration tests
 
 **TASK-004** 🤖 **CLI Integration & Commands** ✅ **← COMPLETED** | Agent: CLI-Specialist
 
-- [x] ~~Implement "asd next" command with comprehensive agent type filtering~~ *(Full implementation with priority, phase, spec-status filtering)*
-- [x] ~~Add "asd next --agent TYPE --priority P0,P1 --phase PHASE-1A" filtering with transparent mode~~ *(Advanced filtering with reasoning and transparency)*
-- [x] ~~Create enhanced "asd assign TASK-ID --agent AGENT-TYPE" command with validation~~ *(Assignment validation using routing system)*
-- [x] ~~Add "asd tasks" listing command with comprehensive filtering~~ *(Task listing with blocked task support)*
-- [x] ~~Implement "asd validate-assignment" command for pre-validation~~ *(Standalone assignment validation)*
-- [x] ~~Add help documentation and usage examples for all commands~~ *(Comprehensive help with option descriptions)*
-- [x] ~~Validate (types, lint, tests, DB/RLS) per "Validation Requirements"~~ *(Linting issues resolved)*
-- [x] ~~Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit~~ *(Documentation updated)*
-- [x] ~~Product Handoff: notify product management that task routing system is complete~~ *(Ready for final validation)*
+- [x] ~~Implement "asd next" command with comprehensive agent type filtering~~ _(Full implementation with priority, phase, spec-status filtering)_
+- [x] ~~Add "asd next --agent TYPE --priority P0,P1 --phase PHASE-1A" filtering with transparent mode~~ _(Advanced filtering with reasoning and transparency)_
+- [x] ~~Create enhanced "asd assign TASK-ID --agent AGENT-TYPE" command with validation~~ _(Assignment validation using routing system)_
+- [x] ~~Add "asd tasks" listing command with comprehensive filtering~~ _(Task listing with blocked task support)_
+- [x] ~~Implement "asd validate-assignment" command for pre-validation~~ _(Standalone assignment validation)_
+- [x] ~~Add help documentation and usage examples for all commands~~ _(Comprehensive help with option descriptions)_
+- [x] ~~Validate (types, lint, tests, DB/RLS) per "Validation Requirements"~~ _(Linting issues resolved)_
+- [x] ~~Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit~~ _(Documentation updated)_
+- [x] ~~Product Handoff: notify product management that task routing system is complete~~ _(Ready for final validation)_
 - **Dependencies**: TASK-003 complete ✓
 - **Files**: Enhanced `bin/asd` with comprehensive CLI integration
 
@@ -277,6 +277,7 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
 ### ✅ Completed Tasks _(Add entry when you finish your task)_
 
 - ✅ **[2024-08-26]** - **TASK-001** completed - _Agent: Backend Developer_ - Next: TASK-002 ready
+
   - Core TaskRouter class implemented with dependency resolution
   - Agent capability matching logic functional
   - Task availability checking with constraint validation
@@ -285,6 +286,7 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
   - Integration with SpecParser working correctly
 
 - ✅ **[2024-08-26]** - **TASK-002** completed - _Agent: Backend Specialist_ - Next: TASK-003 ready
+
   - Enhanced priority weighting algorithm with sophisticated multi-factor scoring
   - PriorityConstraintEngine class for advanced constraint validation
   - Agent workload balancing and capacity limit enforcement
@@ -295,6 +297,7 @@ Create TaskRouter class that loads all specs, analyzes task states, validates de
   - TaskRouter system ready for API layer integration
 
 - ✅ **[2024-08-26]** - **TASK-003** completed - _Agent: Backend Specialist_ - Next: TASK-004 ready
+
   - TaskRecommendationAPI class providing clean interface for CLI integration
   - Comprehensive getNextTask() with filtering by agent, priority, phase, and spec status
   - Batch recommendation support with workload awareness via getBatchRecommendations()

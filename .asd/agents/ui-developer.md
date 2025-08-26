@@ -6,7 +6,7 @@ specializations:
     "user-experience",
     "interaction-patterns",
     "visual-design",
-    "accessibility"
+    "accessibility",
   ]
 context_requirements:
   - "ui-specifications"

@@ -47,6 +47,7 @@ You are working on the **ASD (Agentic Spec Development) CLI** - a tool for manag
 - Terminal UI with terminal-kit integration
 
 **RECENTLY IMPLEMENTED** ✅:
+
 - Context injection system with 4-layer context (critical, task, agent, process)
 - Agent definition system with customizable workflows
 - Context management CLI commands (`asd context`, `asd agent`, `asd assign`)
@@ -56,6 +57,7 @@ You are working on the **ASD (Agentic Spec Development) CLI** - a tool for manag
 - Task assignment validation and dependency checking
 
 **NOT YET IMPLEMENTED** ❌:
+
 - Workflow state management and real-time progress tracking
 - Advanced CLI commands for project management and reporting
 

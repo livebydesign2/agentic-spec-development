@@ -6,7 +6,7 @@ specializations:
     "deployment-orchestration",
     "infrastructure-management",
     "monitoring-observability",
-    "security-compliance"
+    "security-compliance",
   ]
 context_requirements:
   - "deployment-requirements"

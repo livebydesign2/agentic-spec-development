@@ -3,10 +3,10 @@ agent_type: "product-manager"
 specializations:
   [
     "product-strategy",
-    "requirements-analysis", 
+    "requirements-analysis",
     "stakeholder-management",
     "feature-prioritization",
-    "user-research"
+    "user-research",
   ]
 context_requirements:
   - "business-objectives"

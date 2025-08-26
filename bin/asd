@@ -11,6 +11,7 @@ const ContextValidator = require('../lib/context-validator');
 const ContextTriggerSystem = require('../lib/context-triggers');
 const { TaskRecommendationAPI } = require('../lib/task-router');
 const WorkflowStateManager = require('../lib/workflow-state-manager');
+const UIComponents = require('../lib/ui-components');
 
 const program = new Command();
 
@@ -230,28 +231,37 @@ const workflowCommand = program
 
 workflowCommand
   .command('status')
-  .description('Show current workflow status and assignments')
+  .description('Show current workflow status and assignments with rich visualizations')
   .option('--agent <agent-type>', 'Filter by agent type')
   .option('--verbose', 'Show detailed status information')
+  .option('--visual', 'Show rich status visualizations')
+  .option('--workload', 'Display agent workload summary')
+  .option('--timeline', 'Show task timeline view')
   .action(async (options) => {
     await handleWorkflowStatus(options);
   });
 
 workflowCommand
   .command('progress')
-  .description('Show project progress breakdown')
+  .description('Show project progress breakdown with visualizations')
   .option('--spec <spec-id>', 'Show progress for specific spec')
   .option('--phase <phase>', 'Filter by phase')
+  .option('--agent <agent-type>', 'Filter by agent type')
   .option('--detailed', 'Show detailed progress breakdown')
+  .option('--visual', 'Show rich progress visualizations')
+  .option('--bars', 'Display progress bars')
+  .option('--sort <sort>', 'Sort by: completion, priority, phase, recent', 'completion')
   .action(async (options) => {
     await handleWorkflowProgress(options);
   });
 
 workflowCommand
   .command('handoffs')
-  .description('Show ready handoffs and handoff history')
+  .description('Show ready handoffs and handoff history with visualizations')
   .option('--ready-only', 'Show only ready handoffs')
   .option('--history', 'Show handoff history')
+  .option('--visual', 'Show rich handoff visualizations')
+  .option('--timeline', 'Show handoff timeline')
   .action(async (options) => {
     await handleWorkflowHandoffs(options);
   });
@@ -262,6 +272,38 @@ workflowCommand
   .option('--fix', 'Attempt to fix consistency issues')
   .action(async (options) => {
     await handleWorkflowValidate(options);
+  });
+
+workflowCommand
+  .command('dashboard')
+  .description('Show comprehensive progress dashboard')
+  .option('--compact', 'Show compact dashboard view')
+  .option('--velocity', 'Include velocity metrics')
+  .option('--agents', 'Show agent performance breakdown')
+  .action(async (options) => {
+    await handleWorkflowDashboard(options);
+  });
+
+workflowCommand
+  .command('metrics')
+  .description('Show detailed workflow metrics and analytics')
+  .option('--period <period>', 'Time period: day, week, month', 'week')
+  .option('--export <format>', 'Export format: json, csv')
+  .option('--velocity', 'Show velocity trends')
+  .action(async (options) => {
+    await handleWorkflowMetrics(options);
+  });
+
+workflowCommand
+  .command('assignments')
+  .description('Show current assignments with rich details')
+  .option('--agent <agent-type>', 'Filter by agent type')
+  .option('--priority <priority>', 'Filter by priority (P0,P1,P2,P3)')
+  .option('--status <status>', 'Filter by status (in_progress,completed)')
+  .option('--sort <sort>', 'Sort by: priority, started, agent, spec', 'priority')
+  .option('--timeline', 'Show assignment timeline')
+  .action(async (options) => {
+    await handleWorkflowAssignments(options);
   });
 
 program
@@ -1818,43 +1860,120 @@ async function handleWorkflowStatus(options) {
     
     const stateManager = new WorkflowStateManager(configManager, specParser);
     await stateManager.initialize();
+    const ui = new UIComponents();
 
     const assignments = await stateManager.getCurrentAssignments();
     
     console.log(chalk.cyan('📊 Current Workflow Status'));
-    console.log(chalk.gray('='.repeat(50)));
+    console.log(chalk.gray('='.repeat(70)));
     
     if (assignments.current_assignments.length === 0) {
       console.log(chalk.yellow('⚠️  No active assignments'));
+      console.log(chalk.gray('\nUse "asd assign <spec-id> <task-id> --agent <agent-type>" to create assignments'));
       return;
     }
 
-    console.log(chalk.white(`Active Assignments: ${assignments.total_active_assignments}`));
+    console.log(chalk.white(`🎯 Active Assignments: ${chalk.cyan(assignments.total_active_assignments)}`));
     console.log();
 
-    for (const assignment of assignments.current_assignments) {
+    // Sort assignments by priority and start time
+    let sortedAssignments = [...assignments.current_assignments];
+    if (!options.agent) {
+      const priorityOrder = { 'P0': 0, 'P1': 1, 'P2': 2, 'P3': 3 };
+      sortedAssignments.sort((a, b) => {
+        const priorityDiff = (priorityOrder[a.priority] || 4) - (priorityOrder[b.priority] || 4);
+        if (priorityDiff !== 0) return priorityDiff;
+        return new Date(a.started_at) - new Date(b.started_at);
+      });
+    }
+
+    for (const assignment of sortedAssignments) {
       if (!options.agent || assignment.assigned_agent === options.agent) {
-        console.log(chalk.white(`• ${assignment.spec_id}:${assignment.task_id}`));
-        console.log(chalk.gray(`  Agent: ${assignment.assigned_agent}`));
-        console.log(chalk.gray(`  Started: ${new Date(assignment.started_at).toLocaleString()}`));
-        console.log(chalk.gray(`  Priority: ${getPriorityDisplay(assignment.priority)}`));
+        const priorityIcon = ui.getPriorityIcon(assignment.priority);
+        const statusIcon = assignment.status === 'completed' ? '✅' : '🔄';
         
-        if (options.verbose) {
-          console.log(chalk.gray(`  Estimated Hours: ${assignment.estimated_hours || 'N/A'}`));
-          const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 100) / 100;
-          console.log(chalk.gray(`  Duration: ${duration}h`));
+        if (options.visual) {
+          // Rich visual display
+          console.log(`${statusIcon} ${priorityIcon} ${chalk.yellow(assignment.spec_id)}:${chalk.cyan(assignment.task_id)}`);
+          console.log(`   👤 ${chalk.white(assignment.assigned_agent)} | 📅 ${chalk.gray(ui.formatDate(assignment.started_at))}`);
+          
+          if (options.verbose) {
+            const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 10) / 10;
+            const estimatedHours = assignment.estimated_hours || 'N/A';
+            console.log(`   ⏱️  Duration: ${chalk.cyan(duration + 'h')} | Estimated: ${chalk.gray(estimatedHours + 'h')}`);
+            
+            if (assignment.completion_notes && assignment.status === 'completed') {
+              const notes = assignment.completion_notes.substring(0, 60) + '...';
+              console.log(`   📝 ${chalk.gray(notes)}`);
+            }
+          }
+        } else {
+          // Standard display
+          console.log(chalk.white(`• ${assignment.spec_id}:${assignment.task_id}`));
+          console.log(chalk.gray(`  Agent: ${assignment.assigned_agent}`));
+          console.log(chalk.gray(`  Started: ${new Date(assignment.started_at).toLocaleString()}`));
+          console.log(chalk.gray(`  Priority: ${getPriorityDisplay(assignment.priority)}`));
+          
+          if (options.verbose) {
+            console.log(chalk.gray(`  Estimated Hours: ${assignment.estimated_hours || 'N/A'}`));
+            const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 100) / 100;
+            console.log(chalk.gray(`  Duration: ${duration}h`));
+          }
         }
         console.log();
       }
     }
 
-    // Show agent workloads
-    if (Object.keys(assignments.agent_workloads).length > 0) {
-      console.log(chalk.blue('👥 Agent Workloads:'));
-      for (const [agent, workload] of Object.entries(assignments.agent_workloads)) {
+    // Enhanced agent workload display
+    if ((options.workload || options.visual) && Object.keys(assignments.agent_workloads).length > 0) {
+      console.log(chalk.blue('👥 Agent Workload Summary:'));
+      console.log(chalk.gray('─'.repeat(50)));
+      
+      const workloadEntries = Object.entries(assignments.agent_workloads);
+      workloadEntries.sort((a, b) => b[1].current_tasks - a[1].current_tasks); // Sort by task count
+      
+      for (const [agent, workload] of workloadEntries) {
         if (!options.agent || agent === options.agent) {
-          console.log(chalk.gray(`  ${agent}: ${workload.current_tasks} tasks, ${workload.total_hours}h total`));
+          const taskCount = workload.current_tasks;
+          const totalHours = workload.total_hours;
+          
+          if (options.visual) {
+            // Create workload bar (assuming max 5 tasks for visualization)
+            const maxTasks = Math.max(5, Math.max(...workloadEntries.map(([_, w]) => w.current_tasks)));
+            const workloadPercentage = Math.round((taskCount / maxTasks) * 100);
+            const workloadBar = ui.createProgressBar(workloadPercentage, 10);
+            
+            console.log(`  👤 ${chalk.cyan(agent.padEnd(20))} [${chalk[workloadBar.barColor](workloadBar.filled)}${chalk.gray(workloadBar.empty)}] ${chalk.white(taskCount)} tasks (${chalk.gray(totalHours + 'h')})`);
+            
+            // Show individual assignments for this agent
+            if (options.verbose) {
+              for (const assignment of workload.assignments) {
+                const priorityIcon = ui.getPriorityIcon(assignment.priority);
+                console.log(`     ${priorityIcon} ${chalk.gray(assignment.spec_id + ':' + assignment.task_id)}`);
+              }
+            }
+          } else {
+            console.log(chalk.gray(`  ${agent}: ${taskCount} tasks, ${totalHours}h total`));
+          }
         }
+      }
+    }
+
+    // Timeline view
+    if (options.timeline) {
+      console.log(chalk.blue('\n📅 Assignment Timeline:'));
+      console.log(chalk.gray('─'.repeat(50)));
+      
+      const timelineAssignments = [...assignments.current_assignments]
+        .filter(a => !options.agent || a.assigned_agent === options.agent)
+        .sort((a, b) => new Date(a.started_at) - new Date(b.started_at));
+      
+      for (const assignment of timelineAssignments) {
+        const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 10) / 10;
+        const priorityIcon = ui.getPriorityIcon(assignment.priority);
+        const timeAgo = ui.formatDate(assignment.started_at);
+        
+        console.log(`  ${chalk.gray(timeAgo.padEnd(12))} ${priorityIcon} ${chalk.yellow(assignment.spec_id)}:${chalk.cyan(assignment.task_id)} → ${chalk.white(assignment.assigned_agent)} ${chalk.gray('(' + duration + 'h)')}`);
       }
     }
 
@@ -1873,43 +1992,127 @@ async function handleWorkflowProgress(options) {
     
     const stateManager = new WorkflowStateManager(configManager, specParser);
     await stateManager.initialize();
+    const ui = new UIComponents();
 
     if (options.spec) {
       const specProgress = await stateManager.getSpecProgress(options.spec);
+      const specs = specParser.getSpecs();
+      const spec = specs.find(s => s.id === options.spec);
       
       console.log(chalk.cyan(`📈 Progress for ${options.spec}`));
-      console.log(chalk.gray('='.repeat(50)));
+      if (spec && spec.title) {
+        console.log(chalk.white(`   ${spec.title}`));
+      }
+      console.log(chalk.gray('='.repeat(70)));
       
-      console.log(chalk.white(`Total Tasks: ${specProgress.total_tasks || 0}`));
-      console.log(chalk.white(`Completed Tasks: ${specProgress.completed_tasks || 0}`));
-      console.log(chalk.white(`Completion: ${Math.round(specProgress.completion_percentage || 0)}%`));
+      // Rich progress visualization for single spec
+      const totalTasks = specProgress.total_tasks || 0;
+      const completedTasks = specProgress.completed_tasks || 0;
+      const percentage = Math.round(specProgress.completion_percentage || 0);
+      
+      if (options.visual || options.bars) {
+        const progressBar = ui.createProgressBar(percentage, 20);
+        console.log(chalk.white('\nOverall Progress:'));
+        console.log(`  [${chalk[progressBar.percentageColor](progressBar.filled)}${chalk.gray(progressBar.empty)}] ${chalk[progressBar.percentageColor](progressBar.percentage)} (${completedTasks}/${totalTasks} tasks)`);
+      } else {
+        console.log(chalk.white(`Total Tasks: ${totalTasks}`));
+        console.log(chalk.white(`Completed Tasks: ${completedTasks}`));
+        console.log(chalk.white(`Completion: ${percentage}%`));
+      }
+      
       console.log(chalk.white(`Active Assignments: ${specProgress.active_assignments?.length || 0}`));
       
       if (options.detailed && specProgress.active_assignments && specProgress.active_assignments.length > 0) {
-        console.log(chalk.blue('\nActive Assignments:'));
+        console.log(chalk.blue('\n📋 Active Assignments:'));
         for (const assignment of specProgress.active_assignments) {
-          console.log(chalk.gray(`  • ${assignment.task_id} → ${assignment.assigned_agent}`));
+          const agentColor = ui.getColoredPriority(assignment.priority || 'P2');
+          console.log(`  • ${chalk.yellow(assignment.task_id)} → ${chalk.cyan(assignment.assigned_agent)} ${agentColor.text}`);
+          if (assignment.started_at) {
+            const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 10) / 10;
+            console.log(chalk.gray(`    Started: ${ui.formatDate(assignment.started_at)} (${duration}h ago)`));
+          }
         }
       }
     } else {
       const progress = await stateManager.getProjectProgress();
+      const specs = specParser.getSpecs();
       
       console.log(chalk.cyan('📈 Project Progress Overview'));
-      console.log(chalk.gray('='.repeat(50)));
+      console.log(chalk.gray('='.repeat(70)));
       
-      console.log(chalk.white(`Total Specs: ${progress.overall.total_specs}`));
-      console.log(chalk.white(`Active Specs: ${progress.overall.active_specs}`));
-      console.log(chalk.white(`Completed Specs: ${progress.overall.completed_specs}`));
-      console.log(chalk.white(`Total Tasks: ${progress.overall.total_tasks}`));
-      console.log(chalk.white(`Completed Tasks: ${progress.overall.completed_tasks}`));
-      console.log(chalk.white(`Overall Completion: ${Math.round(progress.overall.completion_percentage)}%`));
+      // Overall project stats with rich visualization
+      const overallPercentage = Math.round(progress.overall.completion_percentage || 0);
+      
+      if (options.visual || options.bars) {
+        console.log(chalk.white('\n🎯 Overall Project Progress:'));
+        const overallBar = ui.createProgressBar(overallPercentage, 25);
+        console.log(`  [${chalk[overallBar.percentageColor](overallBar.filled)}${chalk.gray(overallBar.empty)}] ${chalk[overallBar.percentageColor](overallBar.percentage)}`);
+        console.log(chalk.gray(`  Tasks: ${progress.overall.completed_tasks}/${progress.overall.total_tasks} | Specs: ${progress.overall.completed_specs}/${progress.overall.total_specs}`));
+      } else {
+        console.log(chalk.white(`Total Specs: ${progress.overall.total_specs}`));
+        console.log(chalk.white(`Active Specs: ${progress.overall.active_specs}`));
+        console.log(chalk.white(`Completed Specs: ${progress.overall.completed_specs}`));
+        console.log(chalk.white(`Total Tasks: ${progress.overall.total_tasks}`));
+        console.log(chalk.white(`Completed Tasks: ${progress.overall.completed_tasks}`));
+        console.log(chalk.white(`Overall Completion: ${overallPercentage}%`));
+      }
+      
       console.log(chalk.white(`Active Assignments: ${progress.active_assignments || 0}`));
       
+      // Phase progress with visual bars
       if (options.detailed && progress.by_phase && Object.keys(progress.by_phase).length > 0) {
-        console.log(chalk.blue('\nProgress by Phase:'));
-        for (const [phase, phaseData] of Object.entries(progress.by_phase)) {
+        console.log(chalk.blue('\n📊 Progress by Phase:'));
+        const phases = Object.entries(progress.by_phase);
+        
+        // Sort phases if requested
+        if (options.sort === 'completion') {
+          phases.sort((a, b) => b[1].completion_percentage - a[1].completion_percentage);
+        }
+        
+        for (const [phase, phaseData] of phases) {
           if (!options.phase || phase === options.phase) {
-            console.log(chalk.gray(`  ${phase}: ${phaseData.completed_specs}/${phaseData.specs} specs (${Math.round(phaseData.completion_percentage)}%)`));
+            const phasePercentage = Math.round(phaseData.completion_percentage || 0);
+            
+            if (options.visual || options.bars) {
+              const phaseBar = ui.createProgressBar(phasePercentage, 15);
+              console.log(`  ${chalk.cyan(phase.padEnd(12))} [${chalk[phaseBar.percentageColor](phaseBar.filled)}${chalk.gray(phaseBar.empty)}] ${chalk[phaseBar.percentageColor](phaseBar.percentage)} (${phaseData.completed_specs}/${phaseData.specs})`);
+            } else {
+              console.log(chalk.gray(`  ${phase}: ${phaseData.completed_specs}/${phaseData.specs} specs (${phasePercentage}%)`));
+            }
+          }
+        }
+      }
+      
+      // Spec-level progress breakdown
+      if (options.detailed && progress.by_spec && Object.keys(progress.by_spec).length > 0) {
+        console.log(chalk.blue('\n📋 Progress by Specification:'));
+        const specEntries = Object.entries(progress.by_spec).filter(([_, specData]) => 
+          specData.total_tasks > 0 || specData.completed_tasks > 0
+        );
+        
+        // Sort specs if requested
+        if (options.sort === 'completion') {
+          specEntries.sort((a, b) => (b[1].completion_percentage || 0) - (a[1].completion_percentage || 0));
+        } else if (options.sort === 'priority') {
+          specEntries.sort((a, b) => {
+            const specA = specs.find(s => s.id === a[0]);
+            const specB = specs.find(s => s.id === b[0]);
+            const priorityOrder = { 'P0': 0, 'P1': 1, 'P2': 2, 'P3': 3 };
+            return (priorityOrder[specA?.priority] || 4) - (priorityOrder[specB?.priority] || 4);
+          });
+        }
+        
+        for (const [specId, specData] of specEntries.slice(0, 10)) { // Show top 10
+          const spec = specs.find(s => s.id === specId);
+          const percentage = Math.round(specData.completion_percentage || 0);
+          const priorityIcon = spec ? ui.getPriorityIcon(spec.priority) : '';
+          
+          if (options.visual || options.bars) {
+            const specBar = ui.createProgressBar(percentage, 12);
+            const title = spec ? ui.formatFeatureTitle(spec.title, 35) : specId;
+            console.log(`  ${priorityIcon} ${chalk.yellow(specId.padEnd(10))} [${chalk[specBar.percentageColor](specBar.filled)}${chalk.gray(specBar.empty)}] ${chalk[specBar.percentageColor](specBar.percentage)} ${chalk.gray(title)}`);
+          } else {
+            console.log(`  ${priorityIcon} ${chalk.yellow(specId)}: ${specData.completed_tasks}/${specData.total_tasks} tasks (${percentage}%)`);
           }
         }
       }
@@ -1930,34 +2133,103 @@ async function handleWorkflowHandoffs(options) {
     
     const stateManager = new WorkflowStateManager(configManager, specParser);
     await stateManager.initialize();
+    const ui = new UIComponents();
 
     const handoffStatus = await stateManager.getHandoffStatus();
+    const specs = specParser.getSpecs();
     
     console.log(chalk.cyan('🔄 Workflow Handoffs'));
-    console.log(chalk.gray('='.repeat(50)));
+    console.log(chalk.gray('='.repeat(70)));
     
     if (!options.history) {
-      console.log(chalk.white(`Ready Handoffs: ${handoffStatus.ready_handoffs.length}`));
+      console.log(chalk.white(`🎯 Ready Handoffs: ${chalk.cyan(handoffStatus.ready_handoffs.length)}`));
       
       if (handoffStatus.ready_handoffs.length > 0) {
-        console.log(chalk.blue('\nReady for Handoff:'));
+        console.log(chalk.blue('\n📤 Ready for Handoff:'));
+        
         for (const handoff of handoffStatus.ready_handoffs) {
-          console.log(chalk.white(`• ${handoff.spec_id}: ${handoff.from_task} → ${handoff.to_task}`));
-          console.log(chalk.gray(`  Next Agent: ${handoff.next_agent}`));
-          console.log(chalk.gray(`  Ready Since: ${new Date(handoff.ready_at).toLocaleString()}`));
-          console.log(chalk.gray(`  Reason: ${handoff.handoff_reason || handoff.reason}`));
+          const spec = specs.find(s => s.id === handoff.spec_id);
+          const priorityIcon = spec ? ui.getPriorityIcon(spec.priority) : '';
+          const timeReady = ui.formatDate(handoff.ready_at);
+          
+          if (options.visual) {
+            console.log(`🔄 ${priorityIcon} ${chalk.yellow(handoff.spec_id)}: ${chalk.cyan(handoff.from_task)} → ${chalk.green(handoff.to_task)}`);
+            console.log(`   👤 ${chalk.white(handoff.next_agent)} | ⏰ Ready since ${chalk.gray(timeReady)}`);
+            console.log(`   📝 ${chalk.gray(handoff.handoff_reason || handoff.reason || 'No reason provided')}`);
+            
+            if (handoff.context_prepared) {
+              console.log(`   ✅ ${chalk.green('Context prepared for handoff')}`);
+            } else {
+              console.log(`   ⚠️  ${chalk.yellow('Context preparation pending')}`);
+            }
+          } else {
+            console.log(chalk.white(`• ${handoff.spec_id}: ${handoff.from_task} → ${handoff.to_task}`));
+            console.log(chalk.gray(`  Next Agent: ${handoff.next_agent}`));
+            console.log(chalk.gray(`  Ready Since: ${new Date(handoff.ready_at).toLocaleString()}`));
+            console.log(chalk.gray(`  Reason: ${handoff.handoff_reason || handoff.reason}`));
+          }
           console.log();
         }
       } else {
-        console.log(chalk.gray('\nNo handoffs ready at this time'));
+        console.log(chalk.gray('\n⚡ No handoffs ready at this time'));
+        console.log(chalk.gray('   All tasks are either in progress or waiting for dependencies'));
+      }
+    }
+    
+    // Timeline view for handoffs
+    if (options.timeline && handoffStatus.ready_handoffs.length > 0) {
+      console.log(chalk.blue('📅 Handoff Timeline:'));
+      console.log(chalk.gray('─'.repeat(50)));
+      
+      const sortedHandoffs = [...handoffStatus.ready_handoffs].sort((a, b) => 
+        new Date(a.ready_at) - new Date(b.ready_at)
+      );
+      
+      for (const handoff of sortedHandoffs) {
+        const timeReady = new Date(handoff.ready_at).toLocaleDateString('en-US', { 
+          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+        });
+        const spec = specs.find(s => s.id === handoff.spec_id);
+        const priorityIcon = spec ? ui.getPriorityIcon(spec.priority) : '';
+        
+        console.log(`  ${chalk.gray(timeReady.padEnd(15))} ${priorityIcon} ${chalk.yellow(handoff.spec_id)} ${chalk.cyan(handoff.from_task)} → ${chalk.green(handoff.to_task)} (${chalk.white(handoff.next_agent)})`);
       }
     }
     
     if (options.history && handoffStatus.handoff_history.length > 0) {
-      console.log(chalk.blue('\nRecent Handoff History:'));
+      console.log(chalk.blue('\n📜 Recent Handoff History:'));
+      console.log(chalk.gray('─'.repeat(50)));
+      
       for (const historyItem of handoffStatus.handoff_history) {
-        console.log(chalk.gray(`• ${historyItem.spec_id}: ${historyItem.from_task} → ${historyItem.to_task}`));
-        console.log(chalk.gray(`  Completed: ${new Date(historyItem.completed_at).toLocaleString()}`));
+        const completedTime = ui.formatDate(historyItem.completed_at);
+        
+        if (options.visual) {
+          console.log(`✅ ${chalk.yellow(historyItem.spec_id)}: ${chalk.cyan(historyItem.from_task)} → ${chalk.green(historyItem.to_task)}`);
+          console.log(`   ⏰ Completed: ${chalk.gray(completedTime)}`);
+        } else {
+          console.log(chalk.gray(`• ${historyItem.spec_id}: ${historyItem.from_task} → ${historyItem.to_task}`));
+          console.log(chalk.gray(`  Completed: ${new Date(historyItem.completed_at).toLocaleString()}`));
+        }
+      }
+    }
+
+    // Agent availability summary
+    if (options.visual && handoffStatus.agent_availability && Object.keys(handoffStatus.agent_availability).length > 0) {
+      console.log(chalk.green('\n👥 Agent Availability for Handoffs:'));
+      console.log(chalk.gray('─'.repeat(50)));
+      
+      for (const [agent, availability] of Object.entries(handoffStatus.agent_availability)) {
+        const taskCount = availability.current_tasks || 0;
+        const totalHours = availability.total_hours || 0;
+        const workloadLevel = taskCount === 0 ? 'Available' : 
+                             taskCount <= 2 ? 'Light Load' : 
+                             taskCount <= 4 ? 'Moderate Load' : 'Heavy Load';
+        
+        const workloadColor = taskCount === 0 ? 'green' : 
+                             taskCount <= 2 ? 'cyan' : 
+                             taskCount <= 4 ? 'yellow' : 'red';
+        
+        console.log(`  👤 ${chalk.cyan(agent.padEnd(20))} ${chalk[workloadColor](workloadLevel)} (${taskCount} tasks, ${totalHours}h)`);
       }
     }
 
@@ -2018,6 +2290,374 @@ async function handleWorkflowValidate(options) {
 
   } catch (error) {
     console.error(chalk.red('❌ Workflow validation failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleWorkflowDashboard(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const stateManager = new WorkflowStateManager(configManager, specParser);
+    await stateManager.initialize();
+    const ui = new UIComponents();
+
+    const progress = await stateManager.getProjectProgress();
+    const assignments = await stateManager.getCurrentAssignments();
+    const handoffStatus = await stateManager.getHandoffStatus();
+    const specs = specParser.getSpecs();
+
+    console.log(chalk.cyan('📊 ASD Workflow Dashboard'));
+    console.log(chalk.gray('='.repeat(70)));
+    
+    // Overall project health at a glance
+    const overallPercentage = Math.round(progress.overall.completion_percentage || 0);
+    const overallBar = ui.createProgressBar(overallPercentage, options.compact ? 15 : 25);
+    
+    console.log(chalk.white('\n🎯 Project Health:'));
+    console.log(`  [${chalk[overallBar.percentageColor](overallBar.filled)}${chalk.gray(overallBar.empty)}] ${chalk[overallBar.percentageColor](overallBar.percentage)} Complete`);
+    console.log(chalk.gray(`  ${progress.overall.completed_tasks}/${progress.overall.total_tasks} tasks | ${progress.overall.completed_specs}/${progress.overall.total_specs} specs | ${assignments.total_active_assignments} active`));
+
+    // Critical items requiring attention
+    const criticalSpecs = specs.filter(s => s.priority === 'P0' && s.status === 'active').slice(0, 3);
+    if (criticalSpecs.length > 0) {
+      console.log(chalk.red('\n🔥 Critical Items:'));
+      for (const spec of criticalSpecs) {
+        const specProgress = progress.by_spec[spec.id];
+        const percentage = Math.round(specProgress?.completion_percentage || 0);
+        const progressBar = ui.createProgressBar(percentage, 10);
+        
+        console.log(`  ${ui.getPriorityIcon(spec.priority)} ${chalk.yellow(spec.id)} [${chalk[progressBar.percentageColor](progressBar.filled)}${chalk.gray(progressBar.empty)}] ${chalk.white(ui.formatFeatureTitle(spec.title, 40))}`);
+      }
+    }
+
+    // Active work summary
+    if (assignments.total_active_assignments > 0) {
+      console.log(chalk.blue('\n🔄 Active Work:'));
+      const activeByAgent = {};
+      
+      for (const assignment of assignments.current_assignments) {
+        if (!activeByAgent[assignment.assigned_agent]) {
+          activeByAgent[assignment.assigned_agent] = [];
+        }
+        activeByAgent[assignment.assigned_agent].push(assignment);
+      }
+      
+      for (const [agent, agentAssignments] of Object.entries(activeByAgent)) {
+        const taskCount = agentAssignments.length;
+        const highPriorityTasks = agentAssignments.filter(a => a.priority === 'P0' || a.priority === 'P1').length;
+        
+        console.log(`  👤 ${chalk.cyan(agent)} - ${chalk.white(taskCount)} tasks${highPriorityTasks > 0 ? ` (${chalk.red(highPriorityTasks + ' high priority')})` : ''}`);
+        
+        if (!options.compact) {
+          for (const assignment of agentAssignments.slice(0, 2)) {
+            const priorityIcon = ui.getPriorityIcon(assignment.priority);
+            console.log(`     ${priorityIcon} ${chalk.gray(assignment.spec_id + ':' + assignment.task_id)}`);
+          }
+        }
+      }
+    }
+
+    // Ready handoffs
+    if (handoffStatus.ready_handoffs.length > 0) {
+      console.log(chalk.yellow('\n🔄 Ready Handoffs:'));
+      for (const handoff of handoffStatus.ready_handoffs.slice(0, options.compact ? 2 : 5)) {
+        const timeReady = ui.formatDate(handoff.ready_at);
+        console.log(`  📤 ${chalk.yellow(handoff.spec_id)}:${chalk.cyan(handoff.to_task)} → ${chalk.white(handoff.next_agent)} (${chalk.gray('ready ' + timeReady)})`);
+      }
+    }
+
+    // Phase progress summary
+    if (!options.compact && progress.by_phase && Object.keys(progress.by_phase).length > 0) {
+      console.log(chalk.blue('\n📊 Phase Progress:'));
+      for (const [phase, phaseData] of Object.entries(progress.by_phase)) {
+        const phasePercentage = Math.round(phaseData.completion_percentage || 0);
+        const phaseBar = ui.createProgressBar(phasePercentage, 12);
+        console.log(`  ${chalk.cyan(phase.padEnd(12))} [${chalk[phaseBar.percentageColor](phaseBar.filled)}${chalk.gray(phaseBar.empty)}] ${chalk[phaseBar.percentageColor](phaseBar.percentage)} (${phaseData.completed_specs}/${phaseData.specs})`);
+      }
+    }
+
+    // Velocity metrics if requested
+    if (options.velocity) {
+      console.log(chalk.magenta('\n📈 Velocity Metrics:'));
+      const completedToday = assignments.assignment_history.filter(h => 
+        h.action === 'completed' && 
+        new Date(h.completed_at) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+      ).length;
+      
+      const completedThisWeek = assignments.assignment_history.filter(h => 
+        h.action === 'completed' && 
+        new Date(h.completed_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+      ).length;
+      
+      console.log(`  📅 Today: ${chalk.white(completedToday)} tasks completed`);
+      console.log(`  📅 This Week: ${chalk.white(completedThisWeek)} tasks completed`);
+      console.log(`  📅 Average: ${chalk.white(Math.round(completedThisWeek / 7 * 10) / 10)} tasks/day`);
+    }
+
+    // Agent performance if requested
+    if (options.agents && Object.keys(assignments.agent_workloads).length > 0) {
+      console.log(chalk.green('\n👥 Agent Performance:'));
+      for (const [agent, workload] of Object.entries(assignments.agent_workloads)) {
+        const avgHoursPerTask = workload.current_tasks > 0 ? Math.round(workload.total_hours / workload.current_tasks * 10) / 10 : 0;
+        console.log(`  👤 ${chalk.cyan(agent)} - ${chalk.white(workload.current_tasks)} active tasks (${chalk.gray(avgHoursPerTask + 'h avg')})`);
+      }
+    }
+
+    console.log(chalk.gray(`\n📊 Dashboard generated at ${new Date().toLocaleTimeString()}`));
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Workflow dashboard failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleWorkflowMetrics(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const stateManager = new WorkflowStateManager(configManager, specParser);
+    await stateManager.initialize();
+    const ui = new UIComponents();
+
+    const progress = await stateManager.getProjectProgress();
+    const assignments = await stateManager.getCurrentAssignments();
+    
+    console.log(chalk.cyan('📈 Workflow Metrics & Analytics'));
+    console.log(chalk.gray('='.repeat(70)));
+
+    // Time period calculations
+    const periodMs = {
+      'day': 24 * 60 * 60 * 1000,
+      'week': 7 * 24 * 60 * 60 * 1000,
+      'month': 30 * 24 * 60 * 60 * 1000
+    };
+    
+    const periodLength = periodMs[options.period] || periodMs.week;
+    const periodStart = new Date(Date.now() - periodLength);
+    
+    // Completion metrics for the period
+    const completedInPeriod = assignments.assignment_history.filter(h => 
+      h.action === 'completed' && new Date(h.completed_at) > periodStart
+    );
+    
+    const assignedInPeriod = assignments.assignment_history.filter(h => 
+      h.action === 'assigned' && new Date(h.started_at) > periodStart
+    );
+
+    console.log(chalk.white(`\n📊 ${options.period.charAt(0).toUpperCase() + options.period.slice(1)} Metrics:`));
+    console.log(chalk.white(`Tasks Completed: ${chalk.green(completedInPeriod.length)}`));
+    console.log(chalk.white(`Tasks Started: ${chalk.blue(assignedInPeriod.length)}`));
+    console.log(chalk.white(`Completion Rate: ${chalk.cyan(Math.round(completedInPeriod.length / Math.max(assignedInPeriod.length, 1) * 100) + '%')}`));
+
+    // Agent productivity
+    const agentMetrics = {};
+    for (const task of completedInPeriod) {
+      if (!agentMetrics[task.assigned_agent]) {
+        agentMetrics[task.assigned_agent] = { completed: 0, totalHours: 0 };
+      }
+      agentMetrics[task.assigned_agent].completed++;
+      agentMetrics[task.assigned_agent].totalHours += task.duration_hours || 0;
+    }
+
+    if (Object.keys(agentMetrics).length > 0) {
+      console.log(chalk.blue('\n👥 Agent Performance:'));
+      const sortedAgents = Object.entries(agentMetrics).sort((a, b) => b[1].completed - a[1].completed);
+      
+      for (const [agent, metrics] of sortedAgents) {
+        const avgHours = metrics.completed > 0 ? Math.round(metrics.totalHours / metrics.completed * 10) / 10 : 0;
+        console.log(`  👤 ${chalk.cyan(agent.padEnd(20))} ${chalk.white(metrics.completed)} completed | ${chalk.gray(avgHours + 'h avg')}`);
+      }
+    }
+
+    // Priority breakdown
+    const priorityBreakdown = { P0: 0, P1: 0, P2: 0, P3: 0 };
+    for (const task of completedInPeriod) {
+      priorityBreakdown[task.priority] = (priorityBreakdown[task.priority] || 0) + 1;
+    }
+
+    console.log(chalk.blue('\n🔥 Priority Breakdown:'));
+    for (const [priority, count] of Object.entries(priorityBreakdown)) {
+      if (count > 0) {
+        const priorityIcon = ui.getPriorityIcon(priority);
+        console.log(`  ${priorityIcon} ${priority}: ${chalk.white(count)} tasks`);
+      }
+    }
+
+    // Velocity trend if requested
+    if (options.velocity) {
+      console.log(chalk.magenta('\n📈 Velocity Trend:'));
+      const days = Math.ceil(periodLength / (24 * 60 * 60 * 1000));
+      const dailyCompletions = Array(days).fill(0);
+      
+      for (const task of completedInPeriod) {
+        const daysAgo = Math.floor((Date.now() - new Date(task.completed_at)) / (24 * 60 * 60 * 1000));
+        if (daysAgo < days) {
+          dailyCompletions[days - 1 - daysAgo]++;
+        }
+      }
+      
+      // Simple ASCII chart for last 7 days
+      const maxDaily = Math.max(...dailyCompletions);
+      if (maxDaily > 0) {
+        for (let i = Math.max(0, days - 7); i < days; i++) {
+          const barLength = Math.round((dailyCompletions[i] / maxDaily) * 10);
+          const bar = '█'.repeat(barLength) + '░'.repeat(10 - barLength);
+          const date = new Date(Date.now() - (days - 1 - i) * 24 * 60 * 60 * 1000);
+          console.log(`  ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).padEnd(6)} [${chalk.green(bar)}] ${dailyCompletions[i]}`);
+        }
+      }
+    }
+
+    // Export data if requested
+    if (options.export) {
+      const exportData = {
+        period: options.period,
+        generated_at: new Date().toISOString(),
+        summary: {
+          completed_tasks: completedInPeriod.length,
+          started_tasks: assignedInPeriod.length,
+          completion_rate: Math.round(completedInPeriod.length / Math.max(assignedInPeriod.length, 1) * 100)
+        },
+        agent_metrics: agentMetrics,
+        priority_breakdown: priorityBreakdown,
+        overall_progress: progress.overall
+      };
+
+      const fs = require('fs').promises;
+      const filename = `asd-metrics-${options.period}-${new Date().toISOString().split('T')[0]}.${options.export}`;
+      
+      if (options.export === 'json') {
+        await fs.writeFile(filename, JSON.stringify(exportData, null, 2));
+      } else if (options.export === 'csv') {
+        // Simple CSV export for completed tasks
+        const csvLines = ['Date,Spec,Task,Agent,Priority,Duration'];
+        for (const task of completedInPeriod) {
+          const line = [
+            new Date(task.completed_at).toISOString().split('T')[0],
+            task.spec_id,
+            task.task_id,
+            task.assigned_agent,
+            task.priority,
+            task.duration_hours || 0
+          ].join(',');
+          csvLines.push(line);
+        }
+        await fs.writeFile(filename, csvLines.join('\n'));
+      }
+      
+      console.log(chalk.green(`\n📁 Metrics exported to ${filename}`));
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Workflow metrics failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleWorkflowAssignments(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const stateManager = new WorkflowStateManager(configManager, specParser);
+    await stateManager.initialize();
+    const ui = new UIComponents();
+
+    const assignments = await stateManager.getCurrentAssignments();
+    
+    console.log(chalk.cyan('📋 Current Assignments'));
+    console.log(chalk.gray('='.repeat(70)));
+
+    if (assignments.current_assignments.length === 0) {
+      console.log(chalk.yellow('⚠️  No current assignments'));
+      return;
+    }
+
+    // Filter assignments
+    let filteredAssignments = [...assignments.current_assignments];
+    
+    if (options.agent) {
+      filteredAssignments = filteredAssignments.filter(a => a.assigned_agent === options.agent);
+    }
+    
+    if (options.priority) {
+      const priorities = options.priority.split(',');
+      filteredAssignments = filteredAssignments.filter(a => priorities.includes(a.priority));
+    }
+    
+    if (options.status) {
+      const statuses = options.status.split(',');
+      filteredAssignments = filteredAssignments.filter(a => statuses.includes(a.status));
+    }
+
+    // Sort assignments
+    const sortOptions = {
+      'priority': (a, b) => {
+        const priorityOrder = { 'P0': 0, 'P1': 1, 'P2': 2, 'P3': 3 };
+        return (priorityOrder[a.priority] || 4) - (priorityOrder[b.priority] || 4);
+      },
+      'started': (a, b) => new Date(a.started_at) - new Date(b.started_at),
+      'agent': (a, b) => a.assigned_agent.localeCompare(b.assigned_agent),
+      'spec': (a, b) => a.spec_id.localeCompare(b.spec_id)
+    };
+
+    if (sortOptions[options.sort]) {
+      filteredAssignments.sort(sortOptions[options.sort]);
+    }
+
+    console.log(chalk.white(`\n📊 Found ${filteredAssignments.length} assignments:\n`));
+
+    // Display assignments
+    for (const assignment of filteredAssignments) {
+      const priorityIcon = ui.getPriorityIcon(assignment.priority);
+      const statusIcon = assignment.status === 'completed' ? '✅' : 
+                        assignment.status === 'in_progress' ? '🔄' : '⏳';
+      const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 10) / 10;
+      
+      console.log(`${statusIcon} ${priorityIcon} ${chalk.yellow(assignment.spec_id)}:${chalk.cyan(assignment.task_id)}`);
+      console.log(`   👤 ${chalk.white(assignment.assigned_agent)} | 📅 ${chalk.gray(ui.formatDate(assignment.started_at))} | ⏱️  ${chalk.cyan(duration + 'h')}`);
+      
+      if (assignment.estimated_hours) {
+        const progressHours = Math.round((duration / assignment.estimated_hours) * 100);
+        const timeBar = ui.createProgressBar(Math.min(progressHours, 100), 10);
+        console.log(`   ⏱️  Progress: [${chalk[timeBar.barColor](timeBar.filled)}${chalk.gray(timeBar.empty)}] ${duration}h/${assignment.estimated_hours}h`);
+      }
+      
+      if (assignment.completion_notes && assignment.status === 'completed') {
+        const notes = assignment.completion_notes.substring(0, 80) + '...';
+        console.log(`   📝 ${chalk.gray(notes)}`);
+      }
+      
+      console.log();
+    }
+
+    // Timeline view
+    if (options.timeline) {
+      console.log(chalk.blue('📅 Assignment Timeline:'));
+      console.log(chalk.gray('─'.repeat(50)));
+      
+      const timelineSorted = [...filteredAssignments].sort((a, b) => new Date(a.started_at) - new Date(b.started_at));
+      
+      for (const assignment of timelineSorted) {
+        const startTime = new Date(assignment.started_at);
+        const timeLabel = startTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const priorityIcon = ui.getPriorityIcon(assignment.priority);
+        
+        console.log(`  ${chalk.gray(timeLabel.padEnd(15))} ${priorityIcon} ${chalk.yellow(assignment.spec_id)}:${chalk.cyan(assignment.task_id)} → ${chalk.white(assignment.assigned_agent)}`);
+      }
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Workflow assignments failed:'), error.message);
     process.exit(1);
   }
 }
