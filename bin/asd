@@ -1647,7 +1647,6 @@ async function handleNextTask(options) {
     const priority = options.priority ? options.priority.split(',') : undefined;
     const phase = options.phase ? options.phase.split(',') : undefined;
     const specStatus = options.specStatus ? options.specStatus.split(',') : undefined;
-    const limit = parseInt(options.limit) || 5;
 
     // Use transparent API if requested
     if (options.transparent) {
@@ -2052,16 +2051,16 @@ async function handleWorkflowStatus(options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const stateManager = new WorkflowStateManager(configManager, specParser);
     await stateManager.initialize();
     const ui = new UIComponents();
 
     const assignments = await stateManager.getCurrentAssignments();
-    
+
     console.log(chalk.cyan('📊 Current Workflow Status'));
     console.log(chalk.gray('='.repeat(70)));
-    
+
     if (assignments.current_assignments.length === 0) {
       console.log(chalk.yellow('⚠️  No active assignments'));
       console.log(chalk.gray('\nUse "asd assign <spec-id> <task-id> --agent <agent-type>" to create assignments'));
@@ -2086,17 +2085,17 @@ async function handleWorkflowStatus(options) {
       if (!options.agent || assignment.assigned_agent === options.agent) {
         const priorityIcon = ui.getPriorityIcon(assignment.priority);
         const statusIcon = assignment.status === 'completed' ? '✅' : '🔄';
-        
+
         if (options.visual) {
           // Rich visual display
           console.log(`${statusIcon} ${priorityIcon} ${chalk.yellow(assignment.spec_id)}:${chalk.cyan(assignment.task_id)}`);
           console.log(`   👤 ${chalk.white(assignment.assigned_agent)} | 📅 ${chalk.gray(ui.formatDate(assignment.started_at))}`);
-          
+
           if (options.verbose) {
             const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 10) / 10;
             const estimatedHours = assignment.estimated_hours || 'N/A';
             console.log(`   ⏱️  Duration: ${chalk.cyan(duration + 'h')} | Estimated: ${chalk.gray(estimatedHours + 'h')}`);
-            
+
             if (assignment.completion_notes && assignment.status === 'completed') {
               const notes = assignment.completion_notes.substring(0, 60) + '...';
               console.log(`   📝 ${chalk.gray(notes)}`);
@@ -2108,7 +2107,7 @@ async function handleWorkflowStatus(options) {
           console.log(chalk.gray(`  Agent: ${assignment.assigned_agent}`));
           console.log(chalk.gray(`  Started: ${new Date(assignment.started_at).toLocaleString()}`));
           console.log(chalk.gray(`  Priority: ${getPriorityDisplay(assignment.priority)}`));
-          
+
           if (options.verbose) {
             console.log(chalk.gray(`  Estimated Hours: ${assignment.estimated_hours || 'N/A'}`));
             const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 100) / 100;
@@ -2123,23 +2122,23 @@ async function handleWorkflowStatus(options) {
     if ((options.workload || options.visual) && Object.keys(assignments.agent_workloads).length > 0) {
       console.log(chalk.blue('👥 Agent Workload Summary:'));
       console.log(chalk.gray('─'.repeat(50)));
-      
+
       const workloadEntries = Object.entries(assignments.agent_workloads);
       workloadEntries.sort((a, b) => b[1].current_tasks - a[1].current_tasks); // Sort by task count
-      
+
       for (const [agent, workload] of workloadEntries) {
         if (!options.agent || agent === options.agent) {
           const taskCount = workload.current_tasks;
           const totalHours = workload.total_hours;
-          
+
           if (options.visual) {
             // Create workload bar (assuming max 5 tasks for visualization)
             const maxTasks = Math.max(5, Math.max(...workloadEntries.map(([_, w]) => w.current_tasks)));
             const workloadPercentage = Math.round((taskCount / maxTasks) * 100);
             const workloadBar = ui.createProgressBar(workloadPercentage, 10);
-            
+
             console.log(`  👤 ${chalk.cyan(agent.padEnd(20))} [${chalk[workloadBar.barColor](workloadBar.filled)}${chalk.gray(workloadBar.empty)}] ${chalk.white(taskCount)} tasks (${chalk.gray(totalHours + 'h')})`);
-            
+
             // Show individual assignments for this agent
             if (options.verbose) {
               for (const assignment of workload.assignments) {
@@ -2158,16 +2157,16 @@ async function handleWorkflowStatus(options) {
     if (options.timeline) {
       console.log(chalk.blue('\n📅 Assignment Timeline:'));
       console.log(chalk.gray('─'.repeat(50)));
-      
+
       const timelineAssignments = [...assignments.current_assignments]
         .filter(a => !options.agent || a.assigned_agent === options.agent)
         .sort((a, b) => new Date(a.started_at) - new Date(b.started_at));
-      
+
       for (const assignment of timelineAssignments) {
         const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 10) / 10;
         const priorityIcon = ui.getPriorityIcon(assignment.priority);
         const timeAgo = ui.formatDate(assignment.started_at);
-        
+
         console.log(`  ${chalk.gray(timeAgo.padEnd(12))} ${priorityIcon} ${chalk.yellow(assignment.spec_id)}:${chalk.cyan(assignment.task_id)} → ${chalk.white(assignment.assigned_agent)} ${chalk.gray('(' + duration + 'h)')}`);
       }
     }
@@ -2184,7 +2183,7 @@ async function handleWorkflowProgress(options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const stateManager = new WorkflowStateManager(configManager, specParser);
     await stateManager.initialize();
     const ui = new UIComponents();
@@ -2193,18 +2192,18 @@ async function handleWorkflowProgress(options) {
       const specProgress = await stateManager.getSpecProgress(options.spec);
       const specs = specParser.getSpecs();
       const spec = specs.find(s => s.id === options.spec);
-      
+
       console.log(chalk.cyan(`📈 Progress for ${options.spec}`));
       if (spec && spec.title) {
         console.log(chalk.white(`   ${spec.title}`));
       }
       console.log(chalk.gray('='.repeat(70)));
-      
+
       // Rich progress visualization for single spec
       const totalTasks = specProgress.total_tasks || 0;
       const completedTasks = specProgress.completed_tasks || 0;
       const percentage = Math.round(specProgress.completion_percentage || 0);
-      
+
       if (options.visual || options.bars) {
         const progressBar = ui.createProgressBar(percentage, 20);
         console.log(chalk.white('\nOverall Progress:'));
@@ -2214,9 +2213,9 @@ async function handleWorkflowProgress(options) {
         console.log(chalk.white(`Completed Tasks: ${completedTasks}`));
         console.log(chalk.white(`Completion: ${percentage}%`));
       }
-      
+
       console.log(chalk.white(`Active Assignments: ${specProgress.active_assignments?.length || 0}`));
-      
+
       if (options.detailed && specProgress.active_assignments && specProgress.active_assignments.length > 0) {
         console.log(chalk.blue('\n📋 Active Assignments:'));
         for (const assignment of specProgress.active_assignments) {
@@ -2231,13 +2230,13 @@ async function handleWorkflowProgress(options) {
     } else {
       const progress = await stateManager.getProjectProgress();
       const specs = specParser.getSpecs();
-      
+
       console.log(chalk.cyan('📈 Project Progress Overview'));
       console.log(chalk.gray('='.repeat(70)));
-      
+
       // Overall project stats with rich visualization
       const overallPercentage = Math.round(progress.overall.completion_percentage || 0);
-      
+
       if (options.visual || options.bars) {
         console.log(chalk.white('\n🎯 Overall Project Progress:'));
         const overallBar = ui.createProgressBar(overallPercentage, 25);
@@ -2251,23 +2250,23 @@ async function handleWorkflowProgress(options) {
         console.log(chalk.white(`Completed Tasks: ${progress.overall.completed_tasks}`));
         console.log(chalk.white(`Overall Completion: ${overallPercentage}%`));
       }
-      
+
       console.log(chalk.white(`Active Assignments: ${progress.active_assignments || 0}`));
-      
+
       // Phase progress with visual bars
       if (options.detailed && progress.by_phase && Object.keys(progress.by_phase).length > 0) {
         console.log(chalk.blue('\n📊 Progress by Phase:'));
         const phases = Object.entries(progress.by_phase);
-        
+
         // Sort phases if requested
         if (options.sort === 'completion') {
           phases.sort((a, b) => b[1].completion_percentage - a[1].completion_percentage);
         }
-        
+
         for (const [phase, phaseData] of phases) {
           if (!options.phase || phase === options.phase) {
             const phasePercentage = Math.round(phaseData.completion_percentage || 0);
-            
+
             if (options.visual || options.bars) {
               const phaseBar = ui.createProgressBar(phasePercentage, 15);
               console.log(`  ${chalk.cyan(phase.padEnd(12))} [${chalk[phaseBar.percentageColor](phaseBar.filled)}${chalk.gray(phaseBar.empty)}] ${chalk[phaseBar.percentageColor](phaseBar.percentage)} (${phaseData.completed_specs}/${phaseData.specs})`);
@@ -2277,14 +2276,14 @@ async function handleWorkflowProgress(options) {
           }
         }
       }
-      
+
       // Spec-level progress breakdown
       if (options.detailed && progress.by_spec && Object.keys(progress.by_spec).length > 0) {
         console.log(chalk.blue('\n📋 Progress by Specification:'));
-        const specEntries = Object.entries(progress.by_spec).filter(([_, specData]) => 
+        const specEntries = Object.entries(progress.by_spec).filter(([_, specData]) =>
           specData.total_tasks > 0 || specData.completed_tasks > 0
         );
-        
+
         // Sort specs if requested
         if (options.sort === 'completion') {
           specEntries.sort((a, b) => (b[1].completion_percentage || 0) - (a[1].completion_percentage || 0));
@@ -2296,12 +2295,12 @@ async function handleWorkflowProgress(options) {
             return (priorityOrder[specA?.priority] || 4) - (priorityOrder[specB?.priority] || 4);
           });
         }
-        
+
         for (const [specId, specData] of specEntries.slice(0, 10)) { // Show top 10
           const spec = specs.find(s => s.id === specId);
           const percentage = Math.round(specData.completion_percentage || 0);
           const priorityIcon = spec ? ui.getPriorityIcon(spec.priority) : '';
-          
+
           if (options.visual || options.bars) {
             const specBar = ui.createProgressBar(percentage, 12);
             const title = spec ? ui.formatFeatureTitle(spec.title, 35) : specId;
@@ -2325,33 +2324,33 @@ async function handleWorkflowHandoffs(options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const stateManager = new WorkflowStateManager(configManager, specParser);
     await stateManager.initialize();
     const ui = new UIComponents();
 
     const handoffStatus = await stateManager.getHandoffStatus();
     const specs = specParser.getSpecs();
-    
+
     console.log(chalk.cyan('🔄 Workflow Handoffs'));
     console.log(chalk.gray('='.repeat(70)));
-    
+
     if (!options.history) {
       console.log(chalk.white(`🎯 Ready Handoffs: ${chalk.cyan(handoffStatus.ready_handoffs.length)}`));
-      
+
       if (handoffStatus.ready_handoffs.length > 0) {
         console.log(chalk.blue('\n📤 Ready for Handoff:'));
-        
+
         for (const handoff of handoffStatus.ready_handoffs) {
           const spec = specs.find(s => s.id === handoff.spec_id);
           const priorityIcon = spec ? ui.getPriorityIcon(spec.priority) : '';
           const timeReady = ui.formatDate(handoff.ready_at);
-          
+
           if (options.visual) {
             console.log(`🔄 ${priorityIcon} ${chalk.yellow(handoff.spec_id)}: ${chalk.cyan(handoff.from_task)} → ${chalk.green(handoff.to_task)}`);
             console.log(`   👤 ${chalk.white(handoff.next_agent)} | ⏰ Ready since ${chalk.gray(timeReady)}`);
             console.log(`   📝 ${chalk.gray(handoff.handoff_reason || handoff.reason || 'No reason provided')}`);
-            
+
             if (handoff.context_prepared) {
               console.log(`   ✅ ${chalk.green('Context prepared for handoff')}`);
             } else {
@@ -2370,34 +2369,34 @@ async function handleWorkflowHandoffs(options) {
         console.log(chalk.gray('   All tasks are either in progress or waiting for dependencies'));
       }
     }
-    
+
     // Timeline view for handoffs
     if (options.timeline && handoffStatus.ready_handoffs.length > 0) {
       console.log(chalk.blue('📅 Handoff Timeline:'));
       console.log(chalk.gray('─'.repeat(50)));
-      
-      const sortedHandoffs = [...handoffStatus.ready_handoffs].sort((a, b) => 
+
+      const sortedHandoffs = [...handoffStatus.ready_handoffs].sort((a, b) =>
         new Date(a.ready_at) - new Date(b.ready_at)
       );
-      
+
       for (const handoff of sortedHandoffs) {
-        const timeReady = new Date(handoff.ready_at).toLocaleDateString('en-US', { 
-          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+        const timeReady = new Date(handoff.ready_at).toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
         });
         const spec = specs.find(s => s.id === handoff.spec_id);
         const priorityIcon = spec ? ui.getPriorityIcon(spec.priority) : '';
-        
+
         console.log(`  ${chalk.gray(timeReady.padEnd(15))} ${priorityIcon} ${chalk.yellow(handoff.spec_id)} ${chalk.cyan(handoff.from_task)} → ${chalk.green(handoff.to_task)} (${chalk.white(handoff.next_agent)})`);
       }
     }
-    
+
     if (options.history && handoffStatus.handoff_history.length > 0) {
       console.log(chalk.blue('\n📜 Recent Handoff History:'));
       console.log(chalk.gray('─'.repeat(50)));
-      
+
       for (const historyItem of handoffStatus.handoff_history) {
         const completedTime = ui.formatDate(historyItem.completed_at);
-        
+
         if (options.visual) {
           console.log(`✅ ${chalk.yellow(historyItem.spec_id)}: ${chalk.cyan(historyItem.from_task)} → ${chalk.green(historyItem.to_task)}`);
           console.log(`   ⏰ Completed: ${chalk.gray(completedTime)}`);
@@ -2412,18 +2411,18 @@ async function handleWorkflowHandoffs(options) {
     if (options.visual && handoffStatus.agent_availability && Object.keys(handoffStatus.agent_availability).length > 0) {
       console.log(chalk.green('\n👥 Agent Availability for Handoffs:'));
       console.log(chalk.gray('─'.repeat(50)));
-      
+
       for (const [agent, availability] of Object.entries(handoffStatus.agent_availability)) {
         const taskCount = availability.current_tasks || 0;
         const totalHours = availability.total_hours || 0;
-        const workloadLevel = taskCount === 0 ? 'Available' : 
-                             taskCount <= 2 ? 'Light Load' : 
+        const workloadLevel = taskCount === 0 ? 'Available' :
+                             taskCount <= 2 ? 'Light Load' :
                              taskCount <= 4 ? 'Moderate Load' : 'Heavy Load';
-        
-        const workloadColor = taskCount === 0 ? 'green' : 
-                             taskCount <= 2 ? 'cyan' : 
+
+        const workloadColor = taskCount === 0 ? 'green' :
+                             taskCount <= 2 ? 'cyan' :
                              taskCount <= 4 ? 'yellow' : 'red';
-        
+
         console.log(`  👤 ${chalk.cyan(agent.padEnd(20))} ${chalk[workloadColor](workloadLevel)} (${taskCount} tasks, ${totalHours}h)`);
       }
     }
@@ -2440,39 +2439,39 @@ async function handleWorkflowValidate(options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const stateManager = new WorkflowStateManager(configManager, specParser);
     await stateManager.initialize();
 
     console.log(chalk.cyan('🔍 Validating Workflow State'));
     console.log(chalk.gray('='.repeat(50)));
-    
+
     const validation = await stateManager.validateState();
-    
+
     console.log(chalk.white('Valid:'), validation.isValid ? chalk.green('✓') : chalk.red('✗'));
     console.log(chalk.white('Validation Time:'), chalk.cyan(`${validation.performance.total}ms`));
-    
+
     if (validation.statistics) {
       console.log(chalk.blue('\nStatistics:'));
       console.log(chalk.gray(`  Total Assignments: ${validation.statistics.total_assignments}`));
       console.log(chalk.gray(`  Total Specs: ${validation.statistics.total_specs}`));
       console.log(chalk.gray(`  Ready Handoffs: ${validation.statistics.ready_handoffs}`));
     }
-    
+
     if (validation.errors && validation.errors.length > 0) {
       console.log(chalk.red('\nErrors:'));
       validation.errors.forEach(error => {
         console.log(chalk.red(`  • ${error}`));
       });
     }
-    
+
     if (validation.warnings && validation.warnings.length > 0) {
       console.log(chalk.yellow('\nWarnings:'));
       validation.warnings.forEach(warning => {
         console.log(chalk.yellow(`  • ${warning}`));
       });
     }
-    
+
     if (validation.isValid) {
       console.log(chalk.green('\n✅ Workflow state validation passed!'));
     } else {
@@ -2495,7 +2494,7 @@ async function handleWorkflowDashboard(options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const stateManager = new WorkflowStateManager(configManager, specParser);
     await stateManager.initialize();
     const ui = new UIComponents();
@@ -2507,11 +2506,11 @@ async function handleWorkflowDashboard(options) {
 
     console.log(chalk.cyan('📊 ASD Workflow Dashboard'));
     console.log(chalk.gray('='.repeat(70)));
-    
+
     // Overall project health at a glance
     const overallPercentage = Math.round(progress.overall.completion_percentage || 0);
     const overallBar = ui.createProgressBar(overallPercentage, options.compact ? 15 : 25);
-    
+
     console.log(chalk.white('\n🎯 Project Health:'));
     console.log(`  [${chalk[overallBar.percentageColor](overallBar.filled)}${chalk.gray(overallBar.empty)}] ${chalk[overallBar.percentageColor](overallBar.percentage)} Complete`);
     console.log(chalk.gray(`  ${progress.overall.completed_tasks}/${progress.overall.total_tasks} tasks | ${progress.overall.completed_specs}/${progress.overall.total_specs} specs | ${assignments.total_active_assignments} active`));
@@ -2524,7 +2523,7 @@ async function handleWorkflowDashboard(options) {
         const specProgress = progress.by_spec[spec.id];
         const percentage = Math.round(specProgress?.completion_percentage || 0);
         const progressBar = ui.createProgressBar(percentage, 10);
-        
+
         console.log(`  ${ui.getPriorityIcon(spec.priority)} ${chalk.yellow(spec.id)} [${chalk[progressBar.percentageColor](progressBar.filled)}${chalk.gray(progressBar.empty)}] ${chalk.white(ui.formatFeatureTitle(spec.title, 40))}`);
       }
     }
@@ -2533,20 +2532,20 @@ async function handleWorkflowDashboard(options) {
     if (assignments.total_active_assignments > 0) {
       console.log(chalk.blue('\n🔄 Active Work:'));
       const activeByAgent = {};
-      
+
       for (const assignment of assignments.current_assignments) {
         if (!activeByAgent[assignment.assigned_agent]) {
           activeByAgent[assignment.assigned_agent] = [];
         }
         activeByAgent[assignment.assigned_agent].push(assignment);
       }
-      
+
       for (const [agent, agentAssignments] of Object.entries(activeByAgent)) {
         const taskCount = agentAssignments.length;
         const highPriorityTasks = agentAssignments.filter(a => a.priority === 'P0' || a.priority === 'P1').length;
-        
+
         console.log(`  👤 ${chalk.cyan(agent)} - ${chalk.white(taskCount)} tasks${highPriorityTasks > 0 ? ` (${chalk.red(highPriorityTasks + ' high priority')})` : ''}`);
-        
+
         if (!options.compact) {
           for (const assignment of agentAssignments.slice(0, 2)) {
             const priorityIcon = ui.getPriorityIcon(assignment.priority);
@@ -2578,16 +2577,16 @@ async function handleWorkflowDashboard(options) {
     // Velocity metrics if requested
     if (options.velocity) {
       console.log(chalk.magenta('\n📈 Velocity Metrics:'));
-      const completedToday = assignments.assignment_history.filter(h => 
-        h.action === 'completed' && 
+      const completedToday = assignments.assignment_history.filter(h =>
+        h.action === 'completed' &&
         new Date(h.completed_at) > new Date(Date.now() - 24 * 60 * 60 * 1000)
       ).length;
-      
-      const completedThisWeek = assignments.assignment_history.filter(h => 
-        h.action === 'completed' && 
+
+      const completedThisWeek = assignments.assignment_history.filter(h =>
+        h.action === 'completed' &&
         new Date(h.completed_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
       ).length;
-      
+
       console.log(`  📅 Today: ${chalk.white(completedToday)} tasks completed`);
       console.log(`  📅 This Week: ${chalk.white(completedThisWeek)} tasks completed`);
       console.log(`  📅 Average: ${chalk.white(Math.round(completedThisWeek / 7 * 10) / 10)} tasks/day`);
@@ -2603,7 +2602,7 @@ async function handleWorkflowDashboard(options) {
     }
 
     console.log(chalk.gray(`\n📊 Dashboard generated at ${new Date().toLocaleTimeString()}`));
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Workflow dashboard failed:'), error.message);
     process.exit(1);
@@ -2616,14 +2615,14 @@ async function handleWorkflowMetrics(options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const stateManager = new WorkflowStateManager(configManager, specParser);
     await stateManager.initialize();
     const ui = new UIComponents();
 
     const progress = await stateManager.getProjectProgress();
     const assignments = await stateManager.getCurrentAssignments();
-    
+
     console.log(chalk.cyan('📈 Workflow Metrics & Analytics'));
     console.log(chalk.gray('='.repeat(70)));
 
@@ -2633,16 +2632,16 @@ async function handleWorkflowMetrics(options) {
       'week': 7 * 24 * 60 * 60 * 1000,
       'month': 30 * 24 * 60 * 60 * 1000
     };
-    
+
     const periodLength = periodMs[options.period] || periodMs.week;
     const periodStart = new Date(Date.now() - periodLength);
-    
+
     // Completion metrics for the period
-    const completedInPeriod = assignments.assignment_history.filter(h => 
+    const completedInPeriod = assignments.assignment_history.filter(h =>
       h.action === 'completed' && new Date(h.completed_at) > periodStart
     );
-    
-    const assignedInPeriod = assignments.assignment_history.filter(h => 
+
+    const assignedInPeriod = assignments.assignment_history.filter(h =>
       h.action === 'assigned' && new Date(h.started_at) > periodStart
     );
 
@@ -2664,7 +2663,7 @@ async function handleWorkflowMetrics(options) {
     if (Object.keys(agentMetrics).length > 0) {
       console.log(chalk.blue('\n👥 Agent Performance:'));
       const sortedAgents = Object.entries(agentMetrics).sort((a, b) => b[1].completed - a[1].completed);
-      
+
       for (const [agent, metrics] of sortedAgents) {
         const avgHours = metrics.completed > 0 ? Math.round(metrics.totalHours / metrics.completed * 10) / 10 : 0;
         console.log(`  👤 ${chalk.cyan(agent.padEnd(20))} ${chalk.white(metrics.completed)} completed | ${chalk.gray(avgHours + 'h avg')}`);
@@ -2690,14 +2689,14 @@ async function handleWorkflowMetrics(options) {
       console.log(chalk.magenta('\n📈 Velocity Trend:'));
       const days = Math.ceil(periodLength / (24 * 60 * 60 * 1000));
       const dailyCompletions = Array(days).fill(0);
-      
+
       for (const task of completedInPeriod) {
         const daysAgo = Math.floor((Date.now() - new Date(task.completed_at)) / (24 * 60 * 60 * 1000));
         if (daysAgo < days) {
           dailyCompletions[days - 1 - daysAgo]++;
         }
       }
-      
+
       // Simple ASCII chart for last 7 days
       const maxDaily = Math.max(...dailyCompletions);
       if (maxDaily > 0) {
@@ -2727,7 +2726,7 @@ async function handleWorkflowMetrics(options) {
 
       const fs = require('fs').promises;
       const filename = `asd-metrics-${options.period}-${new Date().toISOString().split('T')[0]}.${options.export}`;
-      
+
       if (options.export === 'json') {
         await fs.writeFile(filename, JSON.stringify(exportData, null, 2));
       } else if (options.export === 'csv') {
@@ -2746,7 +2745,7 @@ async function handleWorkflowMetrics(options) {
         }
         await fs.writeFile(filename, csvLines.join('\n'));
       }
-      
+
       console.log(chalk.green(`\n📁 Metrics exported to ${filename}`));
     }
 
@@ -2762,13 +2761,13 @@ async function handleWorkflowAssignments(options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const stateManager = new WorkflowStateManager(configManager, specParser);
     await stateManager.initialize();
     const ui = new UIComponents();
 
     const assignments = await stateManager.getCurrentAssignments();
-    
+
     console.log(chalk.cyan('📋 Current Assignments'));
     console.log(chalk.gray('='.repeat(70)));
 
@@ -2779,16 +2778,16 @@ async function handleWorkflowAssignments(options) {
 
     // Filter assignments
     let filteredAssignments = [...assignments.current_assignments];
-    
+
     if (options.agent) {
       filteredAssignments = filteredAssignments.filter(a => a.assigned_agent === options.agent);
     }
-    
+
     if (options.priority) {
       const priorities = options.priority.split(',');
       filteredAssignments = filteredAssignments.filter(a => priorities.includes(a.priority));
     }
-    
+
     if (options.status) {
       const statuses = options.status.split(',');
       filteredAssignments = filteredAssignments.filter(a => statuses.includes(a.status));
@@ -2814,24 +2813,24 @@ async function handleWorkflowAssignments(options) {
     // Display assignments
     for (const assignment of filteredAssignments) {
       const priorityIcon = ui.getPriorityIcon(assignment.priority);
-      const statusIcon = assignment.status === 'completed' ? '✅' : 
+      const statusIcon = assignment.status === 'completed' ? '✅' :
                         assignment.status === 'in_progress' ? '🔄' : '⏳';
       const duration = Math.round((Date.now() - new Date(assignment.started_at)) / (1000 * 60 * 60) * 10) / 10;
-      
+
       console.log(`${statusIcon} ${priorityIcon} ${chalk.yellow(assignment.spec_id)}:${chalk.cyan(assignment.task_id)}`);
       console.log(`   👤 ${chalk.white(assignment.assigned_agent)} | 📅 ${chalk.gray(ui.formatDate(assignment.started_at))} | ⏱️  ${chalk.cyan(duration + 'h')}`);
-      
+
       if (assignment.estimated_hours) {
         const progressHours = Math.round((duration / assignment.estimated_hours) * 100);
         const timeBar = ui.createProgressBar(Math.min(progressHours, 100), 10);
         console.log(`   ⏱️  Progress: [${chalk[timeBar.barColor](timeBar.filled)}${chalk.gray(timeBar.empty)}] ${duration}h/${assignment.estimated_hours}h`);
       }
-      
+
       if (assignment.completion_notes && assignment.status === 'completed') {
         const notes = assignment.completion_notes.substring(0, 80) + '...';
         console.log(`   📝 ${chalk.gray(notes)}`);
       }
-      
+
       console.log();
     }
 
@@ -2839,14 +2838,14 @@ async function handleWorkflowAssignments(options) {
     if (options.timeline) {
       console.log(chalk.blue('📅 Assignment Timeline:'));
       console.log(chalk.gray('─'.repeat(50)));
-      
+
       const timelineSorted = [...filteredAssignments].sort((a, b) => new Date(a.started_at) - new Date(b.started_at));
-      
+
       for (const assignment of timelineSorted) {
         const startTime = new Date(assignment.started_at);
         const timeLabel = startTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         const priorityIcon = ui.getPriorityIcon(assignment.priority);
-        
+
         console.log(`  ${chalk.gray(timeLabel.padEnd(15))} ${priorityIcon} ${chalk.yellow(assignment.spec_id)}:${chalk.cyan(assignment.task_id)} → ${chalk.white(assignment.assigned_agent)}`);
       }
     }
@@ -2868,11 +2867,11 @@ async function handleHandoffTrigger(specId, taskId, toAgent, options) {
     console.log(chalk.gray('='.repeat(60)));
     console.log(chalk.white(`From Task: ${chalk.yellow(specId)}:${chalk.cyan(taskId)}`));
     console.log(chalk.white(`To Agent: ${chalk.magenta(toAgent)}`));
-    
+
     if (options.fromAgent) {
       console.log(chalk.white(`From Agent: ${chalk.magenta(options.fromAgent)}`));
     }
-    
+
     if (options.reason) {
       console.log(chalk.white(`Reason: ${chalk.gray(options.reason)}`));
     }
@@ -2886,11 +2885,11 @@ async function handleHandoffTrigger(specId, taskId, toAgent, options) {
     console.log();
     if (result.success && result.handoffNeeded) {
       console.log(chalk.green('✅ Handoff executed successfully!'));
-      
+
       if (result.nextTask) {
         console.log(chalk.white(`Next Task: ${chalk.yellow(result.nextTask)}`));
       }
-      
+
       if (result.nextAgent) {
         console.log(chalk.white(`Next Agent: ${chalk.magenta(result.nextAgent)}`));
       }
@@ -2909,7 +2908,7 @@ async function handleHandoffTrigger(specId, taskId, toAgent, options) {
     } else if (result.success && !result.handoffNeeded) {
       console.log(chalk.yellow('ℹ️  No handoff needed'));
       console.log(chalk.gray(`Reason: ${result.reason}`));
-      
+
     } else {
       console.log(chalk.red('❌ Handoff failed'));
       console.log(chalk.red(`Error: ${result.error}`));
@@ -2937,13 +2936,13 @@ async function handleHandoffStatus(options) {
     if (options.health) {
       console.log(chalk.blue('🏥 System Health:'));
       const health = status.systemHealth;
-      
+
       console.log(chalk.white(`Overall: ${health.overall ? chalk.green('Healthy') : chalk.red('Unhealthy')}`));
       console.log(chalk.white(`Workflow State Manager: ${health.workflowStateManager ? chalk.green('✓') : chalk.red('✗')}`));
       console.log(chalk.white(`Context Injector: ${health.contextInjector ? chalk.green('✓') : chalk.red('✗')}`));
       console.log(chalk.white(`Task Router API: ${health.taskRecommendationAPI ? chalk.green('✓') : chalk.red('✗')}`));
       console.log(chalk.white(`Handoff Engine: ${health.handoffEngine ? chalk.green('✓') : chalk.red('✗')}`));
-      
+
       if (health.issues && health.issues.length > 0) {
         console.log(chalk.red('\n⚠️  Issues:'));
         health.issues.forEach(issue => console.log(chalk.red(`  • ${issue}`)));
@@ -2954,7 +2953,7 @@ async function handleHandoffStatus(options) {
     // Show active handoffs
     if (!options.history && (options.active || status.active.length > 0)) {
       console.log(chalk.blue('⏳ Active Handoffs:'));
-      
+
       if (status.active.length === 0) {
         console.log(chalk.gray('  No active handoffs'));
       } else {
@@ -2972,7 +2971,7 @@ async function handleHandoffStatus(options) {
     // Show handoff history if requested
     if (options.history) {
       console.log(chalk.blue('📜 Recent Handoff History:'));
-      
+
       if (status.recentHistory.length === 0) {
         console.log(chalk.gray('  No handoff history'));
       } else {
@@ -2980,11 +2979,11 @@ async function handleHandoffStatus(options) {
           const statusIcon = handoff.status === 'completed' ? '✅' : handoff.status === 'failed' ? '❌' : '🔄';
           console.log(`  ${statusIcon} ${chalk.yellow(handoff.id)} (${chalk.cyan(handoff.status)})`);
           console.log(`     ${chalk.gray(handoff.startedAt)} → ${chalk.gray(handoff.completedAt || 'ongoing')}`);
-          
+
           if (handoff.performance?.total) {
             console.log(`     Performance: ${chalk.gray(handoff.performance.total + 'ms')}`);
           }
-          
+
           if (handoff.error) {
             console.log(`     Error: ${chalk.red(handoff.error)}`);
           }
@@ -2997,7 +2996,7 @@ async function handleHandoffStatus(options) {
     if (options.performance) {
       console.log(chalk.blue('📊 Performance Metrics:'));
       const stats = status.statistics;
-      
+
       console.log(chalk.white(`Total Handoffs: ${chalk.cyan(stats.totalHandoffs)}`));
       console.log(chalk.white(`Successful: ${chalk.green(stats.successfulHandoffs)}`));
       console.log(chalk.white(`Failed: ${chalk.red(stats.failedHandoffs)}`));
@@ -3009,11 +3008,11 @@ async function handleHandoffStatus(options) {
 
     // Default summary view
     if (!options.active && !options.history && !options.health && !options.performance) {
-      console.log(chalk.white(`📊 Summary:`));
+      console.log(chalk.white('📊 Summary:'));
       console.log(chalk.white(`  Active Handoffs: ${chalk.cyan(status.active.length)}`));
       console.log(chalk.white(`  Total Completed: ${chalk.green(status.statistics.successfulHandoffs)}`));
       console.log(chalk.white(`  System Health: ${status.systemHealth.overall ? chalk.green('Healthy') : chalk.red('Unhealthy')}`));
-      
+
       if (status.queue && status.queue.length > 0) {
         console.log(chalk.white(`  Queued Handoffs: ${chalk.yellow(status.queue.length)}`));
       }
@@ -3031,14 +3030,14 @@ async function handleCompleteTaskWithHandoff(specId, taskId, options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const handoffEngine = new HandoffAutomationEngine(configManager);
     await handoffEngine.initialize();
 
     console.log(chalk.cyan('✅ Completing Task with Handoff'));
     console.log(chalk.gray('='.repeat(60)));
     console.log(chalk.white(`Task: ${chalk.yellow(specId)}:${chalk.cyan(taskId)}`));
-    
+
     if (options.notes) {
       console.log(chalk.white(`Notes: ${chalk.gray(options.notes)}`));
     }
@@ -3048,7 +3047,7 @@ async function handleCompleteTaskWithHandoff(specId, taskId, options) {
     await stateManager.initialize();
 
     const completionResult = await stateManager.completeTask(specId, taskId, {
-      notes: options.notes || "Task completed via CLI"
+      notes: options.notes || 'Task completed via CLI'
     });
 
     if (!completionResult.success) {
@@ -3077,11 +3076,11 @@ async function handleCompleteTaskWithHandoff(specId, taskId, options) {
       console.log();
       if (handoffResult.success && handoffResult.handoffNeeded) {
         console.log(chalk.green('🤝 Handoff executed successfully!'));
-        
+
         if (handoffResult.nextTask) {
           console.log(chalk.white(`Next Task: ${chalk.yellow(handoffResult.nextTask)}`));
         }
-        
+
         if (handoffResult.nextAgent) {
           console.log(chalk.white(`Next Agent: ${chalk.magenta(handoffResult.nextAgent)}`));
         }
@@ -3093,7 +3092,7 @@ async function handleCompleteTaskWithHandoff(specId, taskId, options) {
       } else if (handoffResult.success && !handoffResult.handoffNeeded) {
         console.log(chalk.yellow('ℹ️  No handoff needed'));
         console.log(chalk.gray(`Reason: ${handoffResult.reason}`));
-        
+
       } else {
         console.log(chalk.red('❌ Handoff failed'));
         console.log(chalk.red(`Error: ${handoffResult.error}`));
@@ -3164,11 +3163,11 @@ async function handleReportCreate(type, title, specId, options) {
       console.log(chalk.white('File Path:'), chalk.cyan(result.reportPath));
       console.log(chalk.white('Type:'), chalk.magenta(result.metadata.type));
       console.log(chalk.white('Lifecycle:'), chalk.blue(result.metadata.lifecycle));
-      
+
       if (result.metadata.retentionHours) {
         console.log(chalk.white('Retention:'), chalk.gray(`${result.metadata.retentionHours} hours`));
       }
-      
+
       if (result.performance.total > 50) {
         console.log(chalk.yellow(`⚠️  Creation took ${result.performance.total}ms`));
       }
@@ -3216,13 +3215,13 @@ async function handleReportList(options) {
 
       for (const report of result.reports) {
         const age = Math.round((Date.now() - new Date(report.createdAt)) / (1000 * 60 * 60));
-        
+
         console.log(chalk.white(`• ${chalk.yellow(report.id)}`));
         console.log(chalk.gray(`  Title: ${report.title}`));
         console.log(chalk.gray(`  Type: ${chalk.magenta(report.type)} | Agent: ${chalk.blue(report.agentType)}`));
         console.log(chalk.gray(`  Spec: ${chalk.cyan(report.specId)}${report.taskId ? ` | Task: ${chalk.green(report.taskId)}` : ''}`));
         console.log(chalk.gray(`  Created: ${age}h ago | Status: ${report.status === 'active' ? chalk.green(report.status) : chalk.yellow(report.status)}`));
-        
+
         if (options.verbose) {
           console.log(chalk.gray(`  Path: ${report.path}`));
           if (report.lifecycle !== 'manual') {
@@ -3255,33 +3254,33 @@ async function handleReportShow(reportId, options) {
 
     if (result.success) {
       const report = result.metadata;
-      
+
       console.log(chalk.cyan(`📄 Report: ${report.title}`));
       console.log(chalk.gray('='.repeat(50)));
-      
+
       // Show metadata
       console.log(chalk.white('ID:'), chalk.yellow(report.id));
       console.log(chalk.white('Type:'), chalk.magenta(report.type));
       console.log(chalk.white('Status:'), report.status === 'active' ? chalk.green(report.status) : chalk.yellow(report.status));
       console.log(chalk.white('Agent:'), chalk.blue(report.agentType));
       console.log(chalk.white('Spec:'), chalk.cyan(report.specId));
-      
+
       if (report.taskId) {
         console.log(chalk.white('Task:'), chalk.green(report.taskId));
       }
-      
+
       console.log(chalk.white('Created:'), chalk.gray(new Date(report.createdAt).toLocaleString()));
-      
+
       if (report.lastModified) {
         console.log(chalk.white('Modified:'), chalk.gray(new Date(report.lastModified).toLocaleString()));
       }
-      
+
       console.log(chalk.white('Lifecycle:'), chalk.blue(report.lifecycle));
-      
+
       if (report.retentionHours) {
         console.log(chalk.white('Retention:'), chalk.gray(`${report.retentionHours} hours`));
       }
-      
+
       console.log(chalk.white('Path:'), chalk.gray(report.path));
 
       // Show content if requested
@@ -3359,7 +3358,7 @@ async function handleReportUpdate(reportId, options) {
     if (result.success) {
       console.log(chalk.green('✅ Report updated successfully!'));
       console.log(chalk.white('Report ID:'), chalk.yellow(result.reportId));
-      
+
       if (result.performance.total > 50) {
         console.log(chalk.yellow(`⚠️  Update took ${result.performance.total}ms`));
       }
@@ -3405,10 +3404,10 @@ async function handleReportCleanup(options) {
 
     if (result.success) {
       const cleanup = result.cleanup;
-      
+
       console.log(chalk.white('Cleanup Results:'));
       console.log(chalk.green(`✅ Cleaned: ${cleanup.totalCleaned} reports`));
-      
+
       if (cleanup.totalErrors > 0) {
         console.log(chalk.red(`❌ Errors: ${cleanup.totalErrors} reports`));
       }
@@ -3452,7 +3451,7 @@ async function handleReportTemplates(options) {
       // Show specific template
       console.log(chalk.cyan(`📄 Template: ${options.show}`));
       console.log(chalk.gray('='.repeat(50)));
-      
+
       const templates = await reportManager.getAvailableTemplates();
       if (templates.success && templates.templates[options.show]) {
         const template = templates.templates[options.show];
@@ -3461,7 +3460,7 @@ async function handleReportTemplates(options) {
         console.log(chalk.white('Lifecycle:'), chalk.blue(template.lifecycle));
         console.log(chalk.white('Retention:'), template.retention_hours ? `${template.retention_hours}h` : chalk.gray('manual'));
         console.log(chalk.white('Status:'), template.templateExists ? chalk.green('available') : chalk.red('missing'));
-        
+
         if (template.templateContent) {
           console.log(chalk.white('\nTemplate Content:'));
           console.log(chalk.gray('='.repeat(30)));
@@ -3483,7 +3482,7 @@ async function handleReportTemplates(options) {
     if (result.success) {
       for (const [type, template] of Object.entries(result.templates)) {
         const status = template.templateExists ? chalk.green('✓') : chalk.red('✗');
-        
+
         console.log(`${status} ${chalk.white(type)}: ${chalk.yellow(template.name)}`);
         console.log(chalk.gray(`   ${template.description}`));
         console.log(chalk.gray(`   Lifecycle: ${template.lifecycle} | Retention: ${template.retention_hours ? template.retention_hours + 'h' : 'manual'}`));
@@ -3493,14 +3492,14 @@ async function handleReportTemplates(options) {
       if (options.validate) {
         console.log(chalk.blue('🔍 Template Validation:'));
         let allValid = true;
-        
+
         for (const [type, template] of Object.entries(result.templates)) {
           if (!template.templateExists) {
             console.log(chalk.red(`❌ Missing template: ${type}`));
             allValid = false;
           }
         }
-        
+
         if (allValid) {
           console.log(chalk.green('✅ All templates are available'));
         }
@@ -3530,17 +3529,17 @@ async function handleReportStats(options) {
 
     if (result.success) {
       const stats = result.stats;
-      
+
       // Overall statistics
       console.log(chalk.white('Overall Statistics:'));
       console.log(chalk.gray(`  Total Reports: ${chalk.cyan(stats.totalReports)}`));
       console.log(chalk.gray(`  Active Reports: ${chalk.green(stats.activeReports)}`));
       console.log(chalk.gray(`  Upcoming Cleanups: ${chalk.yellow(stats.upcomingCleanups)}`));
-      
+
       if (stats.averageRetentionHours > 0) {
         console.log(chalk.gray(`  Average Retention: ${chalk.blue(Math.round(stats.averageRetentionHours))}h`));
       }
-      
+
       console.log();
 
       // By type breakdown
@@ -3567,7 +3566,7 @@ async function handleReportStats(options) {
         const specEntries = Object.entries(stats.reportsBySpec)
           .sort(([,a], [,b]) => b - a)
           .slice(0, 10); // Show top 10
-        
+
         for (const [spec, count] of specEntries) {
           console.log(chalk.gray(`  ${chalk.cyan(spec)}: ${count}`));
         }
@@ -3578,7 +3577,7 @@ async function handleReportStats(options) {
       if (stats.oldestReport && stats.newestReport) {
         const oldestAge = Math.round((Date.now() - new Date(stats.oldestReport.createdAt)) / (1000 * 60 * 60 * 24));
         const newestAge = Math.round((Date.now() - new Date(stats.newestReport.createdAt)) / (1000 * 60 * 60));
-        
+
         console.log(chalk.white('Age Range:'));
         console.log(chalk.gray(`  Oldest: ${oldestAge} days (${stats.oldestReport.type})`));
         console.log(chalk.gray(`  Newest: ${newestAge}h (${stats.newestReport.type})`));
@@ -3590,7 +3589,7 @@ async function handleReportStats(options) {
         console.log(chalk.yellow('🧹 Upcoming Cleanup Candidates:'));
         if (stats.upcomingCleanups > 0) {
           console.log(chalk.gray(`  ${stats.upcomingCleanups} reports eligible for cleanup within 24 hours`));
-          console.log(chalk.gray(`  Run 'asd report cleanup --dry-run' for details`));
+          console.log(chalk.gray('  Run \'asd report cleanup --dry-run\' for details'));
         } else {
           console.log(chalk.gray('  No reports eligible for cleanup in the next 24 hours'));
         }
@@ -3616,7 +3615,7 @@ async function handleSpecCreate(type, title, options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     // Generate spec ID
     const typeUpper = type.toUpperCase();
     const specs = specParser.getSpecsByType(typeUpper);
@@ -3625,30 +3624,30 @@ async function handleSpecCreate(type, title, options) {
       return match ? parseInt(match[0]) : 0;
     })) + 1;
     const specId = `${typeUpper}-${nextNumber.toString().padStart(3, '0')}`;
-    
+
     // Create spec content from template
     const specContent = createSpecTemplate(specId, title, typeUpper, options);
-    
+
     // Determine file path based on status
     const config = configManager.loadConfig();
     const status = 'backlog'; // Default new specs to backlog
     const fileName = `${specId.toLowerCase()}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.md`;
     const filePath = path.join(config.dataPath, status, fileName);
-    
+
     // Write spec file
     const fs = require('fs').promises;
     await fs.writeFile(filePath, specContent, 'utf-8');
-    
+
     console.log(chalk.green(`✅ Created ${typeUpper} specification: ${specId}`));
     console.log(chalk.gray(`   Title: ${title}`));
     console.log(chalk.gray(`   Priority: ${options.priority}`));
     console.log(chalk.gray(`   Phase: ${options.phase}`));
     console.log(chalk.gray(`   File: ${filePath}`));
-    
+
     if (options.agent) {
       console.log(chalk.gray(`   Assigned to: ${options.agent}`));
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Failed to create specification:'), error.message);
     process.exit(1);
@@ -3661,9 +3660,9 @@ async function handleSpecList(options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     let specs = specParser.getSpecs();
-    
+
     // Apply filters
     if (options.status) {
       specs = specs.filter(spec => spec.status === options.status);
@@ -3679,17 +3678,17 @@ async function handleSpecList(options) {
       const types = options.type.split(',');
       specs = specs.filter(spec => types.includes(spec.type));
     }
-    
+
     // Apply sorting
     specs = sortSpecs(specs, options.sort);
-    
+
     // Apply limit
     const limit = parseInt(options.limit) || 20;
     specs = specs.slice(0, limit);
-    
+
     // Output in requested format
     outputSpecs(specs, options.format);
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Failed to list specifications:'), error.message);
     process.exit(1);
@@ -3702,13 +3701,13 @@ async function handleSpecShow(specId, options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const spec = specParser.getSpecById(specId);
     if (!spec) {
       console.error(chalk.red(`❌ Specification not found: ${specId}`));
       process.exit(1);
     }
-    
+
     if (options.format === 'json') {
       console.log(JSON.stringify(spec, null, 2));
     } else if (options.format === 'summary') {
@@ -3716,7 +3715,7 @@ async function handleSpecShow(specId, options) {
     } else {
       outputSpecDetails(spec, options);
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Failed to show specification:'), error.message);
     process.exit(1);
@@ -3729,21 +3728,21 @@ async function handleSpecUpdate(specId, options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const spec = specParser.getSpecById(specId);
     if (!spec) {
       console.error(chalk.red(`❌ Specification not found: ${specId}`));
       process.exit(1);
     }
-    
+
     // Read current spec file
     const fs = require('fs').promises;
     const specPath = spec.filePath;
     const content = await fs.readFile(specPath, 'utf-8');
-    
+
     let updatedContent = content;
     let hasUpdates = false;
-    
+
     // Update frontmatter fields
     if (options.status) {
       updatedContent = updateFrontmatter(updatedContent, 'status', options.status);
@@ -3761,11 +3760,11 @@ async function handleSpecUpdate(specId, options) {
       updatedContent = updateFrontmatter(updatedContent, 'title', options.title);
       hasUpdates = true;
     }
-    
+
     if (hasUpdates) {
       await fs.writeFile(specPath, updatedContent, 'utf-8');
       console.log(chalk.green(`✅ Updated specification: ${specId}`));
-      
+
       // Show what was updated
       if (options.status) console.log(chalk.gray(`   Status: ${options.status}`));
       if (options.priority) console.log(chalk.gray(`   Priority: ${options.priority}`));
@@ -3774,7 +3773,7 @@ async function handleSpecUpdate(specId, options) {
     } else {
       console.log(chalk.yellow('⚠️  No updates specified'));
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Failed to update specification:'), error.message);
     process.exit(1);
@@ -3787,51 +3786,51 @@ async function handleSpecMove(specId, options) {
     const SpecParser = require('../lib/feature-parser');
     const specParser = new SpecParser(configManager);
     await specParser.loadSpecs();
-    
+
     const spec = specParser.getSpecById(specId);
     if (!spec) {
       console.error(chalk.red(`❌ Specification not found: ${specId}`));
       process.exit(1);
     }
-    
+
     const fs = require('fs').promises;
     const config = configManager.loadConfig();
-    
+
     let moved = false;
-    
+
     // Move to different status (involves file system move)
     if (options.toStatus) {
       const oldPath = spec.filePath;
       const fileName = path.basename(oldPath);
       const newPath = path.join(config.dataPath, options.toStatus, fileName);
-      
+
       await fs.rename(oldPath, newPath);
-      
+
       // Update status in frontmatter
       const content = await fs.readFile(newPath, 'utf-8');
       const updatedContent = updateFrontmatter(content, 'status', options.toStatus);
       await fs.writeFile(newPath, updatedContent, 'utf-8');
-      
+
       console.log(chalk.green(`✅ Moved ${specId} to ${options.toStatus}`));
       console.log(chalk.gray(`   From: ${oldPath}`));
       console.log(chalk.gray(`   To: ${newPath}`));
       moved = true;
     }
-    
+
     // Move to different phase (frontmatter only)
     if (options.toPhase) {
       const content = await fs.readFile(spec.filePath, 'utf-8');
       const updatedContent = updateFrontmatter(content, 'phase', options.toPhase);
       await fs.writeFile(spec.filePath, updatedContent, 'utf-8');
-      
+
       console.log(chalk.green(`✅ Moved ${specId} to phase ${options.toPhase}`));
       moved = true;
     }
-    
+
     if (!moved) {
       console.log(chalk.yellow('⚠️  No move operation specified (use --to-status or --to-phase)'));
     }
-    
+
   } catch (error) {
     console.error(chalk.red('❌ Failed to move specification:'), error.message);
     process.exit(1);
@@ -3841,7 +3840,7 @@ async function handleSpecMove(specId, options) {
 // Helper functions for spec management
 function createSpecTemplate(specId, title, type, options) {
   const timestamp = new Date().toISOString();
-  
+
   return `---
 id: "${specId}"
 title: "${title}"
@@ -4006,17 +4005,17 @@ function outputSpecsTable(specs) {
     console.log(chalk.yellow('No specifications found matching criteria'));
     return;
   }
-  
+
   console.log(chalk.cyan('📋 Specifications'));
   console.log(chalk.gray('='.repeat(80)));
-  
+
   // Table header
   const idWidth = 10;
   const titleWidth = 30;
   const statusWidth = 10;
   const priorityWidth = 8;
   const phaseWidth = 12;
-  
+
   console.log([
     chalk.cyan('ID'.padEnd(idWidth)),
     chalk.cyan('Title'.padEnd(titleWidth)),
@@ -4024,9 +4023,9 @@ function outputSpecsTable(specs) {
     chalk.cyan('Priority'.padEnd(priorityWidth)),
     chalk.cyan('Phase'.padEnd(phaseWidth))
   ].join(' │ '));
-  
+
   console.log('─'.repeat(80));
-  
+
   // Table rows
   specs.forEach(spec => {
     const id = (spec.id || '').padEnd(idWidth);
@@ -4034,10 +4033,10 @@ function outputSpecsTable(specs) {
     const status = (spec.status || '').padEnd(statusWidth);
     const priority = getPriorityColor(spec.priority).padEnd(priorityWidth + 10); // Add space for ANSI codes
     const phase = (spec.phase || '').padEnd(phaseWidth);
-    
+
     console.log([id, title, status, priority, phase].join(' │ '));
   });
-  
+
   console.log(chalk.gray(`\nTotal: ${specs.length} specifications`));
 }
 
@@ -4063,17 +4062,17 @@ function outputSpecsSummary(specs) {
     console.log(chalk.yellow('No specifications found'));
     return;
   }
-  
+
   console.log(chalk.cyan('📊 Specifications Summary'));
   console.log(chalk.gray('='.repeat(50)));
-  
+
   // Group by status
   const byStatus = specs.reduce((acc, spec) => {
     acc[spec.status] = acc[spec.status] || [];
     acc[spec.status].push(spec);
     return acc;
   }, {});
-  
+
   Object.entries(byStatus).forEach(([status, statusSpecs]) => {
     console.log(chalk.white(`\n${status.toUpperCase()}: ${statusSpecs.length}`));
     statusSpecs.forEach(spec => {
@@ -4081,33 +4080,33 @@ function outputSpecsSummary(specs) {
       console.log(`  ${priority} ${spec.id}: ${spec.title}`);
     });
   });
-  
+
   console.log(chalk.gray(`\nTotal: ${specs.length} specifications`));
 }
 
 function outputSpecDetails(spec, options) {
   console.log(chalk.cyan(`📋 ${spec.id}: ${spec.title}`));
   console.log(chalk.gray('='.repeat(60)));
-  
+
   console.log(chalk.white('Status:'), getStatusColor(spec.status));
   console.log(chalk.white('Priority:'), getPriorityColor(spec.priority));
   console.log(chalk.white('Phase:'), chalk.blue(spec.phase || 'N/A'));
   console.log(chalk.white('Type:'), chalk.magenta(spec.type || 'N/A'));
-  
+
   if (spec.created) {
     const date = new Date(spec.created).toLocaleDateString();
     console.log(chalk.white('Created:'), chalk.gray(date));
   }
-  
+
   if (spec.estimated_hours) {
     console.log(chalk.white('Estimated Hours:'), chalk.yellow(spec.estimated_hours));
   }
-  
+
   if (spec.description) {
     console.log(chalk.white('\nDescription:'));
     console.log(chalk.gray(spec.description));
   }
-  
+
   if (options.includeTasks && spec.tasks && spec.tasks.length > 0) {
     console.log(chalk.blue('\n📋 Tasks:'));
     spec.tasks.forEach((task, index) => {
@@ -4115,7 +4114,7 @@ function outputSpecDetails(spec, options) {
       console.log(`  ${index + 1}. ${status} ${task.title || task.id}`);
     });
   }
-  
+
   if (spec.filePath) {
     console.log(chalk.gray(`\nFile: ${spec.filePath}`));
   }
@@ -4152,12 +4151,12 @@ function updateFrontmatter(content, key, value) {
   if (lines[0] !== '---') {
     return content; // No frontmatter
   }
-  
+
   const endIndex = lines.findIndex((line, index) => index > 0 && line === '---');
   if (endIndex === -1) {
     return content; // Invalid frontmatter
   }
-  
+
   // Update the key in frontmatter
   let found = false;
   for (let i = 1; i < endIndex; i++) {
@@ -4167,12 +4166,12 @@ function updateFrontmatter(content, key, value) {
       break;
     }
   }
-  
+
   // If key not found, add it
   if (!found) {
     lines.splice(endIndex, 0, `${key}: "${value}"`);
   }
-  
+
   return lines.join('\n');
 }
 
