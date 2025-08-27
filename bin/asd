@@ -567,6 +567,73 @@ program
   });
 
 // Default command - start the interactive terminal
+// Feature management commands
+const specCommand = program
+  .command('spec')
+  .description('Manage specifications and features');
+
+specCommand
+  .command('create')
+  .description('Create a new specification or feature')
+  .argument('<type>', 'Spec type: spec, feat, bug')
+  .argument('<title>', 'Spec title')
+  .option('--priority <priority>', 'Priority level (P0, P1, P2, P3)', 'P2')
+  .option('--phase <phase>', 'Development phase', 'PHASE-1A')
+  .option('--agent <agent-type>', 'Assign to agent type')
+  .option('--template <template>', 'Use specific template')
+  .action(async (type, title, options) => {
+    await handleSpecCreate(type, title, options);
+  });
+
+specCommand
+  .command('list')
+  .description('List specifications with filtering and multiple output formats')
+  .option('--status <status>', 'Filter by status (active, backlog, done)')
+  .option('--priority <priority>', 'Filter by priority (P0,P1,P2,P3)')
+  .option('--phase <phase>', 'Filter by phase')
+  .option('--type <type>', 'Filter by type (FEAT, BUG, SPEC)')
+  .option('--format <format>', 'Output format (table, json, csv, summary)', 'table')
+  .option('--sort <field>', 'Sort by field (priority, title, status, created)', 'priority')
+  .option('--limit <n>', 'Maximum number of specs to show', '20')
+  .action(async (options) => {
+    await handleSpecList(options);
+  });
+
+specCommand
+  .command('show')
+  .description('Display detailed information about a specification')
+  .argument('<spec-id>', 'Specification ID to show')
+  .option('--format <format>', 'Output format (detailed, summary, json)', 'detailed')
+  .option('--include-tasks', 'Include task details', false)
+  .option('--include-context', 'Include context information', false)
+  .action(async (specId, options) => {
+    await handleSpecShow(specId, options);
+  });
+
+specCommand
+  .command('update')
+  .description('Update specification fields')
+  .argument('<spec-id>', 'Specification ID to update')
+  .option('--status <status>', 'Update status')
+  .option('--priority <priority>', 'Update priority (P0, P1, P2, P3)')
+  .option('--phase <phase>', 'Update phase')
+  .option('--title <title>', 'Update title')
+  .option('--assign <agent-type>', 'Assign to agent type')
+  .action(async (specId, options) => {
+    await handleSpecUpdate(specId, options);
+  });
+
+specCommand
+  .command('move')
+  .description('Move specification to different status or phase')
+  .argument('<spec-id>', 'Specification ID to move')
+  .option('--to-status <status>', 'Move to status (active, backlog, done)')
+  .option('--to-phase <phase>', 'Move to phase')
+  .option('--validate-deps', 'Validate dependencies before moving', true)
+  .action(async (specId, options) => {
+    await handleSpecMove(specId, options);
+  });
+
 program
   .command('start')
   .description('Start the interactive ASD terminal interface (default)')
@@ -3540,6 +3607,573 @@ async function handleReportStats(options) {
     console.error(chalk.red('❌ Report stats failed:'), error.message);
     process.exit(1);
   }
+}
+
+// Feature management handler functions
+async function handleSpecCreate(type, title, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    // Generate spec ID
+    const typeUpper = type.toUpperCase();
+    const specs = specParser.getSpecsByType(typeUpper);
+    const nextNumber = Math.max(0, ...specs.map(s => {
+      const match = s.id.match(/\d+$/);
+      return match ? parseInt(match[0]) : 0;
+    })) + 1;
+    const specId = `${typeUpper}-${nextNumber.toString().padStart(3, '0')}`;
+    
+    // Create spec content from template
+    const specContent = createSpecTemplate(specId, title, typeUpper, options);
+    
+    // Determine file path based on status
+    const config = configManager.loadConfig();
+    const status = 'backlog'; // Default new specs to backlog
+    const fileName = `${specId.toLowerCase()}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.md`;
+    const filePath = path.join(config.dataPath, status, fileName);
+    
+    // Write spec file
+    const fs = require('fs').promises;
+    await fs.writeFile(filePath, specContent, 'utf-8');
+    
+    console.log(chalk.green(`✅ Created ${typeUpper} specification: ${specId}`));
+    console.log(chalk.gray(`   Title: ${title}`));
+    console.log(chalk.gray(`   Priority: ${options.priority}`));
+    console.log(chalk.gray(`   Phase: ${options.phase}`));
+    console.log(chalk.gray(`   File: ${filePath}`));
+    
+    if (options.agent) {
+      console.log(chalk.gray(`   Assigned to: ${options.agent}`));
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Failed to create specification:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleSpecList(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    let specs = specParser.getSpecs();
+    
+    // Apply filters
+    if (options.status) {
+      specs = specs.filter(spec => spec.status === options.status);
+    }
+    if (options.priority) {
+      const priorities = options.priority.split(',');
+      specs = specs.filter(spec => priorities.includes(spec.priority));
+    }
+    if (options.phase) {
+      specs = specs.filter(spec => spec.phase === options.phase);
+    }
+    if (options.type) {
+      const types = options.type.split(',');
+      specs = specs.filter(spec => types.includes(spec.type));
+    }
+    
+    // Apply sorting
+    specs = sortSpecs(specs, options.sort);
+    
+    // Apply limit
+    const limit = parseInt(options.limit) || 20;
+    specs = specs.slice(0, limit);
+    
+    // Output in requested format
+    outputSpecs(specs, options.format);
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Failed to list specifications:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleSpecShow(specId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const spec = specParser.getSpecById(specId);
+    if (!spec) {
+      console.error(chalk.red(`❌ Specification not found: ${specId}`));
+      process.exit(1);
+    }
+    
+    if (options.format === 'json') {
+      console.log(JSON.stringify(spec, null, 2));
+    } else if (options.format === 'summary') {
+      outputSpecSummary(spec);
+    } else {
+      outputSpecDetails(spec, options);
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Failed to show specification:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleSpecUpdate(specId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const spec = specParser.getSpecById(specId);
+    if (!spec) {
+      console.error(chalk.red(`❌ Specification not found: ${specId}`));
+      process.exit(1);
+    }
+    
+    // Read current spec file
+    const fs = require('fs').promises;
+    const specPath = spec.filePath;
+    const content = await fs.readFile(specPath, 'utf-8');
+    
+    let updatedContent = content;
+    let hasUpdates = false;
+    
+    // Update frontmatter fields
+    if (options.status) {
+      updatedContent = updateFrontmatter(updatedContent, 'status', options.status);
+      hasUpdates = true;
+    }
+    if (options.priority) {
+      updatedContent = updateFrontmatter(updatedContent, 'priority', options.priority);
+      hasUpdates = true;
+    }
+    if (options.phase) {
+      updatedContent = updateFrontmatter(updatedContent, 'phase', options.phase);
+      hasUpdates = true;
+    }
+    if (options.title) {
+      updatedContent = updateFrontmatter(updatedContent, 'title', options.title);
+      hasUpdates = true;
+    }
+    
+    if (hasUpdates) {
+      await fs.writeFile(specPath, updatedContent, 'utf-8');
+      console.log(chalk.green(`✅ Updated specification: ${specId}`));
+      
+      // Show what was updated
+      if (options.status) console.log(chalk.gray(`   Status: ${options.status}`));
+      if (options.priority) console.log(chalk.gray(`   Priority: ${options.priority}`));
+      if (options.phase) console.log(chalk.gray(`   Phase: ${options.phase}`));
+      if (options.title) console.log(chalk.gray(`   Title: ${options.title}`));
+    } else {
+      console.log(chalk.yellow('⚠️  No updates specified'));
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Failed to update specification:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleSpecMove(specId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+    
+    const spec = specParser.getSpecById(specId);
+    if (!spec) {
+      console.error(chalk.red(`❌ Specification not found: ${specId}`));
+      process.exit(1);
+    }
+    
+    const fs = require('fs').promises;
+    const config = configManager.loadConfig();
+    
+    let moved = false;
+    
+    // Move to different status (involves file system move)
+    if (options.toStatus) {
+      const oldPath = spec.filePath;
+      const fileName = path.basename(oldPath);
+      const newPath = path.join(config.dataPath, options.toStatus, fileName);
+      
+      await fs.rename(oldPath, newPath);
+      
+      // Update status in frontmatter
+      const content = await fs.readFile(newPath, 'utf-8');
+      const updatedContent = updateFrontmatter(content, 'status', options.toStatus);
+      await fs.writeFile(newPath, updatedContent, 'utf-8');
+      
+      console.log(chalk.green(`✅ Moved ${specId} to ${options.toStatus}`));
+      console.log(chalk.gray(`   From: ${oldPath}`));
+      console.log(chalk.gray(`   To: ${newPath}`));
+      moved = true;
+    }
+    
+    // Move to different phase (frontmatter only)
+    if (options.toPhase) {
+      const content = await fs.readFile(spec.filePath, 'utf-8');
+      const updatedContent = updateFrontmatter(content, 'phase', options.toPhase);
+      await fs.writeFile(spec.filePath, updatedContent, 'utf-8');
+      
+      console.log(chalk.green(`✅ Moved ${specId} to phase ${options.toPhase}`));
+      moved = true;
+    }
+    
+    if (!moved) {
+      console.log(chalk.yellow('⚠️  No move operation specified (use --to-status or --to-phase)'));
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Failed to move specification:'), error.message);
+    process.exit(1);
+  }
+}
+
+// Helper functions for spec management
+function createSpecTemplate(specId, title, type, options) {
+  const timestamp = new Date().toISOString();
+  
+  return `---
+id: "${specId}"
+title: "${title}"
+type: "${type}"
+phase: "${options.phase}"
+priority: "${options.priority}"
+status: "backlog"
+created: "${timestamp}"
+estimated_hours: 0
+tags: []
+tasks: []
+dependencies: []
+acceptance_criteria: []
+---
+
+# ${title}
+
+**Status**: Backlog | **Priority**: ${options.priority} | **Owner**: ${options.agent || 'Unassigned'}
+
+## 🎯 Quick Start _(30 seconds)_
+
+**What**: [Brief description of what this ${type.toLowerCase()} delivers]
+
+**Why**: [Business justification and impact]
+
+**Impact**: [Expected outcome and value]
+
+### 🚀 AGENT PICKUP GUIDE
+
+**➡️ Next Available Task**: [What task is ready for pickup]  
+**📋 Your Job**: [Clear instructions for the next agent]  
+**🚦 Dependencies**: [Any blockers or prerequisites]
+
+### 🚦 Current State _(AGENTS: Update this when you complete YOUR task)_
+
+- **Next Available Task**: None - awaiting initial task breakdown
+- **Current Task Status**: Not started
+- **Overall Progress**: 0 of 0 tasks complete
+- **Blockers**: None
+- **Last Updated**: ${new Date().toISOString().split('T')[0]} by System
+
+---
+
+## 📋 Work Definition _(What needs to be built)_
+
+### Problem Statement
+
+[Describe the problem this ${type.toLowerCase()} solves]
+
+### Solution Approach
+
+[High-level approach to solving the problem]
+
+### Success Criteria
+
+- [ ] [Specific measurable outcome 1]
+- [ ] [Specific measurable outcome 2]
+- [ ] [Specific measurable outcome 3]
+
+---
+
+## 🏗️ Implementation Plan
+
+### Technical Approach
+
+[Technical strategy and key decisions]
+
+### Implementation Tasks _(Each task = one agent handoff)_
+
+[Tasks will be added during planning phase]
+
+---
+
+## ✅ Validation Requirements
+
+### 📝 Documentation Checklist _(REQUIRED before committing YOUR task)_
+
+- [ ] **Your Task Status**: Mark your task ✅ and update all subtasks to \`- [x]\`
+- [ ] **Current State**: Update "Next Available Task" to show what task is ready next
+- [ ] **Success Criteria**: Check off any criteria your task completed
+- [ ] **Handoff**: Clear what the next agent should pick up
+
+### 🧪 Testing Checklist _(Follow this exact order)_
+
+**BEFORE COMMITTING** _(Required validation sequence)_
+
+- [ ] **Types**: Run \`pnpm typecheck\` - fix all TypeScript errors
+- [ ] **Linting**: Run \`pnpm lint && pnpm format\` - fix all style issues
+- [ ] **Tests**: Run relevant test suite
+
+---
+
+## 📊 Progress Tracking _(AGENTS: Add entry when you complete YOUR task)_
+
+### ✅ Completed Tasks _(Add entry when you finish your task)_
+
+- ✅ **[YYYY-MM-DD]** - **TASK-XXX** completed - _Agent: [name]_ - Next: TASK-YYY ready
+
+### 🚨 Task Blockers _(Preventing next task pickup)_
+
+- None currently
+
+### ➡️ Handoff Status _(What's ready for next agent)_
+
+- **Ready When**: Initial planning complete
+- **Waiting**: Task breakdown and assignment
+
+---
+
+**Priority**: ${options.priority} - ${getPriorityDescription(options.priority)}  
+**Effort**: TBD hours  
+**Impact**: [Expected impact description]
+`;
+}
+
+function getPriorityDescription(priority) {
+  switch (priority) {
+    case 'P0': return 'Critical - blocks other work';
+    case 'P1': return 'High - important for current milestone';
+    case 'P2': return 'Medium - planned work';
+    case 'P3': return 'Low - nice to have';
+    default: return 'Standard priority';
+  }
+}
+
+function sortSpecs(specs, sortField) {
+  switch (sortField) {
+    case 'priority':
+      return specs.sort((a, b) => {
+        const priorityOrder = { 'P0': 0, 'P1': 1, 'P2': 2, 'P3': 3 };
+        return (priorityOrder[a.priority] || 4) - (priorityOrder[b.priority] || 4);
+      });
+    case 'title':
+      return specs.sort((a, b) => a.title.localeCompare(b.title));
+    case 'status':
+      return specs.sort((a, b) => a.status.localeCompare(b.status));
+    case 'created':
+      return specs.sort((a, b) => new Date(b.created || 0) - new Date(a.created || 0));
+    default:
+      return specs;
+  }
+}
+
+function outputSpecs(specs, format) {
+  switch (format) {
+    case 'json':
+      console.log(JSON.stringify(specs, null, 2));
+      break;
+    case 'csv':
+      outputSpecsCSV(specs);
+      break;
+    case 'summary':
+      outputSpecsSummary(specs);
+      break;
+    default:
+      outputSpecsTable(specs);
+  }
+}
+
+function outputSpecsTable(specs) {
+  if (specs.length === 0) {
+    console.log(chalk.yellow('No specifications found matching criteria'));
+    return;
+  }
+  
+  console.log(chalk.cyan('📋 Specifications'));
+  console.log(chalk.gray('='.repeat(80)));
+  
+  // Table header
+  const idWidth = 10;
+  const titleWidth = 30;
+  const statusWidth = 10;
+  const priorityWidth = 8;
+  const phaseWidth = 12;
+  
+  console.log([
+    chalk.cyan('ID'.padEnd(idWidth)),
+    chalk.cyan('Title'.padEnd(titleWidth)),
+    chalk.cyan('Status'.padEnd(statusWidth)),
+    chalk.cyan('Priority'.padEnd(priorityWidth)),
+    chalk.cyan('Phase'.padEnd(phaseWidth))
+  ].join(' │ '));
+  
+  console.log('─'.repeat(80));
+  
+  // Table rows
+  specs.forEach(spec => {
+    const id = (spec.id || '').padEnd(idWidth);
+    const title = (spec.title || '').substring(0, titleWidth - 3).padEnd(titleWidth);
+    const status = (spec.status || '').padEnd(statusWidth);
+    const priority = getPriorityColor(spec.priority).padEnd(priorityWidth + 10); // Add space for ANSI codes
+    const phase = (spec.phase || '').padEnd(phaseWidth);
+    
+    console.log([id, title, status, priority, phase].join(' │ '));
+  });
+  
+  console.log(chalk.gray(`\nTotal: ${specs.length} specifications`));
+}
+
+function outputSpecsCSV(specs) {
+  console.log('ID,Title,Status,Priority,Phase,Type,Created,Estimated Hours');
+  specs.forEach(spec => {
+    const row = [
+      spec.id || '',
+      `"${(spec.title || '').replace(/"/g, '""')}"`,
+      spec.status || '',
+      spec.priority || '',
+      spec.phase || '',
+      spec.type || '',
+      spec.created || '',
+      spec.estimated_hours || 0
+    ].join(',');
+    console.log(row);
+  });
+}
+
+function outputSpecsSummary(specs) {
+  if (specs.length === 0) {
+    console.log(chalk.yellow('No specifications found'));
+    return;
+  }
+  
+  console.log(chalk.cyan('📊 Specifications Summary'));
+  console.log(chalk.gray('='.repeat(50)));
+  
+  // Group by status
+  const byStatus = specs.reduce((acc, spec) => {
+    acc[spec.status] = acc[spec.status] || [];
+    acc[spec.status].push(spec);
+    return acc;
+  }, {});
+  
+  Object.entries(byStatus).forEach(([status, statusSpecs]) => {
+    console.log(chalk.white(`\n${status.toUpperCase()}: ${statusSpecs.length}`));
+    statusSpecs.forEach(spec => {
+      const priority = getPriorityColor(spec.priority);
+      console.log(`  ${priority} ${spec.id}: ${spec.title}`);
+    });
+  });
+  
+  console.log(chalk.gray(`\nTotal: ${specs.length} specifications`));
+}
+
+function outputSpecDetails(spec, options) {
+  console.log(chalk.cyan(`📋 ${spec.id}: ${spec.title}`));
+  console.log(chalk.gray('='.repeat(60)));
+  
+  console.log(chalk.white('Status:'), getStatusColor(spec.status));
+  console.log(chalk.white('Priority:'), getPriorityColor(spec.priority));
+  console.log(chalk.white('Phase:'), chalk.blue(spec.phase || 'N/A'));
+  console.log(chalk.white('Type:'), chalk.magenta(spec.type || 'N/A'));
+  
+  if (spec.created) {
+    const date = new Date(spec.created).toLocaleDateString();
+    console.log(chalk.white('Created:'), chalk.gray(date));
+  }
+  
+  if (spec.estimated_hours) {
+    console.log(chalk.white('Estimated Hours:'), chalk.yellow(spec.estimated_hours));
+  }
+  
+  if (spec.description) {
+    console.log(chalk.white('\nDescription:'));
+    console.log(chalk.gray(spec.description));
+  }
+  
+  if (options.includeTasks && spec.tasks && spec.tasks.length > 0) {
+    console.log(chalk.blue('\n📋 Tasks:'));
+    spec.tasks.forEach((task, index) => {
+      const status = task.status === 'complete' ? chalk.green('✅') : chalk.yellow('⏳');
+      console.log(`  ${index + 1}. ${status} ${task.title || task.id}`);
+    });
+  }
+  
+  if (spec.filePath) {
+    console.log(chalk.gray(`\nFile: ${spec.filePath}`));
+  }
+}
+
+function outputSpecSummary(spec) {
+  const priority = getPriorityColor(spec.priority);
+  const status = getStatusColor(spec.status);
+  console.log(`${priority} ${spec.id}: ${spec.title} [${status}]`);
+}
+
+function getPriorityColor(priority) {
+  switch (priority) {
+    case 'P0': return chalk.red('P0');
+    case 'P1': return chalk.yellow('P1');
+    case 'P2': return chalk.blue('P2');
+    case 'P3': return chalk.gray('P3');
+    default: return chalk.gray(priority || 'N/A');
+  }
+}
+
+function getStatusColor(status) {
+  switch (status) {
+    case 'active': return chalk.green('active');
+    case 'backlog': return chalk.yellow('backlog');
+    case 'done': return chalk.blue('done');
+    case 'blocked': return chalk.red('blocked');
+    default: return chalk.gray(status || 'N/A');
+  }
+}
+
+function updateFrontmatter(content, key, value) {
+  const lines = content.split('\n');
+  if (lines[0] !== '---') {
+    return content; // No frontmatter
+  }
+  
+  const endIndex = lines.findIndex((line, index) => index > 0 && line === '---');
+  if (endIndex === -1) {
+    return content; // Invalid frontmatter
+  }
+  
+  // Update the key in frontmatter
+  let found = false;
+  for (let i = 1; i < endIndex; i++) {
+    if (lines[i].startsWith(`${key}:`)) {
+      lines[i] = `${key}: "${value}"`;
+      found = true;
+      break;
+    }
+  }
+  
+  // If key not found, add it
+  if (!found) {
+    lines.splice(endIndex, 0, `${key}: "${value}"`);
+  }
+  
+  return lines.join('\n');
 }
 
 // Handle CLI parsing
