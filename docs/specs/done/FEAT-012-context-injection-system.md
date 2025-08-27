@@ -122,7 +122,7 @@ acceptance_criteria:
   - Users can customize agent workflows via MD files with YAML frontmatter
   - Context system is self-maintaining and accumulates learning over time
   - CLI commands support both automated and manual context management
-last_updated: "2025-08-26T21:37:56.262Z"
+last_updated: "2025-08-27T20:52:43.472Z"
 ---
 
 # Context Injection System

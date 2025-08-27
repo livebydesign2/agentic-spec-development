@@ -1,7 +1,7 @@
 // Global test setup for ASD CLI tests
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 // Suppress console output during tests unless DEBUG_TESTS is set
 if (!process.env.DEBUG_TESTS) {
@@ -15,15 +15,15 @@ if (!process.env.DEBUG_TESTS) {
 }
 
 // Create temporary test directory structure
-global.TEST_DIR = path.join(__dirname, "temp");
-global.FIXTURES_DIR = path.join(__dirname, "fixtures");
+global.TEST_DIR = path.join(__dirname, 'temp');
+global.FIXTURES_DIR = path.join(__dirname, 'fixtures');
 
 // Cleanup function for tests
 global.cleanupTestDir = () => {
   if (fs.existsSync(global.TEST_DIR)) {
     try {
       // Try to change to a safe directory first
-      process.chdir("/tmp");
+      process.chdir('/tmp');
       fs.rmSync(global.TEST_DIR, { recursive: true, force: true });
     } catch (error) {
       // If that fails, try alternative cleanup
@@ -40,7 +40,7 @@ global.cleanupTestDir = () => {
         }
         fs.rmdirSync(global.TEST_DIR);
       } catch (innerError) {
-        console.warn("Could not cleanup test directory:", innerError.message);
+        console.warn('Could not cleanup test directory:', innerError.message);
       }
     }
   }
@@ -53,10 +53,10 @@ global.setupTestDir = () => {
 
   // Create basic directory structure
   const dirs = [
-    "docs/specs/active",
-    "docs/specs/backlog",
-    "docs/specs/done",
-    "docs/specs/template",
+    'docs/specs/active',
+    'docs/specs/backlog',
+    'docs/specs/done',
+    'docs/specs/template',
   ];
 
   dirs.forEach((dir) => {
@@ -73,18 +73,18 @@ global.createTestFile = (relativePath, content) => {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  fs.writeFileSync(fullPath, content, "utf-8");
+  fs.writeFileSync(fullPath, content, 'utf-8');
   return fullPath;
 };
 
 // Utility function to read fixture files
 global.readFixture = (fixtureName) => {
   const fixturePath = path.join(global.FIXTURES_DIR, fixtureName);
-  return fs.readFileSync(fixturePath, "utf-8");
+  return fs.readFileSync(fixturePath, 'utf-8');
 };
 
 // Mock terminal-kit for tests
-jest.mock("terminal-kit", () => ({
+jest.mock('terminal-kit', () => ({
   terminal: {
     width: 80,
     height: 24,

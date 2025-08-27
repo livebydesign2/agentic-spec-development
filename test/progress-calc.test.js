@@ -1,15 +1,15 @@
-const ProgressCalculator = require("../lib/progress-calc");
+const ProgressCalculator = require('../lib/progress-calc');
 
-describe("ProgressCalculator", () => {
+describe('ProgressCalculator', () => {
   let calculator;
 
   beforeEach(() => {
     calculator = new ProgressCalculator();
   });
 
-  describe("calculateProgress", () => {
-    it("should handle features without tasks", () => {
-      const feature = { status: "active" };
+  describe('calculateProgress', () => {
+    it('should handle features without tasks', () => {
+      const feature = { status: 'active' };
       const progress = calculator.calculateProgress(feature);
 
       expect(progress).toEqual({
@@ -17,7 +17,7 @@ describe("ProgressCalculator", () => {
         total: 1,
         percentage: 0,
         countingSubtasks: false,
-        itemType: "tasks",
+        itemType: 'tasks',
         taskBreakdown: {
           mainTasks: 0,
           completedTasks: 0,
@@ -27,8 +27,8 @@ describe("ProgressCalculator", () => {
       });
     });
 
-    it("should handle done features without tasks", () => {
-      const feature = { status: "done" };
+    it('should handle done features without tasks', () => {
+      const feature = { status: 'done' };
       const progress = calculator.calculateProgress(feature);
 
       expect(progress).toEqual({
@@ -36,7 +36,7 @@ describe("ProgressCalculator", () => {
         total: 1,
         percentage: 100,
         countingSubtasks: false,
-        itemType: "tasks",
+        itemType: 'tasks',
         taskBreakdown: {
           mainTasks: 0,
           completedTasks: 0,
@@ -46,13 +46,13 @@ describe("ProgressCalculator", () => {
       });
     });
 
-    it("should calculate progress for pure task-based features", () => {
+    it('should calculate progress for pure task-based features', () => {
       const feature = {
         tasks: [
-          { status: "complete" },
-          { status: "complete" },
-          { status: "in_progress" },
-          { status: "ready" },
+          { status: 'complete' },
+          { status: 'complete' },
+          { status: 'in_progress' },
+          { status: 'ready' },
         ],
       };
 
@@ -63,7 +63,7 @@ describe("ProgressCalculator", () => {
         total: 4,
         percentage: 50,
         countingSubtasks: false,
-        itemType: "tasks",
+        itemType: 'tasks',
         taskBreakdown: {
           mainTasks: 4,
           completedTasks: 2,
@@ -73,11 +73,11 @@ describe("ProgressCalculator", () => {
       });
     });
 
-    it("should calculate progress for pure subtask-based features", () => {
+    it('should calculate progress for pure subtask-based features', () => {
       const feature = {
         tasks: [
           {
-            status: "in_progress",
+            status: 'in_progress',
             subtasks: [
               { completed: true },
               { completed: true },
@@ -85,7 +85,7 @@ describe("ProgressCalculator", () => {
             ],
           },
           {
-            status: "ready",
+            status: 'ready',
             subtasks: [{ completed: false }, { completed: false }],
           },
         ],
@@ -98,7 +98,7 @@ describe("ProgressCalculator", () => {
         total: 5,
         percentage: 40,
         countingSubtasks: true,
-        itemType: "subtasks",
+        itemType: 'subtasks',
         taskBreakdown: {
           mainTasks: 2,
           completedTasks: 0,
@@ -108,15 +108,15 @@ describe("ProgressCalculator", () => {
       });
     });
 
-    it("should calculate progress for mixed task and subtask features", () => {
+    it('should calculate progress for mixed task and subtask features', () => {
       const feature = {
         tasks: [
-          { status: "complete" }, // Complete task = 1 point
+          { status: 'complete' }, // Complete task = 1 point
           {
-            status: "in_progress",
+            status: 'in_progress',
             subtasks: [{ completed: true }, { completed: false }],
           }, // 50% complete = 0.5 points
-          { status: "ready" }, // Incomplete task = 0 points
+          { status: 'ready' }, // Incomplete task = 0 points
         ],
       };
 
@@ -127,7 +127,7 @@ describe("ProgressCalculator", () => {
         total: 3,
         percentage: 50, // 1.5/3 = 50%
         countingSubtasks: false,
-        itemType: "tasks",
+        itemType: 'tasks',
         taskBreakdown: {
           mainTasks: 3,
           completedTasks: 1,
@@ -137,7 +137,7 @@ describe("ProgressCalculator", () => {
       });
     });
 
-    it("should handle empty tasks array", () => {
+    it('should handle empty tasks array', () => {
       const feature = { tasks: [] };
       const progress = calculator.calculateProgress(feature);
 
@@ -146,9 +146,9 @@ describe("ProgressCalculator", () => {
       expect(progress.percentage).toBe(0);
     });
 
-    it("should calculate 100% progress correctly", () => {
+    it('should calculate 100% progress correctly', () => {
       const feature = {
-        tasks: [{ status: "complete" }, { status: "complete" }],
+        tasks: [{ status: 'complete' }, { status: 'complete' }],
       };
 
       const progress = calculator.calculateProgress(feature);
@@ -158,19 +158,19 @@ describe("ProgressCalculator", () => {
       expect(progress.total).toBe(2);
     });
 
-    it("should round progress values appropriately", () => {
+    it('should round progress values appropriately', () => {
       const feature = {
         tasks: [
-          { status: "complete" },
+          { status: 'complete' },
           {
-            status: "in_progress",
+            status: 'in_progress',
             subtasks: [
               { completed: true },
               { completed: false },
               { completed: false },
             ],
           }, // 1/3 complete = 0.333... points
-          { status: "ready" },
+          { status: 'ready' },
         ],
       };
 
@@ -182,20 +182,20 @@ describe("ProgressCalculator", () => {
     });
   });
 
-  describe("calculateOverallProgress", () => {
-    it("should calculate progress across multiple features", () => {
+  describe('calculateOverallProgress', () => {
+    it('should calculate progress across multiple features', () => {
       const features = [
         {
-          tasks: [{ status: "complete" }, { status: "complete" }],
+          tasks: [{ status: 'complete' }, { status: 'complete' }],
         },
         {
           tasks: [
-            { status: "complete" },
-            { status: "in_progress" },
-            { status: "ready" },
+            { status: 'complete' },
+            { status: 'in_progress' },
+            { status: 'ready' },
           ],
         },
-        { status: "done" }, // No tasks
+        { status: 'done' }, // No tasks
       ];
 
       const progress = calculator.calculateOverallProgress(features);
@@ -207,7 +207,7 @@ describe("ProgressCalculator", () => {
       });
     });
 
-    it("should handle empty features array", () => {
+    it('should handle empty features array', () => {
       const progress = calculator.calculateOverallProgress([]);
 
       expect(progress).toEqual({
@@ -218,30 +218,30 @@ describe("ProgressCalculator", () => {
     });
   });
 
-  describe("getNextAvailableTask", () => {
-    it("should return first ready task", () => {
+  describe('getNextAvailableTask', () => {
+    it('should return first ready task', () => {
       const feature = {
         tasks: [
-          { status: "complete", title: "Done Task" },
-          { status: "ready", title: "Ready Task 1" },
-          { status: "ready", title: "Ready Task 2" },
+          { status: 'complete', title: 'Done Task' },
+          { status: 'ready', title: 'Ready Task 1' },
+          { status: 'ready', title: 'Ready Task 2' },
         ],
       };
 
       const nextTask = calculator.getNextAvailableTask(feature);
 
       expect(nextTask).toEqual({
-        status: "ready",
-        title: "Ready Task 1",
+        status: 'ready',
+        title: 'Ready Task 1',
       });
     });
 
-    it("should return null if no ready tasks", () => {
+    it('should return null if no ready tasks', () => {
       const feature = {
         tasks: [
-          { status: "complete" },
-          { status: "in_progress" },
-          { status: "blocked" },
+          { status: 'complete' },
+          { status: 'in_progress' },
+          { status: 'blocked' },
         ],
       };
 
@@ -250,7 +250,7 @@ describe("ProgressCalculator", () => {
       expect(nextTask).toBeNull();
     });
 
-    it("should handle features without tasks", () => {
+    it('should handle features without tasks', () => {
       const feature = {};
       const nextTask = calculator.getNextAvailableTask(feature);
 
@@ -258,27 +258,27 @@ describe("ProgressCalculator", () => {
     });
   });
 
-  describe("getBlockedTasks", () => {
-    it("should return all blocked tasks", () => {
+  describe('getBlockedTasks', () => {
+    it('should return all blocked tasks', () => {
       const feature = {
         tasks: [
-          { status: "complete", title: "Done" },
-          { status: "blocked", title: "Blocked 1" },
-          { status: "ready", title: "Ready" },
-          { status: "blocked", title: "Blocked 2" },
+          { status: 'complete', title: 'Done' },
+          { status: 'blocked', title: 'Blocked 1' },
+          { status: 'ready', title: 'Ready' },
+          { status: 'blocked', title: 'Blocked 2' },
         ],
       };
 
       const blockedTasks = calculator.getBlockedTasks(feature);
 
       expect(blockedTasks).toHaveLength(2);
-      expect(blockedTasks[0].title).toBe("Blocked 1");
-      expect(blockedTasks[1].title).toBe("Blocked 2");
+      expect(blockedTasks[0].title).toBe('Blocked 1');
+      expect(blockedTasks[1].title).toBe('Blocked 2');
     });
 
-    it("should return empty array if no blocked tasks", () => {
+    it('should return empty array if no blocked tasks', () => {
       const feature = {
-        tasks: [{ status: "complete" }, { status: "ready" }],
+        tasks: [{ status: 'complete' }, { status: 'ready' }],
       };
 
       const blockedTasks = calculator.getBlockedTasks(feature);
@@ -287,44 +287,44 @@ describe("ProgressCalculator", () => {
     });
   });
 
-  describe("getInProgressTasks", () => {
-    it("should return all in-progress tasks", () => {
+  describe('getInProgressTasks', () => {
+    it('should return all in-progress tasks', () => {
       const feature = {
         tasks: [
-          { status: "complete", title: "Done" },
-          { status: "in_progress", title: "Working 1" },
-          { status: "ready", title: "Ready" },
-          { status: "in_progress", title: "Working 2" },
+          { status: 'complete', title: 'Done' },
+          { status: 'in_progress', title: 'Working 1' },
+          { status: 'ready', title: 'Ready' },
+          { status: 'in_progress', title: 'Working 2' },
         ],
       };
 
       const inProgressTasks = calculator.getInProgressTasks(feature);
 
       expect(inProgressTasks).toHaveLength(2);
-      expect(inProgressTasks[0].title).toBe("Working 1");
-      expect(inProgressTasks[1].title).toBe("Working 2");
+      expect(inProgressTasks[0].title).toBe('Working 1');
+      expect(inProgressTasks[1].title).toBe('Working 2');
     });
   });
 
-  describe("getFeatureVelocity", () => {
+  describe('getFeatureVelocity', () => {
     beforeEach(() => {
       // Mock Date to ensure consistent test results
       jest.useFakeTimers();
-      jest.setSystemTime(new Date("2024-01-31"));
+      jest.setSystemTime(new Date('2024-01-31'));
     });
 
     afterEach(() => {
       jest.useRealTimers();
     });
 
-    it("should calculate velocity from recent completions", () => {
+    it('should calculate velocity from recent completions', () => {
       const features = [
-        { status: "done", completedDate: "2024-01-30" }, // 1 day ago
-        { status: "done", completedDate: "2024-01-25" }, // 6 days ago
-        { status: "done", completedDate: "2024-01-15" }, // 16 days ago
-        { status: "done", completedDate: "2024-01-01" }, // 30 days ago
-        { status: "done", completedDate: "2023-12-01" }, // Too old
-        { status: "active" }, // Not done
+        { status: 'done', completedDate: '2024-01-30' }, // 1 day ago
+        { status: 'done', completedDate: '2024-01-25' }, // 6 days ago
+        { status: 'done', completedDate: '2024-01-15' }, // 16 days ago
+        { status: 'done', completedDate: '2024-01-01' }, // 30 days ago
+        { status: 'done', completedDate: '2023-12-01' }, // Too old
+        { status: 'active' }, // Not done
       ];
 
       const velocity = calculator.getFeatureVelocity(features, 30);
@@ -336,10 +336,10 @@ describe("ProgressCalculator", () => {
       });
     });
 
-    it("should handle features without completion dates", () => {
+    it('should handle features without completion dates', () => {
       const features = [
-        { status: "done" }, // No completedDate
-        { status: "done", completedDate: "2024-01-30" },
+        { status: 'done' }, // No completedDate
+        { status: 'done', completedDate: '2024-01-30' },
       ];
 
       const velocity = calculator.getFeatureVelocity(features, 30);
@@ -347,8 +347,8 @@ describe("ProgressCalculator", () => {
       expect(velocity.featuresCompleted).toBe(1);
     });
 
-    it("should use default 30-day period", () => {
-      const features = [{ status: "done", completedDate: "2024-01-30" }];
+    it('should use default 30-day period', () => {
+      const features = [{ status: 'done', completedDate: '2024-01-30' }];
 
       const velocity = calculator.getFeatureVelocity(features);
 
@@ -356,36 +356,36 @@ describe("ProgressCalculator", () => {
     });
   });
 
-  describe("estimateCompletionTime", () => {
+  describe('estimateCompletionTime', () => {
     beforeEach(() => {
       jest.useFakeTimers();
-      jest.setSystemTime(new Date("2024-01-31"));
+      jest.setSystemTime(new Date('2024-01-31'));
     });
 
     afterEach(() => {
       jest.useRealTimers();
     });
 
-    it("should estimate completion time based on velocity", () => {
+    it('should estimate completion time based on velocity', () => {
       const features = [
         // Active features (incomplete)
         {
-          status: "active",
+          status: 'active',
           tasks: [
-            { status: "complete" },
-            { status: "ready" },
-            { status: "ready" },
+            { status: 'complete' },
+            { status: 'ready' },
+            { status: 'ready' },
           ],
         },
         // Backlog features (all tasks needed)
         {
-          status: "backlog",
-          tasks: [{ status: "ready" }, { status: "ready" }],
+          status: 'backlog',
+          tasks: [{ status: 'ready' }, { status: 'ready' }],
         },
         // Historical data for velocity
-        { status: "done", completedDate: "2024-01-30" },
-        { status: "done", completedDate: "2024-01-20" },
-        { status: "done", completedDate: "2024-01-10" },
+        { status: 'done', completedDate: '2024-01-30' },
+        { status: 'done', completedDate: '2024-01-20' },
+        { status: 'done', completedDate: '2024-01-10' },
       ];
 
       const estimate = calculator.estimateCompletionTime(features);
@@ -401,11 +401,11 @@ describe("ProgressCalculator", () => {
       expect(estimate.estimatedWeeks).toBeGreaterThan(0);
     });
 
-    it("should handle case with no historical data", () => {
+    it('should handle case with no historical data', () => {
       const features = [
         {
-          status: "active",
-          tasks: [{ status: "ready" }],
+          status: 'active',
+          tasks: [{ status: 'ready' }],
         },
       ];
 
@@ -416,20 +416,20 @@ describe("ProgressCalculator", () => {
         backlogTasks: 0,
         totalTasks: 1,
         estimatedWeeks: null,
-        message: "No historical data for estimation",
+        message: 'No historical data for estimation',
       });
     });
 
-    it("should calculate remaining tasks for active features", () => {
+    it('should calculate remaining tasks for active features', () => {
       const features = [
         {
-          status: "active",
+          status: 'active',
           tasks: [
-            { status: "complete" },
-            { status: "complete" },
-            { status: "in_progress" },
-            { status: "ready" },
-            { status: "ready" },
+            { status: 'complete' },
+            { status: 'complete' },
+            { status: 'in_progress' },
+            { status: 'ready' },
+            { status: 'ready' },
           ],
         },
       ];
@@ -439,14 +439,14 @@ describe("ProgressCalculator", () => {
       expect(estimate.activeTasks).toBe(3); // 3 non-complete tasks
     });
 
-    it("should count all tasks for backlog features", () => {
+    it('should count all tasks for backlog features', () => {
       const features = [
         {
-          status: "backlog",
+          status: 'backlog',
           tasks: [
-            { status: "ready" },
-            { status: "ready" },
-            { status: "ready" },
+            { status: 'ready' },
+            { status: 'ready' },
+            { status: 'ready' },
           ],
         },
       ];
@@ -456,8 +456,8 @@ describe("ProgressCalculator", () => {
       expect(estimate.backlogTasks).toBe(3);
     });
 
-    it("should handle features without tasks", () => {
-      const features = [{ status: "active" }, { status: "backlog" }];
+    it('should handle features without tasks', () => {
+      const features = [{ status: 'active' }, { status: 'backlog' }];
 
       const estimate = calculator.estimateCompletionTime(features);
 
@@ -466,19 +466,19 @@ describe("ProgressCalculator", () => {
     });
   });
 
-  describe("edge cases", () => {
-    it("should handle null and undefined inputs gracefully", () => {
+  describe('edge cases', () => {
+    it('should handle null and undefined inputs gracefully', () => {
       expect(() => calculator.calculateProgress(null)).not.toThrow();
       expect(() => calculator.calculateProgress(undefined)).not.toThrow();
       expect(() => calculator.calculateOverallProgress(null)).not.toThrow();
       expect(() => calculator.getNextAvailableTask({})).not.toThrow();
     });
 
-    it("should handle malformed task data", () => {
+    it('should handle malformed task data', () => {
       const feature = {
         tasks: [
-          { status: "complete" },
-          { status: "invalid_status" },
+          { status: 'complete' },
+          { status: 'invalid_status' },
           null,
           undefined,
           {},
@@ -492,9 +492,9 @@ describe("ProgressCalculator", () => {
       expect(progress.completed).toBe(1); // Only the complete task
     });
 
-    it("should handle circular references safely", () => {
+    it('should handle circular references safely', () => {
       const feature = {
-        tasks: [{ status: "complete" }],
+        tasks: [{ status: 'complete' }],
       };
 
       // Create circular reference

@@ -1,10 +1,10 @@
-const WorkflowStateManager = require("../lib/workflow-state-manager");
-const ConfigManager = require("../lib/config-manager");
-const SpecParser = require("../lib/feature-parser");
-const fs = require("fs").promises;
-const path = require("path");
+const WorkflowStateManager = require('../lib/workflow-state-manager');
+const ConfigManager = require('../lib/config-manager');
+const SpecParser = require('../lib/feature-parser');
+const fs = require('fs').promises;
+const path = require('path');
 
-describe("WorkflowStateManager Integration", () => {
+describe('WorkflowStateManager Integration', () => {
   let stateManager;
   let configManager;
   let specParser;
@@ -23,16 +23,16 @@ describe("WorkflowStateManager Integration", () => {
     await stateManager.initialize();
   });
 
-  describe("Real Project Integration", () => {
-    test("should initialize with real project structure", async () => {
-      expect(stateManager.stateDir).toContain(".asd/state");
+  describe('Real Project Integration', () => {
+    test('should initialize with real project structure', async () => {
+      expect(stateManager.stateDir).toContain('.asd/state');
 
       // Check that state files exist
       const stateFiles = [
-        "assignments.json",
-        "progress.json",
-        "handoffs.json",
-        "metadata.json",
+        'assignments.json',
+        'progress.json',
+        'handoffs.json',
+        'metadata.json',
       ];
       for (const file of stateFiles) {
         const filePath = path.join(stateManager.stateDir, file);
@@ -40,7 +40,7 @@ describe("WorkflowStateManager Integration", () => {
       }
     });
 
-    test("should calculate real project progress", async () => {
+    test('should calculate real project progress', async () => {
       const progress = await stateManager.getProjectProgress();
 
       expect(progress.overall).toBeDefined();
@@ -50,7 +50,7 @@ describe("WorkflowStateManager Integration", () => {
       expect(progress.overall.completion_percentage).toBeLessThanOrEqual(100);
     });
 
-    test("should work with real spec files", async () => {
+    test('should work with real spec files', async () => {
       const specs = specParser.getSpecs();
 
       if (specs.length > 0) {
@@ -66,7 +66,7 @@ describe("WorkflowStateManager Integration", () => {
       }
     });
 
-    test("should handle task assignment workflow", async () => {
+    test('should handle task assignment workflow', async () => {
       const specs = specParser.getSpecs();
 
       if (specs.length > 0) {
@@ -79,8 +79,8 @@ describe("WorkflowStateManager Integration", () => {
           const assignResult = await stateManager.assignTask(
             testSpec.id,
             testTask.id,
-            "test-agent",
-            { priority: "P2" }
+            'test-agent',
+            { priority: 'P2' }
           );
 
           expect(assignResult.success).toBe(true);
@@ -93,7 +93,7 @@ describe("WorkflowStateManager Integration", () => {
           const completeResult = await stateManager.completeTask(
             testSpec.id,
             testTask.id,
-            { notes: "Test completion" }
+            { notes: 'Test completion' }
           );
 
           expect(completeResult.success).toBe(true);
@@ -101,7 +101,7 @@ describe("WorkflowStateManager Integration", () => {
       }
     });
 
-    test("should meet performance requirements", async () => {
+    test('should meet performance requirements', async () => {
       const operations = [
         () => stateManager.getCurrentAssignments(),
         () => stateManager.getProjectProgress(),
@@ -116,7 +116,7 @@ describe("WorkflowStateManager Integration", () => {
       }
     });
 
-    test("should validate state consistency", async () => {
+    test('should validate state consistency', async () => {
       const validation = await stateManager.validateState();
 
       expect(validation.isValid).toBe(true);
@@ -125,20 +125,20 @@ describe("WorkflowStateManager Integration", () => {
     });
   });
 
-  describe("State File Management", () => {
-    test("should create and manage state files", async () => {
-      const stateTypes = ["assignments", "progress", "handoffs", "metadata"];
+  describe('State File Management', () => {
+    test('should create and manage state files', async () => {
+      const stateTypes = ['assignments', 'progress', 'handoffs', 'metadata'];
 
       for (const stateType of stateTypes) {
         const state = await stateManager.loadState(stateType);
         expect(state).toBeDefined();
-        expect(typeof state).toBe("object");
+        expect(typeof state).toBe('object');
       }
     });
 
-    test("should handle cache operations", async () => {
+    test('should handle cache operations', async () => {
       // Load state to populate cache
-      await stateManager.loadState("assignments");
+      await stateManager.loadState('assignments');
 
       const cacheStats = stateManager.getCacheStats();
       expect(cacheStats.size).toBeGreaterThan(0);
@@ -151,7 +151,7 @@ describe("WorkflowStateManager Integration", () => {
   });
 });
 
-describe("WorkflowStateManager CLI Integration", () => {
+describe('WorkflowStateManager CLI Integration', () => {
   let stateManager;
 
   beforeAll(async () => {
@@ -163,7 +163,7 @@ describe("WorkflowStateManager CLI Integration", () => {
     await stateManager.initialize();
   });
 
-  test("should integrate with CLI command patterns", async () => {
+  test('should integrate with CLI command patterns', async () => {
     // Test CLI-style operations that the bin/asd would perform
 
     // Get next available assignments (like 'asd next' command)
@@ -180,12 +180,12 @@ describe("WorkflowStateManager CLI Integration", () => {
     expect(handoffs.ready_handoffs).toBeDefined();
   });
 
-  test("should handle FEAT-014 specific operations", async () => {
+  test('should handle FEAT-014 specific operations', async () => {
     // Test operations specific to FEAT-014 (our current feature)
-    const feat014Progress = await stateManager.getSpecProgress("FEAT-014");
+    const feat014Progress = await stateManager.getSpecProgress('FEAT-014');
 
     if (feat014Progress.spec_id) {
-      expect(feat014Progress.spec_id).toBe("FEAT-014");
+      expect(feat014Progress.spec_id).toBe('FEAT-014');
       expect(feat014Progress.total_tasks).toBeGreaterThanOrEqual(0);
     }
   });

@@ -1,9 +1,9 @@
-const ConfigManager = require("../lib/config-manager");
-const SpecParser = require("../lib/feature-parser");
-const ProgressCalculator = require("../lib/progress-calc");
-const UIComponents = require("../lib/ui-components");
+const ConfigManager = require('../lib/config-manager');
+const SpecParser = require('../lib/feature-parser');
+const ProgressCalculator = require('../lib/progress-calc');
+const UIComponents = require('../lib/ui-components');
 
-describe("Performance Tests", () => {
+describe('Performance Tests', () => {
   let testDir;
 
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe("Performance Tests", () => {
     global.cleanupTestDir();
   });
 
-  describe("Large Dataset Performance", () => {
+  describe('Large Dataset Performance', () => {
     const LARGE_DATASET_SIZE = 500;
     const PERFORMANCE_THRESHOLD = {
       load: 5000, // 5 seconds for loading
@@ -32,9 +32,9 @@ describe("Performance Tests", () => {
       console.log(`Creating dataset with ${size} specifications...`);
 
       const specs = [];
-      const statuses = ["active", "backlog", "done"];
-      const types = ["SPEC", "FEAT", "BUG", "SPIKE", "MAINT"];
-      const priorities = ["P0", "P1", "P2", "P3"];
+      const statuses = ['active', 'backlog', 'done'];
+      const types = ['SPEC', 'FEAT', 'BUG', 'SPIKE', 'MAINT'];
+      const priorities = ['P0', 'P1', 'P2', 'P3'];
 
       for (let i = 1; i <= size; i++) {
         const type = types[i % types.length];
@@ -42,23 +42,23 @@ describe("Performance Tests", () => {
         const priority = priorities[i % priorities.length];
         const taskCount = Math.floor(Math.random() * 8) + 2; // 2-10 tasks
 
-        let tasksContent = "";
+        let tasksContent = '';
         for (let j = 1; j <= taskCount; j++) {
-          const taskStatus = ["complete", "in_progress", "ready", "blocked"][
+          const taskStatus = ['complete', 'in_progress', 'ready', 'blocked'][
             j % 4
           ];
           const emoji = {
-            complete: "✅",
-            in_progress: "🔄",
-            ready: "⏳",
-            blocked: "⏸️",
+            complete: '✅',
+            in_progress: '🔄',
+            ready: '⏳',
+            blocked: '⏸️',
           }[taskStatus];
 
           tasksContent += `### **${emoji} TASK-${j
             .toString()
             .padStart(
               3,
-              "0"
+              '0'
             )}** 🤖 **Task ${j} for ${type}-${i}** | Agent: Developer-${
             (j % 3) + 1
           }\n`;
@@ -69,17 +69,17 @@ describe("Performance Tests", () => {
             for (let k = 1; k <= subtaskCount; k++) {
               const completed = Math.random() > 0.5;
               tasksContent += `- [${
-                completed ? "x" : " "
+                completed ? 'x' : ' '
               }] Subtask ${k} for task ${j}\n`;
             }
           }
 
-          tasksContent += "\n";
+          tasksContent += '\n';
         }
 
         const content = `# ${type}-${i
           .toString()
-          .padStart(3, "0")}: Performance Test Specification ${i}
+          .padStart(3, '0')}: Performance Test Specification ${i}
 
 **Priority:** ${priority}
 
@@ -116,7 +116,7 @@ ${tasksContent}
         specs.push({
           path: `docs/specs/${status}/${type}-${i
             .toString()
-            .padStart(3, "0")}-perf-test.md`,
+            .padStart(3, '0')}-perf-test.md`,
           content,
         });
       }
@@ -127,10 +127,10 @@ ${tasksContent}
         global.createTestFile(spec.path, spec.content);
       }
 
-      console.log("Dataset creation complete");
+      console.log('Dataset creation complete');
     }
 
-    it("should load large dataset within performance threshold", async () => {
+    it('should load large dataset within performance threshold', async () => {
       const configManager = new ConfigManager(testDir);
       const specParser = new SpecParser(configManager);
 
@@ -146,7 +146,7 @@ ${tasksContent}
 
       const specs = specParser.getSpecs();
 
-      console.log("Performance Results:");
+      console.log('Performance Results:');
       console.log(`- Loaded ${specs.length} specifications`);
       console.log(`- Load time: ${loadTime}ms`);
       console.log(`- Memory used: ${memoryUsed.toFixed(2)}MB`);
@@ -156,7 +156,7 @@ ${tasksContent}
       expect(memoryUsed).toBeLessThan(PERFORMANCE_THRESHOLD.memory);
     });
 
-    it("should calculate progress for large dataset efficiently", async () => {
+    it('should calculate progress for large dataset efficiently', async () => {
       const configManager = new ConfigManager(testDir);
       const specParser = new SpecParser(configManager);
       const progressCalc = new ProgressCalculator();
@@ -174,7 +174,7 @@ ${tasksContent}
 
       const progressTime = Date.now() - startTime;
 
-      console.log("Progress Calculation Results:");
+      console.log('Progress Calculation Results:');
       console.log(`- Processed ${specs.length} specifications`);
       console.log(`- Calculation time: ${progressTime}ms`);
       console.log(`- Overall progress: ${overallProgress.percentage}%`);
@@ -186,7 +186,7 @@ ${tasksContent}
       expect(overallProgress.percentage).toBeLessThanOrEqual(100);
     });
 
-    it("should generate UI components for large dataset efficiently", async () => {
+    it('should generate UI components for large dataset efficiently', async () => {
       const configManager = new ConfigManager(testDir);
       const specParser = new SpecParser(configManager);
       const progressCalc = new ProgressCalculator();
@@ -211,7 +211,7 @@ ${tasksContent}
 
       const uiTime = Date.now() - startTime;
 
-      console.log("UI Generation Results:");
+      console.log('UI Generation Results:');
       console.log(`- Generated ${featureListItems.length} feature list items`);
       console.log(`- Generated ${taskLists.length} task lists`);
       console.log(`- UI generation time: ${uiTime}ms`);
@@ -221,7 +221,7 @@ ${tasksContent}
       expect(uiTime).toBeLessThan(PERFORMANCE_THRESHOLD.ui);
     });
 
-    it("should handle memory efficiently with repeated operations", async () => {
+    it('should handle memory efficiently with repeated operations', async () => {
       const configManager = new ConfigManager(testDir);
       const specParser = new SpecParser(configManager);
       const progressCalc = new ProgressCalculator();
@@ -236,7 +236,7 @@ ${tasksContent}
       for (let i = 0; i < iterations; i++) {
         // Simulate typical operations
         // const _stats = specParser.getStats();
-        const activeSpecs = specParser.getSpecsByStatus("active");
+        const activeSpecs = specParser.getSpecsByStatus('active');
         // const _p0Specs = specParser.getSpecsByPriority('P0');
 
         activeSpecs.forEach((spec) => {
@@ -255,7 +255,7 @@ ${tasksContent}
       const memoryGrowth =
         (endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024; // MB
 
-      console.log("Memory Test Results:");
+      console.log('Memory Test Results:');
       console.log(`- Performed ${iterations} iterations`);
       console.log(`- Memory growth: ${memoryGrowth.toFixed(2)}MB`);
 
@@ -263,7 +263,7 @@ ${tasksContent}
       expect(memoryGrowth).toBeLessThan(10);
     });
 
-    it("should handle concurrent access efficiently", async () => {
+    it('should handle concurrent access efficiently', async () => {
       const configManager = new ConfigManager(testDir);
       const specParser = new SpecParser(configManager);
 
@@ -274,10 +274,10 @@ ${tasksContent}
 
       // Simulate concurrent access patterns
       const concurrentOperations = [
-        () => specParser.getSpecsByStatus("active"),
-        () => specParser.getSpecsByStatus("backlog"),
-        () => specParser.getSpecsByPriority("P0"),
-        () => specParser.getSpecsByPriority("P1"),
+        () => specParser.getSpecsByStatus('active'),
+        () => specParser.getSpecsByStatus('backlog'),
+        () => specParser.getSpecsByPriority('P0'),
+        () => specParser.getSpecsByPriority('P1'),
         () => specParser.getStats(),
         () => specParser.getCriticalReady(),
       ];
@@ -294,7 +294,7 @@ ${tasksContent}
 
       const concurrentTime = Date.now() - startTime;
 
-      console.log("Concurrent Access Results:");
+      console.log('Concurrent Access Results:');
       console.log(`- Performed ${promises.length} concurrent operations`);
       console.log(`- Total time: ${concurrentTime}ms`);
 
@@ -302,15 +302,15 @@ ${tasksContent}
     });
   });
 
-  describe("Stress Testing", () => {
-    it("should handle malformed files in large datasets gracefully", async () => {
+  describe('Stress Testing', () => {
+    it('should handle malformed files in large datasets gracefully', async () => {
       // Create mix of valid and malformed files
       const validSpecs = 100;
       const malformedSpecs = 50;
 
       // Create valid specs
       for (let i = 1; i <= validSpecs; i++) {
-        const content = `# SPEC-${i.toString().padStart(3, "0")}: Valid Spec
+        const content = `# SPEC-${i.toString().padStart(3, '0')}: Valid Spec
 **Priority:** P1
 ## Description
 Valid specification.
@@ -319,19 +319,19 @@ Valid specification.
 Valid task.`;
 
         global.createTestFile(
-          `docs/specs/active/SPEC-${i.toString().padStart(3, "0")}-valid.md`,
+          `docs/specs/active/SPEC-${i.toString().padStart(3, '0')}-valid.md`,
           content
         );
       }
 
       // Create malformed specs
       const malformedContents = [
-        "Invalid content without proper format",
-        "# No ID spec\nContent without spec ID",
-        "# INVALID-001\nInvalid type",
-        "", // Empty file
-        "Corrupted\nFile\nContent\n{broken",
-        "# SPEC-999\n**Priority:** INVALID\n## Broken\nBroken format",
+        'Invalid content without proper format',
+        '# No ID spec\nContent without spec ID',
+        '# INVALID-001\nInvalid type',
+        '', // Empty file
+        'Corrupted\nFile\nContent\n{broken',
+        '# SPEC-999\n**Priority:** INVALID\n## Broken\nBroken format',
       ];
 
       for (let i = 1; i <= malformedSpecs; i++) {
@@ -342,7 +342,7 @@ Valid task.`;
       const configManager = new ConfigManager(testDir);
       const specParser = new SpecParser(configManager);
 
-      const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 
       const startTime = Date.now();
 
@@ -351,7 +351,7 @@ Valid task.`;
       const loadTime = Date.now() - startTime;
       const specs = specParser.getSpecs();
 
-      console.log("Stress Test Results:");
+      console.log('Stress Test Results:');
       console.log(`- Valid specs loaded: ${specs.length}`);
       console.log(`- Load time with errors: ${loadTime}ms`);
       console.log(`- Warnings generated: ${consoleSpy.mock.calls.length}`);
@@ -368,23 +368,23 @@ Valid task.`;
       consoleSpy.mockRestore();
     });
 
-    it("should handle extremely large individual specifications", async () => {
+    it('should handle extremely large individual specifications', async () => {
       // Create a specification with many tasks and subtasks
       const largeTasks = [];
       for (let i = 1; i <= 100; i++) {
         largeTasks.push(
           `### **TASK-${i
             .toString()
-            .padStart(3, "0")}** 🤖 **Task ${i}** | Agent: Developer-${i % 10}`
+            .padStart(3, '0')}** 🤖 **Task ${i}** | Agent: Developer-${i % 10}`
         );
 
         // Add subtasks to every task
         for (let j = 1; j <= 20; j++) {
           largeTasks.push(
-            `- [${j % 2 === 0 ? "x" : " "}] Subtask ${j} for task ${i}`
+            `- [${j % 2 === 0 ? 'x' : ' '}] Subtask ${j} for task ${i}`
           );
         }
-        largeTasks.push("");
+        largeTasks.push('');
       }
 
       const largeContent = `# SPEC-LARGE: Extremely Large Specification
@@ -395,32 +395,32 @@ Valid task.`;
 
 This is an extremely large specification with many tasks and subtasks to test parsing performance on individual large files.
 
-${"This specification has a very long description. ".repeat(100)}
+${'This specification has a very long description. '.repeat(100)}
 
 ## Problem Statement
 
-${"Large specifications can cause performance issues. ".repeat(50)}
+${'Large specifications can cause performance issues. '.repeat(50)}
 
 ## Solution Approach
 
-${"We need to handle large specifications efficiently. ".repeat(50)}
+${'We need to handle large specifications efficiently. '.repeat(50)}
 
 ## Tasks
 
-${largeTasks.join("\n")}
+${largeTasks.join('\n')}
 
 ## Testing Checklist
 
-${Array.from({ length: 50 }, (_, i) => `- [ ] Test item ${i + 1}`).join("\n")}
+${Array.from({ length: 50 }, (_, i) => `- [ ] Test item ${i + 1}`).join('\n')}
 
 ## Required Reading
 
 ${Array.from({ length: 20 }, (_, i) => `- docs/reference/doc-${i + 1}.md`).join(
-  "\n"
+  '\n'
 )}`;
 
       global.createTestFile(
-        "docs/specs/active/SPEC-LARGE-test.md",
+        'docs/specs/active/SPEC-LARGE-test.md',
         largeContent
       );
 
@@ -433,9 +433,9 @@ ${Array.from({ length: 20 }, (_, i) => `- docs/reference/doc-${i + 1}.md`).join(
 
       const loadTime = Date.now() - startTime;
       const specs = specParser.getSpecs();
-      const largeSpec = specs.find((s) => s.id === "SPEC-LARGE");
+      const largeSpec = specs.find((s) => s.id === 'SPEC-LARGE');
 
-      console.log("Large Spec Test Results:");
+      console.log('Large Spec Test Results:');
       console.log(`- Parse time: ${loadTime}ms`);
       console.log(`- Tasks parsed: ${largeSpec?.tasks?.length || 0}`);
       console.log(
@@ -464,10 +464,10 @@ ${Array.from({ length: 20 }, (_, i) => `- docs/reference/doc-${i + 1}.md`).join(
     });
   });
 
-  describe("Node.js Version Compatibility", () => {
-    it("should work with current Node.js version features", () => {
+  describe('Node.js Version Compatibility', () => {
+    it('should work with current Node.js version features', () => {
       const nodeVersion = process.version;
-      const majorVersion = parseInt(nodeVersion.slice(1).split(".")[0]);
+      const majorVersion = parseInt(nodeVersion.slice(1).split('.')[0]);
 
       console.log(`Testing on Node.js ${nodeVersion}`);
 
@@ -482,8 +482,8 @@ ${Array.from({ length: 20 }, (_, i) => `- docs/reference/doc-${i + 1}.md`).join(
         expect(value).toBe(1);
 
         // Nullish coalescing
-        const defaultValue = null ?? "default";
-        expect(defaultValue).toBe("default");
+        const defaultValue = null ?? 'default';
+        expect(defaultValue).toBe('default');
 
         // Array methods
         const arr = [1, 2, 3];

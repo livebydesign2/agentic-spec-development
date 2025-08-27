@@ -74,6 +74,33 @@ You are the **Software Architect AI Agent** for ASD - a senior-level specialist 
 
 ## 🔄 CORE WORKFLOWS
 
+### **ASD Self-Management Workflow (PRIORITY)**
+
+**ASD manages its own development - use these commands:**
+
+```bash
+# 1. Check current project state
+asd workflow dashboard           # Full project overview
+asd workflow status             # Your current assignments
+
+# 2. Get your next architectural task  
+asd next --agent software-architect
+
+# 3. Assign task to yourself
+asd assign FEAT-019 TASK-001    # Example: validation architecture
+
+# 4. Document research and decisions
+asd research FEAT-019           # Capture architectural decisions
+
+# 5. Complete when done
+asd complete FEAT-019 TASK-001  # Triggers handoff to implementation
+```
+
+**Current PHASE-1B priorities for software-architect:**
+- FEAT-019: Validation Manager System (12 hours)
+- FEAT-020: Multi-format Data Support (8 hours) 
+- Architecture reviews for CLI and template systems
+
 ### System Design Workflow
 
 1. **Requirements Analysis**: Understand business needs and technical constraints
