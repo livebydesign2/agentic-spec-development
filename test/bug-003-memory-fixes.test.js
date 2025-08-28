@@ -108,13 +108,13 @@ Another test specification.
     it('should cache parsed specifications', async () => {
       const configManager = new ConfigManager(testDir);
       configManager.config.specCacheSize = 50; // Set cache size
-      
+
       const specParser = new SpecParser(configManager);
 
       // First load - should populate cache
       await specParser.loadSpecs();
       const specs1 = specParser.getSpecs();
-      
+
       expect(specs1.length).toBeGreaterThan(0);
 
       // Get initial stats
@@ -124,7 +124,7 @@ Another test specification.
       // Second load - should use cache
       await specParser.loadSpecs();
       const specs2 = specParser.getSpecs();
-      
+
       expect(specs2.length).toBe(specs1.length);
 
       // Check cache effectiveness
@@ -163,7 +163,7 @@ This spec has been modified to test cache invalidation.
       await specParser.loadSpecs();
       const modifiedSpecs = specParser.getSpecs();
       const modifiedSpec001 = modifiedSpecs.find(s => s.id === 'SPEC-001');
-      
+
       expect(modifiedSpec001).toBeDefined();
       expect(modifiedSpec001.priority).toBe('P0'); // Should reflect the change
     });
@@ -182,14 +182,14 @@ Test spec ${i}`);
       }
 
       await specParser.loadSpecs();
-      
+
       const beforeMaintenance = specParser.getCacheStats();
       const cleanedUp = specParser.performCacheMaintenance();
       const afterMaintenance = specParser.getCacheStats();
 
       // Cache should be managed properly
       expect(afterMaintenance.cache_stats.size).toBeLessThanOrEqual(beforeMaintenance.cache_stats.maxSize);
-      
+
       // Generate cache report
       const report = specParser.generateCacheReport();
       expect(report).toContain('SPEC PARSER CACHE REPORT');
@@ -214,12 +214,12 @@ Test spec ${i}`);
 
         if (measurements >= 3) {
           monitor.stop();
-          
+
           const stats = monitor.getStats();
           expect(stats.monitoring).toBe(false);
           expect(stats.stats.totalSamples).toBe(3);
           expect(stats.memoryHistory.length).toBe(3);
-          
+
           done();
         }
       });
@@ -253,7 +253,7 @@ Test spec ${i}`);
       });
 
       const freedMB = monitor.triggerGarbageCollection('test');
-      
+
       // Should work if gc is available, otherwise return 0
       expect(typeof freedMB).toBe('number');
       expect(freedMB).toBeGreaterThanOrEqual(0);
@@ -283,7 +283,7 @@ Test spec ${i}`);
   describe('Memory Leak Prevention', () => {
     it('should handle repeated operations without excessive growth', async () => {
       const configManager = new ConfigManager(testDir);
-      
+
       // Create test files
       for (let i = 1; i <= 20; i++) {
         global.createTestFile(`docs/specs/active/REPEAT-${i.toString().padStart(3, '0')}-test.md`,
@@ -304,7 +304,7 @@ Repeat test ${i} for memory leak prevention.
       for (let i = 0; i < 10; i++) {
         await specParser.loadSpecs();
         const specs = specParser.getSpecs();
-        
+
         // Simulate typical operations
         specs.forEach(spec => {
           spec.tasks?.forEach(task => task.title);
@@ -334,7 +334,7 @@ Repeat test ${i} for memory leak prevention.
 
     it('should maintain performance with caching', async () => {
       const configManager = new ConfigManager(testDir);
-      
+
       // Create more test files
       for (let i = 1; i <= 50; i++) {
         global.createTestFile(`docs/specs/active/PERF-${i.toString().padStart(3, '0')}-test.md`,
@@ -390,7 +390,7 @@ Performance test specification ${i}.
       // Test report generation
       const cacheReport = cache.generateReport();
       const memoryReport = monitor.generateReport();
-      
+
       expect(cacheReport).toContain('LRU CACHE REPORT');
       expect(memoryReport).toContain('MEMORY USAGE REPORT');
     });

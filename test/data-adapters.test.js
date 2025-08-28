@@ -1,7 +1,7 @@
-const { 
-  DataAdapterFactory, 
-  JSONAdapter, 
-  YAMLAdapter, 
+const {
+  DataAdapterFactory,
+  JSONAdapter,
+  YAMLAdapter,
   MarkdownAdapter,
   FormatDetector,
   SchemaValidator,
@@ -95,7 +95,7 @@ describe('Multi-Format Data Support (FEAT-020)', () => {
       });
 
       const spec = adapter.parseContent(jsonContent);
-      
+
       expect(spec.id).toBe('FEAT-001');
       expect(spec.type).toBe('FEAT');
       expect(spec.title).toBe('Test Feature');
@@ -107,7 +107,7 @@ describe('Multi-Format Data Support (FEAT-020)', () => {
 
     test('handles malformed JSON', () => {
       const malformedJson = '{ "id": "FEAT-001", "title": "Test" invalid json }';
-      
+
       expect(() => adapter.parseContent(malformedJson)).toThrow('Invalid JSON format');
     });
 
@@ -209,7 +209,7 @@ tasks:
 `;
 
       const spec = adapter.parseContent(yamlContent);
-      
+
       expect(spec.id).toBe('FEAT-001');
       expect(spec.type).toBe('FEAT');
       expect(spec.title).toBe('Test Feature');
@@ -223,7 +223,7 @@ id: FEAT-001
 title: Test
   invalid: yaml: structure
 `;
-      
+
       expect(() => adapter.parseContent(malformedYaml)).toThrow('Invalid YAML format');
     });
 
@@ -245,7 +245,7 @@ title: Test
       };
 
       const serialized = adapter.serialize(spec);
-      
+
       expect(serialized).toContain('id: FEAT-002');
       expect(serialized).toContain('title: YAML Feature');
       expect(serialized).toContain('tasks:');
@@ -278,7 +278,7 @@ environment: Chrome 91, Windows 10
 `;
 
       const spec = adapter.parseContent(bugYaml);
-      
+
       expect(spec.type).toBe('BUG');
       expect(spec.bugSeverity).toBe('high');
       expect(spec.reproductionSteps).toContain('Navigate to page');
@@ -482,7 +482,7 @@ A feature for testing conversions
 
     test('converts JSON to YAML', async () => {
       const outputFile = path.join(tempDir, 'converted.yaml');
-      
+
       const result = await converter.convertFile(testFiles.json, outputFile, {
         sourceFormat: 'json',
         targetFormat: 'yaml'
@@ -499,14 +499,14 @@ A feature for testing conversions
 
     test('converts YAML to JSON', async () => {
       const outputFile = path.join(tempDir, 'converted.json');
-      
+
       const result = await converter.convertFile(testFiles.yaml, outputFile, {
         sourceFormat: 'yaml',
         targetFormat: 'json'
       });
 
       expect(result.success).toBe(true);
-      
+
       const convertedContent = await fs.readFile(outputFile, 'utf-8');
       const parsed = JSON.parse(convertedContent);
       expect(parsed.id).toBe('FEAT-001');
@@ -515,7 +515,7 @@ A feature for testing conversions
 
     test('auto-detects source and target formats', async () => {
       const outputFile = path.join(tempDir, 'auto-converted.yaml');
-      
+
       const result = await converter.convertFile(testFiles.json, outputFile);
 
       expect(result.success).toBe(true);
@@ -525,7 +525,7 @@ A feature for testing conversions
 
     test('performs roundtrip validation', async () => {
       const jsonContent = await fs.readFile(testFiles.json, 'utf-8');
-      
+
       const validation = await converter.validateConversion(jsonContent, 'json', 'yaml');
 
       expect(validation.isValid).toBe(true);
@@ -535,9 +535,9 @@ A feature for testing conversions
     test('handles conversion errors gracefully', async () => {
       const invalidJson = path.join(tempDir, 'invalid.json');
       await fs.writeFile(invalidJson, '{ invalid json }');
-      
+
       const outputFile = path.join(tempDir, 'failed-conversion.yaml');
-      
+
       const result = await converter.convertFile(invalidJson, outputFile);
 
       expect(result.success).toBe(false);
@@ -546,7 +546,7 @@ A feature for testing conversions
 
     test('batch converts multiple files', async () => {
       const filePaths = [testFiles.json, testFiles.yaml];
-      
+
       const results = await converter.convertBatch(filePaths, {
         targetFormat: 'json',
         outputDir: tempDir,
@@ -626,7 +626,7 @@ A feature for testing conversions
 
       // Convert through all format combinations
       const formats = ['json', 'yaml', 'markdown'];
-      
+
       for (const sourceFormat of formats) {
         for (const targetFormat of formats) {
           if (sourceFormat !== targetFormat) {
@@ -635,7 +635,7 @@ A feature for testing conversions
 
             // Serialize to source format
             const sourceContent = sourceAdapter.serialize(originalSpec);
-            
+
             // Convert to target format
             const convertResult = await factory.convertContent(sourceContent, sourceFormat, targetFormat);
             expect(convertResult.sourceFormat).toBe(sourceFormat);
@@ -643,7 +643,7 @@ A feature for testing conversions
 
             // Parse back to verify data preservation
             const targetSpec = targetAdapter.parseContent(convertResult.convertedContent);
-            
+
             // Verify core fields are preserved
             expect(targetSpec.id).toBe(originalSpec.id);
             expect(targetSpec.title).toBe(originalSpec.title);

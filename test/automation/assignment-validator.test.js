@@ -10,7 +10,7 @@ describe('AssignmentValidator', function() {
 
   beforeEach(function() {
     mockConfigManager = {};
-    
+
     mockTaskRouter = {
       getAllTasks: sinon.stub(),
       validateAgentCapability: sinon.stub(),
@@ -360,7 +360,7 @@ describe('AssignmentValidator', function() {
       const auditLog = validator.getAuditLog();
       expect(auditLog).to.be.an('array');
       expect(auditLog.length).to.be.greaterThan(0);
-      
+
       const events = auditLog.map(entry => entry.event);
       expect(events).to.include('assignment_validation_started');
       expect(events).to.include('assignment_validation_completed');
