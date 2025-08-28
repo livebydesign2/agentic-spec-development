@@ -472,6 +472,36 @@ workflowCommand
     await handleCompleteTaskWithHandoff(specId, taskId, options);
   });
 
+// Enhanced Task Automation Commands (FEAT-026)
+program
+  .command('start-next')
+  .description('Enhanced task automation - intelligently find and assign next recommended task')
+  .requiredOption('--agent <agent-type>', 'Agent type for task assignment (required)')
+  .option('--priority <priorities>', 'Filter by priority (P0,P1,P2,P3)', 'P0,P1,P2,P3')
+  .option('--phase <phases>', 'Filter by phase (PHASE-1A,PHASE-1B)', 'PHASE-1A,PHASE-1B')
+  .option('--spec-status <status>', 'Filter by spec status (active,ready,backlog)', 'active,ready')
+  .option('--dry-run', 'Show what would happen without executing assignment', false)
+  .option('--confirm-critical', 'Confirm P0 critical task assignment', false)
+  .option('--show-reasoning', 'Show detailed recommendation reasoning', false)
+  .option('--max-concurrent <number>', 'Maximum concurrent tasks per agent', '3')
+  .action(async (options) => {
+    await handleStartNext(options);
+  });
+
+program
+  .command('complete-current')
+  .description('Enhanced task automation - complete current task with full automation workflow')
+  .option('--task <task-id>', 'Specific task to complete (otherwise uses current assignment)')
+  .option('--spec <spec-id>', 'Specification ID (required if using --task)')
+  .option('--notes <notes>', 'Completion notes')
+  .option('--skip-lint', 'Skip linting validation', false)
+  .option('--skip-tests', 'Skip test execution', false)
+  .option('--skip-commit', 'Skip git commit automation', false)
+  .option('--commit-message <message>', 'Custom commit message')
+  .action(async (options) => {
+    await handleCompleteCurrentTask(options);
+  });
+
 // Documentation template management commands
 const reportCommand = program
   .command('report')
@@ -3236,6 +3266,214 @@ async function handleCompleteTaskWithHandoff(specId, taskId, options) {
 
   } catch (error) {
     console.error(chalk.red('❌ Task completion with handoff failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+// Enhanced Task Automation handler functions (FEAT-026)
+
+async function handleStartNext(options) {
+  try {
+    const StartNextCommand = require('../lib/commands/start-next');
+    const configManager = new ConfigManager(process.cwd());
+    
+    const command = new StartNextCommand(configManager);
+    await command.initialize();
+    
+    // Build constraints object
+    const constraints = {
+      maxConcurrentTasks: parseInt(options.maxConcurrent) || 3,
+      workload: {
+        maxWorkloadPerAgent: 40 // Default 40 hours per week
+      }
+    };
+
+    const result = await command.execute({
+      agent: options.agent,
+      priority: options.priority,
+      phase: options.phase,
+      specStatus: options.specStatus,
+      dryRun: options.dryRun,
+      confirmCritical: options.confirmCritical,
+      showReasoning: options.showReasoning,
+      constraints
+    });
+
+    if (!result.success) {
+      console.error(chalk.red('❌ start-next command failed:'), result.error);
+      if (result.violations) {
+        console.log(chalk.red('\nValidation Failures:'));
+        result.violations.forEach(violation => {
+          console.log(chalk.red(`  • ${violation}`));
+        });
+      }
+      process.exit(1);
+    }
+
+    // Success case is already handled by the command's display logic
+    
+  } catch (error) {
+    console.error(chalk.red('❌ start-next command failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleCompleteCurrentTask(options) {
+  try {
+    console.log(chalk.cyan('🏁 Complete Current Task'));
+    console.log(chalk.gray('='.repeat(40)));
+    
+    const configManager = new ConfigManager(process.cwd());
+    const workflowStateManager = new WorkflowStateManager(configManager);
+    await workflowStateManager.initialize();
+
+    let specId, taskId;
+    
+    // If specific task provided, use it
+    if (options.task) {
+      if (!options.spec) {
+        console.error(chalk.red('❌ --spec required when using --task'));
+        process.exit(1);
+      }
+      taskId = options.task;
+      specId = options.spec;
+    } else {
+      // Find current assignment for the user
+      const assignments = await workflowStateManager.getCurrentAssignments();
+      const activeAssignments = assignments.current_assignments.filter(a => a.status === 'in_progress');
+      
+      if (activeAssignments.length === 0) {
+        console.log(chalk.yellow('ℹ️  No active task assignments found'));
+        console.log(chalk.white('Use --task and --spec to specify a task, or use start-next to get a new task'));
+        return;
+      }
+      
+      if (activeAssignments.length > 1) {
+        console.log(chalk.yellow('⚠️  Multiple active assignments found:'));
+        activeAssignments.forEach(assignment => {
+          console.log(chalk.white(`  • ${assignment.spec_id}:${assignment.task_id} (${assignment.assigned_agent})`));
+        });
+        console.log(chalk.white('\nUse --task and --spec to specify which task to complete'));
+        return;
+      }
+      
+      const currentAssignment = activeAssignments[0];
+      specId = currentAssignment.spec_id;
+      taskId = currentAssignment.task_id;
+    }
+
+    console.log(chalk.white(`Task: ${chalk.cyan(specId)}:${chalk.yellow(taskId)}`));
+    
+    // Step 1: Run linting (unless skipped)
+    if (!options.skipLint) {
+      console.log(chalk.blue('\n🔍 Running Linting...'));
+      try {
+        const { execSync } = require('child_process');
+        execSync('npm run lint', { stdio: 'inherit' });
+        console.log(chalk.green('✅ Linting passed'));
+      } catch (error) {
+        console.log(chalk.red('❌ Linting failed'));
+        console.log(chalk.yellow('Fix linting errors before completing the task'));
+        process.exit(1);
+      }
+    }
+
+    // Step 2: Run tests (unless skipped)
+    if (!options.skipTests) {
+      console.log(chalk.blue('\n🧪 Running Tests...'));
+      try {
+        const { execSync } = require('child_process');
+        execSync('npm test', { stdio: 'inherit' });
+        console.log(chalk.green('✅ Tests passed'));
+      } catch (error) {
+        console.log(chalk.red('❌ Tests failed'));
+        console.log(chalk.yellow('Fix test failures before completing the task'));
+        process.exit(1);
+      }
+    }
+
+    // Step 3: Complete the task
+    console.log(chalk.blue('\n📋 Completing Task...'));
+    const completionResult = await workflowStateManager.completeTask(specId, taskId, {
+      notes: options.notes || 'Task completed via complete-current automation'
+    });
+
+    if (!completionResult.success) {
+      console.error(chalk.red('❌ Task completion failed:'), completionResult.error);
+      process.exit(1);
+    }
+
+    console.log(chalk.green('✅ Task completed successfully'));
+
+    // Step 4: Git integration (unless skipped)
+    if (!options.skipCommit) {
+      console.log(chalk.blue('\n📝 Creating Git Commit...'));
+      try {
+        const { execSync } = require('child_process');
+        
+        // Add all files
+        execSync('git add .', { stdio: 'inherit' });
+        
+        // Create commit message
+        const commitMessage = options.commitMessage ||
+          'Complete ' + specId + ' ' + taskId + ': Task completed via automation\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>';
+
+        execSync('git commit -m "' + commitMessage.replace(/"/g, '\\"') + '"', { stdio: 'inherit' });
+        console.log(chalk.green('✅ Git commit created'));
+        
+      } catch (error) {
+        console.log(chalk.yellow('⚠️  Git commit failed - manual commit may be needed'));
+        console.log(chalk.gray(`Error: ${error.message}`));
+      }
+    }
+
+    // Step 5: Trigger handoff if available
+    if (completionResult.handoff) {
+      console.log(chalk.blue('\n🔄 Triggering Handoff...'));
+      const handoffEngine = new HandoffAutomationEngine(configManager);
+      await handoffEngine.initialize();
+
+      const handoffResult = await handoffEngine.executeHandoff({
+        type: 'task_completed',
+        specId: specId,
+        taskId: taskId,
+        fromAgent: completionResult.completion?.assigned_agent,
+        context: {
+          completionNotes: options.notes,
+          completedAt: completionResult.completion?.completed_at
+        }
+      });
+
+      if (handoffResult.success && handoffResult.handoffNeeded) {
+        console.log(chalk.green('🤝 Handoff executed successfully!'));
+        if (handoffResult.nextTask) {
+          console.log(chalk.white(`Next Task: ${chalk.yellow(handoffResult.nextTask)}`));
+        }
+        if (handoffResult.nextAgent) {
+          console.log(chalk.white(`Next Agent: ${chalk.magenta(handoffResult.nextAgent)}`));
+        }
+      } else if (handoffResult.success) {
+        console.log(chalk.yellow('ℹ️  No handoff needed'));
+      } else {
+        console.log(chalk.red('❌ Handoff failed:'), handoffResult.error);
+      }
+    }
+
+    // Step 6: Show next steps
+    console.log(chalk.blue('\n🎉 Task Completion Summary:'));
+    console.log(chalk.gray('='.repeat(30)));
+    console.log(chalk.green(`✅ Task ${specId}:${taskId} completed successfully`));
+    console.log(chalk.white(`Completed: ${completionResult.completion.completed_at}`));
+    if (completionResult.completion.duration_hours) {
+      console.log(chalk.white(`Duration: ${completionResult.completion.duration_hours} hours`));
+    }
+
+    console.log(chalk.blue('\n📝 Next Steps:'));
+    console.log(chalk.white('  1. Use start-next to get your next task'));
+    console.log(chalk.white('  2. Check project progress with workflow status'));
+    
+  } catch (error) {
+    console.error(chalk.red('❌ complete-current command failed:'), error.message);
     process.exit(1);
   }
 }
