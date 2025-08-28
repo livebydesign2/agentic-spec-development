@@ -1,6 +1,6 @@
 {
   "dataPath": "./docs/specs",
-  "dataFormat": "markdown",
+  "dataFormat": "auto",
   "templatePath": "./templates",
   "structure": {
     "active": "active",
@@ -8,9 +8,40 @@
     "done": "done"
   },
   "parsing": {
-    "filePattern": "**/*.md",
+    "filePattern": "**/*.{md,json,yaml,yml}",
     "frontMatterRequired": false,
-    "taskFormat": "asd"
+    "taskFormat": "asd",
+    "supportedExtensions": ["md", "json", "yaml", "yml"]
+  },
+  "formatOptions": {
+    "json": {
+      "indent": 2,
+      "sortKeys": true,
+      "dateFormat": "iso"
+    },
+    "yaml": {
+      "indent": 2,
+      "lineWidth": 120,
+      "noRefs": false,
+      "quotingType": "\""
+    },
+    "markdown": {
+      "taskFormat": "asd",
+      "frontMatter": true,
+      "preserveFormatting": true
+    }
+  },
+  "validation": {
+    "schema": "strict",
+    "requiredFields": ["id", "title", "status", "priority"],
+    "autoFix": true,
+    "customSchemaPath": null
+  },
+  "conversion": {
+    "preserveMetadata": true,
+    "validateOnConvert": true,
+    "backupOriginals": true,
+    "defaultTargetFormat": "json"
   },
   "display": {
     "priorityColors": {
@@ -21,13 +52,20 @@
     },
     "theme": "default",
     "autoRefresh": true,
-    "refreshDebounce": 500
+    "refreshDebounce": 500,
+    "showFormatIndicator": true
   },
   "cli": {
     "defaultPriority": "P2",
     "defaultStatus": "backlog",
     "supportedTypes": ["SPEC", "FEAT", "BUG", "SPIKE", "MAINT", "RELEASE"],
     "statusFolders": ["active", "backlog", "done"],
-    "priorities": ["P0", "P1", "P2", "P3"]
+    "priorities": ["P0", "P1", "P2", "P3"],
+    "defaultFormat": "auto",
+    "conversionOptions": {
+      "parallel": true,
+      "progressCallback": true,
+      "validateAfterConversion": true
+    }
   }
 }

@@ -5691,6 +5691,119 @@ function outputResearchSummary(research) {
   });
 }
 
+// Multi-format data support commands (FEAT-020)
+const formatCommand = program
+  .command('format')
+  .description('Multi-format data operations (JSON, YAML, Markdown)');
+
+formatCommand
+  .command('convert <input> <output>')
+  .description('Convert between specification formats')
+  .option('--from <format>', 'Source format (auto-detect if not specified)')
+  .option('--to <format>', 'Target format (auto-detect from extension if not specified)')
+  .option('--validate', 'Validate conversion with roundtrip test')
+  .option('--backup', 'Create backup of output file if it exists')
+  .action(async (input, output, options) => {
+    await handleFormatConversion(input, output, options);
+  });
+
+const validateCommand = program
+  .command('validate')
+  .description('Validate specification files against schema');
+
+validateCommand
+  .command('spec <file>')
+  .description('Validate a specification file')
+  .option('--schema <name>', 'Schema to validate against (default: auto-detect)')
+  .option('--format <format>', 'Expected format (default: auto-detect)')
+  .option('--auto-fix', 'Apply automatic fixes to common issues')
+  .action(async (filePath, options) => {
+    await handleSpecValidation(filePath, options);
+  });
+
+// Multi-format command handlers
+async function handleFormatConversion(input, output, options) {
+  try {
+    const { DataAdapterFactory } = require('../lib/data-adapters');
+    const factory = new DataAdapterFactory();
+
+    console.log(chalk.cyan('🔄 Format Conversion'));
+    console.log(chalk.gray('='.repeat(40)));
+
+    const result = await factory.convertFile(input, output, {
+      sourceFormat: options.from,
+      targetFormat: options.to,
+      validate: options.validate,
+      backup: options.backup
+    });
+
+    if (result.success) {
+      console.log(chalk.green('✅ Conversion successful'));
+      console.log(`Source: ${chalk.yellow(result.sourcePath)} (${result.sourceFormat})`);
+      console.log(`Target: ${chalk.yellow(result.targetPath)} (${result.targetFormat})`);
+      
+      if (result.validation && !result.validation.isValid) {
+        console.log(chalk.yellow('\n⚠️  Validation warnings:'));
+        result.validation.errors.forEach(error => {
+          console.log(`  • ${error.message}`);
+        });
+      }
+    } else {
+      console.error(chalk.red('❌ Conversion failed:'), result.error);
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Format conversion failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleSpecValidation(filePath, options) {
+  try {
+    const { DataAdapterFactory } = require('../lib/data-adapters');
+    const factory = new DataAdapterFactory();
+
+    console.log(chalk.cyan('✅ Specification Validation'));
+    console.log(chalk.gray('='.repeat(40)));
+
+    const fs = require('fs').promises;
+    const content = await fs.readFile(filePath, 'utf-8');
+    const format = options.format || await factory.formatDetector.detectFormat(filePath, content);
+
+    const result = await factory.validateContent(content, format, {
+      schema: options.schema || 'auto',
+      autoFix: options.autoFix
+    });
+
+    console.log(`File: ${chalk.yellow(filePath)} (${format})`);
+    
+    if (result.isValid) {
+      console.log(`Status: ${chalk.green('✅ Valid')}`);
+    } else {
+      console.log(`Status: ${chalk.red('❌ Invalid')}`);
+      
+      if (result.errors.length > 0) {
+        console.log('\nErrors:');
+        result.errors.forEach(error => {
+          console.log(`  • ${chalk.red(error.field)}: ${error.message}`);
+        });
+      }
+    }
+
+    if (result.warnings && result.warnings.length > 0) {
+      console.log('\nWarnings:');
+      result.warnings.forEach(warning => {
+        console.log(`  • ${chalk.yellow(warning.field || 'general')}: ${warning.message}`);
+      });
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Validation failed:'), error.message);
+    process.exit(1);
+  }
+}
+
 // Handle CLI parsing
 program.parse();
 
