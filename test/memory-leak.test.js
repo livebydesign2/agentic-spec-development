@@ -469,8 +469,8 @@ ${'Implement proper memory management and cleanup. '.repeat(10)}
         // Perform typical operations
         const specs = specParser.getSpecs();
         specs.forEach(spec => {
-          const _ = spec.tasks || [];
-          const __ = spec.priority || 'P2';
+          const ___ = spec.tasks || [];
+          const priority = spec.priority || 'P2';
         });
 
         // Take memory snapshot
