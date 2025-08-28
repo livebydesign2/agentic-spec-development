@@ -96,7 +96,7 @@ This roadmap outlines the development of ASD (Agentic Spec Development) from a b
 
 #### Planned Specifications
 
-- **FEAT-018**: Advanced CLI Commands (P1) - 20 hours
+- **FEAT-018**: Advanced CLI Commands (P1) - 20 hours ✅ **COMPLETED**
 - **FEAT-019**: Validation Manager System (P1) - 12 hours
 - **FEAT-020**: Multi-format Data Support (P1) - 8 hours
 - **FEAT-021**: Project Initialization & Templates (P1) - 6 hours
@@ -120,9 +120,44 @@ This roadmap outlines the development of ASD (Agentic Spec Development) from a b
 
 ---
 
+### 🤖 PHASE-1C: Automated Task Status Workflow (ADR-004)
+
+**Target**: 2024-10-15 | **Priority**: High | **Depends On**: PHASE-1B
+
+**Mission**: Implement comprehensive automated task status workflow system to reduce manual overhead by 80% while maintaining quality and audit trails.
+
+#### ADR-004 Specifications
+
+- **FEAT-026**: Enhanced Task Automation Commands (P0) - 18 hours
+- **FEAT-027**: Automated State Synchronization System (P0) - 16 hours  
+- **FEAT-028**: Context Injection & Sub-agent Integration (P1) - 14 hours
+- **FEAT-029**: Git Workflow Automation System (P1) - 12 hours
+
+#### Phase Goals
+
+1. **Enhanced CLI Commands**: `asd start-next` and `asd complete-current` for single-command workflows
+2. **Real-time Synchronization**: YAML frontmatter, JSON state, and git repository consistency
+3. **Context Automation**: Automated context gathering and sub-agent prompt generation  
+4. **Git Integration**: Automated linting, testing, and commit workflows
+
+#### Success Criteria
+
+- [ ] Single-command task assignment with `asd start-next --agent [type]`
+- [ ] Single-command task completion with `asd complete-current`
+- [ ] Real-time state synchronization across all data stores (<2 seconds)
+- [ ] Automated context injection for sub-agents (<3 seconds)
+- [ ] Complete git workflow automation with quality gates
+- [ ] **80% REDUCTION**: Manual task management overhead reduced by 80%
+- [ ] **AUDIT TRAIL**: Complete audit logging for all automated actions
+- [ ] **MANUAL OVERRIDE**: Human control preserved at all decision points
+
+**Estimated Effort**: 60 hours total | **Dependencies**: PHASE-1B complete
+
+---
+
 ### 🌟 PHASE-2A: Advanced Features & Integrations
 
-**Target**: 2024-10-15 | **Priority**: Future | **Depends On**: PHASE-1B
+**Target**: 2024-11-01 | **Priority**: Future | **Depends On**: PHASE-1C
 
 **Mission**: Add advanced features, external integrations, and extensibility for broader adoption.
 
@@ -188,20 +223,23 @@ This roadmap outlines the development of ASD (Agentic Spec Development) from a b
 
 - **PHASE-1A**: 62 hours (Critical foundation)
 - **PHASE-1B**: 46 hours (Complete interface)
+- **PHASE-1C**: 60 hours (Automated workflows - ADR-004)
 - **PHASE-2A**: 44 hours (Advanced features)
-- **Total**: 152 hours to full-featured platform
+- **Total**: 212 hours to full-featured platform
 
 ### Feature Distribution
 
-- **Core Systems (P0)**: 4 features, 62 hours (41%)
-- **Interface & Quality (P1)**: 4 features, 46 hours (30%)
-- **Advanced Features (P2)**: 4 features, 44 hours (29%)
+- **Core Systems (P0)**: 6 features, 96 hours (45%)
+- **Interface & Quality (P1)**: 6 features, 72 hours (34%)
+- **Advanced Features (P2)**: 4 features, 44 hours (21%)
 
 ### Self-Development Transition
 
-- **Traditional Development**: First 56 hours (37% of project)
-- **Self-Managed Development**: Remaining 96 hours (63% of project)
-- **ROI Point**: Self-use capability achieved at 37% completion
+- **Traditional Development**: First 56 hours (26% of project)
+- **Self-Managed Development**: 108 hours (51% of project)
+- **Automated Development**: Final 48 hours (23% of project - ADR-004 automation)
+- **ROI Point**: Self-use capability achieved at 26% completion
+- **Automation ROI**: 80% overhead reduction achieved at 77% completion
 
 ## 🎯 Strategic Decision Points
 
