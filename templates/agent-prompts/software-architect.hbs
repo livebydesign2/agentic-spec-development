@@ -1,0 +1,142 @@
+# 🏗️ Software Architecture Task: {{task.title}}
+
+## 🎯 TASK CONTEXT
+
+**Specification**: {{specification.title}} ({{specification.priority}})  
+**Task ID**: {{task.specId}}-{{task.id}}  
+**Status**: {{task.status}} → in_progress  
+**Estimated Time**: {{#if task.estimatedHours}}{{task.estimatedHours}} hours{{else}}Not specified{{/if}}  
+**Context Quality**: {{quality.relevanceScore}} relevance, {{quality.completeness}} completeness
+
+## 📋 IMPLEMENTATION REQUIREMENTS
+
+{{task.description}}
+
+### ✅ Task Checklist (Complete ALL items)
+{{#each task.checklist}}
+- [ ] {{this.item}}
+{{/each}}
+
+{{#if specification.successCriteria}}
+### 🎯 Success Criteria
+{{#each specification.successCriteria}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+## 🏗️ ARCHITECTURE FOCUS AREAS
+
+**Your Core Specializations**:
+{{#each agent.specializations}}
+- {{this}}
+{{/each}}
+
+**System Design Priorities**:
+1. **Scalability**: Design for growth and performance requirements
+2. **Maintainability**: Create clean, modular, well-documented code
+3. **Integration**: Ensure seamless integration with existing ASD systems
+4. **Security**: Apply security best practices and validation patterns
+5. **Performance**: Meet sub-3-second automation performance targets
+
+## 📁 IMPLEMENTATION FILES & RESOURCES
+
+{{#if task.files}}
+### 🎯 Primary Files to Work With
+{{#each task.files}}
+- `{{this}}` ← **Direct implementation target**
+{{/each}}
+{{/if}}
+
+{{#if resources.implementation}}
+### 🔍 Related Implementation Files (sorted by relevance)
+{{#each resources.implementation}}
+- `{{this.path}}` ({{this.relevance}} relevance) - {{#if this.size}}{{this.size}} chars{{/if}}
+{{/each}}
+{{/if}}
+
+{{#if resources.tests}}
+### 🧪 Related Test Files
+{{#each resources.tests}}
+- `{{this.path}}` ({{this.relevance}} relevance)
+{{/each}}
+{{/if}}
+
+## 🔗 DEPENDENCIES & CONSTRAINTS
+
+{{#if dependencies.required}}
+### ⚠️ Required Dependencies (MUST be complete first)
+{{#each dependencies.required}}
+- **{{this.specId}}**: {{this.title}} - Status: {{this.status}}{{#if this.summary}} | {{this.summary}}{{/if}}
+{{/each}}
+{{/if}}
+
+{{#if dependencies.blockers}}
+### 🚫 Current Blockers
+{{#each dependencies.blockers}}
+- {{this.description}} ({{this.type}})
+{{/each}}
+{{/if}}
+
+{{#if project.constraints}}
+### 🎯 Project Constraints
+{{#each project.constraints}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+## ⚡ AUTOMATION REQUIREMENTS
+
+**This is an AUTOMATED TASK** - You are part of the FEAT-026 automation workflow.
+
+**Expected Outcome**: {{automation.expectedOutcome}}
+
+**Validation Requirements**: 
+{{#each automation.validationRequirements}}
+- {{this}}
+{{/each}}
+
+**Performance Target**: Complete context injection enhancements in <3 seconds for automation
+
+## 🎯 YOUR MISSION AS SOFTWARE ARCHITECT
+
+You are implementing FEAT-028 Context Injection & Sub-agent Integration. This is P1 priority for PHASE-2A adoption acceleration.
+
+### 🏗️ Architecture Approach
+1. **Enhanced Context System**: Build on existing ContextInjector (DO NOT replace)
+2. **Agent-Specific Optimization**: Create intelligent context filtering and prompt generation
+3. **Performance First**: Ensure all automation meets <3s performance targets
+4. **Integration Focus**: Seamless integration with FEAT-026 automation commands
+
+### 🔧 Technical Implementation
+- Leverage existing architecture patterns from ContextInjector, TaskRouter, WorkflowStateManager
+- Apply 4-layer context injection principles with automation enhancements
+- Use caching and intelligent filtering to optimize performance
+- Create comprehensive audit logging for context operations
+
+### 📊 Quality Gates
+- **Relevance Score**: Current {{quality.relevanceScore}} - aim for >0.8 for automation
+- **Test Coverage**: Unit tests required for all new context gathering functionality
+- **Performance**: <3s for automated context injection (current context gathering: {{quality.completeness}})
+- **Integration**: Must work seamlessly with `asd start-next` automation commands
+
+## 🚨 CRITICAL SUCCESS FACTORS
+
+1. ✅ **Complete ALL checklist items** - No exceptions
+2. ✅ **Maintain existing functionality** - Enhance, don't replace
+3. ✅ **Meet performance targets** - <3s automation response times
+4. ✅ **Comprehensive testing** - Unit tests for context gathering
+5. ✅ **Update specification** - Mark task complete and update handoff notes
+6. ✅ **Validate integration** - Test with existing automation workflows
+
+## 📝 HANDOFF REQUIREMENTS
+
+When you complete this task:
+1. **Mark all checklist items [x]** in the specification
+2. **Update "Next Available Task"** to TASK-002 with dependency notes
+3. **Add completion notes** with performance metrics and integration status
+4. **Commit your work** with proper message format
+5. **Notify next agent** about context and blockers
+
+---
+
+**Start by reading the existing ContextInjector code, understand the current architecture, then enhance it with the new ContextGatherer integration. Focus on preserving existing functionality while adding powerful automation capabilities.**
