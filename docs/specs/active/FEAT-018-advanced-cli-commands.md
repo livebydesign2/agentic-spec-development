@@ -12,7 +12,7 @@ tasks:
   - id: "TASK-001"
     title: "Core CLI Command Framework"
     agent_type: "cli-specialist"
-    status: "ready"
+    status: "complete"
     estimated_hours: 6
     context_requirements: ["commander-js", "cli-patterns"]
     subtasks:
@@ -34,7 +34,7 @@ tasks:
   - id: "TASK-002"
     title: "Feature Management Commands"
     agent_type: "cli-specialist"
-    status: "blocked"
+    status: "complete"
     estimated_hours: 6
     context_requirements: ["feature-creation", "spec-templates"]
     depends_on: ["TASK-001"]
@@ -43,21 +43,21 @@ tasks:
         title: "Implement 'asd create' commands"
         type: "implementation"
         estimated_minutes: 180
-        status: "ready"
+        status: "complete"
       - id: "SUBTASK-005"
         title: "Add 'asd list' and 'asd show' commands"
         type: "implementation"
         estimated_minutes: 120
-        status: "ready"
+        status: "complete"
       - id: "SUBTASK-006"
         title: "Validation & testing"
         type: "validation"
         estimated_minutes: 60
-        status: "ready"
+        status: "complete"
   - id: "TASK-003"
     title: "Task Management Commands"
     agent_type: "cli-specialist"
-    status: "blocked"
+    status: "ready"
     estimated_hours: 5
     context_requirements: ["task-routing", "agent-assignment"]
     depends_on: ["TASK-002"]
