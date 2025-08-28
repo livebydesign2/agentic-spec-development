@@ -57,7 +57,7 @@ tasks:
   - id: "TASK-003"
     title: "Task Management Commands"
     agent_type: "cli-specialist"
-    status: "ready"
+    status: "complete"
     estimated_hours: 5
     context_requirements: ["task-routing", "agent-assignment"]
     depends_on: ["TASK-002"]
@@ -66,21 +66,21 @@ tasks:
         title: "Implement task lifecycle commands"
         type: "implementation"
         estimated_minutes: 150
-        status: "ready"
+        status: "complete"
       - id: "SUBTASK-008"
         title: "Add task filtering and search"
         type: "implementation"
         estimated_minutes: 120
-        status: "ready"
+        status: "complete"
       - id: "SUBTASK-009"
         title: "Validation & testing"
         type: "validation"
         estimated_minutes: 30
-        status: "ready"
+        status: "complete"
   - id: "TASK-004"
     title: "Workflow & Context Commands"
     agent_type: "cli-specialist"
-    status: "blocked"
+    status: "ready"
     estimated_hours: 3
     context_requirements: ["context-injection", "workflow-automation"]
     depends_on: ["TASK-003"]
@@ -107,7 +107,7 @@ dependencies:
 acceptance_criteria:
   - "Complete CLI interface for all spec and task operations ✅"
   - "Feature creation, listing, and management via CLI commands ✅"
-  - "Task assignment, progress tracking, and completion via CLI"
+  - "Task assignment, progress tracking, and completion via CLI ✅"
   - "Context management and workflow automation commands"
   - "Comprehensive help system with examples and usage guidance ✅"
 ---
@@ -132,11 +132,11 @@ acceptance_criteria:
 
 ### 🚦 Current State _(AGENTS: Update this when you complete YOUR task)_
 
-- **Next Available Task**: TASK-002 Feature Management Commands - READY for CLI-Specialist
-- **Current Task Status**: TASK-001 Complete - Core CLI framework implemented with feature management commands
-- **Overall Progress**: 1 of 4 tasks complete (25%)
-- **Blockers**: None - TASK-002 ready for pickup
-- **Last Updated**: 2025-08-27 by CLI Specialist (TASK-001 completed)
+- **Next Available Task**: TASK-004 Workflow & Context Commands - READY for CLI-Specialist  
+- **Current Task Status**: TASK-003 Complete - Enhanced task management commands implemented
+- **Overall Progress**: 3 of 4 tasks complete (75%)
+- **Blockers**: None - TASK-004 ready for pickup
+- **Last Updated**: 2025-08-28 by CLI Specialist (TASK-003 completed)
 
 ---
 
@@ -202,21 +202,21 @@ Extend existing CLI framework with advanced command structure, integrate with co
 - **Dependencies**: TASK-001 must be complete
 - **Files**: Feature management CLI commands, spec creation templates
 
-**TASK-003** 🤖 **Task Management Commands** ⏸️ **← BLOCKED (waiting for TASK-002)** | Agent: CLI-Specialist
+**TASK-003** ✅ **Task Management Commands** **← COMPLETE** | Agent: CLI-Specialist
 
-- [ ] Build `asd assign TASK-ID --agent AGENT-TYPE` with validation
-- [ ] Implement `asd start TASK-ID` with context injection integration
-- [ ] Create `asd complete task/subtask` commands with progress updates
-- [ ] Add `asd next` command integration with TaskRouter
-- [ ] Implement `asd tasks` listing with filtering by spec, agent, status
-- [ ] Build task dependency and blocking commands
-- [ ] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
-- [ ] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
-- [ ] Product Handoff: notify next agent that task management is ready for workflow commands
-- **Dependencies**: TASK-002 must be complete
+- [x] Build `asd assign TASK-ID --agent AGENT-TYPE` with validation
+- [x] Implement `asd start TASK-ID` with context injection integration
+- [x] Create `asd complete task/subtask` commands with progress updates
+- [x] Add `asd next` command integration with TaskRouter (existing command enhanced)
+- [x] Implement `asd tasks` listing with filtering by spec, agent, status
+- [x] Build task dependency and blocking commands
+- [x] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
+- [x] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
+- [x] Product Handoff: notify next agent that task management is ready for workflow commands
+- **Dependencies**: TASK-002 must be complete ✅
 - **Files**: Task management CLI commands, integration with TaskRouter and WorkflowStateManager
 
-**TASK-004** 🤖 **Workflow & Context Commands** ⏸️ **← BLOCKED (waiting for TASK-003)** | Agent: CLI-Specialist
+**TASK-004** 🤖 **Workflow & Context Commands** ⏳ **← READY (TASK-003 complete)** | Agent: CLI-Specialist
 
 - [ ] Implement `asd context add/show/update` commands with ContextInjector integration
 - [ ] Add `asd research add/show` commands for research capture
@@ -227,7 +227,7 @@ Extend existing CLI framework with advanced command structure, integrate with co
 - [ ] Validate (types, lint, tests, DB/RLS) per "Validation Requirements"
 - [ ] Update & Commit: mark task [x], update "Next Available Task" + handoff notes in this file, commit
 - [ ] Product Handoff: notify product management that complete CLI system is ready
-- **Dependencies**: TASK-003 must be complete
+- **Dependencies**: TASK-003 must be complete ✅
 - **Files**: Context and workflow CLI commands, validation utilities
 
 **Legend**: ⏳ Ready for pickup | 🔄 In progress | ✅ Complete | ⏸️ Blocked
@@ -278,6 +278,7 @@ Extend existing CLI framework with advanced command structure, integrate with co
 ### ✅ Completed Tasks _(Add entry when you finish your task)_
 
 - ✅ **[2025-08-27]** - **TASK-001** Core CLI Command Framework completed - _Agent: cli-specialist_ - Next: TASK-002 ready
+- ✅ **[2025-08-28]** - **TASK-003** Task Management Commands completed - _Agent: cli-specialist_ - Next: TASK-004 ready
 
 ### 🚨 Task Blockers _(Preventing next task pickup)_
 

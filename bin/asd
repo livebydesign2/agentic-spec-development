@@ -169,16 +169,23 @@ program
 
 program
   .command('tasks')
-  .description('List available tasks with filtering')
+  .description('Enhanced task listing with comprehensive filtering and output formats')
   .option('--agent <agent-type>', 'Filter by agent type')
   .option('--priority <priorities>', 'Filter by priority (P0,P1,P2,P3)')
   .option('--phase <phases>', 'Filter by phase')
-  .option('--spec-status <status>', 'Filter by spec status')
-  .option('--status <status>', 'Filter by task status (ready,blocked,complete)')
+  .option('--spec <spec-ids>', 'Filter by specification IDs (comma-separated)')
+  .option('--spec-status <status>', 'Filter by spec status (active,backlog,done)')
+  .option('--status <status>', 'Filter by task status (ready,blocked,complete,in_progress)')
   .option('--include-blocked', 'Include blocked tasks', false)
-  .option('--limit <number>', 'Maximum number of tasks to return', '10')
+  .option('--only-assigned', 'Show only assigned tasks')
+  .option('--only-unassigned', 'Show only unassigned tasks')
+  .option('--sort <sort>', 'Sort by: priority, created, agent, spec, status', 'priority')
+  .option('--format <format>', 'Output format: table, json, csv, summary', 'table')
+  .option('--limit <number>', 'Maximum number of tasks to return', '20')
+  .option('--show-dependencies', 'Show task dependencies and blocking relationships')
+  .option('--show-context', 'Show context requirements for each task')
   .action(async (options) => {
-    await handleTasksList(options);
+    await handleTasksListEnhanced(options);
   });
 
 program
@@ -224,6 +231,80 @@ program
   .option('--source <source>', 'Source of research')
   .action(async (specId, options) => {
     await handleResearchCapture(specId, options);
+  });
+
+// Enhanced task management commands for FEAT-018 TASK-003
+program
+  .command('start')
+  .description('Start a task with context injection')
+  .argument('<task-id>', 'Task ID to start (SPEC-ID:TASK-ID or just TASK-ID)')
+  .option('--spec <spec-id>', 'Specification ID (if not in task-id)')
+  .option('--agent <agent-type>', 'Agent type starting the task')
+  .option('--inject-context <levels>', 'Context levels to inject (spec,project,phase)', 'spec,project')
+  .option('--dry-run', 'Show what context would be injected without starting')
+  .action(async (taskId, options) => {
+    await handleTaskStart(taskId, options);
+  });
+
+program
+  .command('task-assign')
+  .description('Alternative task assignment with flexible task ID format')
+  .argument('<task-id>', 'Task ID (SPEC-ID:TASK-ID or just TASK-ID)')
+  .requiredOption('--agent <agent-type>', 'Agent type to assign task to')
+  .option('--spec <spec-id>', 'Specification ID (if not in task-id)')
+  .option('--priority <priority>', 'Task priority (P0, P1, P2, P3)')
+  .option('--validate', 'Validate assignment before applying', true)
+  .option('--force', 'Force assignment even if validation warnings exist')
+  .action(async (taskId, options) => {
+    await handleTaskAssignFlexible(taskId, options);
+  });
+
+program
+  .command('complete-task')
+  .description('Mark task or subtask as complete with enhanced options')
+  .argument('<task-id>', 'Task ID (SPEC-ID:TASK-ID or TASK-ID)')
+  .option('--spec <spec-id>', 'Specification ID (if not in task-id)')
+  .option('--type <type>', 'Completion type: task, subtask', 'task')
+  .option('--subtask <subtask-id>', 'Subtask ID (for subtask completion)')
+  .option('--notes <notes>', 'Completion notes')
+  .option('--handoff <next-task>', 'Next task to hand off to')
+  .option('--trigger-automation', 'Trigger automated handoff evaluation', true)
+  .action(async (taskId, options) => {
+    await handleTaskCompleteEnhanced(taskId, options);
+  });
+
+program
+  .command('block')
+  .description('Block a task with reason')
+  .argument('<task-id>', 'Task ID to block (SPEC-ID:TASK-ID or TASK-ID)')
+  .requiredOption('--reason <reason>', 'Reason for blocking the task')
+  .option('--spec <spec-id>', 'Specification ID (if not in task-id)')
+  .option('--until <date>', 'Block until specific date (YYYY-MM-DD)')
+  .option('--depends-on <task-ids>', 'Comma-separated list of tasks this depends on')
+  .action(async (taskId, options) => {
+    await handleTaskBlock(taskId, options);
+  });
+
+program
+  .command('unblock')
+  .description('Unblock a previously blocked task')
+  .argument('<task-id>', 'Task ID to unblock (SPEC-ID:TASK-ID or TASK-ID)')
+  .option('--spec <spec-id>', 'Specification ID (if not in task-id)')
+  .option('--notes <notes>', 'Notes about unblocking')
+  .action(async (taskId, options) => {
+    await handleTaskUnblock(taskId, options);
+  });
+
+program
+  .command('task-deps')
+  .description('Manage task dependencies')
+  .argument('<action>', 'Action: add, remove, list')
+  .argument('<task-id>', 'Task ID (SPEC-ID:TASK-ID or TASK-ID)')
+  .option('--spec <spec-id>', 'Specification ID (if not in task-id)')
+  .option('--depends-on <task-ids>', 'Comma-separated list of dependency task IDs')
+  .option('--blocks <task-ids>', 'Comma-separated list of task IDs this blocks')
+  .action(async (action, taskId, options) => {
+    await handleTaskDependencies(action, taskId, options);
   });
 
 // Workflow state management commands
@@ -1687,44 +1768,6 @@ async function handleNextTask(options) {
   }
 }
 
-async function handleTasksList(options) {
-  try {
-    const configManager = new ConfigManager(process.cwd());
-    const taskAPI = new TaskRecommendationAPI(configManager);
-
-    const initialized = await taskAPI.initialize();
-    if (!initialized) {
-      console.error(chalk.red('❌ Failed to initialize task routing system'));
-      process.exit(1);
-    }
-
-    // Parse filter options
-    const priority = options.priority ? options.priority.split(',') : undefined;
-    const phase = options.phase ? options.phase.split(',') : undefined;
-    const specStatus = options.specStatus ? options.specStatus.split(',') : undefined;
-    const limit = parseInt(options.limit) || 10;
-
-    const result = await taskAPI.getAvailableTasks({
-      agentType: options.agent,
-      priority,
-      phase,
-      specStatus,
-      limit,
-      includeBlocked: options.includeBlocked
-    });
-
-    if (!result.success) {
-      console.error(chalk.red('❌ Failed to list tasks:'), result.error);
-      process.exit(1);
-    }
-
-    displayTasksList(result);
-
-  } catch (error) {
-    console.error(chalk.red('❌ Tasks list command failed:'), error.message);
-    process.exit(1);
-  }
-}
 
 async function handleValidateAssignment(options) {
   try {
@@ -1933,46 +1976,6 @@ function displayTransparentRecommendation(result) {
   console.log(chalk.gray(`\nPerformance: ${result.metadata.performance.total}ms`));
 }
 
-function displayTasksList(result) {
-  console.log(chalk.cyan('📋 Available Tasks'));
-  console.log(chalk.gray('='.repeat(50)));
-
-  if (result.tasks.length === 0) {
-    console.log(chalk.yellow('⚠️  No tasks found matching criteria'));
-    return;
-  }
-
-  console.log(chalk.white(`Found ${result.tasks.length} tasks:`));
-  console.log();
-
-  result.tasks.forEach((task, index) => {
-    const status = task.blocked ? chalk.red('[BLOCKED]') :
-                   task.status === 'complete' ? chalk.green('[COMPLETE]') :
-                   task.status === 'in_progress' ? chalk.blue('[IN PROGRESS]') :
-                   chalk.green('[READY]');
-
-    console.log(chalk.white(`${index + 1}. ${task.id}`), status);
-    console.log(chalk.gray(`   Title: ${task.title}`));
-    console.log(chalk.gray(`   Spec: ${task.specId || 'N/A'}, Priority: ${getPriorityDisplay(task.specPriority || task.priority)}`));
-
-    if (task.agent_type) {
-      console.log(chalk.gray(`   Required Agent: ${task.agent_type}`));
-    }
-
-    if (task.estimated_hours) {
-      console.log(chalk.gray(`   Estimated Hours: ${task.estimated_hours}`));
-    }
-
-    if (task.blocked && task.blockedReason) {
-      console.log(chalk.red(`   Blocked: ${task.blockedReason}`));
-    }
-
-    console.log();
-  });
-
-  console.log(chalk.gray(`Performance: ${result.metadata.performance.total}ms`));
-  console.log(chalk.gray(`Total available: ${result.metadata.total}, Filters: ${JSON.stringify(result.metadata.filters)}`));
-}
 
 function displayValidationResult(result, _options) {
   console.log(chalk.cyan('🔍 Assignment Validation'));
@@ -3834,6 +3837,1051 @@ async function handleSpecMove(specId, options) {
   } catch (error) {
     console.error(chalk.red('❌ Failed to move specification:'), error.message);
     process.exit(1);
+  }
+}
+
+// FEAT-018 TASK-003: Enhanced Task Management Command Handlers
+
+async function handleTaskStart(taskId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextInjector = new ContextInjector(configManager);
+    const contextManager = new ContextManager(configManager);
+    const triggerSystem = new ContextTriggerSystem(configManager);
+    await triggerSystem.initialize();
+
+    // Parse task ID - support both SPEC-ID:TASK-ID and standalone TASK-ID
+    let specId, parsedTaskId;
+    if (taskId.includes(':')) {
+      [specId, parsedTaskId] = taskId.split(':', 2);
+    } else {
+      parsedTaskId = taskId;
+      specId = options.spec;
+    }
+
+    if (!specId) {
+      console.error(chalk.red('❌ Specification ID required (use --spec or SPEC-ID:TASK-ID format)'));
+      process.exit(1);
+    }
+
+    if (!options.agent) {
+      console.error(chalk.red('❌ Must specify --agent <agent-type> to start task'));
+      process.exit(1);
+    }
+
+    // Validate task exists
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+
+    const spec = specParser.getSpecById(specId);
+    if (!spec) {
+      console.error(chalk.red(`❌ Specification not found: ${specId}`));
+      process.exit(1);
+    }
+
+    const task = spec.tasks?.find(t => t.id === parsedTaskId);
+    if (!task) {
+      console.error(chalk.red(`❌ Task not found: ${parsedTaskId} in ${specId}`));
+      process.exit(1);
+    }
+
+    // Prepare context injection
+    const contextLevels = options.injectContext.split(',').map(l => l.trim());
+
+    if (options.dryRun) {
+      console.log(chalk.blue('🔍 Context Injection Preview (--dry-run)'));
+      console.log(chalk.gray('─'.repeat(50)));
+
+      for (const level of contextLevels) {
+        console.log(chalk.cyan(`📋 ${level.toUpperCase()} Context:`));
+
+        try {
+          const contextData = await contextInjector.injectContext(options.agent, {
+            specId,
+            taskId: parsedTaskId,
+            contextType: level
+          });
+
+          if (contextData && contextData.context) {
+            const contextLines = contextData.context.split('\n').slice(0, 5);
+            contextLines.forEach(line => {
+              console.log(chalk.gray(`   ${line}`));
+            });
+            if (contextData.context.split('\n').length > 5) {
+              console.log(chalk.gray('   ... (truncated)'));
+            }
+          } else {
+            console.log(chalk.gray('   No context available'));
+          }
+        } catch (error) {
+          console.log(chalk.yellow(`   ⚠️ Context injection failed: ${error.message}`));
+        }
+
+        console.log();
+      }
+
+      console.log(chalk.blue('Would start task with this context. Use without --dry-run to proceed.'));
+      return;
+    }
+
+    // Update task status to in_progress and assign agent
+    const updates = {
+      frontmatter: {
+        assigned_agent: options.agent,
+        assigned_at: new Date().toISOString(),
+        started_at: new Date().toISOString(),
+        status: 'in_progress'
+      }
+    };
+
+    const taskSuccess = await contextManager.updateContext('task', parsedTaskId, updates);
+
+    // Update dynamic state (assignments.json)
+    const paths = contextManager.getContextPaths();
+    const assignmentsPath = path.join(paths.state, 'assignments.json');
+
+    const fs = require('fs').promises;
+    let assignments = {};
+
+    try {
+      if (await contextManager.fileExists(assignmentsPath)) {
+        const assignmentsContent = await fs.readFile(assignmentsPath, 'utf-8');
+        assignments = JSON.parse(assignmentsContent);
+      }
+    } catch (error) {
+      // Start fresh if file is corrupted
+    }
+
+    // Update assignments
+    assignments[specId] = assignments[specId] || {};
+    assignments[specId][parsedTaskId] = {
+      agent: options.agent,
+      assigned_at: new Date().toISOString(),
+      started_at: new Date().toISOString(),
+      priority: task.priority || 'P2',
+      status: 'in_progress'
+    };
+
+    // Ensure state directory exists
+    await fs.mkdir(paths.state, { recursive: true });
+    await fs.writeFile(assignmentsPath, JSON.stringify(assignments, null, 2), 'utf-8');
+
+    if (taskSuccess) {
+      // Fire trigger for task start
+      await triggerSystem.fireTrigger('start', {
+        specId,
+        taskId: parsedTaskId,
+        agentType: options.agent,
+        contextLevels,
+        source: 'cli_command'
+      });
+
+      console.log(chalk.green(`✅ Started task ${parsedTaskId}`));
+      console.log(chalk.gray(`   Spec: ${specId}`));
+      console.log(chalk.gray(`   Agent: ${options.agent}`));
+      console.log(chalk.gray(`   Context levels: ${contextLevels.join(', ')}`));
+
+      // Show injected context summary
+      console.log(chalk.blue('\n📋 Context Injected:'));
+      for (const level of contextLevels) {
+        try {
+          const contextData = await contextInjector.injectContext(options.agent, {
+            specId,
+            taskId: parsedTaskId,
+            contextType: level
+          });
+
+          if (contextData && contextData.context) {
+            const lines = contextData.context.split('\n').length;
+            console.log(chalk.gray(`   ${level}: ${lines} lines of context`));
+          }
+        } catch (error) {
+          console.log(chalk.yellow(`   ${level}: Context injection failed`));
+        }
+      }
+
+    } else {
+      console.error(chalk.red('❌ Failed to update task status'));
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Task start failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleTaskAssignFlexible(taskId, options) {
+  try {
+    // Parse task ID - support both SPEC-ID:TASK-ID and standalone TASK-ID
+    let specId, parsedTaskId;
+    if (taskId.includes(':')) {
+      [specId, parsedTaskId] = taskId.split(':', 2);
+    } else {
+      parsedTaskId = taskId;
+      specId = options.spec;
+    }
+
+    if (!specId) {
+      console.error(chalk.red('❌ Specification ID required (use --spec or SPEC-ID:TASK-ID format)'));
+      process.exit(1);
+    }
+
+    // Delegate to existing handleTaskAssign function
+    await handleTaskAssign(specId, parsedTaskId, {
+      agent: options.agent,
+      priority: options.priority,
+      validate: options.validate && !options.force
+    });
+
+  } catch (error) {
+    console.error(chalk.red('❌ Task assignment failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleTaskCompleteEnhanced(taskId, options) {
+  try {
+    // Parse task ID - support both SPEC-ID:TASK-ID and standalone TASK-ID
+    let specId, parsedTaskId;
+    if (taskId.includes(':')) {
+      [specId, parsedTaskId] = taskId.split(':', 2);
+    } else {
+      parsedTaskId = taskId;
+      specId = options.spec;
+    }
+
+    if (!specId) {
+      console.error(chalk.red('❌ Specification ID required (use --spec or SPEC-ID:TASK-ID format)'));
+      process.exit(1);
+    }
+
+    if (options.type === 'subtask') {
+      if (!options.subtask) {
+        console.error(chalk.red('❌ Subtask ID required when type is "subtask" (use --subtask)'));
+        process.exit(1);
+      }
+
+      // Handle subtask completion
+      await handleSubtaskComplete(specId, parsedTaskId, options.subtask, options);
+    } else {
+      // Handle regular task completion - delegate to existing function
+      await handleTaskComplete(specId, parsedTaskId, options);
+
+      // Trigger automation if requested
+      if (options.triggerAutomation) {
+        console.log(chalk.blue('🔄 Triggering handoff automation...'));
+        await handleCompleteTaskWithHandoff(specId, parsedTaskId, options);
+      }
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Task completion failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleSubtaskComplete(specId, taskId, subtaskId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const triggerSystem = new ContextTriggerSystem(configManager);
+    await triggerSystem.initialize();
+
+    // Validate spec and task exist
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+
+    const spec = specParser.getSpecById(specId);
+    if (!spec) {
+      console.error(chalk.red(`❌ Specification not found: ${specId}`));
+      process.exit(1);
+    }
+
+    const task = spec.tasks?.find(t => t.id === taskId);
+    if (!task) {
+      console.error(chalk.red(`❌ Task not found: ${taskId} in ${specId}`));
+      process.exit(1);
+    }
+
+    const subtask = task.subtasks?.find(st => st.id === subtaskId);
+    if (!subtask) {
+      console.error(chalk.red(`❌ Subtask not found: ${subtaskId} in ${taskId}`));
+      process.exit(1);
+    }
+
+    // Update subtask status in the spec file
+    const fs = require('fs').promises;
+    const content = await fs.readFile(spec.filePath, 'utf-8');
+
+    // Simple regex replacement to update subtask status
+    const subtaskRegex = new RegExp(
+      `(- id: "${subtaskId}"[\\s\\S]*?status: ")ready|in_progress|blocked(")`
+    );
+
+    const updatedContent = content.replace(subtaskRegex, '$1complete$2');
+
+    if (updatedContent !== content) {
+      await fs.writeFile(spec.filePath, updatedContent, 'utf-8');
+
+      // Fire trigger for subtask completion
+      await triggerSystem.fireTrigger('complete_subtask', {
+        specId,
+        taskId,
+        subtaskId,
+        completionNotes: options.notes,
+        source: 'cli_command'
+      });
+
+      console.log(chalk.green(`✅ Marked subtask ${subtaskId} as complete`));
+      console.log(chalk.gray(`   Task: ${specId}:${taskId}`));
+      if (options.notes) {
+        console.log(chalk.gray(`   Notes: ${options.notes}`));
+      }
+
+      // Check if all subtasks are complete
+      const updatedSpec = await specParser.getSpecById(specId);
+      const updatedTask = updatedSpec.tasks?.find(t => t.id === taskId);
+      const allSubtasksComplete = updatedTask.subtasks?.every(st => st.status === 'complete');
+
+      if (allSubtasksComplete) {
+        console.log(chalk.blue('🎉 All subtasks complete! Consider completing the main task.'));
+      }
+
+    } else {
+      console.error(chalk.red('❌ Failed to update subtask status in spec file'));
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Subtask completion failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleTaskBlock(taskId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    const triggerSystem = new ContextTriggerSystem(configManager);
+    await triggerSystem.initialize();
+
+    // Parse task ID
+    let specId, parsedTaskId;
+    if (taskId.includes(':')) {
+      [specId, parsedTaskId] = taskId.split(':', 2);
+    } else {
+      parsedTaskId = taskId;
+      specId = options.spec;
+    }
+
+    if (!specId) {
+      console.error(chalk.red('❌ Specification ID required (use --spec or SPEC-ID:TASK-ID format)'));
+      process.exit(1);
+    }
+
+    // Validate task exists
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+
+    const spec = specParser.getSpecById(specId);
+    if (!spec) {
+      console.error(chalk.red(`❌ Specification not found: ${specId}`));
+      process.exit(1);
+    }
+
+    const task = spec.tasks?.find(t => t.id === parsedTaskId);
+    if (!task) {
+      console.error(chalk.red(`❌ Task not found: ${parsedTaskId} in ${specId}`));
+      process.exit(1);
+    }
+
+    // Update task with blocking information
+    const updates = {
+      frontmatter: {
+        status: 'blocked',
+        blocked_at: new Date().toISOString(),
+        blocked_reason: options.reason
+      }
+    };
+
+    if (options.until) {
+      updates.frontmatter.blocked_until = options.until;
+    }
+
+    if (options.dependsOn) {
+      const dependencies = options.dependsOn.split(',').map(dep => dep.trim());
+      updates.frontmatter.depends_on = dependencies;
+    }
+
+    const taskSuccess = await contextManager.updateContext('task', parsedTaskId, updates);
+
+    // Update dynamic state
+    const paths = contextManager.getContextPaths();
+    const blockedPath = path.join(paths.state, 'blocked-tasks.json');
+
+    const fs = require('fs').promises;
+    let blockedTasks = {};
+
+    try {
+      if (await contextManager.fileExists(blockedPath)) {
+        const blockedContent = await fs.readFile(blockedPath, 'utf-8');
+        blockedTasks = JSON.parse(blockedContent);
+      }
+    } catch (error) {
+      // Start fresh if file is corrupted
+    }
+
+    // Update blocked tasks registry
+    blockedTasks[specId] = blockedTasks[specId] || {};
+    blockedTasks[specId][parsedTaskId] = {
+      blocked_at: new Date().toISOString(),
+      reason: options.reason,
+      until: options.until || null,
+      depends_on: options.dependsOn ? options.dependsOn.split(',').map(dep => dep.trim()) : []
+    };
+
+    // Ensure state directory exists
+    await fs.mkdir(paths.state, { recursive: true });
+    await fs.writeFile(blockedPath, JSON.stringify(blockedTasks, null, 2), 'utf-8');
+
+    if (taskSuccess) {
+      // Fire trigger for task blocking
+      await triggerSystem.fireTrigger('block', {
+        specId,
+        taskId: parsedTaskId,
+        reason: options.reason,
+        until: options.until,
+        dependsOn: options.dependsOn,
+        source: 'cli_command'
+      });
+
+      console.log(chalk.red(`🚫 Blocked task ${parsedTaskId}`));
+      console.log(chalk.gray(`   Spec: ${specId}`));
+      console.log(chalk.gray(`   Reason: ${options.reason}`));
+      if (options.until) {
+        console.log(chalk.gray(`   Until: ${options.until}`));
+      }
+      if (options.dependsOn) {
+        console.log(chalk.gray(`   Depends on: ${options.dependsOn}`));
+      }
+    } else {
+      console.error(chalk.red('❌ Failed to block task'));
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Task blocking failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleTaskUnblock(taskId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    const triggerSystem = new ContextTriggerSystem(configManager);
+    await triggerSystem.initialize();
+
+    // Parse task ID
+    let specId, parsedTaskId;
+    if (taskId.includes(':')) {
+      [specId, parsedTaskId] = taskId.split(':', 2);
+    } else {
+      parsedTaskId = taskId;
+      specId = options.spec;
+    }
+
+    if (!specId) {
+      console.error(chalk.red('❌ Specification ID required (use --spec or SPEC-ID:TASK-ID format)'));
+      process.exit(1);
+    }
+
+    // Update task to remove blocking
+    const updates = {
+      frontmatter: {
+        status: 'ready',
+        blocked_at: null,
+        blocked_reason: null,
+        blocked_until: null,
+        unblocked_at: new Date().toISOString()
+      }
+    };
+
+    if (options.notes) {
+      updates.frontmatter.unblock_notes = options.notes;
+    }
+
+    const taskSuccess = await contextManager.updateContext('task', parsedTaskId, updates);
+
+    // Update blocked tasks registry
+    const paths = contextManager.getContextPaths();
+    const blockedPath = path.join(paths.state, 'blocked-tasks.json');
+
+    const fs = require('fs').promises;
+    let blockedTasks = {};
+
+    try {
+      if (await contextManager.fileExists(blockedPath)) {
+        const blockedContent = await fs.readFile(blockedPath, 'utf-8');
+        blockedTasks = JSON.parse(blockedContent);
+      }
+    } catch (error) {
+      // Start fresh if file is corrupted
+    }
+
+    // Remove from blocked tasks registry
+    if (blockedTasks[specId] && blockedTasks[specId][parsedTaskId]) {
+      delete blockedTasks[specId][parsedTaskId];
+
+      // Clean up empty spec entries
+      if (Object.keys(blockedTasks[specId]).length === 0) {
+        delete blockedTasks[specId];
+      }
+
+      await fs.writeFile(blockedPath, JSON.stringify(blockedTasks, null, 2), 'utf-8');
+    }
+
+    if (taskSuccess) {
+      // Fire trigger for task unblocking
+      await triggerSystem.fireTrigger('unblock', {
+        specId,
+        taskId: parsedTaskId,
+        notes: options.notes,
+        source: 'cli_command'
+      });
+
+      console.log(chalk.green(`✅ Unblocked task ${parsedTaskId}`));
+      console.log(chalk.gray(`   Spec: ${specId}`));
+      if (options.notes) {
+        console.log(chalk.gray(`   Notes: ${options.notes}`));
+      }
+    } else {
+      console.error(chalk.red('❌ Failed to unblock task'));
+      process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Task unblocking failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleTaskDependencies(action, taskId, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+
+    // Parse task ID
+    let specId, parsedTaskId;
+    if (taskId.includes(':')) {
+      [specId, parsedTaskId] = taskId.split(':', 2);
+    } else {
+      parsedTaskId = taskId;
+      specId = options.spec;
+    }
+
+    if (!specId) {
+      console.error(chalk.red('❌ Specification ID required (use --spec or SPEC-ID:TASK-ID format)'));
+      process.exit(1);
+    }
+
+    // Validate task exists
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    await specParser.loadSpecs();
+
+    const spec = specParser.getSpecById(specId);
+    if (!spec) {
+      console.error(chalk.red(`❌ Specification not found: ${specId}`));
+      process.exit(1);
+    }
+
+    const task = spec.tasks?.find(t => t.id === parsedTaskId);
+    if (!task) {
+      console.error(chalk.red(`❌ Task not found: ${parsedTaskId} in ${specId}`));
+      process.exit(1);
+    }
+
+    switch (action.toLowerCase()) {
+      case 'add':
+        await handleAddTaskDependencies(specId, parsedTaskId, options, contextManager);
+        break;
+      case 'remove':
+        await handleRemoveTaskDependencies(specId, parsedTaskId, options, contextManager);
+        break;
+      case 'list':
+        await handleListTaskDependencies(specId, parsedTaskId, task);
+        break;
+      default:
+        console.error(chalk.red(`❌ Unknown action: ${action}. Use: add, remove, list`));
+        process.exit(1);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Task dependency management failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleAddTaskDependencies(specId, taskId, options, contextManager) {
+  const updates = { frontmatter: {} };
+  let updated = false;
+
+  if (options.dependsOn) {
+    const dependencies = options.dependsOn.split(',').map(dep => dep.trim());
+    updates.frontmatter.depends_on = dependencies;
+    updated = true;
+
+    console.log(chalk.blue(`📎 Adding dependencies for ${taskId}:`));
+    dependencies.forEach(dep => {
+      console.log(chalk.gray(`   → depends on: ${dep}`));
+    });
+  }
+
+  if (options.blocks) {
+    const blockedTasks = options.blocks.split(',').map(task => task.trim());
+    updates.frontmatter.blocks = blockedTasks;
+    updated = true;
+
+    console.log(chalk.blue(`🚫 Adding blocking relationships for ${taskId}:`));
+    blockedTasks.forEach(blocked => {
+      console.log(chalk.gray(`   → blocks: ${blocked}`));
+    });
+  }
+
+  if (updated) {
+    const success = await contextManager.updateContext('task', taskId, updates);
+    if (success) {
+      console.log(chalk.green(`✅ Updated dependencies for ${taskId}`));
+    } else {
+      console.error(chalk.red('❌ Failed to update task dependencies'));
+      process.exit(1);
+    }
+  } else {
+    console.log(chalk.yellow('⚠️  No dependencies specified (use --depends-on or --blocks)'));
+  }
+}
+
+async function handleRemoveTaskDependencies(specId, taskId, options, contextManager) {
+  // For removal, we would need to read current dependencies and remove specific ones
+  // This is a simplified implementation
+  const updates = { frontmatter: {} };
+  let updated = false;
+
+  if (options.dependsOn) {
+    updates.frontmatter.depends_on = [];
+    updated = true;
+    console.log(chalk.yellow(`🗑️  Removed all dependencies for ${taskId}`));
+  }
+
+  if (options.blocks) {
+    updates.frontmatter.blocks = [];
+    updated = true;
+    console.log(chalk.yellow(`🗑️  Removed all blocking relationships for ${taskId}`));
+  }
+
+  if (updated) {
+    const success = await contextManager.updateContext('task', taskId, updates);
+    if (success) {
+      console.log(chalk.green(`✅ Updated dependencies for ${taskId}`));
+    } else {
+      console.error(chalk.red('❌ Failed to update task dependencies'));
+      process.exit(1);
+    }
+  } else {
+    console.log(chalk.yellow('⚠️  No dependencies specified to remove (use --depends-on or --blocks)'));
+  }
+}
+
+async function handleListTaskDependencies(specId, taskId, task) {
+  console.log(chalk.blue(`📋 Dependencies for ${specId}:${taskId}`));
+  console.log(chalk.gray('─'.repeat(50)));
+
+  if (task.depends_on && task.depends_on.length > 0) {
+    console.log(chalk.cyan('📎 Depends on:'));
+    task.depends_on.forEach(dep => {
+      console.log(chalk.gray(`   → ${dep}`));
+    });
+  } else {
+    console.log(chalk.gray('📎 No dependencies'));
+  }
+
+  if (task.blocks && task.blocks.length > 0) {
+    console.log(chalk.cyan('\n🚫 Blocks:'));
+    task.blocks.forEach(blocked => {
+      console.log(chalk.gray(`   → ${blocked}`));
+    });
+  } else {
+    console.log(chalk.gray('🚫 No blocking relationships'));
+  }
+
+  if (task.status === 'blocked' && task.blocked_reason) {
+    console.log(chalk.red(`\n🚫 Currently blocked: ${task.blocked_reason}`));
+  }
+}
+
+async function handleTasksListEnhanced(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const SpecParser = require('../lib/feature-parser');
+    const specParser = new SpecParser(configManager);
+    const workflowStateManager = new WorkflowStateManager(configManager);
+
+    await specParser.loadSpecs();
+    await workflowStateManager.initialize();
+
+    // Get all specs and tasks
+    const allSpecs = specParser.getAllSpecs();
+    let allTasks = [];
+
+    // Extract all tasks with spec context
+    for (const spec of allSpecs) {
+      if (spec.tasks) {
+        for (const task of spec.tasks) {
+          allTasks.push({
+            ...task,
+            specId: spec.id,
+            specTitle: spec.title,
+            specStatus: spec.status,
+            specPhase: spec.phase,
+            specPriority: spec.priority
+          });
+        }
+      }
+    }
+
+    // Get current assignments for assignment status
+    const assignments = await workflowStateManager.getCurrentAssignments();
+    const assignmentMap = {};
+    assignments.current_assignments.forEach(assignment => {
+      const key = `${assignment.spec_id}:${assignment.task_id}`;
+      assignmentMap[key] = assignment;
+    });
+
+    // Apply filters
+    let filteredTasks = allTasks;
+
+    // Filter by spec IDs
+    if (options.spec) {
+      const specIds = options.spec.split(',').map(id => id.trim());
+      filteredTasks = filteredTasks.filter(task => specIds.includes(task.specId));
+    }
+
+    // Filter by agent type
+    if (options.agent) {
+      filteredTasks = filteredTasks.filter(task => {
+        const assignment = assignmentMap[`${task.specId}:${task.id}`];
+        return task.agent_type === options.agent ||
+               (assignment && assignment.assigned_agent === options.agent);
+      });
+    }
+
+    // Filter by priority
+    if (options.priority) {
+      const priorities = options.priority.split(',').map(p => p.trim());
+      filteredTasks = filteredTasks.filter(task =>
+        priorities.includes(task.priority) || priorities.includes(task.specPriority)
+      );
+    }
+
+    // Filter by phase
+    if (options.phase) {
+      const phases = options.phase.split(',').map(p => p.trim());
+      filteredTasks = filteredTasks.filter(task => phases.includes(task.specPhase));
+    }
+
+    // Filter by spec status
+    if (options.specStatus) {
+      const statuses = options.specStatus.split(',').map(s => s.trim());
+      filteredTasks = filteredTasks.filter(task => statuses.includes(task.specStatus));
+    }
+
+    // Filter by task status
+    if (options.status) {
+      const statuses = options.status.split(',').map(s => s.trim());
+      filteredTasks = filteredTasks.filter(task => statuses.includes(task.status));
+    }
+
+    // Filter blocked tasks
+    if (!options.includeBlocked) {
+      filteredTasks = filteredTasks.filter(task => task.status !== 'blocked');
+    }
+
+    // Filter by assignment status
+    if (options.onlyAssigned) {
+      filteredTasks = filteredTasks.filter(task => {
+        const assignment = assignmentMap[`${task.specId}:${task.id}`];
+        return assignment && assignment.assigned_agent;
+      });
+    } else if (options.onlyUnassigned) {
+      filteredTasks = filteredTasks.filter(task => {
+        const assignment = assignmentMap[`${task.specId}:${task.id}`];
+        return !assignment || !assignment.assigned_agent;
+      });
+    }
+
+    // Sort tasks
+    const sortFunction = getSortFunction(options.sort);
+    if (sortFunction) {
+      filteredTasks.sort(sortFunction);
+    }
+
+    // Limit results
+    const limit = parseInt(options.limit) || 20;
+    if (filteredTasks.length > limit) {
+      filteredTasks = filteredTasks.slice(0, limit);
+    }
+
+    // Output in requested format
+    switch (options.format) {
+      case 'json':
+        await outputTasksJson(filteredTasks, assignmentMap, options);
+        break;
+      case 'csv':
+        await outputTasksCsv(filteredTasks, assignmentMap, options);
+        break;
+      case 'summary':
+        await outputTasksSummary(filteredTasks, assignmentMap, options);
+        break;
+      default:
+        await outputTasksTable(filteredTasks, assignmentMap, options);
+    }
+
+    // Show summary stats
+    if (filteredTasks.length > 0 && options.format !== 'json') {
+      console.log(chalk.gray(`\n📊 Showing ${filteredTasks.length} tasks (limit: ${limit})`));
+
+      const stats = {
+        ready: filteredTasks.filter(t => t.status === 'ready').length,
+        in_progress: filteredTasks.filter(t => t.status === 'in_progress').length,
+        blocked: filteredTasks.filter(t => t.status === 'blocked').length,
+        completed: filteredTasks.filter(t => t.status === 'complete').length
+      };
+
+      console.log(chalk.gray(
+        `Status: ${stats.ready} ready, ${stats.in_progress} in progress, ${stats.blocked} blocked, ${stats.completed} completed`
+      ));
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Enhanced task listing failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+function getSortFunction(sortType) {
+  const priorityOrder = { 'P0': 0, 'P1': 1, 'P2': 2, 'P3': 3, null: 4, undefined: 4 };
+
+  switch (sortType) {
+    case 'priority':
+      return (a, b) => {
+        const aPriority = priorityOrder[a.priority] ?? priorityOrder[a.specPriority] ?? 4;
+        const bPriority = priorityOrder[b.priority] ?? priorityOrder[b.specPriority] ?? 4;
+        return aPriority - bPriority;
+      };
+    case 'created':
+      return (a, b) => new Date(b.created || 0) - new Date(a.created || 0);
+    case 'spec':
+      return (a, b) => a.specId.localeCompare(b.specId);
+    case 'agent':
+      return (a, b) => (a.agent_type || '').localeCompare(b.agent_type || '');
+    case 'status':
+      return (a, b) => (a.status || '').localeCompare(b.status || '');
+    default:
+      return null;
+  }
+}
+
+async function outputTasksTable(tasks, assignmentMap, options) {
+  if (tasks.length === 0) {
+    console.log(chalk.yellow('📝 No tasks found matching the filter criteria'));
+    return;
+  }
+
+  console.log(chalk.cyan('📋 Task List'));
+  console.log(chalk.gray('═'.repeat(100)));
+
+  for (const task of tasks) {
+    const assignment = assignmentMap[`${task.specId}:${task.id}`];
+    const statusColor = getTaskStatusColor(task.status);
+    const priorityIcon = getPriorityIcon(task.priority || task.specPriority);
+
+    // Main task line
+    console.log(
+      `${statusColor} ${priorityIcon} ${chalk.yellow(task.specId)}:${chalk.cyan(task.id)} - ${chalk.white(task.title || 'Untitled Task')}`
+    );
+
+    // Details line
+    const agent = assignment?.assigned_agent || task.agent_type || 'Unassigned';
+    const phase = task.specPhase || 'No phase';
+    const estimatedHours = task.estimated_hours || 'N/A';
+
+    console.log(chalk.gray(`   👤 ${agent} | 📍 ${phase} | ⏱️  ${estimatedHours}h | 📊 ${task.specStatus}`));
+
+    // Show dependencies if requested
+    if (options.showDependencies) {
+      if (task.depends_on && task.depends_on.length > 0) {
+        console.log(chalk.gray(`   📎 Depends on: ${task.depends_on.join(', ')}`));
+      }
+      if (task.blocks && task.blocks.length > 0) {
+        console.log(chalk.gray(`   🚫 Blocks: ${task.blocks.join(', ')}`));
+      }
+      if (task.status === 'blocked' && task.blocked_reason) {
+        console.log(chalk.red(`   🚫 Blocked: ${task.blocked_reason}`));
+      }
+    }
+
+    // Show context requirements if requested
+    if (options.showContext && task.context_requirements) {
+      console.log(chalk.gray(`   📋 Context: ${task.context_requirements.join(', ')}`));
+    }
+
+    console.log();
+  }
+}
+
+async function outputTasksJson(tasks, assignmentMap, options) {
+  const jsonTasks = tasks.map(task => {
+    const assignment = assignmentMap[`${task.specId}:${task.id}`];
+    return {
+      id: task.id,
+      title: task.title,
+      status: task.status,
+      priority: task.priority || task.specPriority,
+      agent_type: task.agent_type,
+      assigned_agent: assignment?.assigned_agent,
+      estimated_hours: task.estimated_hours,
+      spec: {
+        id: task.specId,
+        title: task.specTitle,
+        status: task.specStatus,
+        phase: task.specPhase,
+        priority: task.specPriority
+      },
+      dependencies: {
+        depends_on: task.depends_on || [],
+        blocks: task.blocks || [],
+        blocked_reason: task.blocked_reason
+      },
+      context_requirements: task.context_requirements || [],
+      assignment_info: assignment || null
+    };
+  });
+
+  console.log(JSON.stringify({
+    tasks: jsonTasks,
+    meta: {
+      total: tasks.length,
+      filters_applied: Object.keys(options).filter(key => options[key] && !['format', 'limit'].includes(key)),
+      timestamp: new Date().toISOString()
+    }
+  }, null, 2));
+}
+
+async function outputTasksCsv(tasks, assignmentMap, _options) {
+  // CSV headers
+  const headers = [
+    'Task ID', 'Task Title', 'Status', 'Priority', 'Agent Type', 'Assigned Agent',
+    'Estimated Hours', 'Spec ID', 'Spec Title', 'Spec Status', 'Spec Phase',
+    'Dependencies', 'Blocks', 'Context Requirements'
+  ];
+
+  console.log(headers.join(','));
+
+  for (const task of tasks) {
+    const assignment = assignmentMap[`${task.specId}:${task.id}`];
+    const row = [
+      `"${task.id}"`,
+      `"${task.title || ''}"`,
+      `"${task.status || ''}"`,
+      `"${task.priority || task.specPriority || ''}"`,
+      `"${task.agent_type || ''}"`,
+      `"${assignment?.assigned_agent || ''}"`,
+      `"${task.estimated_hours || ''}"`,
+      `"${task.specId}"`,
+      `"${task.specTitle}"`,
+      `"${task.specStatus}"`,
+      `"${task.specPhase || ''}"`,
+      `"${(task.depends_on || []).join(';')}"`,
+      `"${(task.blocks || []).join(';')}"`,
+      `"${(task.context_requirements || []).join(';')}"`
+    ];
+
+    console.log(row.join(','));
+  }
+}
+
+async function outputTasksSummary(tasks, _assignmentMap, _options) {
+  if (tasks.length === 0) {
+    console.log(chalk.yellow('📝 No tasks found matching the filter criteria'));
+    return;
+  }
+
+  console.log(chalk.cyan('📊 Task Summary'));
+  console.log(chalk.gray('═'.repeat(50)));
+
+  // Group by spec
+  const tasksBySpec = {};
+  tasks.forEach(task => {
+    if (!tasksBySpec[task.specId]) {
+      tasksBySpec[task.specId] = [];
+    }
+    tasksBySpec[task.specId].push(task);
+  });
+
+  for (const [specId, specTasks] of Object.entries(tasksBySpec)) {
+    const spec = specTasks[0]; // Get spec info from first task
+    console.log(chalk.yellow(`📋 ${specId}: ${spec.specTitle}`));
+    console.log(chalk.gray(`   Status: ${spec.specStatus} | Phase: ${spec.specPhase || 'N/A'} | Priority: ${spec.specPriority}`));
+
+    const statusCounts = {
+      ready: specTasks.filter(t => t.status === 'ready').length,
+      in_progress: specTasks.filter(t => t.status === 'in_progress').length,
+      blocked: specTasks.filter(t => t.status === 'blocked').length,
+      complete: specTasks.filter(t => t.status === 'complete').length
+    };
+
+    const total = specTasks.length;
+    const completion = total > 0 ? Math.round((statusCounts.complete / total) * 100) : 0;
+
+    console.log(chalk.gray(
+      `   Tasks: ${total} total (${statusCounts.ready} ready, ${statusCounts.in_progress} active, ${statusCounts.blocked} blocked, ${statusCounts.complete} done) - ${completion}% complete`
+    ));
+
+    // Show next ready tasks
+    const readyTasks = specTasks.filter(t => t.status === 'ready').slice(0, 3);
+    if (readyTasks.length > 0) {
+      console.log(chalk.blue('   📌 Ready tasks:'));
+      readyTasks.forEach(task => {
+        const priorityIcon = getPriorityIcon(task.priority || task.specPriority);
+        console.log(chalk.gray(`     ${priorityIcon} ${task.id}: ${task.title || 'Untitled'} (${task.agent_type || 'No agent'})`));
+      });
+    }
+
+    console.log();
+  }
+}
+
+function getTaskStatusColor(status) {
+  switch (status) {
+    case 'ready': return chalk.green('●');
+    case 'in_progress': return chalk.blue('●');
+    case 'blocked': return chalk.red('●');
+    case 'complete': return chalk.green('✅');
+    default: return chalk.gray('○');
+  }
+}
+
+function getPriorityIcon(priority) {
+  switch (priority) {
+    case 'P0': return chalk.red('🔥');
+    case 'P1': return chalk.yellow('⚡');
+    case 'P2': return chalk.blue('📋');
+    case 'P3': return chalk.gray('📝');
+    default: return chalk.gray('○');
   }
 }
 
