@@ -86,8 +86,11 @@ contextCommand
   .command('export')
   .description('Export context data for backup or sharing')
   .option('--output <path>', 'Output file path', './context-export.json')
+  .option('--format <format>', 'Export format: json, csv, yaml, markdown', 'json')
   .option('--spec <spec-id>', 'Export specific spec context')
   .option('--include-state', 'Include dynamic state data')
+  .option('--include-research', 'Include research findings')
+  .option('--compress', 'Compress output for large exports')
   .action(async (options) => {
     await handleContextExport(options);
   });
@@ -222,8 +225,13 @@ program
     await handleTaskComplete(specId, taskId, options);
   });
 
-program
+// Research management commands
+const researchCommand = program
   .command('research')
+  .description('Manage research findings and capture');
+
+researchCommand
+  .command('add')
   .description('Capture research findings and update context')
   .argument('<spec-id>', 'Specification ID')
   .option('--task <task-id>', 'Specific task ID')
@@ -231,6 +239,43 @@ program
   .option('--source <source>', 'Source of research')
   .action(async (specId, options) => {
     await handleResearchCapture(specId, options);
+  });
+
+researchCommand
+  .command('show')
+  .description('Display research findings')
+  .option('--spec <spec-id>', 'Show research for specific spec')
+  .option('--task <task-id>', 'Show research for specific task')
+  .option('--format <format>', 'Output format: table, json, summary', 'summary')
+  .option('--recent <days>', 'Show research from last N days', '30')
+  .action(async (options) => {
+    await handleResearchShow(options);
+  });
+
+// Project-level export/import commands for complete data portability
+program
+  .command('export-project')
+  .description('Export complete project data with all specs, context, and state')
+  .option('--output <path>', 'Output file path', './project-export')
+  .option('--format <format>', 'Export format: json, tar, zip', 'json')
+  .option('--include-state', 'Include dynamic state files', true)
+  .option('--include-context', 'Include all context files', true)
+  .option('--include-research', 'Include research findings', true)
+  .option('--exclude-drafts', 'Exclude draft specifications')
+  .option('--compress', 'Compress output for large projects')
+  .action(async (options) => {
+    await handleProjectExport(options);
+  });
+
+program
+  .command('import-project')
+  .description('Import complete project data from backup')
+  .argument('<file>', 'Project export file to import')
+  .option('--merge', 'Merge with existing project (default: replace)')
+  .option('--dry-run', 'Show what would be imported without making changes')
+  .option('--validate', 'Validate imported data before applying', true)
+  .action(async (file, options) => {
+    await handleProjectImport(file, options);
   });
 
 // Enhanced task management commands for FEAT-018 TASK-003
@@ -1055,13 +1100,93 @@ async function handleContextExport(options) {
       exportData.context = specContext ? { [`specs/${options.spec}-context.md`]: specContext } : {};
     }
 
-    // Write export file
-    await fs.writeFile(options.output, JSON.stringify(exportData, null, 2), 'utf-8');
+    // Include research if requested
+    if (options.includeResearch) {
+      exportData.research = [];
+      for (const contextData of Object.values(exportData.context)) {
+        if (contextData.research) {
+          exportData.research.push(...contextData.research);
+        }
+      }
+    }
 
-    console.log(chalk.green(`✅ Context exported to ${options.output}`));
+    // Export based on format
+    const outputPath = options.output;
+    exportData.format = options.format;
+
+    switch (options.format) {
+      case 'json':
+        await fs.writeFile(outputPath, JSON.stringify(exportData, null, 2), 'utf-8');
+        console.log(chalk.green(`✅ Context exported to ${outputPath}`));
+        break;
+
+      case 'csv': {
+        // Convert to CSV format for context items
+        const csvLines = ['Type,Path,Title,Status,Created,Modified'];
+
+        // Add context files to CSV
+        Object.entries(exportData.context).forEach(([path, data]) => {
+          const row = [
+            'context',
+            path,
+            data.frontmatter?.title || 'N/A',
+            data.frontmatter?.status || 'N/A',
+            data.frontmatter?.created || 'N/A',
+            data.frontmatter?.modified || 'N/A'
+          ].map(field => `'${field}'`).join(',');
+          csvLines.push(row);
+        });
+
+        await fs.writeFile(outputPath.replace(/\.json$/, '.csv'), csvLines.join('\n'));
+        console.log(chalk.green(`✅ Context exported to CSV: ${outputPath.replace(/\.json$/, '.csv')}`));
+        break;
+      }
+
+      case 'yaml':
+        try {
+          const yaml = require('js-yaml');
+          const yamlContent = yaml.dump(exportData, { indent: 2 });
+          await fs.writeFile(outputPath.replace(/\.json$/, '.yaml'), yamlContent);
+          console.log(chalk.green(`✅ Context exported to YAML: ${outputPath.replace(/\.json$/, '.yaml')}`));
+        } catch (error) {
+          console.warn(chalk.yellow('⚠️  YAML export failed, falling back to JSON'));
+          await fs.writeFile(outputPath, JSON.stringify(exportData, null, 2), 'utf-8');
+          console.log(chalk.green(`✅ Context exported to JSON: ${outputPath}`));
+        }
+        break;
+
+      case 'markdown': {
+        // Create markdown report
+        let markdown = '# Context Export Report\n\n';
+        markdown += `**Exported:** ${exportData.timestamp}\n\n`;
+
+        markdown += `## Context Files (${Object.keys(exportData.context).length})\n\n`;
+        Object.entries(exportData.context).forEach(([path, data]) => {
+          markdown += `### ${path}\n`;
+          if (data.frontmatter?.title) markdown += `**Title:** ${data.frontmatter.title}\n`;
+          if (data.frontmatter?.status) markdown += `**Status:** ${data.frontmatter.status}\n`;
+          markdown += '\n';
+        });
+
+        await fs.writeFile(outputPath.replace(/\.json$/, '.md'), markdown);
+        console.log(chalk.green(`✅ Context exported to Markdown: ${outputPath.replace(/\.json$/, '.md')}`));
+        break;
+      }
+
+      default:
+        await fs.writeFile(outputPath, JSON.stringify(exportData, null, 2), 'utf-8');
+        console.log(chalk.green(`✅ Context exported to ${outputPath}`));
+    }
+
     console.log(chalk.gray(`   Context files: ${Object.keys(exportData.context).length}`));
     console.log(chalk.gray(`   Agent files: ${Object.keys(exportData.agents).length}`));
     console.log(chalk.gray(`   Process files: ${Object.keys(exportData.processes).length}`));
+    if (options.includeState) {
+      console.log(chalk.gray('   State data: included'));
+    }
+    if (options.includeResearch) {
+      console.log(chalk.gray(`   Research items: ${exportData.research?.length || 0}`));
+    }
 
   } catch (error) {
     console.error(chalk.red('❌ Context export failed:'), error.message);
@@ -5221,6 +5346,349 @@ function updateFrontmatter(content, key, value) {
   }
 
   return lines.join('\n');
+}
+
+// Handler for research show command
+async function handleResearchShow(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+
+    let research = [];
+    const recentDays = parseInt(options.recent) || 30;
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - recentDays);
+
+    // Collect research from context files
+    if (options.spec) {
+      const specContext = await contextManager.getContext('spec', options.spec);
+      if (specContext && specContext.research) {
+        research.push(...specContext.research);
+      }
+    } else if (options.task) {
+      const taskContext = await contextManager.getContext('task', options.task);
+      if (taskContext && taskContext.research) {
+        research.push(...taskContext.research);
+      }
+    } else {
+      // Get all research findings
+      const contextPaths = contextManager.getContextPaths();
+      const fs = require('fs').promises;
+
+      try {
+        const specDirs = await fs.readdir(contextPaths.specs);
+        for (const specDir of specDirs) {
+          try {
+            const specContext = await contextManager.getContext('spec', specDir);
+            if (specContext && specContext.research) {
+              research.push(...specContext.research.map(r => ({...r, spec: specDir})));
+            }
+          } catch (error) {
+            // Skip specs that can't be read
+          }
+        }
+      } catch (error) {
+        console.warn(chalk.yellow('⚠️  Could not read context files'));
+      }
+    }
+
+    // Filter by recent date
+    research = research.filter(r => {
+      if (!r.created_at) return true;
+      return new Date(r.created_at) >= cutoffDate;
+    });
+
+    // Sort by date (newest first)
+    research.sort((a, b) => {
+      const dateA = new Date(a.created_at || 0);
+      const dateB = new Date(b.created_at || 0);
+      return dateB - dateA;
+    });
+
+    if (research.length === 0) {
+      console.log(chalk.yellow('No research findings found'));
+      return;
+    }
+
+    // Output based on format
+    switch (options.format) {
+      case 'json':
+        console.log(JSON.stringify(research, null, 2));
+        break;
+      case 'table':
+        outputResearchTable(research);
+        break;
+      default:
+        outputResearchSummary(research);
+    }
+
+  } catch (error) {
+    console.error(chalk.red('❌ Research show failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+// Handler for project export command
+async function handleProjectExport(options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    const SpecParser = require('../lib/feature-parser');
+    const fs = require('fs').promises;
+    const path = require('path');
+
+    console.log(chalk.blue('🔍 Collecting project data...'));
+
+    const exportData = {
+      metadata: {
+        exported_at: new Date().toISOString(),
+        format: options.format,
+        asd_version: '0.1.0-alpha'
+      },
+      specs: [],
+      context: {},
+      state: {},
+      research: []
+    };
+
+    // Collect all specifications
+    const parser = new SpecParser({ rootDir: process.cwd() });
+    await parser.initialize();
+    const specs = await parser.getAllSpecs();
+
+    if (!options.excludeDrafts) {
+      exportData.specs = specs;
+    } else {
+      exportData.specs = specs.filter(s => s.status !== 'draft');
+    }
+
+    // Collect context files
+    if (options.includeContext) {
+      console.log(chalk.blue('📋 Collecting context files...'));
+
+      // Export all spec contexts
+      for (const spec of exportData.specs) {
+        try {
+          const specContext = await contextManager.getContext('spec', spec.id);
+          if (specContext) {
+            exportData.context[spec.id] = specContext;
+          }
+        } catch (error) {
+          // Skip specs without context
+        }
+      }
+
+      // Export project-level context
+      try {
+        const projectContext = await contextManager.getContext('project');
+        if (projectContext) {
+          exportData.context.project = projectContext;
+        }
+      } catch (error) {
+        // No project context
+      }
+    }
+
+    // Collect state files
+    if (options.includeState) {
+      console.log(chalk.blue('📊 Collecting state files...'));
+      const contextPaths = contextManager.getContextPaths();
+      const statePath = contextPaths.state;
+
+      try {
+        const stateFiles = await fs.readdir(statePath);
+        for (const file of stateFiles) {
+          if (file.endsWith('.json')) {
+            try {
+              const filePath = path.join(statePath, file);
+              const content = await fs.readFile(filePath, 'utf-8');
+              exportData.state[file.replace('.json', '')] = JSON.parse(content);
+            } catch (error) {
+              // Skip corrupted files
+            }
+          }
+        }
+      } catch (error) {
+        // No state directory
+      }
+    }
+
+    // Collect research findings
+    if (options.includeResearch) {
+      console.log(chalk.blue('🔬 Collecting research findings...'));
+      for (const [specId, context] of Object.entries(exportData.context)) {
+        if (context.research) {
+          exportData.research.push(...context.research.map(r => ({...r, spec: specId})));
+        }
+      }
+    }
+
+    // Output based on format
+    const outputPath = options.output;
+
+    switch (options.format) {
+      case 'json':
+        await fs.writeFile(`${outputPath}.json`, JSON.stringify(exportData, null, 2));
+        console.log(chalk.green(`✅ Project exported to ${outputPath}.json`));
+        break;
+      case 'tar':
+      case 'zip':
+        // For archive formats, create directory structure
+        await fs.mkdir(outputPath, { recursive: true });
+        await fs.writeFile(path.join(outputPath, 'metadata.json'), JSON.stringify(exportData.metadata, null, 2));
+        await fs.writeFile(path.join(outputPath, 'specs.json'), JSON.stringify(exportData.specs, null, 2));
+        await fs.writeFile(path.join(outputPath, 'context.json'), JSON.stringify(exportData.context, null, 2));
+        await fs.writeFile(path.join(outputPath, 'state.json'), JSON.stringify(exportData.state, null, 2));
+        await fs.writeFile(path.join(outputPath, 'research.json'), JSON.stringify(exportData.research, null, 2));
+        console.log(chalk.green(`✅ Project exported to ${outputPath}/`));
+        break;
+      default:
+        await fs.writeFile(`${outputPath}.json`, JSON.stringify(exportData, null, 2));
+        console.log(chalk.green(`✅ Project exported to ${outputPath}.json`));
+    }
+
+    // Show export summary
+    console.log(chalk.cyan('\n📊 Export Summary:'));
+    console.log(chalk.white(`  Specifications: ${exportData.specs.length}`));
+    console.log(chalk.white(`  Context Files: ${Object.keys(exportData.context).length}`));
+    console.log(chalk.white(`  State Files: ${Object.keys(exportData.state).length}`));
+    console.log(chalk.white(`  Research Items: ${exportData.research.length}`));
+
+  } catch (error) {
+    console.error(chalk.red('❌ Project export failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+// Handler for project import command
+async function handleProjectImport(file, options) {
+  try {
+    const configManager = new ConfigManager(process.cwd());
+    const contextManager = new ContextManager(configManager);
+    const fs = require('fs').promises;
+    const path = require('path');
+
+    console.log(chalk.blue('🔍 Reading project import file...'));
+
+    let importData;
+    try {
+      const content = await fs.readFile(file, 'utf-8');
+      importData = JSON.parse(content);
+    } catch (error) {
+      throw new Error(`Cannot read import file: ${error.message}`);
+    }
+
+    // Validate import data
+    if (options.validate) {
+      console.log(chalk.blue('✅ Validating import data...'));
+
+      if (!importData.metadata || !importData.specs) {
+        throw new Error('Invalid import file format - missing required sections');
+      }
+
+      console.log(chalk.green('✅ Import data validation passed'));
+    }
+
+    if (options.dryRun) {
+      console.log(chalk.cyan('🔍 Dry Run - Would import:'));
+      console.log(chalk.white(`  Specifications: ${importData.specs?.length || 0}`));
+      console.log(chalk.white(`  Context Files: ${Object.keys(importData.context || {}).length}`));
+      console.log(chalk.white(`  State Files: ${Object.keys(importData.state || {}).length}`));
+      console.log(chalk.white(`  Research Items: ${importData.research?.length || 0}`));
+      console.log(chalk.gray('\nNo changes made (dry run mode)'));
+      return;
+    }
+
+    console.log(chalk.blue('📥 Importing project data...'));
+
+    // Import context files
+    if (importData.context) {
+      console.log(chalk.blue('📋 Importing context files...'));
+      for (const [contextId, contextData] of Object.entries(importData.context)) {
+        try {
+          if (contextId === 'project') {
+            await contextManager.updateContext('project', null, { content: contextData });
+          } else {
+            await contextManager.updateContext('spec', contextId, { content: contextData });
+          }
+        } catch (error) {
+          console.warn(chalk.yellow(`⚠️  Could not import context for ${contextId}: ${error.message}`));
+        }
+      }
+    }
+
+    // Import state files
+    if (importData.state) {
+      console.log(chalk.blue('📊 Importing state files...'));
+      const contextPaths = contextManager.getContextPaths();
+      await fs.mkdir(contextPaths.state, { recursive: true });
+
+      for (const [stateFile, stateData] of Object.entries(importData.state)) {
+        try {
+          const filePath = path.join(contextPaths.state, `${stateFile}.json`);
+          await fs.writeFile(filePath, JSON.stringify(stateData, null, 2));
+        } catch (error) {
+          console.warn(chalk.yellow(`⚠️  Could not import state file ${stateFile}: ${error.message}`));
+        }
+      }
+    }
+
+    console.log(chalk.green('✅ Project import completed successfully'));
+
+    // Show import summary
+    console.log(chalk.cyan('\n📊 Import Summary:'));
+    console.log(chalk.white(`  Specifications: ${importData.specs?.length || 0}`));
+    console.log(chalk.white(`  Context Files: ${Object.keys(importData.context || {}).length}`));
+    console.log(chalk.white(`  State Files: ${Object.keys(importData.state || {}).length}`));
+    console.log(chalk.white(`  Research Items: ${importData.research?.length || 0}`));
+
+  } catch (error) {
+    console.error(chalk.red('❌ Project import failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+// Output formatters for research
+function outputResearchTable(research) {
+  console.log(chalk.cyan('🔬 Research Findings'));
+  console.log(chalk.gray('='.repeat(80)));
+
+  research.forEach((item, index) => {
+    const date = item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Unknown';
+    const spec = item.spec ? chalk.yellow(`[${item.spec}]`) : '';
+
+    console.log(`${index + 1}. ${spec} ${chalk.white(item.finding || item.content || 'No content')}`);
+    if (item.source) {
+      console.log(`   ${chalk.gray('Source:')} ${chalk.blue(item.source)}`);
+    }
+    console.log(`   ${chalk.gray('Date:')} ${chalk.gray(date)}`);
+    console.log();
+  });
+}
+
+function outputResearchSummary(research) {
+  console.log(chalk.cyan(`🔬 Research Summary (${research.length} findings)`));
+  console.log(chalk.gray('='.repeat(50)));
+
+  const grouped = research.reduce((acc, item) => {
+    const spec = item.spec || 'general';
+    acc[spec] = acc[spec] || [];
+    acc[spec].push(item);
+    return acc;
+  }, {});
+
+  Object.entries(grouped).forEach(([spec, items]) => {
+    console.log(chalk.yellow(`\n${spec.toUpperCase()}: ${items.length} findings`));
+    items.slice(0, 3).forEach(item => {
+      const finding = item.finding || item.content || 'No content';
+      const truncated = finding.length > 60 ? finding.substring(0, 60) + '...' : finding;
+      console.log(`  • ${chalk.white(truncated)}`);
+    });
+
+    if (items.length > 3) {
+      console.log(`  ${chalk.gray(`... and ${items.length - 3} more`)}`);
+    }
+  });
 }
 
 // Handle CLI parsing

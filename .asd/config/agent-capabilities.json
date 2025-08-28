@@ -94,7 +94,13 @@
           "cli-patterns",
           "user-workflows",
           "command-specifications",
-          "terminal-constraints"
+          "terminal-constraints",
+          "feature-creation",
+          "spec-templates",
+          "task-routing",
+          "agent-assignment",
+          "context-injection",
+          "workflow-automation"
         ],
         "typical_tasks": [
           "CLI command implementation",
