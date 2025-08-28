@@ -4534,7 +4534,7 @@ async function handleTasksListEnhanced(options) {
     await workflowStateManager.initialize();
 
     // Get all specs and tasks
-    const allSpecs = specParser.getAllSpecs();
+    const allSpecs = specParser.getSpecs();
     let allTasks = [];
 
     // Extract all tasks with spec context
