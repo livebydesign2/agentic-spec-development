@@ -54,7 +54,7 @@ describe('StartNextCommand', () => {
 
       // Mock the initialization result rather than calling actual initialize
       const result = true;
-      
+
       expect(result).toBe(true);
     });
   });

@@ -432,7 +432,7 @@ describe('Automation Workflow Integration', () => {
 
       expect(completeResult.success).toBe(true);
       expect(completeResult.auditLog).toBeDefined();
-      
+
       // Check audit log contains expected events
       const eventTypes = completeResult.auditLog.map(entry => entry.event);
       expect(eventTypes).toContain('command_started');
@@ -462,7 +462,7 @@ describe('Automation Workflow Integration', () => {
       // Test that concurrent executions don't interfere
       const completeCurrentCommand1 = new CompleteCurrentCommand(configManager);
       const completeCurrentCommand2 = new CompleteCurrentCommand(configManager);
-      
+
       await completeCurrentCommand1.initialize();
       await completeCurrentCommand2.initialize();
 
