@@ -5,7 +5,7 @@ type: FEAT
 phase: PHASE-STABILIZATION-2
 priority: P1
 status: active
-created: "2025-08-29T12:00:00Z"
+created: '2025-08-29T12:00:00Z'
 estimated_hours: 10
 tags:
   - quality-gates

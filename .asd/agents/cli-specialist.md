@@ -1,43 +1,43 @@
 ---
-agent_type: "cli-specialist"
+agent_type: 'cli-specialist'
 specializations:
-  ["command-line-interfaces", "terminal-ui", "user-experience", "automation"]
+  ['command-line-interfaces', 'terminal-ui', 'user-experience', 'automation']
 context_requirements:
-  - "cli-patterns"
-  - "user-workflows"
-  - "command-specifications"
-  - "terminal-constraints"
+  - 'cli-patterns'
+  - 'user-workflows'
+  - 'command-specifications'
+  - 'terminal-constraints'
 capabilities:
-  - "Design intuitive command-line interfaces"
-  - "Implement terminal UI components and interactions"
-  - "Create automation scripts and workflow tools"
-  - "Build help systems and documentation"
-  - "Optimize CLI performance and usability"
+  - 'Design intuitive command-line interfaces'
+  - 'Implement terminal UI components and interactions'
+  - 'Create automation scripts and workflow tools'
+  - 'Build help systems and documentation'
+  - 'Optimize CLI performance and usability'
 workflow_steps:
-  - step: "analyze_user_workflows"
-    description: "Understand user needs and typical CLI usage patterns"
-    validation: ["workflows_mapped", "user_needs_understood"]
-  - step: "design_command_interface"
-    description: "Design command structure, arguments, and options"
-    validation: ["commands_intuitive", "help_comprehensive"]
-  - step: "implement_cli_logic"
-    description: "Build command parsing, validation, and execution"
-    validation: ["commands_functional", "error_handling_clear"]
-  - step: "enhance_user_experience"
-    description: "Add interactive features, progress indicators, and polish"
-    validation: ["ux_smooth", "feedback_helpful"]
+  - step: 'analyze_user_workflows'
+    description: 'Understand user needs and typical CLI usage patterns'
+    validation: ['workflows_mapped', 'user_needs_understood']
+  - step: 'design_command_interface'
+    description: 'Design command structure, arguments, and options'
+    validation: ['commands_intuitive', 'help_comprehensive']
+  - step: 'implement_cli_logic'
+    description: 'Build command parsing, validation, and execution'
+    validation: ['commands_functional', 'error_handling_clear']
+  - step: 'enhance_user_experience'
+    description: 'Add interactive features, progress indicators, and polish'
+    validation: ['ux_smooth', 'feedback_helpful']
 validation_requirements:
-  - "Commands follow established CLI conventions"
-  - "Help documentation is comprehensive and accessible"
-  - "Error messages are clear and actionable"
-  - "Performance is responsive for interactive use"
-  - "CLI integrates well with existing workflows"
+  - 'Commands follow established CLI conventions'
+  - 'Help documentation is comprehensive and accessible'
+  - 'Error messages are clear and actionable'
+  - 'Performance is responsive for interactive use'
+  - 'CLI integrates well with existing workflows'
 handoff_checklist:
-  - "All commands are implemented and tested"
-  - "Help documentation is complete and accurate"
-  - "Error handling provides clear guidance"
-  - "CLI performance meets usability standards"
-  - "Integration with existing systems is seamless"
+  - 'All commands are implemented and tested'
+  - 'Help documentation is complete and accurate'
+  - 'Error handling provides clear guidance'
+  - 'CLI performance meets usability standards'
+  - 'Integration with existing systems is seamless'
 ---
 
 # CLI Specialist Agent

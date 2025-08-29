@@ -1,115 +1,115 @@
 ---
-id: "FEAT-018"
-title: "Advanced CLI Commands"
-type: "FEAT"
-phase: "PHASE-1A"
-priority: "P1"
-status: "complete"
-created: "2024-08-24T17:30:00Z"
+id: 'FEAT-018'
+title: 'Advanced CLI Commands'
+type: 'FEAT'
+phase: 'PHASE-1A'
+priority: 'P1'
+status: 'complete'
+created: '2024-08-24T17:30:00Z'
 estimated_hours: 20
-tags: ["cli", "commands", "task-management", "agent-workflow"]
+tags: ['cli', 'commands', 'task-management', 'agent-workflow']
 tasks:
-  - id: "TASK-001"
-    title: "Core CLI Command Framework"
-    agent_type: "cli-specialist"
-    status: "complete"
+  - id: 'TASK-001'
+    title: 'Core CLI Command Framework'
+    agent_type: 'cli-specialist'
+    status: 'complete'
     estimated_hours: 6
-    context_requirements: ["commander-js", "cli-patterns"]
+    context_requirements: ['commander-js', 'cli-patterns']
     subtasks:
-      - id: "SUBTASK-001"
-        title: "Expand CLI command structure"
-        type: "implementation"
+      - id: 'SUBTASK-001'
+        title: 'Expand CLI command structure'
+        type: 'implementation'
         estimated_minutes: 180
-        status: "ready"
-      - id: "SUBTASK-002"
-        title: "Add argument parsing and validation"
-        type: "implementation"
+        status: 'ready'
+      - id: 'SUBTASK-002'
+        title: 'Add argument parsing and validation'
+        type: 'implementation'
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-003"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'ready'
+      - id: 'SUBTASK-003'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 60
-        status: "ready"
-  - id: "TASK-002"
-    title: "Feature Management Commands"
-    agent_type: "cli-specialist"
-    status: "complete"
+        status: 'ready'
+  - id: 'TASK-002'
+    title: 'Feature Management Commands'
+    agent_type: 'cli-specialist'
+    status: 'complete'
     estimated_hours: 6
-    context_requirements: ["feature-creation", "spec-templates"]
-    depends_on: ["TASK-001"]
+    context_requirements: ['feature-creation', 'spec-templates']
+    depends_on: ['TASK-001']
     subtasks:
-      - id: "SUBTASK-004"
+      - id: 'SUBTASK-004'
         title: "Implement 'asd create' commands"
-        type: "implementation"
+        type: 'implementation'
         estimated_minutes: 180
-        status: "complete"
-      - id: "SUBTASK-005"
+        status: 'complete'
+      - id: 'SUBTASK-005'
         title: "Add 'asd list' and 'asd show' commands"
-        type: "implementation"
+        type: 'implementation'
         estimated_minutes: 120
-        status: "complete"
-      - id: "SUBTASK-006"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'complete'
+      - id: 'SUBTASK-006'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 60
-        status: "complete"
-  - id: "TASK-003"
-    title: "Task Management Commands"
-    agent_type: "cli-specialist"
-    status: "complete"
+        status: 'complete'
+  - id: 'TASK-003'
+    title: 'Task Management Commands'
+    agent_type: 'cli-specialist'
+    status: 'complete'
     estimated_hours: 5
-    context_requirements: ["task-routing", "agent-assignment"]
-    depends_on: ["TASK-002"]
+    context_requirements: ['task-routing', 'agent-assignment']
+    depends_on: ['TASK-002']
     subtasks:
-      - id: "SUBTASK-007"
-        title: "Implement task lifecycle commands"
-        type: "implementation"
+      - id: 'SUBTASK-007'
+        title: 'Implement task lifecycle commands'
+        type: 'implementation'
         estimated_minutes: 150
-        status: "complete"
-      - id: "SUBTASK-008"
-        title: "Add task filtering and search"
-        type: "implementation"
+        status: 'complete'
+      - id: 'SUBTASK-008'
+        title: 'Add task filtering and search'
+        type: 'implementation'
         estimated_minutes: 120
-        status: "complete"
-      - id: "SUBTASK-009"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'complete'
+      - id: 'SUBTASK-009'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 30
-        status: "complete"
-  - id: "TASK-004"
-    title: "Workflow & Context Commands"
-    agent_type: "cli-specialist"
-    status: "ready"
+        status: 'complete'
+  - id: 'TASK-004'
+    title: 'Workflow & Context Commands'
+    agent_type: 'cli-specialist'
+    status: 'ready'
     estimated_hours: 3
-    context_requirements: ["context-injection", "workflow-automation"]
-    depends_on: ["TASK-003"]
+    context_requirements: ['context-injection', 'workflow-automation']
+    depends_on: ['TASK-003']
     subtasks:
-      - id: "SUBTASK-010"
-        title: "Implement context management commands"
-        type: "implementation"
+      - id: 'SUBTASK-010'
+        title: 'Implement context management commands'
+        type: 'implementation'
         estimated_minutes: 90
-        status: "ready"
-      - id: "SUBTASK-011"
-        title: "Add workflow automation commands"
-        type: "implementation"
+        status: 'ready'
+      - id: 'SUBTASK-011'
+        title: 'Add workflow automation commands'
+        type: 'implementation'
         estimated_minutes: 90
-        status: "ready"
-      - id: "SUBTASK-012"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'ready'
+      - id: 'SUBTASK-012'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 0
-        status: "ready"
+        status: 'ready'
 dependencies:
-  - "FEAT-013" # Task Router System
-  - "FEAT-014" # Workflow State Manager
-  - "FEAT-012" # Context Injection System
+  - 'FEAT-013' # Task Router System
+  - 'FEAT-014' # Workflow State Manager
+  - 'FEAT-012' # Context Injection System
 acceptance_criteria:
-  - "Complete CLI interface for all spec and task operations ✅"
-  - "Feature creation, listing, and management via CLI commands ✅"
-  - "Task assignment, progress tracking, and completion via CLI ✅"
-  - "Context management and workflow automation commands"
-  - "Comprehensive help system with examples and usage guidance ✅"
+  - 'Complete CLI interface for all spec and task operations ✅'
+  - 'Feature creation, listing, and management via CLI commands ✅'
+  - 'Task assignment, progress tracking, and completion via CLI ✅'
+  - 'Context management and workflow automation commands'
+  - 'Comprehensive help system with examples and usage guidance ✅'
 ---
 
 # Advanced CLI Commands

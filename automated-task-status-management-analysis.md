@@ -394,7 +394,7 @@ class GitCommitAutomation {
           specId: match[2],
           taskId: match[3] || this.inferTaskFromFiles(changedFiles),
           confidence: this.calculateConfidence(match, changedFiles),
-          action: this.inferAction(match[4] || "progress"),
+          action: this.inferAction(match[4] || 'progress'),
         };
       }
     }
@@ -411,11 +411,11 @@ class GitCommitAutomation {
 class FileSystemAutomation {
   setupWatchers() {
     const watcher = chokidar.watch(
-      ["docs/specs/**/*.md", ".asd/context/**/*.md", "lib/**/*.js"],
+      ['docs/specs/**/*.md', '.asd/context/**/*.md', 'lib/**/*.js'],
       { ignoreInitial: true }
     );
 
-    watcher.on("change", async (path) => {
+    watcher.on('change', async (path) => {
       const analysis = await this.analyzeFileChange(path);
       if (analysis.confidence > 0.8) {
         await this.triggerAutomation(analysis);
@@ -424,7 +424,7 @@ class FileSystemAutomation {
   }
 
   async analyzeFileChange(filePath) {
-    const content = await fs.readFile(filePath, "utf8");
+    const content = await fs.readFile(filePath, 'utf8');
     const changes = await this.detectSignificantChanges(content);
 
     return {
@@ -500,11 +500,11 @@ class AuditSystem {
 
     if (entry.rollbackData) {
       await this.restoreState(entry.rollbackData);
-      await this.logRollback(entry, "Manual rollback requested");
+      await this.logRollback(entry, 'Manual rollback requested');
       return { success: true };
     }
 
-    return { success: false, reason: "No rollback data available" };
+    return { success: false, reason: 'No rollback data available' };
   }
 }
 ```
@@ -521,7 +521,7 @@ class ManualOverrideSystem {
       reason,
       requestedBy,
       requestedAt: new Date().toISOString(),
-      status: "pending",
+      status: 'pending',
       automationPaused: true,
     };
 
@@ -533,7 +533,7 @@ class ManualOverrideSystem {
 
   async approveOverride(overrideId, approvedBy) {
     const override = await this.getOverride(overrideId);
-    override.status = "approved";
+    override.status = 'approved';
     override.approvedBy = approvedBy;
     override.approvedAt = new Date().toISOString();
 
@@ -554,14 +554,14 @@ class AutomatedWorkflowStateManager extends WorkflowStateManager {
   async assignTask(specId, taskId, agentType, options = {}) {
     // Enhanced with automation context
     options.automationTriggered = true;
-    options.automationSource = options.source || "unknown";
+    options.automationSource = options.source || 'unknown';
     options.automationConfidence = options.confidence || 0.5;
 
     const result = await super.assignTask(specId, taskId, agentType, options);
 
     if (result.success && options.automationTriggered) {
       await this.auditSystem.logAutomatedAction({
-        type: "task_assignment",
+        type: 'task_assignment',
         specId,
         taskId,
         agentType,
@@ -590,7 +590,7 @@ class EnhancedHandoffAutomation extends HandoffAutomationEngine {
       await this.requestManualReview(trigger);
       return {
         success: false,
-        reason: "Low confidence, manual review required",
+        reason: 'Low confidence, manual review required',
       };
     }
 
@@ -598,7 +598,7 @@ class EnhancedHandoffAutomation extends HandoffAutomationEngine {
 
     if (result.success) {
       await this.auditSystem.logAutomatedAction({
-        type: "automated_handoff",
+        type: 'automated_handoff',
         ...trigger,
         result,
       });

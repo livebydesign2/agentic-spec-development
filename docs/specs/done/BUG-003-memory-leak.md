@@ -11,18 +11,19 @@ tags:
   - memory-leak
   - file-watcher
   - stability
-created: "2025-08-29T00:00:00.000Z"
-updated: "2025-08-29T00:00:00.000Z"
+created: '2025-08-29T00:00:00.000Z'
+updated: '2025-08-29T00:00:00.000Z'
 assignee: null
 dependencies: []
 blocking: []
 related: []
 tasks:
-  TASK-001:
-    status: in_progress
-    assigned_agent: test-agent
-    assigned_at: "2025-08-29T22:51:22.894Z"
-last_updated: "2025-08-29T22:51:22.902Z"
+  - id: TASK-001
+    title: Fix Memory Leak Issues
+    status: complete
+    agent_type: software-architect
+    estimated_hours: 3
+last_updated: '2025-08-29T22:51:22.902Z'
 ---
 
 # Memory Leak in File Watcher

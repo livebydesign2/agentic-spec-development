@@ -153,7 +153,7 @@ class PerformantFileWatcher {
 function slowStartup() {
   const allFiles = fs.readdirSync(specsPath, { recursive: true });
   const allSpecs = allFiles
-    .filter((f) => f.endsWith(".md"))
+    .filter((f) => f.endsWith('.md'))
     .map((f) => parseSpecificationSync(f)); // Blocks for each file
 
   renderUI(allSpecs);
@@ -184,7 +184,7 @@ class MemoryHeavyParser {
   }
 
   parseDocument(path) {
-    const fullContent = fs.readFileSync(path, "utf8"); // Always reads full file
+    const fullContent = fs.readFileSync(path, 'utf8'); // Always reads full file
     this.fullTextCache.set(path, fullContent);
 
     const parsed = this.expensiveParsing(fullContent);
@@ -238,11 +238,11 @@ class FastRenderer {
 
   render() {
     // Only update changed regions
-    if (this.dirtyRegions.has("header")) {
+    if (this.dirtyRegions.has('header')) {
       this.renderHeader();
     }
 
-    if (this.dirtyRegions.has("mainPanel")) {
+    if (this.dirtyRegions.has('mainPanel')) {
       this.renderMainPanel();
     }
 
@@ -318,9 +318,9 @@ class PerformanceBenchmark {
 const benchmark = new PerformanceBenchmark();
 
 async function monitoredOperation() {
-  benchmark.startTimer("document-parse");
+  benchmark.startTimer('document-parse');
   const result = await parseDocument(path);
-  const duration = benchmark.endTimer("document-parse");
+  const duration = benchmark.endTimer('document-parse');
 
   if (duration > 100) {
     // Alert if over 100ms
@@ -427,8 +427,8 @@ function validatePerformance(metrics) {
 
 ```javascript
 // test/performance.test.js
-describe("Performance Tests", () => {
-  test("startup time meets targets", async () => {
+describe('Performance Tests', () => {
+  test('startup time meets targets', async () => {
     const startTime = process.hrtime.bigint();
 
     const asd = new ASDClient({ cwd: testDirectory });
@@ -442,17 +442,17 @@ describe("Performance Tests", () => {
     );
   });
 
-  test("handles 1000 documents efficiently", async () => {
+  test('handles 1000 documents efficiently', async () => {
     const testDocs = generateTestDocuments(1000);
     const startMemory = process.memoryUsage().heapUsed;
 
     const benchmark = new PerformanceBenchmark();
-    benchmark.startTimer("bulk-parse");
+    benchmark.startTimer('bulk-parse');
 
     const parser = new FeatureParser();
     await parser.loadFeatures(testDocs);
 
-    const parseTime = benchmark.endTimer("bulk-parse");
+    const parseTime = benchmark.endTimer('bulk-parse');
     const endMemory = process.memoryUsage().heapUsed;
     const memoryUsed = (endMemory - startMemory) / 1024 / 1024; // MB
 

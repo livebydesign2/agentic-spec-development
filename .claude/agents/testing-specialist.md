@@ -98,14 +98,14 @@ test/
 
 ```javascript
 // Using Jest for Node.js testing
-const jest = require("jest");
+const jest = require('jest');
 
 // Test configuration
 module.exports = {
-  testEnvironment: "node",
-  testMatch: ["**/test/**/*.test.js"],
-  collectCoverageFrom: ["lib/**/*.js", "bin/**/*", "!**/node_modules/**"],
-  setupFilesAfterEnv: ["<rootDir>/test/setup.js"],
+  testEnvironment: 'node',
+  testMatch: ['**/test/**/*.test.js'],
+  collectCoverageFrom: ['lib/**/*.js', 'bin/**/*', '!**/node_modules/**'],
+  setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
 };
 ```
 
@@ -116,7 +116,7 @@ module.exports = {
 ### **Unit Test Patterns**
 
 ```javascript
-describe("FeatureParser", () => {
+describe('FeatureParser', () => {
   let parser;
 
   beforeEach(() => {
@@ -128,23 +128,23 @@ describe("FeatureParser", () => {
     jest.clearAllMocks();
   });
 
-  test("parses valid specification file correctly", () => {
+  test('parses valid specification file correctly', () => {
     // Arrange
-    const specContent = loadFixture("valid-spec.md");
+    const specContent = loadFixture('valid-spec.md');
 
     // Act
     const result = parser.parseSpecification(specContent);
 
     // Assert
-    expect(result.id).toBe("SPEC-001");
-    expect(result.title).toBe("Expected Title");
-    expect(result.status).toBe("active");
+    expect(result.id).toBe('SPEC-001');
+    expect(result.title).toBe('Expected Title');
+    expect(result.status).toBe('active');
     expect(result.tasks).toHaveLength(3);
   });
 
-  test("handles malformed specification gracefully", () => {
+  test('handles malformed specification gracefully', () => {
     // Arrange
-    const malformedContent = loadFixture("malformed-spec.md");
+    const malformedContent = loadFixture('malformed-spec.md');
 
     // Act & Assert
     expect(() => parser.parseSpecification(malformedContent)).not.toThrow();
@@ -158,7 +158,7 @@ describe("FeatureParser", () => {
 ### **Integration Test Patterns**
 
 ```javascript
-describe("CLI Integration", () => {
+describe('CLI Integration', () => {
   let tempDir;
   let originalCwd;
 
@@ -175,19 +175,19 @@ describe("CLI Integration", () => {
     await cleanupTempDirectory(tempDir);
   });
 
-  test("initializes project structure correctly", async () => {
+  test('initializes project structure correctly', async () => {
     // Act
-    const result = await execCLI(["init"]);
+    const result = await execCLI(['init']);
 
     // Assert
     expect(result.exitCode).toBe(0);
-    expect(fs.existsSync("docs/specs/active")).toBe(true);
-    expect(fs.existsSync("docs/specs/backlog")).toBe(true);
-    expect(fs.existsSync("docs/specs/done")).toBe(true);
-    expect(fs.existsSync("asd.config.js")).toBe(true);
+    expect(fs.existsSync('docs/specs/active')).toBe(true);
+    expect(fs.existsSync('docs/specs/backlog')).toBe(true);
+    expect(fs.existsSync('docs/specs/done')).toBe(true);
+    expect(fs.existsSync('asd.config.js')).toBe(true);
   });
 
-  test("displays specifications correctly", async () => {
+  test('displays specifications correctly', async () => {
     // Arrange
     await setupTestSpecs(tempDir);
 
@@ -196,8 +196,8 @@ describe("CLI Integration", () => {
 
     // Assert
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain("SPEC-001");
-    expect(result.stdout).toContain("Active: 2 specs");
+    expect(result.stdout).toContain('SPEC-001');
+    expect(result.stdout).toContain('Active: 2 specs');
   });
 });
 ```
@@ -205,33 +205,33 @@ describe("CLI Integration", () => {
 ### **CLI Testing Patterns**
 
 ```javascript
-describe("Command Line Interface", () => {
-  test("displays help when requested", async () => {
-    const result = await execCLI(["--help"]);
+describe('Command Line Interface', () => {
+  test('displays help when requested', async () => {
+    const result = await execCLI(['--help']);
 
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain("Usage:");
-    expect(result.stdout).toContain("asd [options]");
-    expect(result.stdout).toContain("Commands:");
+    expect(result.stdout).toContain('Usage:');
+    expect(result.stdout).toContain('asd [options]');
+    expect(result.stdout).toContain('Commands:');
   });
 
-  test("handles invalid commands gracefully", async () => {
-    const result = await execCLI(["invalid-command"]);
+  test('handles invalid commands gracefully', async () => {
+    const result = await execCLI(['invalid-command']);
 
     expect(result.exitCode).toBe(1);
-    expect(result.stderr).toContain("Unknown command");
+    expect(result.stderr).toContain('Unknown command');
   });
 
-  test("validates configuration file", async () => {
+  test('validates configuration file', async () => {
     // Arrange
-    fs.writeFileSync("asd.config.js", "invalid javascript");
+    fs.writeFileSync('asd.config.js', 'invalid javascript');
 
     // Act
-    const result = await execCLI(["doctor"]);
+    const result = await execCLI(['doctor']);
 
     // Assert
     expect(result.exitCode).toBe(1);
-    expect(result.stderr).toContain("Configuration error");
+    expect(result.stderr).toContain('Configuration error');
   });
 });
 ```
@@ -244,32 +244,32 @@ describe("Command Line Interface", () => {
 
 ```javascript
 // test/fixtures/test-helpers.js
-const fs = require("fs").promises;
-const path = require("path");
-const { spawn } = require("child_process");
+const fs = require('fs').promises;
+const path = require('path');
+const { spawn } = require('child_process');
 
 /**
  * Execute ASD CLI command for testing
  */
 async function execCLI(args = [], options = {}) {
   return new Promise((resolve) => {
-    const child = spawn("node", [path.join(__dirname, "../bin/asd"), ...args], {
-      stdio: "pipe",
+    const child = spawn('node', [path.join(__dirname, '../bin/asd'), ...args], {
+      stdio: 'pipe',
       ...options,
     });
 
-    let stdout = "";
-    let stderr = "";
+    let stdout = '';
+    let stderr = '';
 
-    child.stdout.on("data", (data) => {
+    child.stdout.on('data', (data) => {
       stdout += data.toString();
     });
 
-    child.stderr.on("data", (data) => {
+    child.stderr.on('data', (data) => {
       stderr += data.toString();
     });
 
-    child.on("close", (exitCode) => {
+    child.on('close', (exitCode) => {
       resolve({ exitCode, stdout, stderr });
     });
   });
@@ -279,13 +279,13 @@ async function execCLI(args = [], options = {}) {
  * Create temporary test directory with fixtures
  */
 async function createTempTestDirectory() {
-  const tempDir = path.join(__dirname, "../tmp", `test-${Date.now()}`);
+  const tempDir = path.join(__dirname, '../tmp', `test-${Date.now()}`);
   await fs.mkdir(tempDir, { recursive: true });
 
   // Copy test fixtures
   await copyFixtures(
-    path.join(__dirname, "sample-specs"),
-    path.join(tempDir, "docs/specs")
+    path.join(__dirname, 'sample-specs'),
+    path.join(tempDir, 'docs/specs')
   );
 
   return tempDir;
@@ -295,7 +295,7 @@ async function createTempTestDirectory() {
  * Load test fixture file
  */
 function loadFixture(filename) {
-  return fs.readFileSync(path.join(__dirname, "fixtures", filename), "utf8");
+  return fs.readFileSync(path.join(__dirname, 'fixtures', filename), 'utf8');
 }
 
 module.exports = {
@@ -311,12 +311,12 @@ module.exports = {
 ```javascript
 // test/fixtures/test-config.js
 module.exports = {
-  featuresPath: "test/fixtures/specs",
-  templatePath: "test/fixtures/templates",
+  featuresPath: 'test/fixtures/specs',
+  templatePath: 'test/fixtures/templates',
   autoRefresh: false,
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
-  statusFolders: ["active", "backlog", "done"],
-  priorities: ["P0", "P1", "P2", "P3"],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
+  statusFolders: ['active', 'backlog', 'done'],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 };
 ```
 
@@ -431,15 +431,15 @@ As the Testing Specialist, you are the quality guardian for ASD functionality. N
 
 ```javascript
 // WRONG - Just testing function exists
-test("function exists", () => {
-  expect(typeof parseSpecification).toBe("function");
+test('function exists', () => {
+  expect(typeof parseSpecification).toBe('function');
 });
 
 // RIGHT - Testing actual functionality
-test("parseSpecification extracts correct metadata", () => {
+test('parseSpecification extracts correct metadata', () => {
   const result = parseSpecification(validSpec);
-  expect(result.id).toBe("SPEC-001");
-  expect(result.priority).toBe("P1");
+  expect(result.id).toBe('SPEC-001');
+  expect(result.priority).toBe('P1');
 });
 ```
 
@@ -447,14 +447,14 @@ test("parseSpecification extracts correct metadata", () => {
 
 ```javascript
 // WRONG - Testing implementation details
-test("calls internal method", () => {
-  const spy = jest.spyOn(parser, "_internalMethod");
+test('calls internal method', () => {
+  const spy = jest.spyOn(parser, '_internalMethod');
   parser.parse(content);
   expect(spy).toHaveBeenCalled();
 });
 
 // RIGHT - Testing behavior
-test("parsing invalid content returns error", () => {
+test('parsing invalid content returns error', () => {
   const result = parser.parse(invalidContent);
   expect(result.error).toBeDefined();
   expect(result.valid).toBe(false);
@@ -465,12 +465,12 @@ test("parsing invalid content returns error", () => {
 
 ```javascript
 // WRONG - Testing everything in one test
-test("entire application works", () => {
+test('entire application works', () => {
   // 100 lines testing multiple features
 });
 
 // RIGHT - Focused, specific tests
-test("specification parser extracts tasks correctly", () => {
+test('specification parser extracts tasks correctly', () => {
   // Focused on one specific functionality
 });
 ```

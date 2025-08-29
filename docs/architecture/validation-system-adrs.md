@@ -126,7 +126,7 @@ class ValidationRule {
 // Specific rule implementation
 class RequiredFieldsRule extends ValidationRule {
   constructor() {
-    super("required-fields", "spec", "error");
+    super('required-fields', 'spec', 'error');
   }
 
   async validate(spec, context) {
@@ -196,15 +196,15 @@ Chosen option: **Tiered Auto-Fixing with Risk Assessment and User Confirmation**
 const RISK_LEVELS = {
   low: {
     requiresConfirmation: false,
-    operations: ["format-whitespace", "add-missing-field", "normalize-dates"],
+    operations: ['format-whitespace', 'add-missing-field', 'normalize-dates'],
   },
   medium: {
     requiresConfirmation: true,
-    operations: ["fix-yaml-syntax", "update-default-values"],
+    operations: ['fix-yaml-syntax', 'update-default-values'],
   },
   high: {
     requiresConfirmation: true,
-    operations: ["modify-id", "restructure-content", "change-dependencies"],
+    operations: ['modify-id', 'restructure-content', 'change-dependencies'],
   },
 };
 ```
@@ -272,7 +272,7 @@ Chosen option: **Pre-Operation Validation with Hook System**
 class WorkflowStateManager {
   async assignTask(specId, taskId, agentType, options = {}) {
     // Execute pre-hooks (including quality gates)
-    const hookData = await this.hookManager.executePreHooks("assignTask", {
+    const hookData = await this.hookManager.executePreHooks('assignTask', {
       specId,
       taskId,
       agentType,
@@ -285,7 +285,7 @@ class WorkflowStateManager {
 }
 
 // Quality gate as pre-hook
-this.hookManager.registerPreHook("assignTask", async (data) => {
+this.hookManager.registerPreHook('assignTask', async (data) => {
   const gateResult = await qualityGateManager.enforceAssignmentGate(
     data.taskId,
     data.agentType
@@ -373,16 +373,16 @@ const ValidationResult = {
   success: boolean,
   errors: [
     {
-      code: "ERROR_CODE",
-      message: "Human-readable error message",
+      code: 'ERROR_CODE',
+      message: 'Human-readable error message',
       data: {
         /* Additional error context */
       },
-      rule: "rule-name",
-      file: "/path/to/file",
+      rule: 'rule-name',
+      file: '/path/to/file',
       line: number, // Optional
       column: number, // Optional
-      severity: "error" | "warning" | "info",
+      severity: 'error' | 'warning' | 'info',
     },
   ],
   warnings: [], // Same format as errors
@@ -432,15 +432,15 @@ const AggregatedResult = {
 
 ```javascript
 const FixSuggestion = {
-  code: "FIX_CODE",
-  description: "What this fix does",
-  riskLevel: "low" | "medium" | "high",
+  code: 'FIX_CODE',
+  description: 'What this fix does',
+  riskLevel: 'low' | 'medium' | 'high',
   autoFixable: boolean,
   estimatedTime: number, // milliseconds
-  preview: "What the change would look like",
+  preview: 'What the change would look like',
   confirmation: {
     required: boolean,
-    message: "Confirmation prompt for user",
+    message: 'Confirmation prompt for user',
   },
 };
 ```
@@ -489,23 +489,23 @@ Chosen option: **Multi-Level Optimization Strategy**
 const CachingLevels = {
   // Level 1: Rule results cache
   ruleResults: {
-    key: "file_path_rule_name_content_hash",
+    key: 'file_path_rule_name_content_hash',
     ttl: 300000, // 5 minutes
-    storage: "memory",
+    storage: 'memory',
   },
 
   // Level 2: Context cache
   validationContext: {
-    key: "project_state_hash",
+    key: 'project_state_hash',
     ttl: 60000, // 1 minute
-    storage: "memory",
+    storage: 'memory',
   },
 
   // Level 3: Parsed spec cache
   specMetadata: {
-    key: "file_path_modification_time",
+    key: 'file_path_modification_time',
     ttl: 600000, // 10 minutes
-    storage: "disk", // For large projects
+    storage: 'disk', // For large projects
   },
 };
 ```

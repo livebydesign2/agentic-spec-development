@@ -487,7 +487,7 @@ User notification preferences and triggers.`,
 
     it('should handle missing directories', async () => {
       // Remove one status directory
-      await fs.rmdir(path.join(testDir, 'docs/specs/done'), {
+      await fs.rm(path.join(testDir, 'docs/specs/done'), {
         recursive: true,
       });
 

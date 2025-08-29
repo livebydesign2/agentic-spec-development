@@ -1,24 +1,24 @@
 ---
-context_type: "project"
-project_name: "ASD CLI"
-version: "0.1.0-alpha"
-phase: "PHASE-1A"
-last_updated: "2024-08-24"
+context_type: 'project'
+project_name: 'ASD CLI'
+version: '0.1.0-alpha'
+phase: 'PHASE-1A'
+last_updated: '2024-08-24'
 constraints:
-  - "Node.js 18+ required"
-  - "Zero legacy compatibility - clean slate architecture"
-  - "Performance: < 2s response time for all operations"
-  - "Self-use capability target after PHASE-1A completion"
+  - 'Node.js 18+ required'
+  - 'Zero legacy compatibility - clean slate architecture'
+  - 'Performance: < 2s response time for all operations'
+  - 'Self-use capability target after PHASE-1A completion'
 architecture_decisions:
-  - "Hybrid YAML frontmatter + Markdown content"
-  - "Atomic hierarchy: Roadmap → Phases → Specs → Tasks"
-  - "Phase-based organization via frontmatter tags"
-  - "Claude-style agent definitions (MD + YAML)"
+  - 'Hybrid YAML frontmatter + Markdown content'
+  - 'Atomic hierarchy: Roadmap → Phases → Specs → Tasks'
+  - 'Phase-based organization via frontmatter tags'
+  - 'Claude-style agent definitions (MD + YAML)'
 technology_stack:
-  - "Node.js with Commander.js for CLI"
-  - "terminal-kit for terminal UI"
-  - "js-yaml for YAML processing"
-  - "Multi-format data adapters (JSON, YAML, Markdown)"
+  - 'Node.js with Commander.js for CLI'
+  - 'terminal-kit for terminal UI'
+  - 'js-yaml for YAML processing'
+  - 'Multi-format data adapters (JSON, YAML, Markdown)'
 ---
 
 # ASD CLI Project Context

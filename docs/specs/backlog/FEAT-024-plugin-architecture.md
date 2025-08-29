@@ -169,7 +169,7 @@ class ASDPlugin {
 
   // Plugin metadata
   static get manifest() {
-    return require("./plugin.json");
+    return require('./plugin.json');
   }
 }
 
@@ -177,20 +177,20 @@ class ASDPlugin {
 class GitHubAdvancedPlugin extends ASDPlugin {
   async activate() {
     // Register custom commands
-    this.api.commands.register("github:sync-advanced", {
-      description: "Advanced GitHub sync with conflict resolution",
+    this.api.commands.register('github:sync-advanced', {
+      description: 'Advanced GitHub sync with conflict resolution',
       handler: this.handleAdvancedSync.bind(this),
     });
 
     // Register workflow automation
-    this.api.workflows.register("feature.completed", {
-      name: "github-release-automation",
+    this.api.workflows.register('feature.completed', {
+      name: 'github-release-automation',
       handler: this.handleReleaseAutomation.bind(this),
     });
   }
 
   async handleAdvancedSync(args) {
-    const features = await this.api.data.getFeatures({ status: "completed" });
+    const features = await this.api.data.getFeatures({ status: 'completed' });
     // Advanced sync logic...
     return { success: true, synced: features.length };
   }
@@ -221,7 +221,7 @@ asd plugin configure github-advanced --interactive
 // Integration plugin interface
 class SlackIntegrationPlugin extends ASDPlugin {
   async activate() {
-    this.api.integrations.register("slack", {
+    this.api.integrations.register('slack', {
       authenticate: this.authenticate.bind(this),
       syncFeatures: this.syncFeatures.bind(this),
       handleWebhook: this.handleWebhook.bind(this),
@@ -246,8 +246,8 @@ class SlackIntegrationPlugin extends ASDPlugin {
 // UI plugin for custom dashboard widgets
 class AnalyticsDashboardPlugin extends ASDPlugin {
   async activate() {
-    this.api.ui.registerWidget("analytics-chart", {
-      position: "dashboard.right",
+    this.api.ui.registerWidget('analytics-chart', {
+      position: 'dashboard.right',
       component: this.renderAnalyticsChart.bind(this),
     });
   }
@@ -255,10 +255,10 @@ class AnalyticsDashboardPlugin extends ASDPlugin {
   renderAnalyticsChart(context) {
     const features = context.features;
     return {
-      type: "chart",
-      title: "Completion Trends",
+      type: 'chart',
+      title: 'Completion Trends',
       data: this.calculateTrends(features),
-      config: { type: "line", animated: true },
+      config: { type: 'line', animated: true },
     };
   }
 }
@@ -270,9 +270,9 @@ class AnalyticsDashboardPlugin extends ASDPlugin {
 // Data transformation plugin
 class AdvancedAnalyticsPlugin extends ASDPlugin {
   async activate() {
-    this.api.data.registerProcessor("velocity-calculation", {
-      input: ["features", "timeframe"],
-      output: "velocity-metrics",
+    this.api.data.registerProcessor('velocity-calculation', {
+      input: ['features', 'timeframe'],
+      output: 'velocity-metrics',
       processor: this.calculateVelocity.bind(this),
     });
   }
@@ -280,7 +280,7 @@ class AdvancedAnalyticsPlugin extends ASDPlugin {
   async calculateVelocity(features, timeframe) {
     // Advanced velocity calculation logic
     return {
-      completed_features: features.filter((f) => f.status === "done").length,
+      completed_features: features.filter((f) => f.status === 'done').length,
       average_completion_time: this.calculateAverageTime(features),
       velocity_trend: this.calculateTrend(features, timeframe),
     };

@@ -5,7 +5,7 @@ type: FEAT
 phase: PHASE-STABILIZATION-3
 priority: P2
 status: active
-created: "2025-08-29T12:00:00Z"
+created: '2025-08-29T12:00:00Z'
 estimated_hours: 2
 tags:
   - user-testing

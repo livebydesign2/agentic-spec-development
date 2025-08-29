@@ -1,17 +1,17 @@
 ---
-process_type: "code-review"
-version: "1.0"
+process_type: 'code-review'
+version: '1.0'
 applies_to:
-  ["backend-developer", "cli-specialist", "ui-developer", "software-architect"]
+  ['backend-developer', 'cli-specialist', 'ui-developer', 'software-architect']
 mandatory_checks:
-  - "code_quality_standards"
-  - "security_review"
-  - "performance_impact"
-  - "testing_adequacy"
+  - 'code_quality_standards'
+  - 'security_review'
+  - 'performance_impact'
+  - 'testing_adequacy'
 recommended_checks:
-  - "design_pattern_consistency"
-  - "documentation_completeness"
-  - "maintainability_assessment"
+  - 'design_pattern_consistency'
+  - 'documentation_completeness'
+  - 'maintainability_assessment'
 ---
 
 # Code Review Process Template

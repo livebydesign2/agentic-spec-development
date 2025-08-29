@@ -138,13 +138,13 @@ asd doctor            # Health check
 
 ```javascript
 // Proper terminal handling
-term.on("key", (name, matches, data) => {
-  if (name === "CTRL_C" || name === "q") process.exit(0);
+term.on('key', (name, matches, data) => {
+  if (name === 'CTRL_C' || name === 'q') process.exit(0);
 });
 
 // Color management
-term.brightGreen("text"); // Direct terminal-kit colors
-this.ui.colorize("text", "brightGreen"); // UI component wrapper
+term.brightGreen('text'); // Direct terminal-kit colors
+this.ui.colorize('text', 'brightGreen'); // UI component wrapper
 
 // Layout calculations
 const { width, height } = term;

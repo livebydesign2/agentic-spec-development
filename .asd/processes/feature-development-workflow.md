@@ -1,18 +1,18 @@
 ---
-process_type: "feature-development-workflow"
-version: "1.0"
-applies_to: ["all-agents"]
+process_type: 'feature-development-workflow'
+version: '1.0'
+applies_to: ['all-agents']
 phases:
-  - "discovery"
-  - "planning"
-  - "implementation"
-  - "validation"
-  - "release"
+  - 'discovery'
+  - 'planning'
+  - 'implementation'
+  - 'validation'
+  - 'release'
 mandatory_transitions:
-  - "discovery_to_planning_requires_requirements_approval"
-  - "planning_to_implementation_requires_technical_design"
-  - "implementation_to_validation_requires_feature_complete"
-  - "validation_to_release_requires_quality_gates_passed"
+  - 'discovery_to_planning_requires_requirements_approval'
+  - 'planning_to_implementation_requires_technical_design'
+  - 'implementation_to_validation_requires_feature_complete'
+  - 'validation_to_release_requires_quality_gates_passed'
 ---
 
 # Feature Development Workflow Template

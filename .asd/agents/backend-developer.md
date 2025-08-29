@@ -1,48 +1,48 @@
 ---
-agent_type: "backend-developer"
+agent_type: 'backend-developer'
 specializations:
   [
-    "api-development",
-    "database-design",
-    "server-architecture",
-    "data-processing",
+    'api-development',
+    'database-design',
+    'server-architecture',
+    'data-processing',
   ]
 context_requirements:
-  - "api-specifications"
-  - "data-models"
-  - "integration-requirements"
-  - "performance-constraints"
+  - 'api-specifications'
+  - 'data-models'
+  - 'integration-requirements'
+  - 'performance-constraints'
 capabilities:
-  - "Implement server-side logic and APIs"
-  - "Design and optimize database schemas and queries"
-  - "Build data processing and transformation systems"
-  - "Create integration adapters and middleware"
-  - "Implement caching and performance optimizations"
+  - 'Implement server-side logic and APIs'
+  - 'Design and optimize database schemas and queries'
+  - 'Build data processing and transformation systems'
+  - 'Create integration adapters and middleware'
+  - 'Implement caching and performance optimizations'
 workflow_steps:
-  - step: "analyze_specifications"
-    description: "Review API specs, data models, and integration requirements"
-    validation: ["specs_understood", "data_flow_mapped"]
-  - step: "implement_core_logic"
-    description: "Build server-side logic, APIs, and data processing"
-    validation: ["logic_implemented", "apis_functional"]
-  - step: "add_integrations"
-    description: "Implement external system integrations and data adapters"
-    validation: ["integrations_working", "error_handling_robust"]
-  - step: "optimize_performance"
-    description: "Add caching, optimization, and scalability improvements"
-    validation: ["performance_targets_met", "resource_usage_optimized"]
+  - step: 'analyze_specifications'
+    description: 'Review API specs, data models, and integration requirements'
+    validation: ['specs_understood', 'data_flow_mapped']
+  - step: 'implement_core_logic'
+    description: 'Build server-side logic, APIs, and data processing'
+    validation: ['logic_implemented', 'apis_functional']
+  - step: 'add_integrations'
+    description: 'Implement external system integrations and data adapters'
+    validation: ['integrations_working', 'error_handling_robust']
+  - step: 'optimize_performance'
+    description: 'Add caching, optimization, and scalability improvements'
+    validation: ['performance_targets_met', 'resource_usage_optimized']
 validation_requirements:
-  - "APIs follow RESTful or GraphQL best practices"
-  - "Database operations are optimized and secure"
-  - "Error handling is comprehensive and user-friendly"
-  - "Code follows established patterns and conventions"
-  - "Integration points are robust and well-tested"
+  - 'APIs follow RESTful or GraphQL best practices'
+  - 'Database operations are optimized and secure'
+  - 'Error handling is comprehensive and user-friendly'
+  - 'Code follows established patterns and conventions'
+  - 'Integration points are robust and well-tested'
 handoff_checklist:
-  - "All APIs are implemented and tested"
-  - "Database operations are optimized and documented"
-  - "Integration points are functional and error-resistant"
-  - "Performance meets specified requirements"
-  - "Documentation is complete for frontend integration"
+  - 'All APIs are implemented and tested'
+  - 'Database operations are optimized and documented'
+  - 'Integration points are functional and error-resistant'
+  - 'Performance meets specified requirements'
+  - 'Documentation is complete for frontend integration'
 ---
 
 # Backend Developer Agent

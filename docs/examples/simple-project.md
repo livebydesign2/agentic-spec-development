@@ -29,29 +29,29 @@ my-app/
 ```javascript
 module.exports = {
   // Basic setup
-  featuresPath: "docs/specs",
-  templatePath: "docs/specs/template",
+  featuresPath: 'docs/specs',
+  templatePath: 'docs/specs/template',
 
   // Simple workflow
-  statusFolders: ["active", "backlog", "done"],
+  statusFolders: ['active', 'backlog', 'done'],
 
   // Basic types for a web application
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
 
   // Standard priorities
-  priorities: ["P0", "P1", "P2", "P3"],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 
   // Reasonable defaults
-  defaultPriority: "P2",
-  defaultStatus: "backlog",
+  defaultPriority: 'P2',
+  defaultStatus: 'backlog',
 
   // Enable auto-refresh for development
   autoRefresh: true,
   refreshDebounce: 500,
 
   // Custom branding
-  appName: "My App Specifications",
-  appIcon: "🚀",
+  appName: 'My App Specifications',
+  appIcon: '🚀',
 };
 ```
 
@@ -376,14 +376,14 @@ Edit `asd.config.js` to match your project needs:
 
 ```javascript
 module.exports = {
-  featuresPath: "docs/specs",
-  appName: "My App Specifications",
-  appIcon: "🚀",
+  featuresPath: 'docs/specs',
+  appName: 'My App Specifications',
+  appIcon: '🚀',
 
   // Customize for your workflow
-  statusFolders: ["active", "backlog", "done"],
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
-  priorities: ["P0", "P1", "P2", "P3"],
+  statusFolders: ['active', 'backlog', 'done'],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 };
 ```
 

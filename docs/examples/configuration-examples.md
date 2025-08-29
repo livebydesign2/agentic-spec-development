@@ -10,7 +10,7 @@ This document provides practical configuration examples for different use cases 
 
 ```javascript
 module.exports = {
-  featuresPath: "docs/specs",
+  featuresPath: 'docs/specs',
 };
 ```
 
@@ -22,21 +22,21 @@ This minimal configuration uses all defaults and is perfect for getting started 
 
 ```javascript
 module.exports = {
-  featuresPath: "docs/specifications",
-  templatePath: "docs/specifications/templates",
+  featuresPath: 'docs/specifications',
+  templatePath: 'docs/specifications/templates',
 
-  appName: "Project Specifications",
-  appIcon: "📋",
+  appName: 'Project Specifications',
+  appIcon: '📋',
 
   autoRefresh: true,
   refreshDebounce: 500,
 
-  supportedTypes: ["SPEC", "FEAT", "BUG", "EPIC"],
-  statusFolders: ["active", "backlog", "done"],
-  priorities: ["P0", "P1", "P2", "P3"],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG', 'EPIC'],
+  statusFolders: ['active', 'backlog', 'done'],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 
-  defaultPriority: "P2",
-  defaultStatus: "backlog",
+  defaultPriority: 'P2',
+  defaultStatus: 'backlog',
 };
 ```
 
@@ -97,38 +97,38 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "dev-specs",
+  featuresPath: 'dev-specs',
 
   // Fast refresh for development
   autoRefresh: true,
   refreshDebounce: 100,
 
   // Development branding
-  appName: "Dev Specifications",
-  appIcon: "🔧",
+  appName: 'Dev Specifications',
+  appIcon: '🔧',
 
   // Relaxed validation
   enforceSpec: false,
 
   // Development-specific types
   supportedTypes: [
-    "SPEC",
-    "FEAT",
-    "BUG",
-    "EXPERIMENT", // Development experiments
-    "POC", // Proof of concepts
-    "SPIKE", // Research spikes
-    "TEMP", // Temporary specs
+    'SPEC',
+    'FEAT',
+    'BUG',
+    'EXPERIMENT', // Development experiments
+    'POC', // Proof of concepts
+    'SPIKE', // Research spikes
+    'TEMP', // Temporary specs
   ],
 
   // Simple workflow for development
-  statusFolders: ["todo", "doing", "done"],
+  statusFolders: ['todo', 'doing', 'done'],
 
   // Development priorities
-  priorities: ["urgent", "normal", "later"],
+  priorities: ['urgent', 'normal', 'later'],
 
-  defaultPriority: "normal",
-  defaultStatus: "todo",
+  defaultPriority: 'normal',
+  defaultStatus: 'todo',
 };
 ```
 
@@ -138,36 +138,36 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "specifications",
+  featuresPath: 'specifications',
 
   // Disable auto-refresh in production
   autoRefresh: false,
 
   // Production branding
-  appName: "Production Specifications",
-  appIcon: "🚀",
+  appName: 'Production Specifications',
+  appIcon: '🚀',
 
   // Strict validation
   enforceSpec: true,
 
   // Production-ready types only
-  supportedTypes: ["SPEC", "FEAT", "BUG", "RELEASE"],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG', 'RELEASE'],
 
   // Formal workflow
   statusFolders: [
-    "proposed",
-    "approved",
-    "active",
-    "testing",
-    "staging",
-    "deployed",
+    'proposed',
+    'approved',
+    'active',
+    'testing',
+    'staging',
+    'deployed',
   ],
 
   // Business priorities
-  priorities: ["P0", "P1", "P2", "P3"],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 
-  defaultPriority: "P2",
-  defaultStatus: "proposed",
+  defaultPriority: 'P2',
+  defaultStatus: 'proposed',
 };
 ```
 
@@ -177,22 +177,22 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "test/fixtures/specs",
+  featuresPath: 'test/fixtures/specs',
 
   // No auto-refresh in tests
   autoRefresh: false,
 
   // Test branding
-  appName: "Test Specifications",
-  appIcon: "🧪",
+  appName: 'Test Specifications',
+  appIcon: '🧪',
 
   // Minimal types for testing
-  supportedTypes: ["SPEC", "FEAT"],
-  statusFolders: ["active", "done"],
-  priorities: ["high", "low"],
+  supportedTypes: ['SPEC', 'FEAT'],
+  statusFolders: ['active', 'done'],
+  priorities: ['high', 'low'],
 
-  defaultPriority: "low",
-  defaultStatus: "active",
+  defaultPriority: 'low',
+  defaultStatus: 'active',
 };
 ```
 
@@ -204,38 +204,38 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "frontend-specs",
-  templatePath: "templates/frontend",
+  featuresPath: 'frontend-specs',
+  templatePath: 'templates/frontend',
 
-  appName: "Frontend Specifications",
-  appIcon: "🎨",
+  appName: 'Frontend Specifications',
+  appIcon: '🎨',
 
   // Frontend-specific types
   supportedTypes: [
-    "COMP", // Component specifications
-    "PAGE", // Page specifications
-    "FLOW", // User flow specifications
-    "DESIGN", // Design system updates
-    "A11Y", // Accessibility improvements
-    "PERF", // Performance optimizations
-    "BUG", // Bug fixes
+    'COMP', // Component specifications
+    'PAGE', // Page specifications
+    'FLOW', // User flow specifications
+    'DESIGN', // Design system updates
+    'A11Y', // Accessibility improvements
+    'PERF', // Performance optimizations
+    'BUG', // Bug fixes
   ],
 
   // Frontend workflow
   statusFolders: [
-    "design",
-    "approved",
-    "development",
-    "review",
-    "testing",
-    "deployed",
+    'design',
+    'approved',
+    'development',
+    'review',
+    'testing',
+    'deployed',
   ],
 
   // Frontend priorities
-  priorities: ["blocking", "critical", "high", "medium", "low", "polish"],
+  priorities: ['blocking', 'critical', 'high', 'medium', 'low', 'polish'],
 
-  defaultPriority: "medium",
-  defaultStatus: "design",
+  defaultPriority: 'medium',
+  defaultStatus: 'design',
 };
 ```
 
@@ -245,39 +245,39 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "backend-specs",
-  templatePath: "templates/backend",
+  featuresPath: 'backend-specs',
+  templatePath: 'templates/backend',
 
-  appName: "Backend Specifications",
-  appIcon: "⚙️",
+  appName: 'Backend Specifications',
+  appIcon: '⚙️',
 
   // Backend-specific types
   supportedTypes: [
-    "API", // API specifications
-    "SERVICE", // Service specifications
-    "DB", // Database changes
-    "SECURITY", // Security implementations
-    "PERF", // Performance optimizations
-    "INFRA", // Infrastructure changes
-    "MIGRATION", // Data migrations
-    "BUG", // Bug fixes
+    'API', // API specifications
+    'SERVICE', // Service specifications
+    'DB', // Database changes
+    'SECURITY', // Security implementations
+    'PERF', // Performance optimizations
+    'INFRA', // Infrastructure changes
+    'MIGRATION', // Data migrations
+    'BUG', // Bug fixes
   ],
 
   // Backend workflow
   statusFolders: [
-    "design",
-    "api-review",
-    "approved",
-    "development",
-    "testing",
-    "deployed",
+    'design',
+    'api-review',
+    'approved',
+    'development',
+    'testing',
+    'deployed',
   ],
 
   // Backend priorities
-  priorities: ["outage", "critical", "high", "medium", "low", "tech-debt"],
+  priorities: ['outage', 'critical', 'high', 'medium', 'low', 'tech-debt'],
 
-  defaultPriority: "medium",
-  defaultStatus: "design",
+  defaultPriority: 'medium',
+  defaultStatus: 'design',
 };
 ```
 
@@ -287,47 +287,47 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "infrastructure-specs",
-  templatePath: "templates/infrastructure",
+  featuresPath: 'infrastructure-specs',
+  templatePath: 'templates/infrastructure',
 
-  appName: "Infrastructure Specifications",
-  appIcon: "🔧",
+  appName: 'Infrastructure Specifications',
+  appIcon: '🔧',
 
   // DevOps-specific types
   supportedTypes: [
-    "INFRA", // Infrastructure changes
-    "DEPLOY", // Deployment specifications
-    "MONITOR", // Monitoring & observability
-    "SECURITY", // Security implementations
-    "BACKUP", // Backup & recovery
-    "SCALE", // Scaling specifications
-    "DISASTER", // Disaster recovery
-    "AUTOMATION", // Automation improvements
+    'INFRA', // Infrastructure changes
+    'DEPLOY', // Deployment specifications
+    'MONITOR', // Monitoring & observability
+    'SECURITY', // Security implementations
+    'BACKUP', // Backup & recovery
+    'SCALE', // Scaling specifications
+    'DISASTER', // Disaster recovery
+    'AUTOMATION', // Automation improvements
   ],
 
   // DevOps workflow
   statusFolders: [
-    "planning",
-    "security-review",
-    "approved",
-    "implementation",
-    "testing",
-    "staging",
-    "production",
+    'planning',
+    'security-review',
+    'approved',
+    'implementation',
+    'testing',
+    'staging',
+    'production',
   ],
 
   // Infrastructure priorities
   priorities: [
-    "outage",
-    "security",
-    "critical",
-    "high",
-    "medium",
-    "maintenance",
+    'outage',
+    'security',
+    'critical',
+    'high',
+    'medium',
+    'maintenance',
   ],
 
-  defaultPriority: "medium",
-  defaultStatus: "planning",
+  defaultPriority: 'medium',
+  defaultStatus: 'planning',
 };
 ```
 
@@ -339,10 +339,10 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "specs",
+  featuresPath: 'specs',
 
-  appName: "Startup Specs",
-  appIcon: "🚀",
+  appName: 'Startup Specs',
+  appIcon: '🚀',
 
   // Fast iteration
   autoRefresh: true,
@@ -350,20 +350,20 @@ module.exports = {
 
   // Lean types
   supportedTypes: [
-    "FEAT", // Feature specifications
-    "MVP", // MVP features
-    "EXPERIMENT", // Experiments
-    "BUG", // Bug fixes
+    'FEAT', // Feature specifications
+    'MVP', // MVP features
+    'EXPERIMENT', // Experiments
+    'BUG', // Bug fixes
   ],
 
   // Simple workflow
-  statusFolders: ["backlog", "sprint", "done"],
+  statusFolders: ['backlog', 'sprint', 'done'],
 
   // Startup priorities
-  priorities: ["must-have", "should-have", "nice-to-have"],
+  priorities: ['must-have', 'should-have', 'nice-to-have'],
 
-  defaultPriority: "should-have",
-  defaultStatus: "backlog",
+  defaultPriority: 'should-have',
+  defaultStatus: 'backlog',
 
   // Relaxed validation for speed
   enforceSpec: false,
@@ -376,43 +376,43 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "docs/features",
-  templatePath: "docs/templates",
+  featuresPath: 'docs/features',
+  templatePath: 'docs/templates',
 
-  appName: "Project Features",
-  appIcon: "🌍",
+  appName: 'Project Features',
+  appIcon: '🌍',
 
   // Community-friendly types
   supportedTypes: [
-    "FEAT", // Feature requests
-    "ENHANCEMENT", // Enhancements
-    "BUG", // Bug reports
-    "DOCS", // Documentation
-    "REFACTOR", // Code refactoring
-    "BREAKING", // Breaking changes
+    'FEAT', // Feature requests
+    'ENHANCEMENT', // Enhancements
+    'BUG', // Bug reports
+    'DOCS', // Documentation
+    'REFACTOR', // Code refactoring
+    'BREAKING', // Breaking changes
   ],
 
   // Open source workflow
   statusFolders: [
-    "proposed", // Community proposals
-    "discussion", // Under discussion
-    "accepted", // Accepted for development
-    "in-progress", // Being developed
-    "review", // Under review
-    "merged", // Merged to main
+    'proposed', // Community proposals
+    'discussion', // Under discussion
+    'accepted', // Accepted for development
+    'in-progress', // Being developed
+    'review', // Under review
+    'merged', // Merged to main
   ],
 
   // Community priorities
   priorities: [
-    "critical", // Critical bugs
-    "high", // High impact
-    "medium", // Standard priority
-    "low", // Nice to have
-    "help-wanted", // Community help wanted
+    'critical', // Critical bugs
+    'high', // High impact
+    'medium', // Standard priority
+    'low', // Nice to have
+    'help-wanted', // Community help wanted
   ],
 
-  defaultPriority: "medium",
-  defaultStatus: "proposed",
+  defaultPriority: 'medium',
+  defaultStatus: 'proposed',
 
   // Community features
   requireApproval: false,
@@ -426,48 +426,48 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "product-specs",
-  templatePath: "product-specs/templates",
+  featuresPath: 'product-specs',
+  templatePath: 'product-specs/templates',
 
-  appName: "SaaS Product Specifications",
-  appIcon: "💼",
+  appName: 'SaaS Product Specifications',
+  appIcon: '💼',
 
   // Enterprise types
   supportedTypes: [
-    "EPIC", // Large initiatives
-    "FEAT", // Feature specifications
-    "INTEGRATION", // Third-party integrations
-    "COMPLIANCE", // Compliance requirements
-    "SECURITY", // Security features
-    "ANALYTICS", // Analytics features
-    "API", // API specifications
-    "BILLING", // Billing features
-    "TENANT", // Multi-tenancy features
+    'EPIC', // Large initiatives
+    'FEAT', // Feature specifications
+    'INTEGRATION', // Third-party integrations
+    'COMPLIANCE', // Compliance requirements
+    'SECURITY', // Security features
+    'ANALYTICS', // Analytics features
+    'API', // API specifications
+    'BILLING', // Billing features
+    'TENANT', // Multi-tenancy features
   ],
 
   // Enterprise workflow
   statusFolders: [
-    "product-review",
-    "engineering-review",
-    "security-review",
-    "approved",
-    "active",
-    "beta",
-    "production",
-    "deprecated",
+    'product-review',
+    'engineering-review',
+    'security-review',
+    'approved',
+    'active',
+    'beta',
+    'production',
+    'deprecated',
   ],
 
   // Business priorities
   priorities: [
-    "P0-REVENUE", // Revenue impact
-    "P1-CUSTOMER", // Customer impact
-    "P2-GROWTH", // Growth impact
-    "P3-EFFICIENCY", // Efficiency improvement
-    "P4-TECH-DEBT", // Technical debt
+    'P0-REVENUE', // Revenue impact
+    'P1-CUSTOMER', // Customer impact
+    'P2-GROWTH', // Growth impact
+    'P3-EFFICIENCY', // Efficiency improvement
+    'P4-TECH-DEBT', // Technical debt
   ],
 
-  defaultPriority: "P3-EFFICIENCY",
-  defaultStatus: "product-review",
+  defaultPriority: 'P3-EFFICIENCY',
+  defaultStatus: 'product-review',
 
   // Enterprise requirements
   enforceSpec: true,
@@ -484,29 +484,29 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "src/specs",
-  templatePath: "src/specs/templates",
+  featuresPath: 'src/specs',
+  templatePath: 'src/specs/templates',
 
-  appName: "React App Specs",
-  appIcon: "⚛️",
+  appName: 'React App Specs',
+  appIcon: '⚛️',
 
   // React-specific types
   supportedTypes: [
-    "COMPONENT", // React component specs
-    "HOOK", // Custom hook specs
-    "PAGE", // Page component specs
-    "FEATURE", // Feature specifications
-    "STATE", // State management specs
-    "PERF", // Performance optimizations
-    "BUG", // Bug fixes
+    'COMPONENT', // React component specs
+    'HOOK', // Custom hook specs
+    'PAGE', // Page component specs
+    'FEATURE', // Feature specifications
+    'STATE', // State management specs
+    'PERF', // Performance optimizations
+    'BUG', // Bug fixes
   ],
 
-  statusFolders: ["design", "development", "testing", "deployed"],
+  statusFolders: ['design', 'development', 'testing', 'deployed'],
 
-  priorities: ["critical", "high", "medium", "low"],
+  priorities: ['critical', 'high', 'medium', 'low'],
 
-  defaultPriority: "medium",
-  defaultStatus: "design",
+  defaultPriority: 'medium',
+  defaultStatus: 'design',
 };
 ```
 
@@ -516,30 +516,30 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "api-specs",
-  templatePath: "api-specs/templates",
+  featuresPath: 'api-specs',
+  templatePath: 'api-specs/templates',
 
-  appName: "Node.js API Specs",
-  appIcon: "🟢",
+  appName: 'Node.js API Specs',
+  appIcon: '🟢',
 
   // API-specific types
   supportedTypes: [
-    "ENDPOINT", // API endpoint specs
-    "MIDDLEWARE", // Middleware specifications
-    "AUTH", // Authentication specs
-    "VALIDATION", // Validation specifications
-    "DATABASE", // Database specifications
-    "PERF", // Performance optimizations
-    "SECURITY", // Security implementations
-    "BUG", // Bug fixes
+    'ENDPOINT', // API endpoint specs
+    'MIDDLEWARE', // Middleware specifications
+    'AUTH', // Authentication specs
+    'VALIDATION', // Validation specifications
+    'DATABASE', // Database specifications
+    'PERF', // Performance optimizations
+    'SECURITY', // Security implementations
+    'BUG', // Bug fixes
   ],
 
-  statusFolders: ["design", "implementation", "testing", "deployed"],
+  statusFolders: ['design', 'implementation', 'testing', 'deployed'],
 
-  priorities: ["security", "critical", "high", "medium", "low"],
+  priorities: ['security', 'critical', 'high', 'medium', 'low'],
 
-  defaultPriority: "medium",
-  defaultStatus: "design",
+  defaultPriority: 'medium',
+  defaultStatus: 'design',
 };
 ```
 
@@ -550,19 +550,19 @@ module.exports = {
 **dynamic.config.js**
 
 ```javascript
-const os = require("os");
-const path = require("path");
+const os = require('os');
+const path = require('path');
 
 // Detect environment
-const isDev = process.env.NODE_ENV === "development";
-const isCI = process.env.CI === "true";
+const isDev = process.env.NODE_ENV === 'development';
+const isCI = process.env.CI === 'true';
 const username = os.userInfo().username;
 
 // Team detection
 const teamMapping = {
-  "frontend-": "frontend",
-  "backend-": "backend",
-  "devops-": "devops",
+  'frontend-': 'frontend',
+  'backend-': 'backend',
+  'devops-': 'devops',
 };
 
 function detectTeam(username) {
@@ -571,7 +571,7 @@ function detectTeam(username) {
       return team;
     }
   }
-  return "general";
+  return 'general';
 }
 
 const team = process.env.TEAM || detectTeam(username);
@@ -584,13 +584,13 @@ module.exports = {
   // Dynamic branding
   appName: `${team.charAt(0).toUpperCase() + team.slice(1)} Specifications`,
   appIcon:
-    team === "frontend"
-      ? "🎨"
-      : team === "backend"
-      ? "⚙️"
-      : team === "devops"
-      ? "🔧"
-      : "📋",
+    team === 'frontend'
+      ? '🎨'
+      : team === 'backend'
+      ? '⚙️'
+      : team === 'devops'
+      ? '🔧'
+      : '📋',
 
   // Environment-specific settings
   autoRefresh: !isCI,
@@ -599,13 +599,13 @@ module.exports = {
 
   // Dynamic types based on team
   supportedTypes:
-    team === "frontend"
-      ? ["COMPONENT", "PAGE", "FEATURE", "BUG"]
-      : team === "backend"
-      ? ["API", "SERVICE", "DATABASE", "BUG"]
-      : team === "devops"
-      ? ["INFRA", "DEPLOY", "MONITOR", "BUG"]
-      : ["SPEC", "FEAT", "BUG"],
+    team === 'frontend'
+      ? ['COMPONENT', 'PAGE', 'FEATURE', 'BUG']
+      : team === 'backend'
+      ? ['API', 'SERVICE', 'DATABASE', 'BUG']
+      : team === 'devops'
+      ? ['INFRA', 'DEPLOY', 'MONITOR', 'BUG']
+      : ['SPEC', 'FEAT', 'BUG'],
 
   // Conditional features
   ...(isDev && {
@@ -613,7 +613,7 @@ module.exports = {
     experimentalFeatures: true,
   }),
 
-  ...(team === "security" && {
+  ...(team === 'security' && {
     requireSecurityReview: true,
     securityTemplates: true,
   }),
@@ -627,36 +627,36 @@ module.exports = {
 ```javascript
 module.exports = {
   // Base configuration shared across all environments
-  appIcon: "📋",
+  appIcon: '📋',
   autoRefresh: true,
   refreshDebounce: 500,
 
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
-  statusFolders: ["active", "backlog", "done"],
-  priorities: ["P0", "P1", "P2", "P3"],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
+  statusFolders: ['active', 'backlog', 'done'],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 
-  defaultPriority: "P2",
-  defaultStatus: "backlog",
+  defaultPriority: 'P2',
+  defaultStatus: 'backlog',
 };
 ```
 
 **project.config.js**
 
 ```javascript
-const base = require("./base.config");
+const base = require('./base.config');
 
 module.exports = {
   ...base,
 
   // Project-specific overrides
-  featuresPath: "product-specs",
-  appName: "Product Specifications",
+  featuresPath: 'product-specs',
+  appName: 'Product Specifications',
 
   // Extended types
-  supportedTypes: [...base.supportedTypes, "EPIC", "STORY", "TASK"],
+  supportedTypes: [...base.supportedTypes, 'EPIC', 'STORY', 'TASK'],
 
   // Extended workflow
-  statusFolders: ["proposed", ...base.statusFolders, "deployed"],
+  statusFolders: ['proposed', ...base.statusFolders, 'deployed'],
 };
 ```
 
@@ -666,10 +666,10 @@ module.exports = {
 
 ```javascript
 const baseConfig = {
-  featuresPath: "specs",
-  appName: "Specifications",
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
-  statusFolders: ["active", "backlog", "done"],
+  featuresPath: 'specs',
+  appName: 'Specifications',
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
+  statusFolders: ['active', 'backlog', 'done'],
 };
 
 // Environment-specific additions
@@ -678,7 +678,7 @@ const environmentConfig = {
     autoRefresh: true,
     refreshDebounce: 100,
     enforceSpec: false,
-    supportedTypes: [...baseConfig.supportedTypes, "EXPERIMENT", "POC"],
+    supportedTypes: [...baseConfig.supportedTypes, 'EXPERIMENT', 'POC'],
   },
 
   production: {
@@ -688,19 +688,19 @@ const environmentConfig = {
   },
 
   testing: {
-    featuresPath: "test/fixtures/specs",
+    featuresPath: 'test/fixtures/specs',
     autoRefresh: false,
   },
 };
 
 // Feature flags
 const featureFlags = {
-  enableAdvancedReporting: process.env.FEATURE_ADVANCED_REPORTING === "true",
-  enableIntegrations: process.env.FEATURE_INTEGRATIONS === "true",
-  enableCompliance: process.env.FEATURE_COMPLIANCE === "true",
+  enableAdvancedReporting: process.env.FEATURE_ADVANCED_REPORTING === 'true',
+  enableIntegrations: process.env.FEATURE_INTEGRATIONS === 'true',
+  enableCompliance: process.env.FEATURE_COMPLIANCE === 'true',
 };
 
-const env = process.env.NODE_ENV || "development";
+const env = process.env.NODE_ENV || 'development';
 
 module.exports = {
   ...baseConfig,
@@ -710,7 +710,7 @@ module.exports = {
   ...(featureFlags.enableAdvancedReporting && {
     reporting: {
       enabled: true,
-      schedule: "weekly",
+      schedule: 'weekly',
     },
   }),
 
@@ -724,7 +724,7 @@ module.exports = {
   ...(featureFlags.enableCompliance && {
     compliance: {
       required: true,
-      frameworks: ["SOX", "GDPR"],
+      frameworks: ['SOX', 'GDPR'],
     },
   }),
 };
@@ -738,18 +738,18 @@ module.exports = {
 
 ```javascript
 const config = {
-  featuresPath: "specs",
-  appName: "Project Specifications",
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
-  statusFolders: ["active", "backlog", "done"],
-  priorities: ["P0", "P1", "P2", "P3"],
+  featuresPath: 'specs',
+  appName: 'Project Specifications',
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
+  statusFolders: ['active', 'backlog', 'done'],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 };
 
 // Validation functions
 function validateConfig(config) {
   // Required fields
   if (!config.featuresPath) {
-    throw new Error("featuresPath is required");
+    throw new Error('featuresPath is required');
   }
 
   // Array validations
@@ -757,14 +757,14 @@ function validateConfig(config) {
     !Array.isArray(config.supportedTypes) ||
     config.supportedTypes.length === 0
   ) {
-    throw new Error("supportedTypes must be a non-empty array");
+    throw new Error('supportedTypes must be a non-empty array');
   }
 
   if (
     !Array.isArray(config.statusFolders) ||
     config.statusFolders.length === 0
   ) {
-    throw new Error("statusFolders must be a non-empty array");
+    throw new Error('statusFolders must be a non-empty array');
   }
 
   // Priority validation
@@ -772,7 +772,7 @@ function validateConfig(config) {
     config.defaultPriority &&
     !config.priorities.includes(config.defaultPriority)
   ) {
-    throw new Error("defaultPriority must be one of the defined priorities");
+    throw new Error('defaultPriority must be one of the defined priorities');
   }
 
   // Status validation
@@ -780,7 +780,7 @@ function validateConfig(config) {
     config.defaultStatus &&
     !config.statusFolders.includes(config.defaultStatus)
   ) {
-    throw new Error("defaultStatus must be one of the defined statusFolders");
+    throw new Error('defaultStatus must be one of the defined statusFolders');
   }
 
   return true;
@@ -797,7 +797,7 @@ module.exports = config;
 **schema-validated.config.js**
 
 ```javascript
-const Joi = require("joi");
+const Joi = require('joi');
 
 const configSchema = Joi.object({
   featuresPath: Joi.string().required(),
@@ -819,13 +819,13 @@ const configSchema = Joi.object({
 });
 
 const config = {
-  featuresPath: "specifications",
-  appName: "Project Specs",
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
-  statusFolders: ["active", "backlog", "done"],
-  priorities: ["P0", "P1", "P2", "P3"],
-  defaultPriority: "P2",
-  defaultStatus: "backlog",
+  featuresPath: 'specifications',
+  appName: 'Project Specs',
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
+  statusFolders: ['active', 'backlog', 'done'],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
+  defaultPriority: 'P2',
+  defaultStatus: 'backlog',
 };
 
 // Validate configuration

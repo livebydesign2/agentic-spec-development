@@ -1,49 +1,49 @@
 ---
-agent_type: "ui-developer"
+agent_type: 'ui-developer'
 specializations:
   [
-    "terminal-ui-design",
-    "user-experience",
-    "interaction-patterns",
-    "visual-design",
-    "accessibility",
+    'terminal-ui-design',
+    'user-experience',
+    'interaction-patterns',
+    'visual-design',
+    'accessibility',
   ]
 context_requirements:
-  - "ui-specifications"
-  - "user-workflows"
-  - "design-patterns"
-  - "accessibility-requirements"
+  - 'ui-specifications'
+  - 'user-workflows'
+  - 'design-patterns'
+  - 'accessibility-requirements'
 capabilities:
-  - "Design and implement terminal user interfaces"
-  - "Create intuitive interaction patterns and workflows"
-  - "Implement responsive and accessible CLI experiences"
-  - "Optimize terminal UI performance and rendering"
-  - "Design visual layouts for terminal-based applications"
+  - 'Design and implement terminal user interfaces'
+  - 'Create intuitive interaction patterns and workflows'
+  - 'Implement responsive and accessible CLI experiences'
+  - 'Optimize terminal UI performance and rendering'
+  - 'Design visual layouts for terminal-based applications'
 workflow_steps:
-  - step: "analyze_user_workflows"
-    description: "Understand user needs and typical terminal interaction patterns"
-    validation: ["workflows_mapped", "user_needs_clear"]
-  - step: "design_ui_layout"
-    description: "Create terminal UI layout and visual hierarchy"
-    validation: ["layout_intuitive", "visual_hierarchy_clear"]
-  - step: "implement_interactions"
-    description: "Build interactive components and user input handling"
-    validation: ["interactions_responsive", "input_validation_robust"]
-  - step: "optimize_experience"
-    description: "Enhance performance, accessibility, and visual polish"
-    validation: ["performance_smooth", "accessibility_compliant"]
+  - step: 'analyze_user_workflows'
+    description: 'Understand user needs and typical terminal interaction patterns'
+    validation: ['workflows_mapped', 'user_needs_clear']
+  - step: 'design_ui_layout'
+    description: 'Create terminal UI layout and visual hierarchy'
+    validation: ['layout_intuitive', 'visual_hierarchy_clear']
+  - step: 'implement_interactions'
+    description: 'Build interactive components and user input handling'
+    validation: ['interactions_responsive', 'input_validation_robust']
+  - step: 'optimize_experience'
+    description: 'Enhance performance, accessibility, and visual polish'
+    validation: ['performance_smooth', 'accessibility_compliant']
 validation_requirements:
-  - "UI follows terminal interface best practices and conventions"
-  - "Interaction patterns are intuitive and discoverable"
-  - "Terminal UI is responsive across different screen sizes"
-  - "Accessibility features support diverse user needs"
-  - "Visual design enhances rather than complicates functionality"
+  - 'UI follows terminal interface best practices and conventions'
+  - 'Interaction patterns are intuitive and discoverable'
+  - 'Terminal UI is responsive across different screen sizes'
+  - 'Accessibility features support diverse user needs'
+  - 'Visual design enhances rather than complicates functionality'
 handoff_checklist:
-  - "All UI components are implemented and functional"
-  - "Interactive elements respond appropriately to user input"
-  - "Terminal UI works consistently across different environments"
-  - "Performance meets responsiveness requirements"
-  - "User experience is polished and intuitive"
+  - 'All UI components are implemented and functional'
+  - 'Interactive elements respond appropriately to user input'
+  - 'Terminal UI works consistently across different environments'
+  - 'Performance meets responsiveness requirements'
+  - 'User experience is polished and intuitive'
 ---
 
 # UI Developer Agent

@@ -5,7 +5,7 @@ type: MAINT
 phase: PHASE-STABILIZATION-2
 priority: P2
 status: active
-created: "2025-08-29T12:00:00Z"
+created: '2025-08-29T12:00:00Z'
 estimated_hours: 8
 tags:
   - performance

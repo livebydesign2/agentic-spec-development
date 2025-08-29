@@ -1,113 +1,113 @@
 ---
-id: "FEAT-013"
-title: "Task Router System"
-type: "FEAT"
-phase: "PHASE-1A"
-priority: "P0"
-status: "complete"
-created: "2024-08-24T17:00:00Z"
+id: 'FEAT-013'
+title: 'Task Router System'
+type: 'FEAT'
+phase: 'PHASE-1A'
+priority: 'P0'
+status: 'complete'
+created: '2024-08-24T17:00:00Z'
 estimated_hours: 16
-tags: ["task-routing", "agent-assignment", "workflow", "core-system"]
+tags: ['task-routing', 'agent-assignment', 'workflow', 'core-system']
 tasks:
-  - id: "TASK-001"
-    title: "Core Task Routing Engine"
-    agent_type: "backend-developer"
-    status: "complete"
+  - id: 'TASK-001'
+    title: 'Core Task Routing Engine'
+    agent_type: 'backend-developer'
+    status: 'complete'
     estimated_hours: 6
     context_requirements:
-      ["spec-parsing", "agent-capabilities", "dependency-tracking"]
+      ['spec-parsing', 'agent-capabilities', 'dependency-tracking']
     subtasks:
-      - id: "SUBTASK-001"
-        title: "Implement TaskRouter class with dependency resolution"
-        type: "implementation"
+      - id: 'SUBTASK-001'
+        title: 'Implement TaskRouter class with dependency resolution'
+        type: 'implementation'
         estimated_minutes: 180
-        status: "ready"
-      - id: "SUBTASK-002"
-        title: "Add agent capability matching logic"
-        type: "implementation"
+        status: 'ready'
+      - id: 'SUBTASK-002'
+        title: 'Add agent capability matching logic'
+        type: 'implementation'
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-003"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'ready'
+      - id: 'SUBTASK-003'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 60
-        status: "ready"
-  - id: "TASK-002"
-    title: "Priority & Constraint System"
-    agent_type: "backend-developer"
-    status: "complete"
+        status: 'ready'
+  - id: 'TASK-002'
+    title: 'Priority & Constraint System'
+    agent_type: 'backend-developer'
+    status: 'complete'
     estimated_hours: 4
-    context_requirements: ["priority-algorithms", "constraint-solving"]
-    depends_on: ["TASK-001"]
+    context_requirements: ['priority-algorithms', 'constraint-solving']
+    depends_on: ['TASK-001']
     subtasks:
-      - id: "SUBTASK-004"
-        title: "Implement priority weighting algorithm"
-        type: "implementation"
+      - id: 'SUBTASK-004'
+        title: 'Implement priority weighting algorithm'
+        type: 'implementation'
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-005"
-        title: "Add constraint validation system"
-        type: "implementation"
+        status: 'ready'
+      - id: 'SUBTASK-005'
+        title: 'Add constraint validation system'
+        type: 'implementation'
         estimated_minutes: 90
-        status: "ready"
-      - id: "SUBTASK-006"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'ready'
+      - id: 'SUBTASK-006'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 30
-        status: "ready"
-  - id: "TASK-003"
-    title: "Next Task Recommendation API"
-    agent_type: "backend-developer"
-    status: "complete"
+        status: 'ready'
+  - id: 'TASK-003'
+    title: 'Next Task Recommendation API'
+    agent_type: 'backend-developer'
+    status: 'complete'
     estimated_hours: 4
-    context_requirements: ["api-design", "filtering-logic"]
-    depends_on: ["TASK-002"]
+    context_requirements: ['api-design', 'filtering-logic']
+    depends_on: ['TASK-002']
     subtasks:
-      - id: "SUBTASK-007"
-        title: "Build getNextTask() with filtering"
-        type: "implementation"
+      - id: 'SUBTASK-007'
+        title: 'Build getNextTask() with filtering'
+        type: 'implementation'
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-008"
-        title: "Add batch recommendation support"
-        type: "implementation"
+        status: 'ready'
+      - id: 'SUBTASK-008'
+        title: 'Add batch recommendation support'
+        type: 'implementation'
         estimated_minutes: 90
-        status: "ready"
-      - id: "SUBTASK-009"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'ready'
+      - id: 'SUBTASK-009'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 30
-        status: "ready"
-  - id: "TASK-004"
-    title: "CLI Integration & Commands"
-    agent_type: "cli-specialist"
-    status: "complete"
+        status: 'ready'
+  - id: 'TASK-004'
+    title: 'CLI Integration & Commands'
+    agent_type: 'cli-specialist'
+    status: 'complete'
     estimated_hours: 2
-    context_requirements: ["cli-patterns", "task-routing-api"]
-    depends_on: ["TASK-003"]
+    context_requirements: ['cli-patterns', 'task-routing-api']
+    depends_on: ['TASK-003']
     subtasks:
-      - id: "SUBTASK-010"
+      - id: 'SUBTASK-010'
         title: "Implement 'asd next' command"
-        type: "implementation"
+        type: 'implementation'
         estimated_minutes: 60
-        status: "ready"
-      - id: "SUBTASK-011"
-        title: "Add task assignment commands"
-        type: "implementation"
+        status: 'ready'
+      - id: 'SUBTASK-011'
+        title: 'Add task assignment commands'
+        type: 'implementation'
         estimated_minutes: 60
-        status: "ready"
-      - id: "SUBTASK-012"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'ready'
+      - id: 'SUBTASK-012'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 0
-        status: "ready"
+        status: 'ready'
 dependencies: []
 acceptance_criteria:
-  - "Agents can get next recommended task based on their capabilities"
-  - "Task dependencies are validated before assignment"
-  - "Priority weighting considers P0/P1/P2/P3 levels and constraints"
-  - "System prevents assignment of blocked or unavailable tasks"
-  - "CLI commands provide filtering by agent type, priority, phase"
+  - 'Agents can get next recommended task based on their capabilities'
+  - 'Task dependencies are validated before assignment'
+  - 'Priority weighting considers P0/P1/P2/P3 levels and constraints'
+  - 'System prevents assignment of blocked or unavailable tasks'
+  - 'CLI commands provide filtering by agent type, priority, phase'
 ---
 
 # Task Router System

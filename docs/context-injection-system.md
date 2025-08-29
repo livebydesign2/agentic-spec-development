@@ -307,9 +307,9 @@ code .asd/agents/product-manager.md  # Modify workflow steps, context requiremen
 // asd.config.js
 module.exports = {
   agents: {
-    "product-manager": {
+    'product-manager': {
       workflow_overrides: {
-        validation_steps: ["strategic-check", "user-research-complete"],
+        validation_steps: ['strategic-check', 'user-research-complete'],
       },
     },
   },

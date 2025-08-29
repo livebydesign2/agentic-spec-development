@@ -5,158 +5,158 @@
  * Part of MAINT-002 TASK-002: Critical Code Quality Issues - Final cleanup
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 // Exact errors from lint output with line numbers and fixes
 const errorFixes = [
   {
-    file: "lib/automation/hook-handler.js",
+    file: 'lib/automation/hook-handler.js',
     fixes: [
       {
         line: 135,
-        pattern: "__hooksDetected",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '__hooksDetected',
+        fix: 'eslint-disable-line no-unused-vars',
       },
       {
         line: 803,
-        pattern: "__description",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '__description',
+        fix: 'eslint-disable-line no-unused-vars',
       },
     ],
   },
   {
-    file: "lib/automation/linting-system.js",
+    file: 'lib/automation/linting-system.js',
     fixes: [
       {
         line: 214,
-        pattern: "__skipWarnings",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '__skipWarnings',
+        fix: 'eslint-disable-line no-unused-vars',
       },
       {
         line: 612,
-        pattern: "__description",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '__description',
+        fix: 'eslint-disable-line no-unused-vars',
       },
     ],
   },
   {
-    file: "lib/automation/test-reporter.js",
+    file: 'lib/automation/test-reporter.js',
     fixes: [
-      { line: 2, pattern: "__path", fix: "eslint-disable-line no-unused-vars" },
+      { line: 2, pattern: '__path', fix: 'eslint-disable-line no-unused-vars' },
       {
         line: 723,
-        pattern: "_performance",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '_performance',
+        fix: 'eslint-disable-line no-unused-vars',
       },
     ],
   },
   {
-    file: "lib/automation/testing-system.js",
+    file: 'lib/automation/testing-system.js',
     fixes: [
       {
         line: 264,
-        pattern: "__watchMode",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '__watchMode',
+        fix: 'eslint-disable-line no-unused-vars',
       },
       {
         line: 779,
-        pattern: "__description",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '__description',
+        fix: 'eslint-disable-line no-unused-vars',
       },
     ],
   },
   {
-    file: "lib/automation/workspace-manager.js",
+    file: 'lib/automation/workspace-manager.js',
     fixes: [
       {
         line: 84,
-        pattern: "_baseContext",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '_baseContext',
+        fix: 'eslint-disable-line no-unused-vars',
       },
-      { line: 573, pattern: "__", fix: "eslint-disable-line no-unused-vars" },
+      { line: 573, pattern: '__', fix: 'eslint-disable-line no-unused-vars' },
     ],
   },
   {
-    file: "lib/data-adapters/schema-validator.js",
+    file: 'lib/data-adapters/schema-validator.js',
     fixes: [
       {
         line: 110,
-        pattern: "__strict",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '__strict',
+        fix: 'eslint-disable-line no-unused-vars',
       },
     ],
   },
   {
-    file: "test/automation/automated-state-sync.test.js",
+    file: 'test/automation/automated-state-sync.test.js',
     fixes: [
-      { line: 4, pattern: "__fs", fix: "eslint-disable-line no-unused-vars" },
+      { line: 4, pattern: '__fs', fix: 'eslint-disable-line no-unused-vars' },
       {
         line: 91,
-        pattern: "__originalEventBus",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '__originalEventBus',
+        fix: 'eslint-disable-line no-unused-vars',
       },
       {
         line: 101,
-        pattern: "__originalConstructor",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '__originalConstructor',
+        fix: 'eslint-disable-line no-unused-vars',
       },
     ],
   },
   {
-    file: "test/automation/context-gathering.test.js",
+    file: 'test/automation/context-gathering.test.js',
     fixes: [
-      { line: 2, pattern: "_path", fix: "eslint-disable-line no-unused-vars" },
+      { line: 2, pattern: '_path', fix: 'eslint-disable-line no-unused-vars' },
       {
         line: 136,
-        pattern: "_context1",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '_context1',
+        fix: 'eslint-disable-line no-unused-vars',
       },
     ],
   },
   {
-    file: "test/automation/state-sync-integration.test.js",
+    file: 'test/automation/state-sync-integration.test.js',
     fixes: [
-      { line: 2, pattern: "__fs", fix: "eslint-disable-line no-unused-vars" },
+      { line: 2, pattern: '__fs', fix: 'eslint-disable-line no-unused-vars' },
     ],
   },
   {
-    file: "test/bug-003-memory-fixes.test.js",
+    file: 'test/bug-003-memory-fixes.test.js',
     fixes: [
       {
         line: 187,
-        pattern: "__cleanedUp",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '__cleanedUp',
+        fix: 'eslint-disable-line no-unused-vars',
       },
     ],
   },
   {
-    file: "test/integration/feat-028-integration.test.js",
+    file: 'test/integration/feat-028-integration.test.js',
     fixes: [
-      { line: 1, pattern: "_fs", fix: "eslint-disable-line no-unused-vars" },
-      { line: 2, pattern: "_path", fix: "eslint-disable-line no-unused-vars" },
+      { line: 1, pattern: '_fs', fix: 'eslint-disable-line no-unused-vars' },
+      { line: 2, pattern: '_path', fix: 'eslint-disable-line no-unused-vars' },
       {
         line: 294,
-        pattern: "_gatherer",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '_gatherer',
+        fix: 'eslint-disable-line no-unused-vars',
       },
     ],
   },
   {
-    file: "test/memory-leak.test.js",
+    file: 'test/memory-leak.test.js',
     fixes: [
-      { line: 472, pattern: "____", fix: "eslint-disable-line no-unused-vars" },
+      { line: 472, pattern: '____', fix: 'eslint-disable-line no-unused-vars' },
       {
         line: 473,
-        pattern: "_priority",
-        fix: "eslint-disable-line no-unused-vars",
+        pattern: '_priority',
+        fix: 'eslint-disable-line no-unused-vars',
       },
     ],
   },
   {
-    file: "test/startup-error-scenarios.test.js",
+    file: 'test/startup-error-scenarios.test.js',
     fixes: [
-      { line: 4, pattern: "_os", fix: "eslint-disable-line no-unused-vars" },
+      { line: 4, pattern: '_os', fix: 'eslint-disable-line no-unused-vars' },
     ],
   },
 ];
@@ -169,10 +169,10 @@ async function fixFile(fileInfo) {
 
     if (!fs.existsSync(fullPath)) {
       console.log(`   ⚠️  File not found: ${fullPath}`);
-      return { success: false, reason: "File not found" };
+      return { success: false, reason: 'File not found' };
     }
 
-    const lines = fs.readFileSync(fullPath, "utf-8").split("\n");
+    const lines = fs.readFileSync(fullPath, 'utf-8').split('\n');
     let changesMade = 0;
 
     // Apply fixes in reverse line order to maintain line numbers
@@ -186,8 +186,8 @@ async function fixFile(fileInfo) {
         lines[lineIndex].includes(fixInfo.pattern)
       ) {
         // Add eslint-disable comment at end of line
-        if (!lines[lineIndex].includes("eslint-disable-line")) {
-          lines[lineIndex] = lines[lineIndex] + " // " + fixInfo.fix;
+        if (!lines[lineIndex].includes('eslint-disable-line')) {
+          lines[lineIndex] = lines[lineIndex] + ' // ' + fixInfo.fix;
           changesMade++;
           console.log(`   ✓ Fixed line ${fixInfo.line}: ${fixInfo.pattern}`);
         }
@@ -195,7 +195,7 @@ async function fixFile(fileInfo) {
     }
 
     if (changesMade > 0) {
-      fs.writeFileSync(fullPath, lines.join("\n"), "utf-8");
+      fs.writeFileSync(fullPath, lines.join('\n'), 'utf-8');
       console.log(`   ✅ Applied ${changesMade} fixes to ${fileInfo.file}`);
       return { success: true, changes: changesMade };
     } else {
@@ -209,9 +209,9 @@ async function fixFile(fileInfo) {
 }
 
 async function main() {
-  console.log("🚀 MAINT-002 TASK-002: Final Unused Variable Cleanup");
+  console.log('🚀 MAINT-002 TASK-002: Final Unused Variable Cleanup');
   console.log(
-    "📊 Fixing remaining ESLint errors with precise line-by-line approach\n"
+    '📊 Fixing remaining ESLint errors with precise line-by-line approach\n'
   );
 
   let totalFixed = 0;
@@ -225,12 +225,12 @@ async function main() {
     }
   }
 
-  console.log("\n📈 SUMMARY:");
+  console.log('\n📈 SUMMARY:');
   console.log(`✅ Files processed: ${totalFiles}/${errorFixes.length}`);
   console.log(`🔧 Total fixes applied: ${totalFixed}`);
 
   console.log(
-    "\n🔍 Running final lint check to verify all errors are resolved..."
+    '\n🔍 Running final lint check to verify all errors are resolved...'
   );
 }
 

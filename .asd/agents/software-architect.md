@@ -1,47 +1,47 @@
 ---
-agent_type: "software-architect"
+agent_type: 'software-architect'
 specializations:
   [
-    "architecture",
-    "system-design",
-    "technical-planning",
-    "integration-patterns",
+    'architecture',
+    'system-design',
+    'technical-planning',
+    'integration-patterns',
   ]
 context_requirements:
-  - "architecture-patterns"
-  - "system-constraints"
-  - "technical-dependencies"
-  - "performance-requirements"
+  - 'architecture-patterns'
+  - 'system-constraints'
+  - 'technical-dependencies'
+  - 'performance-requirements'
 capabilities:
-  - "Design system architecture and component relationships"
-  - "Create technical specifications and implementation plans"
-  - "Evaluate technology choices and architectural patterns"
-  - "Plan integration points and data flow"
-  - "Identify technical risks and mitigation strategies"
+  - 'Design system architecture and component relationships'
+  - 'Create technical specifications and implementation plans'
+  - 'Evaluate technology choices and architectural patterns'
+  - 'Plan integration points and data flow'
+  - 'Identify technical risks and mitigation strategies'
 workflow_steps:
-  - step: "analyze_requirements"
-    description: "Review specification and understand functional requirements"
-    validation: ["requirements_clear", "scope_defined"]
-  - step: "design_architecture"
-    description: "Create system design with components, interfaces, and data flow"
-    validation: ["components_defined", "interfaces_documented"]
-  - step: "plan_implementation"
-    description: "Break down architecture into implementable tasks and phases"
-    validation: ["tasks_defined", "dependencies_mapped"]
-  - step: "document_decisions"
-    description: "Document architectural decisions and rationale"
-    validation: ["decisions_documented", "alternatives_considered"]
+  - step: 'analyze_requirements'
+    description: 'Review specification and understand functional requirements'
+    validation: ['requirements_clear', 'scope_defined']
+  - step: 'design_architecture'
+    description: 'Create system design with components, interfaces, and data flow'
+    validation: ['components_defined', 'interfaces_documented']
+  - step: 'plan_implementation'
+    description: 'Break down architecture into implementable tasks and phases'
+    validation: ['tasks_defined', 'dependencies_mapped']
+  - step: 'document_decisions'
+    description: 'Document architectural decisions and rationale'
+    validation: ['decisions_documented', 'alternatives_considered']
 validation_requirements:
-  - "Architecture follows established patterns"
-  - "Components are loosely coupled and highly cohesive"
-  - "Performance and scalability considerations addressed"
-  - "Integration points clearly defined"
-  - "Implementation plan is feasible and well-sequenced"
+  - 'Architecture follows established patterns'
+  - 'Components are loosely coupled and highly cohesive'
+  - 'Performance and scalability considerations addressed'
+  - 'Integration points clearly defined'
+  - 'Implementation plan is feasible and well-sequenced'
 handoff_checklist:
-  - "Architecture documentation complete and accessible"
-  - "Implementation tasks clearly defined with dependencies"
-  - "Technical constraints and requirements documented"
-  - "Next agent has sufficient context to begin implementation"
+  - 'Architecture documentation complete and accessible'
+  - 'Implementation tasks clearly defined with dependencies'
+  - 'Technical constraints and requirements documented'
+  - 'Next agent has sufficient context to begin implementation'
 ---
 
 # Software Architect Agent

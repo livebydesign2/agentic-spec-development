@@ -1,112 +1,112 @@
 ---
-id: "FEAT-019"
-title: "Validation Manager System"
-type: "FEAT"
-phase: "PHASE-1A"
-priority: "P1"
-status: "done"
-created: "2024-08-24T17:45:00Z"
+id: 'FEAT-019'
+title: 'Validation Manager System'
+type: 'FEAT'
+phase: 'PHASE-1A'
+priority: 'P1'
+status: 'done'
+created: '2024-08-24T17:45:00Z'
 estimated_hours: 12
-tags: ["validation", "quality-gates", "consistency", "automation"]
+tags: ['validation', 'quality-gates', 'consistency', 'automation']
 tasks:
-  - id: "TASK-001"
-    title: "Core Validation Framework"
-    agent_type: "software-architect"
-    status: "ready"
+  - id: 'TASK-001'
+    title: 'Core Validation Framework'
+    agent_type: 'software-architect'
+    status: 'ready'
     estimated_hours: 4
-    context_requirements: ["validation-patterns", "quality-systems"]
+    context_requirements: ['validation-patterns', 'quality-systems']
     subtasks:
-      - id: "SUBTASK-001"
-        title: "Implement ValidationManager class"
-        type: "implementation"
+      - id: 'SUBTASK-001'
+        title: 'Implement ValidationManager class'
+        type: 'implementation'
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-002"
-        title: "Add validation rule engine"
-        type: "implementation"
+        status: 'ready'
+      - id: 'SUBTASK-002'
+        title: 'Add validation rule engine'
+        type: 'implementation'
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-003"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'ready'
+      - id: 'SUBTASK-003'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 0
-        status: "ready"
-  - id: "TASK-002"
-    title: "Spec & Task Validation Rules"
-    agent_type: "backend-specialist"
-    status: "blocked"
+        status: 'ready'
+  - id: 'TASK-002'
+    title: 'Spec & Task Validation Rules'
+    agent_type: 'backend-specialist'
+    status: 'blocked'
     estimated_hours: 4
-    context_requirements: ["spec-schemas", "task-validation"]
-    depends_on: ["TASK-001"]
+    context_requirements: ['spec-schemas', 'task-validation']
+    depends_on: ['TASK-001']
     subtasks:
-      - id: "SUBTASK-004"
-        title: "Implement spec validation rules"
-        type: "implementation"
+      - id: 'SUBTASK-004'
+        title: 'Implement spec validation rules'
+        type: 'implementation'
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-005"
-        title: "Add task dependency validation"
-        type: "implementation"
+        status: 'ready'
+      - id: 'SUBTASK-005'
+        title: 'Add task dependency validation'
+        type: 'implementation'
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-006"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'ready'
+      - id: 'SUBTASK-006'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 0
-        status: "ready"
-  - id: "TASK-003"
-    title: "Quality Gates & Auto-Fixing"
-    agent_type: "backend-specialist"
-    status: "blocked"
+        status: 'ready'
+  - id: 'TASK-003'
+    title: 'Quality Gates & Auto-Fixing'
+    agent_type: 'backend-specialist'
+    status: 'blocked'
     estimated_hours: 3
-    context_requirements: ["auto-fixing", "quality-gates"]
-    depends_on: ["TASK-002"]
+    context_requirements: ['auto-fixing', 'quality-gates']
+    depends_on: ['TASK-002']
     subtasks:
-      - id: "SUBTASK-007"
-        title: "Implement auto-fixing for common issues"
-        type: "implementation"
+      - id: 'SUBTASK-007'
+        title: 'Implement auto-fixing for common issues'
+        type: 'implementation'
         estimated_minutes: 120
-        status: "ready"
-      - id: "SUBTASK-008"
-        title: "Add quality gate enforcement"
-        type: "implementation"
+        status: 'ready'
+      - id: 'SUBTASK-008'
+        title: 'Add quality gate enforcement'
+        type: 'implementation'
         estimated_minutes: 60
-        status: "ready"
-      - id: "SUBTASK-009"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'ready'
+      - id: 'SUBTASK-009'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 0
-        status: "ready"
-  - id: "TASK-004"
-    title: "CLI Integration & Reporting"
-    agent_type: "cli-specialist"
-    status: "blocked"
+        status: 'ready'
+  - id: 'TASK-004'
+    title: 'CLI Integration & Reporting'
+    agent_type: 'cli-specialist'
+    status: 'blocked'
     estimated_hours: 1
-    context_requirements: ["cli-integration", "validation-reporting"]
-    depends_on: ["TASK-003"]
+    context_requirements: ['cli-integration', 'validation-reporting']
+    depends_on: ['TASK-003']
     subtasks:
-      - id: "SUBTASK-010"
-        title: "Implement validation CLI commands"
-        type: "implementation"
+      - id: 'SUBTASK-010'
+        title: 'Implement validation CLI commands'
+        type: 'implementation'
         estimated_minutes: 30
-        status: "ready"
-      - id: "SUBTASK-011"
-        title: "Add validation reporting and summaries"
-        type: "implementation"
+        status: 'ready'
+      - id: 'SUBTASK-011'
+        title: 'Add validation reporting and summaries'
+        type: 'implementation'
         estimated_minutes: 30
-        status: "ready"
-      - id: "SUBTASK-012"
-        title: "Validation & testing"
-        type: "validation"
+        status: 'ready'
+      - id: 'SUBTASK-012'
+        title: 'Validation & testing'
+        type: 'validation'
         estimated_minutes: 0
-        status: "ready"
+        status: 'ready'
 dependencies: []
 acceptance_criteria:
-  - "Comprehensive validation of specs, tasks, and system consistency"
-  - "Auto-fixing capability for common formatting and structural issues"
-  - "Quality gates prevent invalid assignments and workflow violations"
-  - "Clear validation reports with actionable error messages"
-  - "CLI integration for validation commands and automated checks"
+  - 'Comprehensive validation of specs, tasks, and system consistency'
+  - 'Auto-fixing capability for common formatting and structural issues'
+  - 'Quality gates prevent invalid assignments and workflow violations'
+  - 'Clear validation reports with actionable error messages'
+  - 'CLI integration for validation commands and automated checks'
 ---
 
 # Validation Manager System
@@ -445,11 +445,11 @@ class ValidationRule {
 
   // Metadata
   getDescription() {
-    return "Rule description";
+    return 'Rule description';
   }
 
   getFixSuggestion(error) {
-    return "How to fix this error";
+    return 'How to fix this error';
   }
 }
 ```
@@ -462,10 +462,10 @@ class ValidationRule {
 // Required fields validation
 class RequiredFieldsRule extends ValidationRule {
   validate(spec) {
-    const required = ["id", "title", "type", "status", "priority"];
+    const required = ['id', 'title', 'type', 'status', 'priority'];
     const missing = required.filter((field) => !spec[field]);
     if (missing.length > 0) {
-      return new ValidationError("missing_required_fields", missing);
+      return new ValidationError('missing_required_fields', missing);
     }
     return ValidationResult.success();
   }
@@ -476,7 +476,7 @@ class IDFormatRule extends ValidationRule {
   validate(spec) {
     const pattern = /^(FEAT|BUG|SPEC|SPIKE|MAINT|RELEASE)-\d{3}$/;
     if (!pattern.test(spec.id)) {
-      return new ValidationError("invalid_id_format", spec.id);
+      return new ValidationError('invalid_id_format', spec.id);
     }
     return ValidationResult.success();
   }
@@ -485,9 +485,9 @@ class IDFormatRule extends ValidationRule {
 // Priority validation
 class PriorityValidation extends ValidationRule {
   validate(spec) {
-    const validPriorities = ["P0", "P1", "P2", "P3"];
+    const validPriorities = ['P0', 'P1', 'P2', 'P3'];
     if (!validPriorities.includes(spec.priority)) {
-      return new ValidationError("invalid_priority", spec.priority);
+      return new ValidationError('invalid_priority', spec.priority);
     }
     return ValidationResult.success();
   }
@@ -506,12 +506,12 @@ class TaskDependencyRule extends ValidationRule {
     const invalidDeps = task.depends_on.filter((dep) => !allTasks.has(dep));
 
     if (invalidDeps.length > 0) {
-      return new ValidationError("invalid_dependencies", invalidDeps);
+      return new ValidationError('invalid_dependencies', invalidDeps);
     }
 
     // Check for circular dependencies
     if (this.hasCircularDependency(task, allTasks)) {
-      return new ValidationError("circular_dependency", task.id);
+      return new ValidationError('circular_dependency', task.id);
     }
 
     return ValidationResult.success();
@@ -523,7 +523,7 @@ class AgentTypeValidation extends ValidationRule {
   validate(task, context) {
     const validAgentTypes = context.getAgentTypes();
     if (!validAgentTypes.includes(task.agent_type)) {
-      return new ValidationError("invalid_agent_type", task.agent_type);
+      return new ValidationError('invalid_agent_type', task.agent_type);
     }
     return ValidationResult.success();
   }

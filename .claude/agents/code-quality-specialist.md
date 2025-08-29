@@ -84,12 +84,12 @@ const requiredModule = require('existing-module');
 
 ```javascript
 // WRONG - Missing imports
-const fs = require("fs"); // Used but not validated
-import { missingFunction } from "./module"; // Function doesn't exist
+const fs = require('fs'); // Used but not validated
+import { missingFunction } from './module'; // Function doesn't exist
 
 // RIGHT - Proper imports
-const fs = require("fs").promises;
-import { existingFunction } from "./module";
+const fs = require('fs').promises;
+import { existingFunction } from './module';
 ```
 
 ### Error Handling Issues
@@ -105,7 +105,7 @@ function riskyOperation() {
   try {
     return data?.property || null;
   } catch (error) {
-    console.error("Operation failed:", error);
+    console.error('Operation failed:', error);
     return null;
   }
 }
@@ -156,15 +156,15 @@ Total Progress: [overall percentage]% complete
 
 ```javascript
 #!/usr/bin/env node
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 const fixPatterns = [
   {
     pattern: /regex/g,
     check: (content) => boolean,
     fix: (content) => string,
-    description: "Fix description",
+    description: 'Fix description',
   },
 ];
 

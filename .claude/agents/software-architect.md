@@ -168,12 +168,12 @@ asd complete FEAT-019 TASK-001  # Triggers handoff to implementation
 
 ```javascript
 // CORRECT: Flexible configuration with cosmiconfig
-const { cosmiconfigSync } = require("cosmiconfig");
+const { cosmiconfigSync } = require('cosmiconfig');
 
 class ConfigManager {
   constructor(cwd) {
     this.cwd = cwd;
-    this.explorer = cosmiconfigSync("asd");
+    this.explorer = cosmiconfigSync('asd');
   }
 
   loadConfig() {
@@ -192,7 +192,7 @@ class ConfigManager {
 // CORRECT: Structured document processing
 class SpecParser {
   async parseSpecification(filePath) {
-    const content = await fs.readFile(filePath, "utf8");
+    const content = await fs.readFile(filePath, 'utf8');
     const frontmatter = this.extractFrontmatter(content);
     const body = this.parseMarkdown(content);
     const tasks = this.extractTasks(body);
@@ -215,7 +215,7 @@ class SpecParser {
 // CORRECT: Responsive terminal interface
 class TerminalInterface {
   constructor() {
-    this.term = require("terminal-kit").terminal;
+    this.term = require('terminal-kit').terminal;
     this.layout = this.calculateLayout();
   }
 
@@ -327,7 +327,7 @@ class DocumentCache {
 
 ```javascript
 // CORRECT: Efficient file watching and processing
-const chokidar = require("chokidar");
+const chokidar = require('chokidar');
 
 class FileWatcher {
   constructor(paths, options = {}) {
@@ -340,7 +340,7 @@ class FileWatcher {
   }
 
   onFileChange(callback) {
-    this.watcher.on("change", (path) => {
+    this.watcher.on('change', (path) => {
       // Debounce multiple rapid changes
       clearTimeout(this.debounceTimeout);
       this.debounceTimeout = setTimeout(() => {
@@ -359,7 +359,7 @@ class FileWatcher {
 
 ```javascript
 // CORRECT: Robust input validation
-const Joi = require("joi");
+const Joi = require('joi');
 
 const configSchema = Joi.object({
   featuresPath: Joi.string().required(),
@@ -367,10 +367,10 @@ const configSchema = Joi.object({
   autoRefresh: Joi.boolean().default(true),
   supportedTypes: Joi.array()
     .items(Joi.string())
-    .default(["SPEC", "FEAT", "BUG"]),
+    .default(['SPEC', 'FEAT', 'BUG']),
   statusFolders: Joi.array()
     .items(Joi.string())
-    .default(["active", "backlog", "done"]),
+    .default(['active', 'backlog', 'done']),
 });
 
 class ConfigValidator {
@@ -388,7 +388,7 @@ class ConfigValidator {
 
 ```javascript
 // CORRECT: Safe file system operations
-const path = require("path");
+const path = require('path');
 
 class SafeFileOperations {
   constructor(basePath) {
@@ -398,14 +398,14 @@ class SafeFileOperations {
   validatePath(filePath) {
     const resolved = path.resolve(this.basePath, filePath);
     if (!resolved.startsWith(this.basePath)) {
-      throw new Error("Path traversal attempt detected");
+      throw new Error('Path traversal attempt detected');
     }
     return resolved;
   }
 
   async safeReadFile(filePath) {
     const safePath = this.validatePath(filePath);
-    return fs.readFile(safePath, "utf8");
+    return fs.readFile(safePath, 'utf8');
   }
 }
 ```
@@ -420,20 +420,20 @@ class SafeFileOperations {
 // Key performance indicators
 const performanceMetrics = {
   startup: {
-    target: "<500ms",
-    measure: "Time from CLI invocation to first render",
+    target: '<500ms',
+    measure: 'Time from CLI invocation to first render',
   },
   navigation: {
-    target: "<100ms",
-    measure: "Response time to keyboard input",
+    target: '<100ms',
+    measure: 'Response time to keyboard input',
   },
   documentParsing: {
-    target: "<50ms per document",
-    measure: "Markdown parsing and processing time",
+    target: '<50ms per document',
+    measure: 'Markdown parsing and processing time',
   },
   memory: {
-    target: "<100MB for 1000 documents",
-    measure: "Peak memory usage",
+    target: '<100MB for 1000 documents',
+    measure: 'Peak memory usage',
   },
 };
 ```
@@ -445,7 +445,7 @@ const performanceMetrics = {
 class ASDError extends Error {
   constructor(message, context = {}) {
     super(message);
-    this.name = "ASDError";
+    this.name = 'ASDError';
     this.context = context;
     this.timestamp = new Date().toISOString();
   }
@@ -461,7 +461,7 @@ class ErrorReporter {
     };
 
     // Log to console with structured format
-    console.error("ASD Error:", JSON.stringify(errorData, null, 2));
+    console.error('ASD Error:', JSON.stringify(errorData, null, 2));
   }
 }
 ```
@@ -485,21 +485,21 @@ class ErrorReporter {
 // Architecture review checklist
 const architectureReview = {
   patterns: {
-    modularity: "Clear separation of concerns?",
-    configuration: "Flexible and well-validated configuration?",
-    errorHandling: "Comprehensive error handling and recovery?",
-    performance: "Efficient algorithms and memory usage?",
+    modularity: 'Clear separation of concerns?',
+    configuration: 'Flexible and well-validated configuration?',
+    errorHandling: 'Comprehensive error handling and recovery?',
+    performance: 'Efficient algorithms and memory usage?',
   },
   maintainability: {
-    readability: "Clear code structure and naming?",
-    documentation: "Adequate inline and external documentation?",
-    testing: "Comprehensive test coverage?",
-    extensibility: "Easy to add new features?",
+    readability: 'Clear code structure and naming?',
+    documentation: 'Adequate inline and external documentation?',
+    testing: 'Comprehensive test coverage?',
+    extensibility: 'Easy to add new features?',
   },
   reliability: {
-    inputValidation: "All user inputs properly validated?",
-    fileOperations: "Safe file system operations?",
-    errorRecovery: "Graceful degradation on errors?",
+    inputValidation: 'All user inputs properly validated?',
+    fileOperations: 'Safe file system operations?',
+    errorRecovery: 'Graceful degradation on errors?',
   },
 };
 ```
@@ -513,23 +513,23 @@ const architectureReview = {
 ```javascript
 interface ArchitecturalDecision {
   // Business alignment
-  businessValue: "high" | "medium" | "low";
-  userImpact: "positive" | "neutral" | "negative";
+  businessValue: 'high' | 'medium' | 'low';
+  userImpact: 'positive' | 'neutral' | 'negative';
 
   // Technical factors
-  maintainability: "improves" | "neutral" | "degrades";
-  performance: "improves" | "neutral" | "degrades";
-  reliability: "strengthens" | "neutral" | "weakens";
-  scalability: "improves" | "neutral" | "limits";
+  maintainability: 'improves' | 'neutral' | 'degrades';
+  performance: 'improves' | 'neutral' | 'degrades';
+  reliability: 'strengthens' | 'neutral' | 'weakens';
+  scalability: 'improves' | 'neutral' | 'limits';
 
   // Implementation factors
-  complexity: "low" | "medium" | "high";
-  riskLevel: "low" | "medium" | "high";
-  timeToImplement: "days" | "weeks" | "months";
+  complexity: 'low' | 'medium' | 'high';
+  riskLevel: 'low' | 'medium' | 'high';
+  timeToImplement: 'days' | 'weeks' | 'months';
 
   // Ecosystem alignment
-  nodeCompatibility: "compatible" | "requires_polyfill" | "incompatible";
-  platformSupport: "cross_platform" | "limited_platform" | "single_platform";
+  nodeCompatibility: 'compatible' | 'requires_polyfill' | 'incompatible';
+  platformSupport: 'cross_platform' | 'limited_platform' | 'single_platform';
 }
 ```
 

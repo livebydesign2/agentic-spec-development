@@ -1,10 +1,10 @@
 ---
 type: recommendations
-title: "{{title}}"
-spec_id: "{{specId}}"
-task_id: "{{taskId}}"
-agent_type: "{{agentType}}"
-created_at: "{{createdAt}}"
+title: '{{title}}'
+spec_id: '{{specId}}'
+task_id: '{{taskId}}'
+agent_type: '{{agentType}}'
+created_at: '{{createdAt}}'
 status: active
 ---
 

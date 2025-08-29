@@ -182,11 +182,11 @@ ASD searches for configuration in this order:
 ```javascript
 // asd.config.js
 module.exports = {
-  featuresPath: "docs/specs", // Path to specifications
-  templatePath: "templates", // Template directory
+  featuresPath: 'docs/specs', // Path to specifications
+  templatePath: 'templates', // Template directory
   autoRefresh: true, // Enable file watching
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
-  statusFolders: ["active", "backlog", "done"],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
+  statusFolders: ['active', 'backlog', 'done'],
 };
 ```
 ````
@@ -223,9 +223,9 @@ await asd.init();
 ### Configuration Manager
 
 ```javascript
-const { ConfigManager } = require("agentic-spec-development");
+const { ConfigManager } = require('agentic-spec-development');
 
-const configManager = new ConfigManager("/project/root");
+const configManager = new ConfigManager('/project/root');
 const config = configManager.loadConfig();
 ```
 
@@ -248,8 +248,8 @@ Creates a new ASD client instance.
 
 ```javascript
 const asd = new ASDClient({
-  cwd: "/path/to/project",
-  appName: "Custom Name",
+  cwd: '/path/to/project',
+  appName: 'Custom Name',
 });
 ```
 
@@ -426,7 +426,7 @@ asd.run(); // This method doesn't exist
 <!-- RIGHT - Verified, working example -->
 
 ```javascript
-const ASDClient = require("agentic-spec-development");
+const ASDClient = require('agentic-spec-development');
 const asd = new ASDClient({ cwd: process.cwd() });
 await asd.init();
 ```

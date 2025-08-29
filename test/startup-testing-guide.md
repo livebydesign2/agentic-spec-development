@@ -260,8 +260,8 @@ DEBUG_TESTS=true npm run test:startup
 2. **Follow naming conventions**:
 
    ```javascript
-   describe("Feature Category", () => {
-     test("specific behavior description", async () => {
+   describe('Feature Category', () => {
+     test('specific behavior description', async () => {
        // Test implementation
      });
    });

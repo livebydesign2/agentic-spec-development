@@ -87,7 +87,7 @@ describe('SpecParser', () => {
 
     it('should handle missing folders gracefully', async () => {
       // Remove one of the status folders
-      await fs.rmdir(path.join(testDir, 'docs/specs/done'), {
+      await fs.rm(path.join(testDir, 'docs/specs/done'), {
         recursive: true,
       });
 

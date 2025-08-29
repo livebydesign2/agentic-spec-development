@@ -174,7 +174,7 @@ class ValidationManager {
   }
 
   // Reporting and CLI integration
-  async generateReport(results, format = "terminal") {
+  async generateReport(results, format = 'terminal') {
     /* Validation reports */
   }
   async getSummary(results) {
@@ -228,7 +228,7 @@ class ValidationRuleEngine {
 
 ```javascript
 class ValidationRule {
-  constructor(name, category, severity = "error") {
+  constructor(name, category, severity = 'error') {
     this.name = name;
     this.category = category; // 'spec', 'task', 'consistency', 'workflow'
     this.severity = severity; // 'error', 'warning', 'info'
@@ -250,10 +250,10 @@ class ValidationRule {
 
   // Metadata
   getDescription() {
-    return "Rule description";
+    return 'Rule description';
   }
   getFixSuggestion(error) {
-    return "How to fix this error";
+    return 'How to fix this error';
   }
 
   // Context helpers
@@ -416,10 +416,10 @@ async assignTask(specId, taskId, agentType, options = {}) {
 ```javascript
 // New CLI commands for validation
 commander
-  .command("validate [spec-id]")
-  .option("--fix", "Auto-fix issues where possible")
-  .option("--format <format>", "Output format (terminal, json)", "terminal")
-  .option("--rules <rules>", "Specific rule categories to run")
+  .command('validate [spec-id]')
+  .option('--fix', 'Auto-fix issues where possible')
+  .option('--format <format>', 'Output format (terminal, json)', 'terminal')
+  .option('--rules <rules>', 'Specific rule categories to run')
   .action(async (specId, options) => {
     const validationManager = new ValidationManager(specParser, configManager);
 
@@ -497,9 +497,9 @@ module.exports = {
 
     // Rule configuration
     rules: {
-      "spec-required-fields": { enabled: true, severity: "error" },
-      "id-format": { enabled: true, severity: "error", pattern: "FEAT-\\d{3}" },
-      "task-dependencies": { enabled: true, severity: "warning" },
+      'spec-required-fields': { enabled: true, severity: 'error' },
+      'id-format': { enabled: true, severity: 'error', pattern: 'FEAT-\\d{3}' },
+      'task-dependencies': { enabled: true, severity: 'warning' },
     },
 
     // Auto-fixing
@@ -519,8 +519,8 @@ module.exports = {
 
     // Reporting
     reporting: {
-      format: "terminal", // 'terminal', 'json', 'html'
-      verbosity: "normal", // 'minimal', 'normal', 'detailed'
+      format: 'terminal', // 'terminal', 'json', 'html'
+      verbosity: 'normal', // 'minimal', 'normal', 'detailed'
       showPerformance: true,
     },
   },

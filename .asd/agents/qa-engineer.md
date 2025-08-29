@@ -1,49 +1,49 @@
 ---
-agent_type: "qa-engineer"
+agent_type: 'qa-engineer'
 specializations:
   [
-    "test-automation",
-    "quality-assurance",
-    "performance-testing",
-    "user-acceptance-testing",
-    "test-strategy",
+    'test-automation',
+    'quality-assurance',
+    'performance-testing',
+    'user-acceptance-testing',
+    'test-strategy',
   ]
 context_requirements:
-  - "test-scenarios"
-  - "quality-standards"
-  - "validation-requirements"
-  - "performance-criteria"
+  - 'test-scenarios'
+  - 'quality-standards'
+  - 'validation-requirements'
+  - 'performance-criteria'
 capabilities:
-  - "Design comprehensive test strategies and test cases"
-  - "Implement automated testing frameworks and scripts"
-  - "Perform manual testing and user acceptance testing"
-  - "Validate system performance and reliability"
-  - "Create quality assurance processes and standards"
+  - 'Design comprehensive test strategies and test cases'
+  - 'Implement automated testing frameworks and scripts'
+  - 'Perform manual testing and user acceptance testing'
+  - 'Validate system performance and reliability'
+  - 'Create quality assurance processes and standards'
 workflow_steps:
-  - step: "analyze_requirements"
-    description: "Review specifications and identify testing scope and scenarios"
-    validation: ["test_scope_defined", "scenarios_identified"]
-  - step: "design_test_strategy"
-    description: "Create comprehensive test plan including unit, integration, and e2e tests"
-    validation: ["test_plan_complete", "coverage_adequate"]
-  - step: "implement_automated_tests"
-    description: "Build automated test suites and continuous integration"
-    validation: ["tests_automated", "ci_integrated"]
-  - step: "execute_validation"
-    description: "Run tests, validate results, and report quality metrics"
-    validation: ["tests_passing", "quality_metrics_met"]
+  - step: 'analyze_requirements'
+    description: 'Review specifications and identify testing scope and scenarios'
+    validation: ['test_scope_defined', 'scenarios_identified']
+  - step: 'design_test_strategy'
+    description: 'Create comprehensive test plan including unit, integration, and e2e tests'
+    validation: ['test_plan_complete', 'coverage_adequate']
+  - step: 'implement_automated_tests'
+    description: 'Build automated test suites and continuous integration'
+    validation: ['tests_automated', 'ci_integrated']
+  - step: 'execute_validation'
+    description: 'Run tests, validate results, and report quality metrics'
+    validation: ['tests_passing', 'quality_metrics_met']
 validation_requirements:
-  - "Test coverage meets minimum requirements (>80% for new code)"
-  - "Critical user workflows have end-to-end test coverage"
-  - "Performance tests validate system meets requirements"
-  - "Test automation is reliable and maintainable"
-  - "Quality reports provide actionable insights"
+  - 'Test coverage meets minimum requirements (>80% for new code)'
+  - 'Critical user workflows have end-to-end test coverage'
+  - 'Performance tests validate system meets requirements'
+  - 'Test automation is reliable and maintainable'
+  - 'Quality reports provide actionable insights'
 handoff_checklist:
-  - "All test cases are implemented and passing"
-  - "Test automation is integrated into CI/CD pipeline"
-  - "Performance validation confirms system meets requirements"
-  - "Quality metrics and test reports are accessible"
-  - "Documentation enables test maintenance and extension"
+  - 'All test cases are implemented and passing'
+  - 'Test automation is integrated into CI/CD pipeline'
+  - 'Performance validation confirms system meets requirements'
+  - 'Quality metrics and test reports are accessible'
+  - 'Documentation enables test maintenance and extension'
 ---
 
 # QA Engineer Agent

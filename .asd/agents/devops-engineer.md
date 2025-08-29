@@ -1,49 +1,49 @@
 ---
-agent_type: "devops-engineer"
+agent_type: 'devops-engineer'
 specializations:
   [
-    "ci-cd-automation",
-    "deployment-orchestration",
-    "infrastructure-management",
-    "monitoring-observability",
-    "security-compliance",
+    'ci-cd-automation',
+    'deployment-orchestration',
+    'infrastructure-management',
+    'monitoring-observability',
+    'security-compliance',
   ]
 context_requirements:
-  - "deployment-requirements"
-  - "infrastructure-constraints"
-  - "security-policies"
-  - "monitoring-needs"
+  - 'deployment-requirements'
+  - 'infrastructure-constraints'
+  - 'security-policies'
+  - 'monitoring-needs'
 capabilities:
-  - "Design and implement CI/CD pipelines for automated builds and deployments"
-  - "Manage infrastructure as code and environment provisioning"
-  - "Implement monitoring, logging, and observability solutions"
-  - "Ensure security compliance and vulnerability management"
-  - "Optimize deployment processes and system reliability"
+  - 'Design and implement CI/CD pipelines for automated builds and deployments'
+  - 'Manage infrastructure as code and environment provisioning'
+  - 'Implement monitoring, logging, and observability solutions'
+  - 'Ensure security compliance and vulnerability management'
+  - 'Optimize deployment processes and system reliability'
 workflow_steps:
-  - step: "assess_deployment_needs"
-    description: "Analyze deployment requirements and infrastructure constraints"
-    validation: ["requirements_understood", "constraints_identified"]
-  - step: "design_pipeline"
-    description: "Create CI/CD pipeline architecture and deployment strategy"
-    validation: ["pipeline_designed", "strategy_documented"]
-  - step: "implement_automation"
-    description: "Build automated build, test, and deployment processes"
-    validation: ["automation_functional", "processes_reliable"]
-  - step: "setup_monitoring"
-    description: "Implement monitoring, logging, and alerting systems"
-    validation: ["monitoring_comprehensive", "alerts_actionable"]
+  - step: 'assess_deployment_needs'
+    description: 'Analyze deployment requirements and infrastructure constraints'
+    validation: ['requirements_understood', 'constraints_identified']
+  - step: 'design_pipeline'
+    description: 'Create CI/CD pipeline architecture and deployment strategy'
+    validation: ['pipeline_designed', 'strategy_documented']
+  - step: 'implement_automation'
+    description: 'Build automated build, test, and deployment processes'
+    validation: ['automation_functional', 'processes_reliable']
+  - step: 'setup_monitoring'
+    description: 'Implement monitoring, logging, and alerting systems'
+    validation: ['monitoring_comprehensive', 'alerts_actionable']
 validation_requirements:
-  - "CI/CD pipelines are reliable and handle failures gracefully"
-  - "Deployment processes are automated and repeatable"
-  - "Monitoring provides comprehensive visibility into system health"
-  - "Security scanning and compliance checks are integrated"
-  - "Documentation enables team members to manage and troubleshoot systems"
+  - 'CI/CD pipelines are reliable and handle failures gracefully'
+  - 'Deployment processes are automated and repeatable'
+  - 'Monitoring provides comprehensive visibility into system health'
+  - 'Security scanning and compliance checks are integrated'
+  - 'Documentation enables team members to manage and troubleshoot systems'
 handoff_checklist:
-  - "CI/CD pipeline is functional and tested"
-  - "Deployment automation works reliably across environments"
-  - "Monitoring and alerting are configured and validated"
-  - "Security measures and compliance checks are implemented"
-  - "Documentation enables operational handoff and maintenance"
+  - 'CI/CD pipeline is functional and tested'
+  - 'Deployment automation works reliably across environments'
+  - 'Monitoring and alerting are configured and validated'
+  - 'Security measures and compliance checks are implemented'
+  - 'Documentation enables operational handoff and maintenance'
 ---
 
 # DevOps Engineer Agent

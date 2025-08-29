@@ -3,27 +3,27 @@
 # This template provides the foundation for all ASD agent definitions
 # Inherit from this template when creating new agents
 
-agent_type: "base-template"
-template_version: "1.0"
+agent_type: 'base-template'
+template_version: '1.0'
 is_template: true
 extends: null
 
 # Core structure that all agents should include
 required_fields:
-  - "agent_type"
-  - "specializations"
-  - "context_requirements"
-  - "capabilities"
-  - "workflow_steps"
-  - "validation_requirements"
-  - "handoff_checklist"
+  - 'agent_type'
+  - 'specializations'
+  - 'context_requirements'
+  - 'capabilities'
+  - 'workflow_steps'
+  - 'validation_requirements'
+  - 'handoff_checklist'
 
 # Optional but recommended fields
 recommended_fields:
-  - "technology_focus"
-  - "quality_standards"
-  - "success_criteria"
-  - "common_patterns"
+  - 'technology_focus'
+  - 'quality_standards'
+  - 'success_criteria'
+  - 'common_patterns'
 
 # Template inheritance patterns
 inheritance_options:
@@ -36,159 +36,159 @@ inheritance_options:
 validation_rules:
   agent_type:
     required: true
-    pattern: "^[a-z-]+$"
-    description: "Agent type must be lowercase with hyphens"
+    pattern: '^[a-z-]+$'
+    description: 'Agent type must be lowercase with hyphens'
 
   specializations:
     required: true
     min_items: 2
-    description: "Each agent must have at least 2 specialization areas"
+    description: 'Each agent must have at least 2 specialization areas'
 
   context_requirements:
     required: true
     min_items: 2
-    description: "Each agent must specify context requirements"
+    description: 'Each agent must specify context requirements'
 
   capabilities:
     required: true
     min_items: 3
-    description: "Each agent must define at least 3 core capabilities"
+    description: 'Each agent must define at least 3 core capabilities'
 
   workflow_steps:
     required: true
     min_items: 3
     structure:
-      step: "required"
-      description: "required"
-      validation: "required_array"
-    description: "Each agent must define workflow with validation criteria"
+      step: 'required'
+      description: 'required'
+      validation: 'required_array'
+    description: 'Each agent must define workflow with validation criteria'
 
 # Common capability patterns that can be inherited
 common_capability_patterns:
   code_quality:
-    - "Follow established coding standards and conventions"
-    - "Implement comprehensive error handling and validation"
-    - "Create maintainable, well-documented code"
+    - 'Follow established coding standards and conventions'
+    - 'Implement comprehensive error handling and validation'
+    - 'Create maintainable, well-documented code'
 
   testing:
-    - "Create appropriate test coverage for implemented functionality"
-    - "Validate functionality against acceptance criteria"
-    - "Ensure integration points work correctly"
+    - 'Create appropriate test coverage for implemented functionality'
+    - 'Validate functionality against acceptance criteria'
+    - 'Ensure integration points work correctly'
 
   documentation:
-    - "Document implementation decisions and key approaches"
-    - "Update relevant documentation and specifications"
-    - "Provide clear handoff notes for subsequent agents"
+    - 'Document implementation decisions and key approaches'
+    - 'Update relevant documentation and specifications'
+    - 'Provide clear handoff notes for subsequent agents'
 
   collaboration:
-    - "Communicate effectively with other agents and stakeholders"
-    - "Provide constructive feedback during reviews"
-    - "Contribute to team knowledge sharing and improvement"
+    - 'Communicate effectively with other agents and stakeholders'
+    - 'Provide constructive feedback during reviews'
+    - 'Contribute to team knowledge sharing and improvement'
 
 # Common workflow step patterns
 common_workflow_patterns:
   analysis:
-    step: "analyze_requirements"
-    description: "Review and understand requirements, constraints, and context"
+    step: 'analyze_requirements'
+    description: 'Review and understand requirements, constraints, and context'
     validation:
-      ["requirements_clear", "scope_understood", "constraints_identified"]
+      ['requirements_clear', 'scope_understood', 'constraints_identified']
 
   design:
-    step: "design_solution"
-    description: "Create solution design appropriate for agent specialization"
-    validation: ["design_complete", "approach_validated", "patterns_followed"]
+    step: 'design_solution'
+    description: 'Create solution design appropriate for agent specialization'
+    validation: ['design_complete', 'approach_validated', 'patterns_followed']
 
   implementation:
-    step: "implement_solution"
-    description: "Execute implementation according to design and standards"
+    step: 'implement_solution'
+    description: 'Execute implementation according to design and standards'
     validation:
-      ["functionality_complete", "quality_standards_met", "testing_adequate"]
+      ['functionality_complete', 'quality_standards_met', 'testing_adequate']
 
   validation:
-    step: "validate_results"
-    description: "Validate implementation against requirements and quality criteria"
+    step: 'validate_results'
+    description: 'Validate implementation against requirements and quality criteria'
     validation:
       [
-        "acceptance_criteria_met",
-        "quality_gates_passed",
-        "integration_verified",
+        'acceptance_criteria_met',
+        'quality_gates_passed',
+        'integration_verified',
       ]
 
 # Common validation requirements
 common_validation_requirements:
   functional:
-    - "All acceptance criteria are demonstrably met"
-    - "Functionality works as specified in requirements"
-    - "Error cases and edge conditions are handled appropriately"
+    - 'All acceptance criteria are demonstrably met'
+    - 'Functionality works as specified in requirements'
+    - 'Error cases and edge conditions are handled appropriately'
 
   quality:
-    - "Code follows established patterns and conventions"
-    - "Implementation is maintainable and well-documented"
-    - "Performance requirements are satisfied"
+    - 'Code follows established patterns and conventions'
+    - 'Implementation is maintainable and well-documented'
+    - 'Performance requirements are satisfied'
 
   integration:
-    - "Changes integrate properly with existing systems"
-    - "No breaking changes to other components"
-    - "Configuration updates are properly applied"
+    - 'Changes integrate properly with existing systems'
+    - 'No breaking changes to other components'
+    - 'Configuration updates are properly applied'
 
 # Common handoff checklist patterns
 common_handoff_patterns:
   technical:
-    - "All implementation is complete and tested"
-    - "Code quality standards are met"
-    - "Integration points are functional"
-    - "Documentation is updated and accurate"
+    - 'All implementation is complete and tested'
+    - 'Code quality standards are met'
+    - 'Integration points are functional'
+    - 'Documentation is updated and accurate'
 
   process:
-    - "Task status is updated in specifications"
-    - "Next steps are clearly defined"
-    - "Blockers and dependencies are documented"
-    - "Relevant stakeholders are informed"
+    - 'Task status is updated in specifications'
+    - 'Next steps are clearly defined'
+    - 'Blockers and dependencies are documented'
+    - 'Relevant stakeholders are informed'
 
   knowledge_transfer:
-    - "Implementation approach is documented"
-    - "Key decisions and rationale are explained"
-    - "Next agent has sufficient context to continue"
-    - "Lessons learned are captured for future reference"
+    - 'Implementation approach is documented'
+    - 'Key decisions and rationale are explained'
+    - 'Next agent has sufficient context to continue'
+    - 'Lessons learned are captured for future reference'
 
 # Customization guidelines for creating new agents
 customization_guidelines:
   specializations:
-    - "Define 3-5 specific areas where agent excels"
-    - "Use clear, searchable terminology"
-    - "Align with industry standard role definitions"
+    - 'Define 3-5 specific areas where agent excels'
+    - 'Use clear, searchable terminology'
+    - 'Align with industry standard role definitions'
 
   capabilities:
-    - "Focus on what agent can deliver, not just skills"
-    - "Make capabilities specific and measurable"
-    - "Include both technical and process capabilities"
+    - 'Focus on what agent can deliver, not just skills'
+    - 'Make capabilities specific and measurable'
+    - 'Include both technical and process capabilities'
 
   workflow_steps:
     - "Define 3-5 key steps in agent's typical workflow"
-    - "Include specific validation criteria for each step"
-    - "Ensure steps are logical and sequential"
+    - 'Include specific validation criteria for each step'
+    - 'Ensure steps are logical and sequential'
 
   context_requirements:
-    - "Specify what information agent needs to be effective"
-    - "Use consistent terminology across agents"
-    - "Balance specificity with flexibility"
+    - 'Specify what information agent needs to be effective'
+    - 'Use consistent terminology across agents'
+    - 'Balance specificity with flexibility'
 
 # Integration with ASD systems
 system_integration:
   context_injection:
-    - "Context requirements are used by ContextInjector for filtering"
-    - "Specializations guide context relevance scoring"
-    - "Workflow steps inform process template selection"
+    - 'Context requirements are used by ContextInjector for filtering'
+    - 'Specializations guide context relevance scoring'
+    - 'Workflow steps inform process template selection'
 
   cli_commands:
     - "Agent type used in 'asd agent' commands"
-    - "Capabilities displayed in agent listings"
-    - "Validation requirements used in quality checks"
+    - 'Capabilities displayed in agent listings'
+    - 'Validation requirements used in quality checks'
 
   capability_matching:
-    - "Specializations used for task assignment recommendations"
-    - "Capabilities matched against task keywords"
-    - "Handoff patterns guide workflow coordination"
+    - 'Specializations used for task assignment recommendations'
+    - 'Capabilities matched against task keywords'
+    - 'Handoff patterns guide workflow coordination'
 ---
 
 # Base Agent Template

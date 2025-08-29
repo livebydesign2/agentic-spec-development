@@ -1,17 +1,17 @@
 ---
-process_type: "task-handoff"
-version: "1.0"
-applies_to: ["all-agents"]
+process_type: 'task-handoff'
+version: '1.0'
+applies_to: ['all-agents']
 required_steps:
-  - "complete_current_work"
-  - "update_documentation"
-  - "prepare_handoff_notes"
-  - "validate_completion"
+  - 'complete_current_work'
+  - 'update_documentation'
+  - 'prepare_handoff_notes'
+  - 'validate_completion'
 validation_checklist:
-  - "All task acceptance criteria met"
-  - "Tests pass and code quality standards met"
-  - "Documentation updated with implementation details"
-  - "Next steps clearly defined for subsequent agent"
+  - 'All task acceptance criteria met'
+  - 'Tests pass and code quality standards met'
+  - 'Documentation updated with implementation details'
+  - 'Next steps clearly defined for subsequent agent'
 ---
 
 # Task Handoff Process Template

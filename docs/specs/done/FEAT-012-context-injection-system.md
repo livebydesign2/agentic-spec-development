@@ -5,7 +5,7 @@ type: FEAT
 phase: PHASE-1A
 priority: P0
 status: complete
-created: "2024-08-24T16:00:00Z"
+created: '2024-08-24T16:00:00Z'
 estimated_hours: 32
 tags:
   - context
@@ -122,7 +122,7 @@ acceptance_criteria:
   - Users can customize agent workflows via MD files with YAML frontmatter
   - Context system is self-maintaining and accumulates learning over time
   - CLI commands support both automated and manual context management
-last_updated: "2025-08-29T23:28:27.851Z"
+last_updated: '2025-08-29T23:39:28.383Z'
 ---
 
 # Context Injection System

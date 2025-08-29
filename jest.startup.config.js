@@ -1,19 +1,19 @@
 // Jest configuration specifically for startup testing
 module.exports = {
   // Basic configuration
-  testEnvironment: "node",
+  testEnvironment: 'node',
 
   // Test matching patterns for startup tests
-  testMatch: ["**/test/startup*.test.js", "**/test/cli-startup.test.js"],
+  testMatch: ['**/test/startup*.test.js', '**/test/cli-startup.test.js'],
 
   // Test setup
-  setupFilesAfterEnv: ["<rootDir>/test/setup.js"],
+  setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
 
   // Coverage configuration
   collectCoverageFrom: [
-    "lib/startup-validator.js",
-    "!**/node_modules/**",
-    "!**/test/**",
+    'lib/startup-validator.js',
+    '!**/node_modules/**',
+    '!**/test/**',
   ],
 
   // Coverage thresholds for startup-related code
@@ -24,7 +24,7 @@ module.exports = {
       lines: 75,
       statements: 75,
     },
-    "./lib/startup-validator.js": {
+    './lib/startup-validator.js': {
       branches: 85,
       functions: 90,
       lines: 90,
@@ -39,22 +39,22 @@ module.exports = {
   maxWorkers: 2, // Limit workers to avoid resource contention during startup tests
 
   // Verbose output for CI
-  verbose: process.env.CI === "true",
+  verbose: process.env.CI === 'true',
 
   // Reporter configuration
   reporters: [
-    "default",
+    'default',
     [
-      "jest-junit",
+      'jest-junit',
       {
-        outputDirectory: "test-results",
-        outputName: "startup-test-results.xml",
+        outputDirectory: 'test-results',
+        outputName: 'startup-test-results.xml',
       },
     ],
   ],
 
   // Module resolution for startup tests
-  moduleDirectories: ["node_modules", "lib"],
+  moduleDirectories: ['node_modules', 'lib'],
 
   // Transform configuration
   transform: {},
@@ -65,5 +65,5 @@ module.exports = {
   },
 
   // Test result processor for performance monitoring
-  testResultsProcessor: "<rootDir>/test/startup-results-processor.js",
+  testResultsProcessor: '<rootDir>/test/startup-results-processor.js',
 };

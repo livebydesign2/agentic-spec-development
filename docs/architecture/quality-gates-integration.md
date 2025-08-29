@@ -125,19 +125,19 @@ class QualityGateManager {
       const context = await this.buildAssignmentContext(taskId, agentType);
 
       // Execute assignment gate rules
-      const gateRules = this.gateRules.get("assignment") || [];
+      const gateRules = this.gateRules.get('assignment') || [];
       const gateResults = await this.executeGateRules(gateRules, {
-        operation: "assignment",
+        operation: 'assignment',
         taskId,
         agentType,
         context,
         options,
       });
 
-      const result = this.evaluateGateResults(gateResults, "assignment");
+      const result = this.evaluateGateResults(gateResults, 'assignment');
 
       // Update metrics
-      this.updateMetrics("assignment", Date.now() - startTime, result.allowed);
+      this.updateMetrics('assignment', Date.now() - startTime, result.allowed);
 
       // Cache result for potential retry
       this.cacheGateResult(gateId, result, 60000); // 1 minute cache
@@ -172,9 +172,9 @@ class QualityGateManager {
       );
 
       // Execute transition gate rules
-      const gateRules = this.gateRules.get("transition") || [];
+      const gateRules = this.gateRules.get('transition') || [];
       const gateResults = await this.executeGateRules(gateRules, {
-        operation: "transition",
+        operation: 'transition',
         specId,
         fromStatus,
         toStatus,
@@ -182,10 +182,10 @@ class QualityGateManager {
         options,
       });
 
-      const result = this.evaluateGateResults(gateResults, "transition");
+      const result = this.evaluateGateResults(gateResults, 'transition');
 
       // Update metrics
-      this.updateMetrics("transition", Date.now() - startTime, result.allowed);
+      this.updateMetrics('transition', Date.now() - startTime, result.allowed);
 
       return {
         ...result,
@@ -213,19 +213,19 @@ class QualityGateManager {
       const context = await this.buildCompletionContext(specId, taskId);
 
       // Execute completion gate rules
-      const gateRules = this.gateRules.get("completion") || [];
+      const gateRules = this.gateRules.get('completion') || [];
       const gateResults = await this.executeGateRules(gateRules, {
-        operation: "completion",
+        operation: 'completion',
         specId,
         taskId,
         context,
         options,
       });
 
-      const result = this.evaluateGateResults(gateResults, "completion");
+      const result = this.evaluateGateResults(gateResults, 'completion');
 
       // Update metrics
-      this.updateMetrics("completion", Date.now() - startTime, result.allowed);
+      this.updateMetrics('completion', Date.now() - startTime, result.allowed);
 
       return {
         ...result,
@@ -267,13 +267,13 @@ class QualityGateManager {
         return {
           rule: rule.name,
           category: rule.category,
-          severity: "error",
+          severity: 'error',
           success: false,
           result: {
             success: false,
             errors: [
               {
-                code: "GATE_RULE_ERROR",
+                code: 'GATE_RULE_ERROR',
                 message: `Gate rule execution failed: ${error.message}`,
                 data: { originalError: error.message },
               },
@@ -331,7 +331,7 @@ class QualityGateManager {
         }
 
         // Block operation if rule failed and is blocking
-        if (ruleResult.severity === "error") {
+        if (ruleResult.severity === 'error') {
           evaluation.allowed = false;
           if (!evaluation.reason) {
             const primaryError = ruleResult.result.errors?.[0];
@@ -464,7 +464,7 @@ class QualityGateManager {
   // Workflow integration
   registerWorkflowHooks() {
     // Hook into WorkflowStateManager operations
-    this.hookManager.registerPreHook("assignTask", async (data) => {
+    this.hookManager.registerPreHook('assignTask', async (data) => {
       const gateResult = await this.enforceAssignmentGate(
         data.taskId,
         data.agentType,
@@ -478,7 +478,7 @@ class QualityGateManager {
       return data; // Allow operation to proceed
     });
 
-    this.hookManager.registerPreHook("completeTask", async (data) => {
+    this.hookManager.registerPreHook('completeTask', async (data) => {
       const gateResult = await this.enforceCompletionGate(
         data.specId,
         data.taskId,
@@ -493,7 +493,7 @@ class QualityGateManager {
     });
 
     // Hook into spec status transitions (would require SpecParser integration)
-    this.hookManager.registerPreHook("updateSpecStatus", async (data) => {
+    this.hookManager.registerPreHook('updateSpecStatus', async (data) => {
       const gateResult = await this.enforceTransitionGate(
         data.specId,
         data.fromStatus,
@@ -556,22 +556,22 @@ class QualityGateManager {
 
   getValidStatusTransitions() {
     return {
-      backlog: ["active", "cancelled"],
-      active: ["done", "backlog"],
+      backlog: ['active', 'cancelled'],
+      active: ['done', 'backlog'],
       done: [], // Terminal state
-      cancelled: ["backlog"], // Can be reactivated
+      cancelled: ['backlog'], // Can be reactivated
     };
   }
 
   getPhaseRequirements(phase) {
     return {
-      "PHASE-1A": {
-        requiredForCompletion: ["all_tasks_complete"],
-        blocksTransition: ["incomplete_dependencies"],
+      'PHASE-1A': {
+        requiredForCompletion: ['all_tasks_complete'],
+        blocksTransition: ['incomplete_dependencies'],
       },
-      "PHASE-1B": {
-        requiredForCompletion: ["all_tasks_complete", "documentation_complete"],
-        blocksTransition: ["phase_1a_incomplete"],
+      'PHASE-1B': {
+        requiredForCompletion: ['all_tasks_complete', 'documentation_complete'],
+        blocksTransition: ['phase_1a_incomplete'],
       },
     };
   }
@@ -579,27 +579,27 @@ class QualityGateManager {
   getCompletionRequirements(task) {
     return {
       requiredChecks: [
-        "implementation_complete",
-        "validation_passed",
-        "documentation_updated",
+        'implementation_complete',
+        'validation_passed',
+        'documentation_updated',
       ],
-      optionalChecks: ["performance_validated", "security_reviewed"],
+      optionalChecks: ['performance_validated', 'security_reviewed'],
     };
   }
 
   getDeliverableChecks(task) {
     const deliverables = [];
 
-    if (task.agent_type === "software-architect") {
+    if (task.agent_type === 'software-architect') {
       deliverables.push(
-        "architecture_documented",
-        "design_decisions_recorded",
-        "technical_specifications_complete"
+        'architecture_documented',
+        'design_decisions_recorded',
+        'technical_specifications_complete'
       );
     }
 
-    if (task.agent_type === "backend-specialist") {
-      deliverables.push("code_implemented", "tests_written", "api_documented");
+    if (task.agent_type === 'backend-specialist') {
+      deliverables.push('code_implemented', 'tests_written', 'api_documented');
     }
 
     return deliverables;
@@ -607,7 +607,7 @@ class QualityGateManager {
 
   initializeGateRules() {
     // Assignment gate rules
-    this.gateRules.set("assignment", [
+    this.gateRules.set('assignment', [
       new AgentCapabilityGateRule(),
       new TaskReadinessGateRule(),
       new WorkloadValidationGateRule(),
@@ -615,14 +615,14 @@ class QualityGateManager {
     ]);
 
     // Transition gate rules
-    this.gateRules.set("transition", [
+    this.gateRules.set('transition', [
       new StatusTransitionGateRule(),
       new CompletionRequirementGateRule(),
       new PhaseProgressionGateRule(),
     ]);
 
     // Completion gate rules
-    this.gateRules.set("completion", [
+    this.gateRules.set('completion', [
       new DeliverableValidationGateRule(),
       new QualityCriteriaGateRule(),
       new HandoffPreparationGateRule(),
@@ -635,7 +635,7 @@ class QualityGateManager {
 
 ```javascript
 class QualityGateRule {
-  constructor(name, category, severity = "error") {
+  constructor(name, category, severity = 'error') {
     this.name = name;
     this.category = category; // 'assignment', 'transition', 'completion'
     this.severity = severity; // 'error', 'warning', 'info'
@@ -661,7 +661,7 @@ class QualityGateRule {
       success: false,
       errors: [
         {
-          code: code || "GATE_ERROR",
+          code: code || 'GATE_ERROR',
           message,
           data,
           gate: this.name,
@@ -677,7 +677,7 @@ class QualityGateRule {
 // Agent Capability Gate Rule
 class AgentCapabilityGateRule extends QualityGateRule {
   constructor() {
-    super("agent-capability-check", "assignment", "error");
+    super('agent-capability-check', 'assignment', 'error');
   }
 
   async validate(operationData) {
@@ -688,7 +688,7 @@ class AgentCapabilityGateRule extends QualityGateRule {
     if (task.agent_type && task.agent_type !== agentType) {
       return this.error(
         `Task requires ${task.agent_type} agent, but attempting to assign to ${agentType}`,
-        "AGENT_TYPE_MISMATCH",
+        'AGENT_TYPE_MISMATCH',
         { requiredAgent: task.agent_type, providedAgent: agentType }
       );
     }
@@ -705,9 +705,9 @@ class AgentCapabilityGateRule extends QualityGateRule {
       if (!capabilityCheck.capable) {
         return this.error(
           `Agent ${agentType} lacks required capabilities: ${capabilityCheck.missing.join(
-            ", "
+            ', '
           )}`,
-          "INSUFFICIENT_CAPABILITIES",
+          'INSUFFICIENT_CAPABILITIES',
           { missing: capabilityCheck.missing, required: taskContextReqs }
         );
       }
@@ -720,20 +720,20 @@ class AgentCapabilityGateRule extends QualityGateRule {
     // This would integrate with the TaskRouter's capability validation
     // For now, simplified implementation
     const agentCapabilities = {
-      "software-architect": [
-        "system-design",
-        "architecture",
-        "technical-decisions",
+      'software-architect': [
+        'system-design',
+        'architecture',
+        'technical-decisions',
       ],
-      "backend-specialist": [
-        "api-development",
-        "database-design",
-        "integration",
+      'backend-specialist': [
+        'api-development',
+        'database-design',
+        'integration',
       ],
-      "cli-specialist": [
-        "terminal-interfaces",
-        "user-experience",
-        "automation",
+      'cli-specialist': [
+        'terminal-interfaces',
+        'user-experience',
+        'automation',
       ],
     };
 
@@ -754,7 +754,7 @@ class AgentCapabilityGateRule extends QualityGateRule {
 // Task Readiness Gate Rule
 class TaskReadinessGateRule extends QualityGateRule {
   constructor() {
-    super("task-readiness-check", "assignment", "error");
+    super('task-readiness-check', 'assignment', 'error');
   }
 
   async validate(operationData) {
@@ -762,10 +762,10 @@ class TaskReadinessGateRule extends QualityGateRule {
     const { task, dependencies } = context;
 
     // Check task status
-    if (task.status && task.status !== "ready" && task.status !== "pending") {
+    if (task.status && task.status !== 'ready' && task.status !== 'pending') {
       return this.error(
         `Task ${taskId} is not ready for assignment (status: ${task.status})`,
-        "TASK_NOT_READY",
+        'TASK_NOT_READY',
         { currentStatus: task.status, taskId }
       );
     }
@@ -774,9 +774,9 @@ class TaskReadinessGateRule extends QualityGateRule {
     if (dependencies && dependencies.blockedBy.length > 0) {
       return this.error(
         `Task ${taskId} is blocked by unmet dependencies: ${dependencies.blockedBy.join(
-          ", "
+          ', '
         )}`,
-        "DEPENDENCIES_NOT_MET",
+        'DEPENDENCIES_NOT_MET',
         { blockedBy: dependencies.blockedBy, taskId }
       );
     }
@@ -784,11 +784,11 @@ class TaskReadinessGateRule extends QualityGateRule {
     // Check if already assigned
     if (
       context.currentAssignment &&
-      context.currentAssignment.status === "in_progress"
+      context.currentAssignment.status === 'in_progress'
     ) {
       return this.error(
         `Task ${taskId} is already assigned to ${context.currentAssignment.assigned_agent}`,
-        "TASK_ALREADY_ASSIGNED",
+        'TASK_ALREADY_ASSIGNED',
         { currentAgent: context.currentAssignment.assigned_agent, taskId }
       );
     }
@@ -800,7 +800,7 @@ class TaskReadinessGateRule extends QualityGateRule {
 // Workload Validation Gate Rule
 class WorkloadValidationGateRule extends QualityGateRule {
   constructor() {
-    super("workload-validation", "assignment", "warning"); // Warning level
+    super('workload-validation', 'assignment', 'warning'); // Warning level
   }
 
   async validate(operationData) {
@@ -815,7 +815,7 @@ class WorkloadValidationGateRule extends QualityGateRule {
     if (projectedWorkload > maxWorkloadPerAgent) {
       return this.error(
         `Assignment would exceed agent capacity: ${projectedWorkload}h > ${maxWorkloadPerAgent}h limit`,
-        "WORKLOAD_EXCEEDED",
+        'WORKLOAD_EXCEEDED',
         {
           currentWorkload,
           taskHours,
@@ -832,7 +832,7 @@ class WorkloadValidationGateRule extends QualityGateRule {
         errors: [],
         warnings: [
           {
-            code: "HIGH_WORKLOAD",
+            code: 'HIGH_WORKLOAD',
             message: `Assignment approaches capacity limit: ${projectedWorkload}h (${maxWorkloadPerAgent}h max)`,
             data: { currentWorkload, taskHours, projectedWorkload },
             gate: this.name,
@@ -850,7 +850,7 @@ class WorkloadValidationGateRule extends QualityGateRule {
 // Status Transition Gate Rule
 class StatusTransitionGateRule extends QualityGateRule {
   constructor() {
-    super("status-transition-validation", "transition", "error");
+    super('status-transition-validation', 'transition', 'error');
   }
 
   async validate(operationData) {
@@ -862,22 +862,22 @@ class StatusTransitionGateRule extends QualityGateRule {
     if (!allowedTransitions.includes(toStatus)) {
       return this.error(
         `Invalid status transition: ${fromStatus} → ${toStatus}. Allowed transitions: ${allowedTransitions.join(
-          ", "
+          ', '
         )}`,
-        "INVALID_STATUS_TRANSITION",
+        'INVALID_STATUS_TRANSITION',
         { fromStatus, toStatus, allowedTransitions }
       );
     }
 
     // Special validations for specific transitions
-    if (toStatus === "done") {
+    if (toStatus === 'done') {
       const completionCheck = await this.validateCompletionRequirements(
         context
       );
       if (!completionCheck.valid) {
         return this.error(
           `Cannot transition to 'done': ${completionCheck.reason}`,
-          "COMPLETION_REQUIREMENTS_NOT_MET",
+          'COMPLETION_REQUIREMENTS_NOT_MET',
           { requirements: completionCheck.missingRequirements }
         );
       }
@@ -891,14 +891,14 @@ class StatusTransitionGateRule extends QualityGateRule {
 
     // Check if all tasks are complete
     const incompleteTasks = (spec.tasks || []).filter(
-      (task) => task.status !== "complete" && task.status !== "done"
+      (task) => task.status !== 'complete' && task.status !== 'done'
     );
 
     if (incompleteTasks.length > 0) {
       return {
         valid: false,
         reason: `${incompleteTasks.length} tasks not completed`,
-        missingRequirements: ["all_tasks_complete"],
+        missingRequirements: ['all_tasks_complete'],
         incompleteTasks: incompleteTasks.map((t) => t.id),
       };
     }
@@ -908,13 +908,13 @@ class StatusTransitionGateRule extends QualityGateRule {
       // This would require additional validation logic
       return {
         valid: true,
-        reason: "All completion requirements satisfied",
+        reason: 'All completion requirements satisfied',
       };
     }
 
     return {
       valid: true,
-      reason: "All completion requirements satisfied",
+      reason: 'All completion requirements satisfied',
     };
   }
 }
@@ -961,10 +961,10 @@ class WorkflowHookManager {
         currentData = await hook(currentData);
       }
 
-      this.recordHookMetrics(operation, "pre", Date.now() - startTime, true);
+      this.recordHookMetrics(operation, 'pre', Date.now() - startTime, true);
       return currentData;
     } catch (error) {
-      this.recordHookMetrics(operation, "pre", Date.now() - startTime, false);
+      this.recordHookMetrics(operation, 'pre', Date.now() - startTime, false);
       throw new Error(`Pre-hook failed for ${operation}: ${error.message}`);
     }
   }
@@ -984,10 +984,10 @@ class WorkflowHookManager {
         currentResult = await hook(data, currentResult);
       }
 
-      this.recordHookMetrics(operation, "post", Date.now() - startTime, true);
+      this.recordHookMetrics(operation, 'post', Date.now() - startTime, true);
       return currentResult;
     } catch (error) {
-      this.recordHookMetrics(operation, "post", Date.now() - startTime, false);
+      this.recordHookMetrics(operation, 'post', Date.now() - startTime, false);
       // Post-hooks failing shouldn't block the operation
       console.warn(`Post-hook failed for ${operation}: ${error.message}`);
       return result;
@@ -1073,8 +1073,8 @@ async assignTask(specId, taskId, agentType, options = {}) {
 ```javascript
 // New CLI commands for quality gate management
 commander
-  .command("validate assignment <task-id> <agent-type>")
-  .description("Test if task assignment would pass quality gates")
+  .command('validate assignment <task-id> <agent-type>')
+  .description('Test if task assignment would pass quality gates')
   .action(async (taskId, agentType) => {
     const qualityGateManager = new QualityGateManager(
       validationManager,
@@ -1090,19 +1090,19 @@ commander
     console.log(`\n🚦 Assignment Gate Check: ${taskId} → ${agentType}\n`);
 
     if (result.allowed) {
-      console.log("✅ Assignment allowed");
+      console.log('✅ Assignment allowed');
     } else {
       console.log(`❌ Assignment blocked: ${result.reason}`);
 
       if (result.errors && result.errors.length > 0) {
-        console.log("\nErrors:");
+        console.log('\nErrors:');
         result.errors.forEach((error) => {
           console.log(`  • ${error.message}`);
         });
       }
 
       if (result.warnings && result.warnings.length > 0) {
-        console.log("\nWarnings:");
+        console.log('\nWarnings:');
         result.warnings.forEach((warning) => {
           console.log(`  ⚠️  ${warning.message}`);
         });
@@ -1113,13 +1113,13 @@ commander
   });
 
 commander
-  .command("quality-gates status")
-  .description("Show quality gate metrics and status")
+  .command('quality-gates status')
+  .description('Show quality gate metrics and status')
   .action(async () => {
     const metrics = qualityGateManager.metrics;
     const hookMetrics = qualityGateManager.hookManager.getHookMetrics();
 
-    console.log("\n📊 Quality Gate Metrics\n");
+    console.log('\n📊 Quality Gate Metrics\n');
     console.log(`Gate Executions: ${metrics.gateExecutions}`);
     console.log(
       `Average Execution Time: ${metrics.averageExecutionTime.toFixed(2)}ms`
@@ -1134,7 +1134,7 @@ commander
     );
 
     if (Object.keys(hookMetrics).length > 0) {
-      console.log("\n🪝 Hook Metrics\n");
+      console.log('\n🪝 Hook Metrics\n');
       for (const [hook, stats] of Object.entries(hookMetrics)) {
         console.log(
           `${hook}: ${stats.executions} executions, ${stats.averageTime.toFixed(

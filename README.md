@@ -144,22 +144,22 @@ ASD will search for configuration in the following order:
 ```javascript
 module.exports = {
   // Path to specifications directory
-  featuresPath: "docs/specs",
+  featuresPath: 'docs/specs',
 
   // Template directory for new specs
-  templatePath: "docs/specs/template",
+  templatePath: 'docs/specs/template',
 
   // Enable automatic file watching
   autoRefresh: true,
 
   // Supported specification types
-  supportedTypes: ["SPEC", "FEAT", "BUG", "SPIKE", "MAINT", "RELEASE"],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG', 'SPIKE', 'MAINT', 'RELEASE'],
 
   // Status folders (subdirectories)
-  statusFolders: ["active", "backlog", "done"],
+  statusFolders: ['active', 'backlog', 'done'],
 
   // Priority levels
-  priorities: ["P0", "P1", "P2", "P3"],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 };
 ```
 
@@ -167,29 +167,29 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "docs/specifications",
-  templatePath: "templates/specs",
-  legacyFeaturesPath: "docs/product/features", // Backwards compatibility
+  featuresPath: 'docs/specifications',
+  templatePath: 'templates/specs',
+  legacyFeaturesPath: 'docs/product/features', // Backwards compatibility
 
   // UI Customization
-  appName: "My Project Specs",
-  appIcon: "🎯",
+  appName: 'My Project Specs',
+  appIcon: '🎯',
 
   // File watching
   autoRefresh: true,
   refreshDebounce: 500,
 
   // Defaults for new specs
-  defaultPriority: "P2",
-  defaultStatus: "backlog",
+  defaultPriority: 'P2',
+  defaultStatus: 'backlog',
 
   // Enforce specification format
   enforceSpec: true,
 
   // Custom types and statuses
-  supportedTypes: ["SPEC", "EPIC", "STORY", "TASK", "BUG"],
-  statusFolders: ["todo", "doing", "review", "done"],
-  priorities: ["critical", "high", "medium", "low"],
+  supportedTypes: ['SPEC', 'EPIC', 'STORY', 'TASK', 'BUG'],
+  statusFolders: ['todo', 'doing', 'review', 'done'],
+  priorities: ['critical', 'high', 'medium', 'low'],
 };
 ```
 
@@ -374,12 +374,12 @@ Use ASD programmatically in your applications:
 ### Basic Usage
 
 ```javascript
-const ASDClient = require("agentic-spec-development");
+const ASDClient = require('agentic-spec-development');
 
 const asd = new ASDClient({
-  cwd: "/path/to/project",
-  appName: "My Project Specs",
-  appIcon: "🎯",
+  cwd: '/path/to/project',
+  appName: 'My Project Specs',
+  appIcon: '🎯',
 });
 
 await asd.init();
@@ -388,15 +388,15 @@ await asd.init();
 ### Custom Configuration
 
 ```javascript
-const { ConfigManager } = require("agentic-spec-development");
+const { ConfigManager } = require('agentic-spec-development');
 
-const configManager = new ConfigManager("/project/root");
+const configManager = new ConfigManager('/project/root');
 const config = configManager.loadConfig();
 
 const asd = new ASDClient({
   configManager,
-  appName: "Custom App",
-  appVersion: "2.0.0",
+  appName: 'Custom App',
+  appVersion: '2.0.0',
 });
 
 await asd.init();
@@ -479,14 +479,14 @@ legacy-project/
 // asd.config.js
 module.exports = {
   // Custom branding
-  appName: "Product Specifications",
-  appIcon: "📋",
+  appName: 'Product Specifications',
+  appIcon: '📋',
 
   // UI customization
   theme: {
-    primaryColor: "brightBlue",
-    accentColor: "brightGreen",
-    backgroundColor: "bgBlack",
+    primaryColor: 'brightBlue',
+    accentColor: 'brightGreen',
+    backgroundColor: 'bgBlack',
   },
 };
 ```

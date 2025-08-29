@@ -166,16 +166,16 @@ class ValidationRuleRegistry {
 
   // Interface validation
   validateRuleInterface(rule) {
-    const required = ["name", "category", "validate"];
+    const required = ['name', 'category', 'validate'];
     const missing = required.filter((prop) => !(prop in rule));
     if (missing.length > 0) {
       throw new Error(
-        `Rule missing required properties: ${missing.join(", ")}`
+        `Rule missing required properties: ${missing.join(', ')}`
       );
     }
 
-    if (typeof rule.validate !== "function") {
-      throw new Error("Rule validate method must be a function");
+    if (typeof rule.validate !== 'function') {
+      throw new Error('Rule validate method must be a function');
     }
   }
 }
@@ -308,12 +308,12 @@ class ValidationRuleEngine {
       return {
         rule: rule.name,
         category: rule.category,
-        severity: "error",
+        severity: 'error',
         success: false,
         executionTime: Date.now() - startTime,
         errors: [
           {
-            code: "RULE_EXECUTION_ERROR",
+            code: 'RULE_EXECUTION_ERROR',
             message: `Rule execution failed: ${error.message}`,
             data: { originalError: error.message },
           },
@@ -334,7 +334,7 @@ class ValidationRuleEngine {
       results.push(result);
 
       // Early termination for critical errors if configured
-      if (result.severity === "error" && context.stopOnError) {
+      if (result.severity === 'error' && context.stopOnError) {
         break;
       }
     }
@@ -344,14 +344,14 @@ class ValidationRuleEngine {
   // Result processing
   normalizeRuleResult(result, rule) {
     // Handle different result formats rules might return
-    if (typeof result === "boolean") {
+    if (typeof result === 'boolean') {
       return {
         success: result,
         errors: result
           ? []
           : [
               {
-                code: "VALIDATION_FAILED",
+                code: 'VALIDATION_FAILED',
                 message: `${rule.name} validation failed`,
               },
             ],
@@ -360,7 +360,7 @@ class ValidationRuleEngine {
       };
     }
 
-    if (result && typeof result === "object") {
+    if (result && typeof result === 'object') {
       return {
         success:
           result.success || (result.errors && result.errors.length === 0),
@@ -415,7 +415,7 @@ class ValidationRuleEngine {
       aggregated.summary.info += (result.info || []).length;
 
       // Group by category
-      const category = result.category || "unknown";
+      const category = result.category || 'unknown';
       if (!aggregated.byCategory[category]) {
         aggregated.byCategory[category] = {
           results: [],
@@ -427,7 +427,7 @@ class ValidationRuleEngine {
         };
       }
       aggregated.byCategory[category].results.push(result);
-      aggregated.byCategory[category][result.success ? "passed" : "failed"]++;
+      aggregated.byCategory[category][result.success ? 'passed' : 'failed']++;
       aggregated.byCategory[category].errors += (result.errors || []).length;
       aggregated.byCategory[category].warnings += (
         result.warnings || []
@@ -435,7 +435,7 @@ class ValidationRuleEngine {
       aggregated.byCategory[category].info += (result.info || []).length;
 
       // Group by severity
-      const severity = result.severity || "info";
+      const severity = result.severity || 'info';
       if (aggregated.bySeverity[severity]) {
         aggregated.bySeverity[severity].push(result);
       }
@@ -461,7 +461,7 @@ class ValidationRuleEngine {
   }
 
   recordExecutionMetrics(rules, executionTime, results) {
-    const key = rules.map((r) => r.name).join(",");
+    const key = rules.map((r) => r.name).join(',');
     this.executionMetrics.set(key, {
       rules: rules.length,
       executionTime,
@@ -485,7 +485,7 @@ class ValidationRule {
   constructor(name, category, options = {}) {
     this.name = name;
     this.category = category; // 'spec', 'task', 'consistency', 'workflow', 'quality-gate'
-    this.severity = options.severity || "error"; // 'error', 'warning', 'info'
+    this.severity = options.severity || 'error'; // 'error', 'warning', 'info'
     this.autoFixable = options.autoFixable || false;
     this.dependencies = options.dependencies || []; // Other rule names this depends on
     this.enabled = options.enabled !== false;
@@ -517,7 +517,7 @@ class ValidationRule {
   }
 
   getFixSuggestion(error) {
-    return this.metadata.fixSuggestion || "No fix suggestion available";
+    return this.metadata.fixSuggestion || 'No fix suggestion available';
   }
 
   // Context helper methods
@@ -559,7 +559,7 @@ class ValidationRule {
       success: false,
       errors: [
         {
-          code: code || "VALIDATION_ERROR",
+          code: code || 'VALIDATION_ERROR',
           message,
           data,
           rule: this.name,
@@ -577,7 +577,7 @@ class ValidationRule {
       errors: [],
       warnings: [
         {
-          code: code || "VALIDATION_WARNING",
+          code: code || 'VALIDATION_WARNING',
           message,
           data,
           rule: this.name,
@@ -595,7 +595,7 @@ class ValidationRule {
       warnings: [],
       info: [
         {
-          code: code || "VALIDATION_INFO",
+          code: code || 'VALIDATION_INFO',
           message,
           data,
           rule: this.name,
@@ -626,30 +626,30 @@ class ValidationRule {
 ```javascript
 class RequiredFieldsRule extends ValidationRule {
   constructor() {
-    super("required-fields", "spec", {
-      severity: "error",
+    super('required-fields', 'spec', {
+      severity: 'error',
       autoFixable: true,
-      description: "Validates presence of required frontmatter fields",
-      fixSuggestion: "Add missing required fields to spec frontmatter",
+      description: 'Validates presence of required frontmatter fields',
+      fixSuggestion: 'Add missing required fields to spec frontmatter',
     });
 
     this.requiredFields = [
-      "id",
-      "title",
-      "type",
-      "phase",
-      "priority",
-      "status",
-      "created",
-      "estimated_hours",
-      "tags",
+      'id',
+      'title',
+      'type',
+      'phase',
+      'priority',
+      'status',
+      'created',
+      'estimated_hours',
+      'tags',
     ];
   }
 
   async validate(spec, context) {
     const missing = this.requiredFields.filter((field) => {
       return (
-        spec[field] === undefined || spec[field] === null || spec[field] === ""
+        spec[field] === undefined || spec[field] === null || spec[field] === ''
       );
     });
 
@@ -658,8 +658,8 @@ class RequiredFieldsRule extends ValidationRule {
     }
 
     return this.error(
-      `Missing required fields: ${missing.join(", ")}`,
-      "MISSING_REQUIRED_FIELDS",
+      `Missing required fields: ${missing.join(', ')}`,
+      'MISSING_REQUIRED_FIELDS',
       { missingFields: missing, specId: spec.id }
     );
   }
@@ -671,23 +671,23 @@ class RequiredFieldsRule extends ValidationRule {
     // Generate default values for missing fields
     for (const field of missingFields) {
       switch (field) {
-        case "created":
+        case 'created':
           fixes[field] = new Date().toISOString();
           break;
-        case "priority":
-          fixes[field] = "P2";
+        case 'priority':
+          fixes[field] = 'P2';
           break;
-        case "status":
-          fixes[field] = "backlog";
+        case 'status':
+          fixes[field] = 'backlog';
           break;
-        case "estimated_hours":
+        case 'estimated_hours':
           fixes[field] = 8; // Default estimate
           break;
-        case "tags":
+        case 'tags':
           fixes[field] = [];
           break;
         default:
-          fixes[field] = ""; // Let user fill in
+          fixes[field] = ''; // Let user fill in
       }
     }
 
@@ -701,28 +701,28 @@ class RequiredFieldsRule extends ValidationRule {
 ```javascript
 class IDFormatRule extends ValidationRule {
   constructor() {
-    super("id-format", "spec", {
-      severity: "error",
+    super('id-format', 'spec', {
+      severity: 'error',
       autoFixable: false, // ID format changes are too risky to auto-fix
-      description: "Validates spec ID format matches expected pattern",
+      description: 'Validates spec ID format matches expected pattern',
       fixSuggestion:
-        "Rename spec file and update ID to match pattern: TYPE-NNN",
+        'Rename spec file and update ID to match pattern: TYPE-NNN',
     });
 
-    this.validTypes = ["FEAT", "BUG", "SPEC", "SPIKE", "MAINT", "RELEASE"];
+    this.validTypes = ['FEAT', 'BUG', 'SPEC', 'SPIKE', 'MAINT', 'RELEASE'];
     this.idPattern = /^(FEAT|BUG|SPEC|SPIKE|MAINT|RELEASE)-(\d{3})$/;
   }
 
   async validate(spec, context) {
     if (!spec.id) {
-      return this.error("Spec missing ID field", "MISSING_ID");
+      return this.error('Spec missing ID field', 'MISSING_ID');
     }
 
     const match = spec.id.match(this.idPattern);
     if (!match) {
       return this.error(
         `Invalid ID format: ${spec.id}. Expected format: TYPE-NNN (e.g., FEAT-001)`,
-        "INVALID_ID_FORMAT",
+        'INVALID_ID_FORMAT',
         { specId: spec.id, pattern: this.idPattern.source }
       );
     }
@@ -733,9 +733,9 @@ class IDFormatRule extends ValidationRule {
     if (!this.validTypes.includes(type)) {
       return this.error(
         `Invalid spec type: ${type}. Valid types: ${this.validTypes.join(
-          ", "
+          ', '
         )}`,
-        "INVALID_SPEC_TYPE",
+        'INVALID_SPEC_TYPE',
         { specId: spec.id, type, validTypes: this.validTypes }
       );
     }
@@ -747,7 +747,7 @@ class IDFormatRule extends ValidationRule {
     );
 
     if (duplicates.length > 0) {
-      return this.error(`Duplicate spec ID: ${spec.id}`, "DUPLICATE_ID", {
+      return this.error(`Duplicate spec ID: ${spec.id}`, 'DUPLICATE_ID', {
         specId: spec.id,
         duplicateFiles: duplicates.map((d) => d.filePath),
       });
@@ -765,13 +765,13 @@ class IDFormatRule extends ValidationRule {
 ```javascript
 class TaskDependencyRule extends ValidationRule {
   constructor() {
-    super("task-dependencies", "task", {
-      severity: "error",
+    super('task-dependencies', 'task', {
+      severity: 'error',
       autoFixable: false,
       description:
-        "Validates task dependency references and prevents circular dependencies",
+        'Validates task dependency references and prevents circular dependencies',
       fixSuggestion:
-        "Update task dependencies to reference valid tasks and remove circular references",
+        'Update task dependencies to reference valid tasks and remove circular references',
     });
   }
 
@@ -799,7 +799,7 @@ class TaskDependencyRule extends ValidationRule {
 
       if (!dependency) {
         errors.push({
-          code: "INVALID_DEPENDENCY",
+          code: 'INVALID_DEPENDENCY',
           message: `Task dependency not found: ${depId}`,
           data: { taskId: task.id, dependencyId: depId },
         });
@@ -807,16 +807,16 @@ class TaskDependencyRule extends ValidationRule {
         // Check for circular dependencies
         if (this.hasCircularDependency(task, dependency, allTasks)) {
           errors.push({
-            code: "CIRCULAR_DEPENDENCY",
+            code: 'CIRCULAR_DEPENDENCY',
             message: `Circular dependency detected: ${task.id} → ${depId}`,
             data: { taskId: task.id, dependencyId: depId },
           });
         }
 
         // Check dependency status (warning level)
-        if (dependency.status === "ready" || dependency.status === "pending") {
+        if (dependency.status === 'ready' || dependency.status === 'pending') {
           warnings.push({
-            code: "DEPENDENCY_NOT_COMPLETE",
+            code: 'DEPENDENCY_NOT_COMPLETE',
             message: `Dependency ${depId} is not completed (status: ${dependency.status})`,
             data: {
               taskId: task.id,
@@ -929,16 +929,16 @@ const aggregated = {
 module.exports = {
   validation: {
     rules: {
-      "required-fields": {
+      'required-fields': {
         enabled: true,
-        severity: "error",
-        requiredFields: ["id", "title", "type", "priority"], // Custom config
+        severity: 'error',
+        requiredFields: ['id', 'title', 'type', 'priority'], // Custom config
       },
-      "id-format": {
+      'id-format': {
         enabled: true,
-        severity: "error",
-        pattern: "^(FEAT|BUG)-\\d{3}$", // Custom pattern
-        validTypes: ["FEAT", "BUG"], // Custom types
+        severity: 'error',
+        pattern: '^(FEAT|BUG)-\\d{3}$', // Custom pattern
+        validTypes: ['FEAT', 'BUG'], // Custom types
       },
     },
   },
@@ -986,12 +986,12 @@ class CachedValidationRule extends ValidationRule {
 
   async doValidate(data, context) {
     // Actual validation logic implemented by subclasses
-    throw new Error("Subclasses must implement doValidate");
+    throw new Error('Subclasses must implement doValidate');
   }
 
   generateCacheKey(data, context) {
     // Generate cache key based on data that affects validation
-    return `${data.id || "unknown"}_${data.filePath || "unknown"}_${
+    return `${data.id || 'unknown'}_${data.filePath || 'unknown'}_${
       context.validatedAt
     }`;
   }

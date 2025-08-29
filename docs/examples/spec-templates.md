@@ -343,12 +343,12 @@ X-API-Key: <api-key>
 
 ```javascript
 const api = new APIClient({
-  baseURL: "https://api.example.com",
-  apiKey: "your-api-key",
+  baseURL: 'https://api.example.com',
+  apiKey: 'your-api-key',
 });
 
 const resources = await api.getResources({
-  filter: "active",
+  filter: 'active',
   limit: 50,
 });
 ```

@@ -27,10 +27,10 @@ Create an `asd.config.js` file in your project root:
 
 ```javascript
 module.exports = {
-  featuresPath: "docs/specs",
+  featuresPath: 'docs/specs',
   autoRefresh: true,
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
-  statusFolders: ["active", "backlog", "done"],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
+  statusFolders: ['active', 'backlog', 'done'],
 };
 ```
 
@@ -44,43 +44,43 @@ ASD searches for configuration files in the following order:
 
 ```javascript
 module.exports = {
-  featuresPath: "docs/specifications",
-  templatePath: "templates/specs",
+  featuresPath: 'docs/specifications',
+  templatePath: 'templates/specs',
   autoRefresh: true,
   refreshDebounce: 1000,
 
   // Custom application branding
-  appName: "Product Specifications",
-  appIcon: "📋",
+  appName: 'Product Specifications',
+  appIcon: '📋',
 
   // File type configuration
   supportedTypes: [
-    "SPEC", // Specifications
-    "EPIC", // Large features
-    "STORY", // User stories
-    "TASK", // Technical tasks
-    "BUG", // Bug reports
-    "SPIKE", // Research tasks
+    'SPEC', // Specifications
+    'EPIC', // Large features
+    'STORY', // User stories
+    'TASK', // Technical tasks
+    'BUG', // Bug reports
+    'SPIKE', // Research tasks
   ],
 
   // Directory structure
   statusFolders: [
-    "todo", // Not started
-    "doing", // In progress
-    "review", // Under review
-    "done", // Completed
+    'todo', // Not started
+    'doing', // In progress
+    'review', // Under review
+    'done', // Completed
   ],
 
   // Priority levels
-  priorities: ["critical", "high", "medium", "low"],
+  priorities: ['critical', 'high', 'medium', 'low'],
 
   // Default values for new specifications
-  defaultPriority: "medium",
-  defaultStatus: "todo",
+  defaultPriority: 'medium',
+  defaultStatus: 'todo',
 
   // Advanced options
   enforceSpec: true,
-  legacyFeaturesPath: "docs/product/features",
+  legacyFeaturesPath: 'docs/product/features',
 };
 ```
 
@@ -148,13 +148,13 @@ priorities:
 
 ```javascript
 // Relative path
-featuresPath: "docs/specifications";
+featuresPath: 'docs/specifications';
 
 // Absolute path
-featuresPath: "/project/specs";
+featuresPath: '/project/specs';
 
 // Nested structure
-featuresPath: "docs/product/specifications";
+featuresPath: 'docs/product/specifications';
 ```
 
 #### `templatePath`
@@ -164,7 +164,7 @@ featuresPath: "docs/product/specifications";
 **Description**: Path to specification templates.
 
 ```javascript
-templatePath: "templates/specifications";
+templatePath: 'templates/specifications';
 ```
 
 #### `autoRefresh`
@@ -199,19 +199,19 @@ refreshDebounce: 250; // Quick refresh (may be resource intensive)
 
 ```javascript
 // Standard types
-supportedTypes: ["SPEC", "FEAT", "BUG"];
+supportedTypes: ['SPEC', 'FEAT', 'BUG'];
 
 // Custom types
-supportedTypes: ["EPIC", "STORY", "TASK", "DEFECT"];
+supportedTypes: ['EPIC', 'STORY', 'TASK', 'DEFECT'];
 
 // Extended types
 supportedTypes: [
-  "SPEC", // Technical specifications
-  "REQ", // Requirements
-  "ARCH", // Architecture documents
-  "API", // API specifications
-  "TEST", // Test plans
-  "DOC", // Documentation
+  'SPEC', // Technical specifications
+  'REQ', // Requirements
+  'ARCH', // Architecture documents
+  'API', // API specifications
+  'TEST', // Test plans
+  'DOC', // Documentation
 ];
 ```
 
@@ -223,19 +223,19 @@ supportedTypes: [
 
 ```javascript
 // Standard workflow
-statusFolders: ["active", "backlog", "done"];
+statusFolders: ['active', 'backlog', 'done'];
 
 // Agile workflow
-statusFolders: ["todo", "doing", "review", "done"];
+statusFolders: ['todo', 'doing', 'review', 'done'];
 
 // Extended workflow
 statusFolders: [
-  "proposed", // Initial proposals
-  "approved", // Approved specifications
-  "active", // Currently being implemented
-  "testing", // Under testing
-  "completed", // Finished work
-  "archived", // Old specifications
+  'proposed', // Initial proposals
+  'approved', // Approved specifications
+  'active', // Currently being implemented
+  'testing', // Under testing
+  'completed', // Finished work
+  'archived', // Old specifications
 ];
 ```
 
@@ -247,18 +247,18 @@ statusFolders: [
 
 ```javascript
 // Numeric priorities
-priorities: ["P0", "P1", "P2", "P3"];
+priorities: ['P0', 'P1', 'P2', 'P3'];
 
 // Named priorities
-priorities: ["critical", "high", "medium", "low"];
+priorities: ['critical', 'high', 'medium', 'low'];
 
 // Extended priorities
 priorities: [
-  "blocker", // Must fix immediately
-  "critical", // High impact
-  "major", // Significant impact
-  "minor", // Low impact
-  "trivial", // Cosmetic changes
+  'blocker', // Must fix immediately
+  'critical', // High impact
+  'major', // Significant impact
+  'minor', // Low impact
+  'trivial', // Cosmetic changes
 ];
 ```
 
@@ -271,9 +271,9 @@ priorities: [
 **Description**: Default priority for new specifications.
 
 ```javascript
-defaultPriority: "P2"; // Standard priority
-defaultPriority: "medium"; // Named priority
-defaultPriority: "low"; // Conservative default
+defaultPriority: 'P2'; // Standard priority
+defaultPriority: 'medium'; // Named priority
+defaultPriority: 'low'; // Conservative default
 ```
 
 #### `defaultStatus`
@@ -283,9 +283,9 @@ defaultPriority: "low"; // Conservative default
 **Description**: Default status for new specifications.
 
 ```javascript
-defaultStatus: "backlog"; // Standard default
-defaultStatus: "proposed"; // Requires approval
-defaultStatus: "todo"; // Ready to start
+defaultStatus: 'backlog'; // Standard default
+defaultStatus: 'proposed'; // Requires approval
+defaultStatus: 'todo'; // Ready to start
 ```
 
 ### UI Customization
@@ -297,9 +297,9 @@ defaultStatus: "todo"; // Ready to start
 **Description**: Custom application name displayed in the UI.
 
 ```javascript
-appName: "Product Specifications";
-appName: "Technical Requirements";
-appName: "Project Roadmap";
+appName: 'Product Specifications';
+appName: 'Technical Requirements';
+appName: 'Project Roadmap';
 ```
 
 #### `appIcon`
@@ -309,10 +309,10 @@ appName: "Project Roadmap";
 **Description**: Icon displayed in the terminal header.
 
 ```javascript
-appIcon: "📋"; // Clipboard
-appIcon: "🎯"; // Target
-appIcon: "⚡"; // Lightning
-appIcon: "🚀"; // Rocket
+appIcon: '📋'; // Clipboard
+appIcon: '🎯'; // Target
+appIcon: '⚡'; // Lightning
+appIcon: '🚀'; // Rocket
 ```
 
 ### Advanced Settings
@@ -335,8 +335,8 @@ enforceSpec: false; // Lenient parsing
 **Description**: Path to legacy feature files for backwards compatibility.
 
 ```javascript
-legacyFeaturesPath: "docs/product/features";
-legacyFeaturesPath: "legacy/roadmap";
+legacyFeaturesPath: 'docs/product/features';
+legacyFeaturesPath: 'legacy/roadmap';
 ```
 
 ## Environment-Specific Configuration
@@ -347,15 +347,15 @@ legacyFeaturesPath: "legacy/roadmap";
 
 ```javascript
 module.exports = {
-  featuresPath: "docs/specs",
+  featuresPath: 'docs/specs',
   autoRefresh: true,
   refreshDebounce: 100, // Fast refresh for development
-  appName: "Dev Specs",
-  appIcon: "🔧",
+  appName: 'Dev Specs',
+  appIcon: '🔧',
 
   // Development-specific settings
-  statusFolders: ["wip", "review", "done"],
-  priorities: ["urgent", "normal", "later"],
+  statusFolders: ['wip', 'review', 'done'],
+  priorities: ['urgent', 'normal', 'later'],
 };
 ```
 
@@ -365,15 +365,15 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "specifications",
+  featuresPath: 'specifications',
   autoRefresh: false, // Disable file watching in production
-  appName: "Product Specifications",
-  appIcon: "📋",
+  appName: 'Product Specifications',
+  appIcon: '📋',
 
   // Production-specific settings
   enforceSpec: true,
-  statusFolders: ["active", "backlog", "done"],
-  priorities: ["P0", "P1", "P2", "P3"],
+  statusFolders: ['active', 'backlog', 'done'],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 };
 ```
 
@@ -383,22 +383,22 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "team-specs",
-  appName: "Team Alpha Specifications",
-  appIcon: "👥",
+  featuresPath: 'team-specs',
+  appName: 'Team Alpha Specifications',
+  appIcon: '👥',
 
   // Team workflow
   statusFolders: [
-    "proposed",
-    "approved",
-    "in-progress",
-    "code-review",
-    "testing",
-    "deployed",
+    'proposed',
+    'approved',
+    'in-progress',
+    'code-review',
+    'testing',
+    'deployed',
   ],
 
   // Team priorities
-  priorities: ["critical", "high", "medium", "low", "nice-to-have"],
+  priorities: ['critical', 'high', 'medium', 'low', 'nice-to-have'],
 };
 ```
 
@@ -407,40 +407,40 @@ module.exports = {
 ### Conditional Configuration
 
 ```javascript
-const isDevelopment = process.env.NODE_ENV === "development";
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 module.exports = {
-  featuresPath: isDevelopment ? "docs/dev-specs" : "docs/specs",
+  featuresPath: isDevelopment ? 'docs/dev-specs' : 'docs/specs',
   autoRefresh: isDevelopment,
   refreshDebounce: isDevelopment ? 100 : 500,
 
-  appName: isDevelopment ? "Dev Specs" : "Product Specs",
+  appName: isDevelopment ? 'Dev Specs' : 'Product Specs',
 
   // Environment-specific types
   supportedTypes: isDevelopment
-    ? ["SPEC", "FEAT", "BUG", "EXPERIMENT", "POC"]
-    : ["SPEC", "FEAT", "BUG"],
+    ? ['SPEC', 'FEAT', 'BUG', 'EXPERIMENT', 'POC']
+    : ['SPEC', 'FEAT', 'BUG'],
 };
 ```
 
 ### User-Specific Configuration
 
 ```javascript
-const os = require("os");
+const os = require('os');
 const username = os.userInfo().username;
 
 module.exports = {
-  featuresPath: "docs/specs",
+  featuresPath: 'docs/specs',
   appName: `${username}'s Specifications`,
 
   // User-specific defaults
-  defaultPriority: username === "alice" ? "P1" : "P2",
+  defaultPriority: username === 'alice' ? 'P1' : 'P2',
 
   // User workflow preferences
   statusFolders:
-    username === "bob"
-      ? ["todo", "doing", "review", "done"]
-      : ["active", "backlog", "done"],
+    username === 'bob'
+      ? ['todo', 'doing', 'review', 'done']
+      : ['active', 'backlog', 'done'],
 };
 ```
 
@@ -463,18 +463,18 @@ asd doctor
 ```javascript
 // asd.config.js
 const config = {
-  featuresPath: "docs/specs",
-  supportedTypes: ["SPEC", "FEAT"],
-  statusFolders: ["active", "backlog", "done"],
+  featuresPath: 'docs/specs',
+  supportedTypes: ['SPEC', 'FEAT'],
+  statusFolders: ['active', 'backlog', 'done'],
 };
 
 // Validate custom requirements
 if (!config.featuresPath) {
-  throw new Error("featuresPath is required");
+  throw new Error('featuresPath is required');
 }
 
 if (config.supportedTypes.length === 0) {
-  throw new Error("At least one supported type is required");
+  throw new Error('At least one supported type is required');
 }
 
 module.exports = config;
@@ -513,9 +513,9 @@ asd --app-name "My Specs" --app-icon "🎯"
 
 ```javascript
 module.exports = {
-  featuresPath: "specs",
-  appName: "Project Alpha",
-  appIcon: "🅰️",
+  featuresPath: 'specs',
+  appName: 'Project Alpha',
+  appIcon: '🅰️',
 };
 ```
 
@@ -523,9 +523,9 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "specifications",
-  appName: "Project Beta",
-  appIcon: "🅱️",
+  featuresPath: 'specifications',
+  appName: 'Project Beta',
+  appIcon: '🅱️',
 };
 ```
 
@@ -537,22 +537,22 @@ module.exports = {
 module.exports = {
   autoRefresh: true,
   refreshDebounce: 500,
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
-  statusFolders: ["active", "backlog", "done"],
-  priorities: ["P0", "P1", "P2", "P3"],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
+  statusFolders: ['active', 'backlog', 'done'],
+  priorities: ['P0', 'P1', 'P2', 'P3'],
 };
 ```
 
 **Project**: `asd.config.js`
 
 ```javascript
-const base = require("./shared/asd.base");
+const base = require('./shared/asd.base');
 
 module.exports = {
   ...base,
-  featuresPath: "docs/project-specs",
-  appName: "Specific Project",
-  appIcon: "🚀",
+  featuresPath: 'docs/project-specs',
+  appName: 'Specific Project',
+  appIcon: '🚀',
 };
 ```
 
@@ -562,28 +562,28 @@ module.exports = {
 
 ```javascript
 module.exports = {
-  featuresPath: "docs/specs",
-  appName: "Monorepo Specifications",
+  featuresPath: 'docs/specs',
+  appName: 'Monorepo Specifications',
 
   // Support multiple project types
   supportedTypes: [
-    "SPEC",
-    "FEAT",
-    "API", // API specifications
-    "LIB", // Library features
-    "APP", // Application features
-    "INFRA", // Infrastructure changes
+    'SPEC',
+    'FEAT',
+    'API', // API specifications
+    'LIB', // Library features
+    'APP', // Application features
+    'INFRA', // Infrastructure changes
   ],
 
   // Extended workflow for large projects
   statusFolders: [
-    "proposed",
-    "approved",
-    "in-progress",
-    "review",
-    "testing",
-    "deployed",
-    "archived",
+    'proposed',
+    'approved',
+    'in-progress',
+    'review',
+    'testing',
+    'deployed',
+    'archived',
   ],
 };
 ```
@@ -615,12 +615,12 @@ node -e "console.log(require('./asd.config.js'))"
 **Path resolution issues**:
 
 ```javascript
-const path = require("path");
+const path = require('path');
 
 module.exports = {
   // Use absolute paths to avoid confusion
-  featuresPath: path.resolve(__dirname, "docs/specs"),
-  templatePath: path.resolve(__dirname, "templates"),
+  featuresPath: path.resolve(__dirname, 'docs/specs'),
+  templatePath: path.resolve(__dirname, 'templates'),
 };
 ```
 
@@ -646,7 +646,7 @@ module.exports = {};
 
 // ✅ Valid
 module.exports = {
-  featuresPath: "docs/specs", // Required field
+  featuresPath: 'docs/specs', // Required field
 };
 ```
 
@@ -655,14 +655,14 @@ module.exports = {
 ```javascript
 // ❌ Invalid
 module.exports = {
-  featuresPath: "docs/specs",
-  statusFolders: "active,backlog,done", // Should be array
+  featuresPath: 'docs/specs',
+  statusFolders: 'active,backlog,done', // Should be array
 };
 
 // ✅ Valid
 module.exports = {
-  featuresPath: "docs/specs",
-  statusFolders: ["active", "backlog", "done"],
+  featuresPath: 'docs/specs',
+  statusFolders: ['active', 'backlog', 'done'],
 };
 ```
 
@@ -671,13 +671,13 @@ module.exports = {
 ```javascript
 // ❌ Problematic
 module.exports = {
-  featuresPath: "../../../specs", // Relative paths can be confusing
+  featuresPath: '../../../specs', // Relative paths can be confusing
 };
 
 // ✅ Better
-const path = require("path");
+const path = require('path');
 module.exports = {
-  featuresPath: path.join(__dirname, "..", "specs"),
+  featuresPath: path.join(__dirname, '..', 'specs'),
 };
 ```
 
@@ -689,19 +689,19 @@ JavaScript configuration files offer the most flexibility:
 
 ```javascript
 // asd.config.js
-const isDev = process.env.NODE_ENV === "development";
+const isDev = process.env.NODE_ENV === 'development';
 
 module.exports = {
-  featuresPath: "docs/specs",
+  featuresPath: 'docs/specs',
   autoRefresh: isDev,
-  appName: isDev ? "Dev Specs" : "Product Specs",
+  appName: isDev ? 'Dev Specs' : 'Product Specs',
 
   // Computed values
   refreshDebounce: isDev ? 100 : 500,
 
   // Conditional features
   ...(isDev && {
-    supportedTypes: ["SPEC", "FEAT", "BUG", "EXPERIMENT"],
+    supportedTypes: ['SPEC', 'FEAT', 'BUG', 'EXPERIMENT'],
   }),
 };
 ```
@@ -712,12 +712,12 @@ module.exports = {
 // asd.config.js
 module.exports = {
   // Core paths
-  featuresPath: "docs/specs", // Main specs directory
-  templatePath: "docs/specs/template", // Templates for new specs
+  featuresPath: 'docs/specs', // Main specs directory
+  templatePath: 'docs/specs/template', // Templates for new specs
 
   // UI settings
-  appName: "Product Specifications", // Displayed in terminal
-  appIcon: "📋", // Terminal icon
+  appName: 'Product Specifications', // Displayed in terminal
+  appIcon: '📋', // Terminal icon
 
   // File watching
   autoRefresh: true, // Watch files for changes
@@ -725,15 +725,15 @@ module.exports = {
 
   // Workflow configuration
   supportedTypes: [
-    "SPEC", // Technical specifications
-    "FEAT", // Feature descriptions
-    "BUG", // Bug reports
+    'SPEC', // Technical specifications
+    'FEAT', // Feature descriptions
+    'BUG', // Bug reports
   ],
 
   statusFolders: [
-    "active", // Currently being worked on
-    "backlog", // Planned for future
-    "done", // Completed work
+    'active', // Currently being worked on
+    'backlog', // Planned for future
+    'done', // Completed work
   ],
 };
 ```
@@ -742,32 +742,32 @@ module.exports = {
 
 ```javascript
 // asd.config.js
-const env = process.env.NODE_ENV || "development";
+const env = process.env.NODE_ENV || 'development';
 
 const configs = {
   development: {
-    featuresPath: "docs/dev-specs",
+    featuresPath: 'docs/dev-specs',
     autoRefresh: true,
     refreshDebounce: 100,
   },
 
   production: {
-    featuresPath: "docs/specs",
+    featuresPath: 'docs/specs',
     autoRefresh: false,
     enforceSpec: true,
   },
 
   test: {
-    featuresPath: "test/fixtures/specs",
+    featuresPath: 'test/fixtures/specs',
     autoRefresh: false,
   },
 };
 
 module.exports = {
   // Base configuration
-  appName: "Specifications",
-  supportedTypes: ["SPEC", "FEAT", "BUG"],
-  statusFolders: ["active", "backlog", "done"],
+  appName: 'Specifications',
+  supportedTypes: ['SPEC', 'FEAT', 'BUG'],
+  statusFolders: ['active', 'backlog', 'done'],
 
   // Environment-specific overrides
   ...configs[env],
@@ -782,13 +782,13 @@ Create a shared configuration and document team conventions:
 // team-asd.config.js (shared)
 module.exports = {
   // Team standards
-  supportedTypes: ["SPEC", "FEAT", "BUG", "EPIC"],
-  statusFolders: ["proposed", "approved", "active", "review", "done"],
-  priorities: ["critical", "high", "medium", "low"],
+  supportedTypes: ['SPEC', 'FEAT', 'BUG', 'EPIC'],
+  statusFolders: ['proposed', 'approved', 'active', 'review', 'done'],
+  priorities: ['critical', 'high', 'medium', 'low'],
 
   // Team defaults
-  defaultPriority: "medium",
-  defaultStatus: "proposed",
+  defaultPriority: 'medium',
+  defaultStatus: 'proposed',
 
   // Team workflow
   autoRefresh: true,

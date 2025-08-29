@@ -1,37 +1,37 @@
 ---
-context_type: "task"
-task_id: "TASK-001"
-spec_id: "FEAT-012"
-task_title: "Core Context Storage & File Structure"
-assigned_agent: "software-architect"
-status: "in_progress"
-started: "2024-08-24"
+context_type: 'task'
+task_id: 'TASK-001'
+spec_id: 'FEAT-012'
+task_title: 'Core Context Storage & File Structure'
+assigned_agent: 'software-architect'
+status: 'in_progress'
+started: '2024-08-24'
 progress:
   subtasks_completed: 0
   subtasks_total: 3
-  current_subtask: "Design .asd/ directory structure"
+  current_subtask: 'Design .asd/ directory structure'
 implementation_notes:
-  - "Created .asd/ directory with proper structure"
-  - "Agent definitions follow Claude sub-agent pattern successfully"
-  - "Context inheritance pattern enables project → spec → task flow"
-  - "File format schemas defined for validation"
+  - 'Created .asd/ directory with proper structure'
+  - 'Agent definitions follow Claude sub-agent pattern successfully'
+  - 'Context inheritance pattern enables project → spec → task flow'
+  - 'File format schemas defined for validation'
 research_findings:
   - "Claude's MD + YAML pattern provides excellent human/machine readability balance"
-  - "Directory structure mirrors project organization for intuitive navigation"
-  - "Context inheritance reduces duplication while maintaining specificity"
+  - 'Directory structure mirrors project organization for intuitive navigation'
+  - 'Context inheritance reduces duplication while maintaining specificity'
 decisions_made:
-  - "Use .asd/ directory to avoid conflicts with existing project structure"
-  - "Separate agents/, processes/, context/, state/ for clear organization"
-  - "JSON for performance-critical config, MD+YAML for human-readable content"
+  - 'Use .asd/ directory to avoid conflicts with existing project structure'
+  - 'Separate agents/, processes/, context/, state/ for clear organization'
+  - 'JSON for performance-critical config, MD+YAML for human-readable content'
 blockers: []
 next_steps:
-  - "Complete file schema validation"
-  - "Create additional example agent definitions"
-  - "Test context inheritance patterns"
+  - 'Complete file schema validation'
+  - 'Create additional example agent definitions'
+  - 'Test context inheritance patterns'
 handoff_notes:
-  - "Directory structure established and documented"
-  - "Agent definition pattern proven with software-architect example"
-  - "Next agent can begin context injection engine implementation"
+  - 'Directory structure established and documented'
+  - 'Agent definition pattern proven with software-architect example'
+  - 'Next agent can begin context injection engine implementation'
 ---
 
 # TASK-001: Core Context Storage & File Structure - Task Context

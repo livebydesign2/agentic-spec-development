@@ -130,7 +130,7 @@ class AutoFixEngine {
       fixes: [],
       results: {},
       backupId: null,
-      status: "running",
+      status: 'running',
     };
 
     this.executionHistory.push(execution);
@@ -142,7 +142,7 @@ class AutoFixEngine {
       if (availableFixes.length === 0) {
         return {
           success: true,
-          message: "No auto-fixable issues found",
+          message: 'No auto-fixable issues found',
           execution,
           performance: { total: Date.now() - startTime },
         };
@@ -157,7 +157,7 @@ class AutoFixEngine {
       if (applicableFixes.length === 0) {
         return {
           success: true,
-          message: "No applicable fixes after filtering",
+          message: 'No applicable fixes after filtering',
           availableFixes,
           execution,
           performance: { total: Date.now() - startTime },
@@ -169,7 +169,7 @@ class AutoFixEngine {
       // 3. Safety validation
       const safetyResult = await this.validateFixSafety(applicableFixes);
       if (!safetyResult.safe) {
-        execution.status = "blocked";
+        execution.status = 'blocked';
         execution.blockReason = safetyResult.reason;
 
         return {
@@ -189,12 +189,12 @@ class AutoFixEngine {
         );
 
         if (!confirmation.approved) {
-          execution.status = "cancelled";
-          execution.cancellationReason = "User cancelled";
+          execution.status = 'cancelled';
+          execution.cancellationReason = 'User cancelled';
 
           return {
             success: false,
-            message: "Auto-fix cancelled by user",
+            message: 'Auto-fix cancelled by user',
             confirmation,
             execution,
             performance: { total: Date.now() - startTime },
@@ -226,7 +226,7 @@ class AutoFixEngine {
           await this.rollbackChanges(execution.backupId);
         }
 
-        execution.status = "failed";
+        execution.status = 'failed';
         execution.error = postValidation.error;
 
         return {
@@ -239,7 +239,7 @@ class AutoFixEngine {
         };
       }
 
-      execution.status = "completed";
+      execution.status = 'completed';
 
       return {
         success: true,
@@ -250,7 +250,7 @@ class AutoFixEngine {
         performance: { total: Date.now() - startTime },
       };
     } catch (error) {
-      execution.status = "error";
+      execution.status = 'error';
       execution.error = error.message;
 
       // Attempt rollback on error
@@ -258,7 +258,7 @@ class AutoFixEngine {
         try {
           await this.rollbackChanges(execution.backupId);
         } catch (rollbackError) {
-          console.error("Rollback failed:", rollbackError.message);
+          console.error('Rollback failed:', rollbackError.message);
         }
       }
 
@@ -320,7 +320,7 @@ class AutoFixEngine {
                 category: result.category,
                 strategy: strategy.name,
                 fix,
-                riskLevel: strategy.riskLevel || "low",
+                riskLevel: strategy.riskLevel || 'low',
                 requiresConfirmation: strategy.requiresConfirmation || false,
                 estimatedTime: strategy.estimatedTime || 100, // ms
               });
@@ -338,7 +338,7 @@ class AutoFixEngine {
 
     // Apply filters
     if (options.safeOnly) {
-      filtered = filtered.filter((fix) => fix.riskLevel === "low");
+      filtered = filtered.filter((fix) => fix.riskLevel === 'low');
     }
 
     if (options.categories) {
@@ -376,9 +376,9 @@ class AutoFixEngine {
       };
 
       const aPriority =
-        priorityOrder[a.error.severity || "error"] + riskPenalty[a.riskLevel];
+        priorityOrder[a.error.severity || 'error'] + riskPenalty[a.riskLevel];
       const bPriority =
-        priorityOrder[b.error.severity || "error"] + riskPenalty[b.riskLevel];
+        priorityOrder[b.error.severity || 'error'] + riskPenalty[b.riskLevel];
 
       return bPriority - aPriority; // Higher priority first
     });
@@ -438,7 +438,7 @@ class AutoFixEngine {
 
     try {
       // Read current file content
-      const originalContent = await fs.readFile(filePath, "utf-8");
+      const originalContent = await fs.readFile(filePath, 'utf-8');
       let modifiedContent = originalContent;
 
       // Apply fixes in order
@@ -537,7 +537,7 @@ class AutoFixEngine {
     const tempPath = `${filePath}.tmp.${Date.now()}`;
 
     try {
-      await fs.writeFile(tempPath, content, "utf-8");
+      await fs.writeFile(tempPath, content, 'utf-8');
       await fs.rename(tempPath, filePath);
     } catch (error) {
       // Clean up temp file on error
@@ -591,16 +591,16 @@ class SafetyValidator {
   constructor() {
     this.riskAssessmentRules = new Map();
     this.safeOperations = new Set([
-      "add-missing-field",
-      "format-whitespace",
-      "normalize-dates",
-      "fix-yaml-syntax",
+      'add-missing-field',
+      'format-whitespace',
+      'normalize-dates',
+      'fix-yaml-syntax',
     ]);
     this.unsafeOperations = new Set([
-      "modify-id",
-      "change-file-structure",
-      "remove-content",
-      "modify-dependencies",
+      'modify-id',
+      'change-file-structure',
+      'remove-content',
+      'modify-dependencies',
     ]);
   }
 
@@ -609,11 +609,11 @@ class SafetyValidator {
       safe: true,
       reason: null,
       fixAssessments: [],
-      overallRisk: "low",
+      overallRisk: 'low',
       warnings: [],
     };
 
-    let highestRisk = "low";
+    let highestRisk = 'low';
 
     for (const fix of fixes) {
       const fixAssessment = await this.assessFix(fix);
@@ -646,7 +646,7 @@ class SafetyValidator {
     const assessment = {
       fixId: fix.id,
       safe: true,
-      riskLevel: "low",
+      riskLevel: 'low',
       reason: null,
       warnings: [],
       risks: [],
@@ -658,13 +658,13 @@ class SafetyValidator {
 
     if (this.unsafeOperations.has(operationType)) {
       assessment.safe = false;
-      assessment.riskLevel = "high";
+      assessment.riskLevel = 'high';
       assessment.reason = `Unsafe operation: ${operationType}`;
       assessment.risks.push(`Operation ${operationType} can cause data loss`);
     } else if (this.safeOperations.has(operationType)) {
-      assessment.riskLevel = "low";
+      assessment.riskLevel = 'low';
     } else {
-      assessment.riskLevel = "medium";
+      assessment.riskLevel = 'medium';
       assessment.warnings.push(`Unknown operation safety: ${operationType}`);
     }
 
@@ -683,8 +683,8 @@ class SafetyValidator {
 
     // File modification scope
     const scopeAssessment = this.assessModificationScope(fix);
-    if (scopeAssessment.riskLevel === "high") {
-      assessment.riskLevel = "high";
+    if (scopeAssessment.riskLevel === 'high') {
+      assessment.riskLevel = 'high';
       assessment.warnings.push(...scopeAssessment.warnings);
     }
 
@@ -710,16 +710,16 @@ class SafetyValidator {
     ];
 
     for (const change of contentChanges) {
-      if (change.type === "delete") {
+      if (change.type === 'delete') {
         assessment.risks.push(`Content deletion: ${change.description}`);
         if (change.critical) {
           assessment.safe = false;
-          assessment.reason = "Critical content deletion detected";
+          assessment.reason = 'Critical content deletion detected';
         }
       }
 
-      if (change.type === "modify") {
-        const content = change.newContent || "";
+      if (change.type === 'modify') {
+        const content = change.newContent || '';
         for (const pattern of dangerousPatterns) {
           if (pattern.test(content)) {
             assessment.warnings.push(
@@ -735,14 +735,14 @@ class SafetyValidator {
 
   assessModificationScope(fix) {
     const assessment = {
-      riskLevel: "low",
+      riskLevel: 'low',
       warnings: [],
     };
 
     // Check if fix affects multiple files
     const affectedFiles = fix.fix.affectedFiles || [fix.fix.filePath];
     if (affectedFiles.length > 1) {
-      assessment.riskLevel = "medium";
+      assessment.riskLevel = 'medium';
       assessment.warnings.push(
         `Fix affects multiple files: ${affectedFiles.length}`
       );
@@ -751,9 +751,9 @@ class SafetyValidator {
     // Check if fix affects critical sections
     const criticalSections = fix.fix.criticalSections || [];
     if (criticalSections.length > 0) {
-      assessment.riskLevel = "high";
+      assessment.riskLevel = 'high';
       assessment.warnings.push(
-        `Fix affects critical sections: ${criticalSections.join(", ")}`
+        `Fix affects critical sections: ${criticalSections.join(', ')}`
       );
     }
 
@@ -763,20 +763,20 @@ class SafetyValidator {
   suggestMitigations(assessment) {
     const mitigations = [];
 
-    if (assessment.riskLevel === "high") {
-      mitigations.push("Create backup before applying fix");
-      mitigations.push("Review changes manually before confirmation");
-      mitigations.push("Test validation after applying fix");
+    if (assessment.riskLevel === 'high') {
+      mitigations.push('Create backup before applying fix');
+      mitigations.push('Review changes manually before confirmation');
+      mitigations.push('Test validation after applying fix');
     }
 
-    if (assessment.riskLevel === "medium") {
-      mitigations.push("Preview changes before applying");
-      mitigations.push("Validate affected files after fix");
+    if (assessment.riskLevel === 'medium') {
+      mitigations.push('Preview changes before applying');
+      mitigations.push('Validate affected files after fix');
     }
 
     if (assessment.risks.length > 0) {
-      mitigations.push("Enable rollback capability");
-      mitigations.push("Monitor fix results closely");
+      mitigations.push('Enable rollback capability');
+      mitigations.push('Monitor fix results closely');
     }
 
     return mitigations;
@@ -790,7 +790,7 @@ class SafetyValidator {
 class FixStrategy {
   constructor(name, options = {}) {
     this.name = name;
-    this.riskLevel = options.riskLevel || "low";
+    this.riskLevel = options.riskLevel || 'low';
     this.requiresConfirmation = options.requiresConfirmation || false;
     this.estimatedTime = options.estimatedTime || 100;
     this.applicableErrors = options.applicableErrors || [];
@@ -798,11 +798,11 @@ class FixStrategy {
 
   // Methods to be implemented by specific strategies
   async createFix(error, ruleResult, validationResults) {
-    throw new Error("FixStrategy subclasses must implement createFix");
+    throw new Error('FixStrategy subclasses must implement createFix');
   }
 
   async applyFix(content, fix, error) {
-    throw new Error("FixStrategy subclasses must implement applyFix");
+    throw new Error('FixStrategy subclasses must implement applyFix');
   }
 
   // Helper methods
@@ -817,16 +817,16 @@ class FixStrategy {
 // Missing Field Fix Strategy
 class MissingFieldFixStrategy extends FixStrategy {
   constructor() {
-    super("missing-field-fix", {
-      riskLevel: "low",
+    super('missing-field-fix', {
+      riskLevel: 'low',
       requiresConfirmation: false,
-      applicableErrors: ["MISSING_REQUIRED_FIELDS"],
+      applicableErrors: ['MISSING_REQUIRED_FIELDS'],
     });
 
     this.defaultValues = {
       created: () => new Date().toISOString(),
-      priority: "P2",
-      status: "backlog",
+      priority: 'P2',
+      status: 'backlog',
       estimated_hours: 8,
       tags: () => [],
       acceptance_criteria: () => [],
@@ -844,17 +844,17 @@ class MissingFieldFixStrategy extends FixStrategy {
       if (this.defaultValues[field]) {
         const defaultValue = this.defaultValues[field];
         fixes[field] =
-          typeof defaultValue === "function" ? defaultValue() : defaultValue;
+          typeof defaultValue === 'function' ? defaultValue() : defaultValue;
       } else {
-        fixes[field] = ""; // Let user fill in manually
+        fixes[field] = ''; // Let user fill in manually
       }
     }
 
     return {
-      operation: "add-missing-fields",
+      operation: 'add-missing-fields',
       fields: fixes,
       filePath: error.data?.filePath,
-      description: `Add missing fields: ${missingFields.join(", ")}`,
+      description: `Add missing fields: ${missingFields.join(', ')}`,
     };
   }
 
@@ -867,13 +867,13 @@ class MissingFieldFixStrategy extends FixStrategy {
       if (!frontmatterMatch) {
         return {
           success: false,
-          error: "No frontmatter found in file",
+          error: 'No frontmatter found in file',
         };
       }
 
-      const yaml = require("js-yaml");
+      const yaml = require('js-yaml');
       const frontmatter = yaml.load(frontmatterMatch[1]) || {};
-      const markdownContent = frontmatterMatch[2] || "";
+      const markdownContent = frontmatterMatch[2] || '';
 
       // Add missing fields
       const updatedFrontmatter = { ...frontmatter, ...fix.fields };
@@ -890,7 +890,7 @@ class MissingFieldFixStrategy extends FixStrategy {
         success: true,
         content: newContent,
         changes: Object.keys(fix.fields).map((field) => ({
-          type: "add",
+          type: 'add',
           field,
           value: fix.fields[field],
           description: `Added missing field: ${field}`,
@@ -908,10 +908,10 @@ class MissingFieldFixStrategy extends FixStrategy {
 // ID Format Fix Strategy
 class IDFormatFixStrategy extends FixStrategy {
   constructor() {
-    super("id-format-fix", {
-      riskLevel: "high", // ID changes are risky
+    super('id-format-fix', {
+      riskLevel: 'high', // ID changes are risky
       requiresConfirmation: true,
-      applicableErrors: ["INVALID_ID_FORMAT"],
+      applicableErrors: ['INVALID_ID_FORMAT'],
     });
 
     this.idPattern = /^(FEAT|BUG|SPEC|SPIKE|MAINT|RELEASE)-(\d{3})$/;
@@ -923,13 +923,13 @@ class IDFormatFixStrategy extends FixStrategy {
 
     // Try to extract type from current ID
     const typeMatch = currentId.match(/^([A-Z]+)/);
-    const type = typeMatch ? typeMatch[1] : "FEAT";
+    const type = typeMatch ? typeMatch[1] : 'FEAT';
 
     // Generate suggested ID
     const suggestedId = await this.generateSuggestedId(type, validationResults);
 
     return {
-      operation: "fix-id-format",
+      operation: 'fix-id-format',
       currentId,
       suggestedId,
       filePath: error.data?.filePath,
@@ -942,7 +942,7 @@ class IDFormatFixStrategy extends FixStrategy {
     try {
       // This is a high-risk operation that requires careful handling
       const updatedContent = content.replace(
-        new RegExp(`id:\\s*["']?${fix.currentId}["']?`, "g"),
+        new RegExp(`id:\\s*["']?${fix.currentId}["']?`, 'g'),
         `id: "${fix.suggestedId}"`
       );
 
@@ -951,8 +951,8 @@ class IDFormatFixStrategy extends FixStrategy {
         content: updatedContent,
         changes: [
           {
-            type: "modify",
-            field: "id",
+            type: 'modify',
+            field: 'id',
             oldValue: fix.currentId,
             newValue: fix.suggestedId,
             description: `Updated spec ID format`,
@@ -961,7 +961,7 @@ class IDFormatFixStrategy extends FixStrategy {
         ],
         postActions: [
           {
-            type: "rename-file",
+            type: 'rename-file',
             oldName: fix.filePath,
             newName: fix.filePath.replace(fix.currentId, fix.suggestedId),
           },
@@ -989,7 +989,7 @@ class IDFormatFixStrategy extends FixStrategy {
       }
     }
 
-    const nextNumber = (maxNumber + 1).toString().padStart(3, "0");
+    const nextNumber = (maxNumber + 1).toString().padStart(3, '0');
     return `${type}-${nextNumber}`;
   }
 }
@@ -1002,7 +1002,7 @@ class IDFormatFixStrategy extends FixStrategy {
 ```javascript
 class BackupManager {
   constructor() {
-    this.backupDir = ".asd/backups";
+    this.backupDir = '.asd/backups';
     this.maxBackups = 50;
     this.backupRetention = 30 * 24 * 60 * 60 * 1000; // 30 days
   }
@@ -1016,7 +1016,7 @@ class BackupManager {
       timestamp: new Date().toISOString(),
       files: [],
       metadata: {
-        reason: "auto-fix",
+        reason: 'auto-fix',
         fileCount: filePaths.length,
       },
     };
@@ -1042,7 +1042,7 @@ class BackupManager {
 
     // Save backup metadata
     await fs.writeFile(
-      path.join(backupPath, "backup.json"),
+      path.join(backupPath, 'backup.json'),
       JSON.stringify(backup, null, 2)
     );
 
@@ -1051,9 +1051,9 @@ class BackupManager {
 
   async restoreBackup(backupId) {
     const backupPath = path.join(this.backupDir, backupId);
-    const metadataPath = path.join(backupPath, "backup.json");
+    const metadataPath = path.join(backupPath, 'backup.json');
 
-    const metadata = JSON.parse(await fs.readFile(metadataPath, "utf-8"));
+    const metadata = JSON.parse(await fs.readFile(metadataPath, 'utf-8'));
 
     for (const file of metadata.files) {
       await fs.copyFile(file.backup, file.original);
@@ -1078,7 +1078,7 @@ class UserConfirmationManager {
     }
 
     if (options.safeOnly) {
-      const safeFixes = fixes.filter((fix) => fix.riskLevel === "low");
+      const safeFixes = fixes.filter((fix) => fix.riskLevel === 'low');
       return { approved: true, selectedFixes: safeFixes };
     }
 
@@ -1089,7 +1089,7 @@ class UserConfirmationManager {
       userChoices: [],
     };
 
-    console.log("\n🔧 Auto-Fix Preview\n");
+    console.log('\n🔧 Auto-Fix Preview\n');
     console.log(`Found ${fixes.length} fixable issues:\n`);
 
     for (let i = 0; i < fixes.length; i++) {
@@ -1118,9 +1118,9 @@ class UserConfirmationManager {
 
   displayFixPreview(fix, index) {
     const riskEmoji = {
-      low: "🟢",
-      medium: "🟡",
-      high: "🔴",
+      low: '🟢',
+      medium: '🟡',
+      high: '🔴',
     };
 
     console.log(`${index}. ${riskEmoji[fix.riskLevel]} ${fix.fix.description}`);
@@ -1132,14 +1132,14 @@ class UserConfirmationManager {
       console.log(`   Preview: ${fix.fix.preview}`);
     }
 
-    console.log("");
+    console.log('');
   }
 
   async promptForFix(fix) {
     // Simplified - in real implementation would use interactive prompts
     return {
-      apply: fix.riskLevel !== "high", // Auto-approve low/medium risk
-      reason: fix.riskLevel === "high" ? "High risk - skipped" : "Approved",
+      apply: fix.riskLevel !== 'high', // Auto-approve low/medium risk
+      reason: fix.riskLevel === 'high' ? 'High risk - skipped' : 'Approved',
     };
   }
 

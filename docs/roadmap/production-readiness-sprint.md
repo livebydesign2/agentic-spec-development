@@ -1,21 +1,21 @@
 ---
-id: "PRODUCTION-READINESS-SPRINT"
-title: "Production Readiness Sprint"
-version: "1.0.0"
-created: "2025-08-29T12:00:00Z"
-phase: "PHASE-STABILIZATION"
-priority: "P0"
+id: 'PRODUCTION-READINESS-SPRINT'
+title: 'Production Readiness Sprint'
+version: '1.0.0'
+created: '2025-08-29T12:00:00Z'
+phase: 'PHASE-STABILIZATION'
+priority: 'P0'
 critical_issues_count: 7
 effort_hours: 112
-target_completion: "2025-09-19"
+target_completion: '2025-09-19'
 success_criteria:
-  - "All CLI startup and execution issues resolved"
-  - "Zero critical code quality violations"
-  - "No duplicate specification conflicts"
-  - "Test suite achieves 95%+ stability"
-  - "Comprehensive error handling implemented"
-  - "Pre-commit quality gates operational"
-  - "System ready for external user adoption"
+  - 'All CLI startup and execution issues resolved'
+  - 'Zero critical code quality violations'
+  - 'No duplicate specification conflicts'
+  - 'Test suite achieves 95%+ stability'
+  - 'Comprehensive error handling implemented'
+  - 'Pre-commit quality gates operational'
+  - 'System ready for external user adoption'
 ---
 
 # Production Readiness Sprint

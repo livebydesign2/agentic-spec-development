@@ -38,7 +38,7 @@ global.cleanupTestDir = () => {
             fs.unlinkSync(filePath);
           }
         }
-        fs.rmdirSync(global.TEST_DIR);
+        fs.rmSync(global.TEST_DIR, { recursive: true, force: true });
       } catch (innerError) {
         console.warn('Could not cleanup test directory:', innerError.message);
       }

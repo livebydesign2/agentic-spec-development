@@ -1,28 +1,28 @@
 ---
-context_type: "spec"
-spec_id: "FEAT-012"
-spec_title: "Context Injection System"
-priority: "P0"
-status: "active"
-phase: "PHASE-1A"
-assigned_agents: ["software-architect"]
-created: "2024-08-24"
-last_updated: "2024-08-24"
+context_type: 'spec'
+spec_id: 'FEAT-012'
+spec_title: 'Context Injection System'
+priority: 'P0'
+status: 'active'
+phase: 'PHASE-1A'
+assigned_agents: ['software-architect']
+created: '2024-08-24'
+last_updated: '2024-08-24'
 research_findings:
-  - "Multi-layer context system required for agent effectiveness"
+  - 'Multi-layer context system required for agent effectiveness'
   - "Claude's MD + YAML pattern provides good human/machine readability"
-  - "File system approach enables human inspection and manual editing"
-  - "4-layer context (critical, task, agent, process) balances relevance and completeness"
+  - 'File system approach enables human inspection and manual editing'
+  - '4-layer context (critical, task, agent, process) balances relevance and completeness'
 implementation_decisions:
-  - ".asd/ directory structure mirrors project organization"
-  - "Agent definitions follow Claude sub-agent pattern"
-  - "Context inheritance: project → spec → task levels"
-  - "Automatic update triggers based on CLI command usage"
+  - '.asd/ directory structure mirrors project organization'
+  - 'Agent definitions follow Claude sub-agent pattern'
+  - 'Context inheritance: project → spec → task levels'
+  - 'Automatic update triggers based on CLI command usage'
 constraints:
-  - "Context injection must complete in < 500ms"
-  - "All context files must remain human-readable"
-  - "Integration with existing ConfigManager and SpecParser"
-  - "No external dependencies beyond current tech stack"
+  - 'Context injection must complete in < 500ms'
+  - 'All context files must remain human-readable'
+  - 'Integration with existing ConfigManager and SpecParser'
+  - 'No external dependencies beyond current tech stack'
 ---
 
 # FEAT-012: Context Injection System - Context

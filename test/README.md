@@ -251,14 +251,14 @@ npx jest test/spec-parser.test.js --coverage --verbose
 ```javascript
 // Log test data during development
 if (process.env.DEBUG_TESTS) {
-  console.log("Test data:", testData);
+  console.log('Test data:', testData);
 }
 
 // Inspect test directory contents
-console.log("Test dir contents:", fs.readdirSync(global.TEST_DIR));
+console.log('Test dir contents:', fs.readdirSync(global.TEST_DIR));
 
 // Check memory usage
-console.log("Memory usage:", process.memoryUsage());
+console.log('Memory usage:', process.memoryUsage());
 ```
 
 ## 🎯 Best Practices
@@ -282,7 +282,7 @@ console.log("Memory usage:", process.memoryUsage());
 
 ```javascript
 // Prefer specific assertions
-expect(result.id).toBe("SPEC-001");
+expect(result.id).toBe('SPEC-001');
 expect(result.tasks).toHaveLength(3);
 expect(result.progress.percentage).toBe(50);
 

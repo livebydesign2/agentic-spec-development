@@ -5,7 +5,7 @@ type: BUG
 phase: PHASE-STABILIZATION-1
 priority: P1
 status: active
-created: "2025-08-29T18:15:00Z"
+created: '2025-08-29T18:15:00Z'
 estimated_hours: 8
 tags:
   - workflow

@@ -150,18 +150,18 @@ When working on specifications, always:
 ```javascript
 // Before starting any specification work
 Task(
-  (subagent_type = "Product-manager"),
-  (description = "Specification validation"),
+  (subagent_type = 'Product-manager'),
+  (description = 'Specification validation'),
   (prompt =
-    "Validate SPEC-005 is ready for development. Check numbering, priority, dependencies, and move to active state if ready.")
+    'Validate SPEC-005 is ready for development. Check numbering, priority, dependencies, and move to active state if ready.')
 );
 
 // After completing specification work
 Task(
-  (subagent_type = "Product-manager"),
-  (description = "Specification completion"),
+  (subagent_type = 'Product-manager'),
+  (description = 'Specification completion'),
   (prompt =
-    "SPEC-005 implementation complete. Review work, validate criteria, move to done, and update roadmap.")
+    'SPEC-005 implementation complete. Review work, validate criteria, move to done, and update roadmap.')
 );
 ```
 
@@ -170,16 +170,16 @@ Task(
 ```javascript
 // Software architecture with ASD context
 Task(
-  (subagent_type = "Software-architect"),
-  (description = "System design"),
+  (subagent_type = 'Software-architect'),
+  (description = 'System design'),
   (prompt =
     "Design the authentication system per SPEC-003. Read current system state and focus on TASK-001 only. Use the specification's technical requirements and context files.")
 );
 
 // Code implementation with quality gates
 Task(
-  (subagent_type = "Code-quality-specialist"),
-  (description = "Feature implementation"),
+  (subagent_type = 'Code-quality-specialist'),
+  (description = 'Feature implementation'),
   (prompt =
     "Implement TASK-002 from SPEC-003. Follow the specification's validation requirements. Test thoroughly and update task status for clean handoff.")
 );

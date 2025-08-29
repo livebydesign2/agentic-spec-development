@@ -15,6 +15,7 @@ This guide documents the comprehensive specification integrity validation system
 **Purpose**: Comprehensive validation of all specifications in the project.
 
 **Usage**:
+
 ```bash
 # Basic validation
 npm run validate-specs
@@ -28,6 +29,7 @@ node scripts/validate-spec-integrity.js . --json report.json
 ```
 
 **What it validates**:
+
 - ✅ Duplicate specification IDs across all directories
 - ✅ Inter-specification references (dependencies, blocking, related)
 - ✅ Cross-spec task dependencies
@@ -40,6 +42,7 @@ node scripts/validate-spec-integrity.js . --json report.json
 **Purpose**: Real-time monitoring and periodic integrity checks.
 
 **Usage**:
+
 ```bash
 # Watch mode with real-time validation
 npm run monitor-specs
@@ -52,6 +55,7 @@ node scripts/spec-integrity-monitor.js . --watch --interval 60 --dashboard
 ```
 
 **Features**:
+
 - 📁 File system watching for real-time validation
 - ⏰ Periodic integrity checks
 - 📊 Live dashboard with health metrics
@@ -63,6 +67,7 @@ node scripts/spec-integrity-monitor.js . --watch --interval 60 --dashboard
 **Purpose**: Prevents commits that would introduce integrity violations.
 
 **Installation**:
+
 ```bash
 # Install hooks for current repository
 npm run install-hooks
@@ -72,6 +77,7 @@ bash scripts/install-hooks.sh
 ```
 
 **What it prevents**:
+
 - 🚫 Duplicate specification IDs
 - 🚫 Broken inter-spec references
 - 🚫 Structural integrity violations
@@ -80,6 +86,7 @@ bash scripts/install-hooks.sh
 ### 4. Enhanced Validation Rules (`lib/validation-rules.js`)
 
 **New validation rules added**:
+
 - `ReferenceIntegrityRule` - Validates all inter-spec references
 - `FilenameConsistencyRule` - Ensures filenames match spec IDs
 - `CircularReferenceRule` - Detects circular dependencies
@@ -89,17 +96,20 @@ bash scripts/install-hooks.sh
 ### When Creating New Specifications
 
 1. **Check ID Availability**:
+
    ```bash
    # Validate before committing
    npm run validate-specs
    ```
 
 2. **Follow ID Conventions**:
+
    - Format: `TYPE-###` (e.g., `FEAT-025`, `BUG-007`, `MAINT-004`)
    - Valid types: `FEAT`, `BUG`, `SPEC`, `MAINT`, `SPIKE`, `RELEASE`
    - Use next available number in sequence
 
 3. **Filename Conventions**:
+
    - Format: `{ID}-{description}.md`
    - Example: `FEAT-025-claude-code-commands.md`
    - Must start with the specification ID
@@ -110,40 +120,43 @@ bash scripts/install-hooks.sh
    id: FEAT-025
    title: Your Specification Title
    type: FEAT
-   status: backlog  # active, backlog, done, archived
-   priority: P2     # P0, P1, P2, P3
+   status: backlog # active, backlog, done, archived
+   priority: P2 # P0, P1, P2, P3
    ---
    ```
 
 ### When Referencing Other Specifications
 
 1. **Validate References Before Use**:
+
    ```bash
    # Check that target specifications exist
    npm run validate-specs
    ```
 
 2. **Use Proper Reference Fields**:
+
    ```yaml
-   dependencies: [FEAT-001, FEAT-002]  # This spec depends on these
-   blocking: [FEAT-010]                # This spec blocks these  
-   related: [BUG-005, SPEC-003]        # Related specifications
+   dependencies: [FEAT-001, FEAT-002] # This spec depends on these
+   blocking: [FEAT-010] # This spec blocks these
+   related: [BUG-005, SPEC-003] # Related specifications
    ```
 
 3. **Cross-spec Task Dependencies**:
    ```yaml
    tasks:
      - id: TASK-001
-       depends_on: [FEAT-001-TASK-002]  # Reference specific tasks
+       depends_on: [FEAT-001-TASK-002] # Reference specific tasks
    ```
 
 ### When Moving or Renaming Specifications
 
 1. **Update All References**:
+
    ```bash
    # Find all references to the old ID
    grep -r "OLD-ID" docs/specs/
-   
+
    # Validate after updates
    npm run validate-specs
    ```
@@ -159,12 +172,14 @@ bash scripts/install-hooks.sh
 ### Development Workflow Integration
 
 1. **Daily Development**:
+
    ```bash
    # Start monitoring during development
    npm run monitor-specs-dashboard
    ```
 
 2. **Before Committing**:
+
    ```bash
    # Pre-commit hook runs automatically, but you can test manually:
    npm run validate-specs
@@ -181,11 +196,13 @@ bash scripts/install-hooks.sh
 ### Duplicate ID Conflicts
 
 **Symptoms**:
+
 ```
 ❌ Duplicate spec ID found: FEAT-025 (appears 2 times)
 ```
 
 **Resolution**:
+
 1. Identify the duplicate specifications
 2. Determine which should keep the ID (usually the older/more complete one)
 3. Assign new ID to the duplicate:
@@ -200,11 +217,13 @@ bash scripts/install-hooks.sh
 ### Broken References
 
 **Symptoms**:
+
 ```
 ❌ Invalid dependency reference in FEAT-025: 'FEAT-999' does not exist
 ```
 
 **Resolution**:
+
 1. Check if the target specification exists:
    ```bash
    find docs/specs/ -name "*FEAT-999*"
@@ -218,12 +237,14 @@ bash scripts/install-hooks.sh
 ### Structural Issues
 
 **Symptoms**:
+
 ```
 ❌ Missing required field: priority
 ❌ Invalid status: in_progress. Valid statuses: active, backlog, done, archived
 ```
 
 **Resolution**:
+
 1. Add missing required fields to frontmatter
 2. Fix invalid field values to match allowed formats
 3. Ensure file location matches status field
@@ -240,6 +261,7 @@ npm run monitor-specs-dashboard
 ```
 
 **Dashboard displays**:
+
 - ✅ Overall health status
 - 📊 Summary metrics (total specs, errors, warnings)
 - 🔍 Issue breakdown by type
@@ -249,12 +271,14 @@ npm run monitor-specs-dashboard
 ### Report Generation
 
 **Automated Reports**:
+
 - Generated on every validation run
 - Stored in `.asd/integrity-reports/`
 - JSON format for programmatic analysis
 - Automatic cleanup (keeps latest 50 reports)
 
 **Manual Report Generation**:
+
 ```bash
 # Generate detailed JSON report
 npm run validate-specs-json
@@ -271,7 +295,7 @@ const vm = new ValidationManager();
 
 // Rules include:
 // - reference-integrity
-// - filename-consistency  
+// - filename-consistency
 // - circular-reference
 ```
 
@@ -280,12 +304,14 @@ const vm = new ValidationManager();
 ### Weekly Maintenance
 
 1. **Review Integrity Reports**:
+
    ```bash
    # Check recent validation history
    ls -la .asd/integrity-reports/ | head -10
    ```
 
 2. **Clean Up Old Reports** (automated but can be manual):
+
    ```bash
    # Monitor report storage
    du -sh .asd/integrity-reports/
@@ -299,6 +325,7 @@ const vm = new ValidationManager();
 ### Monthly Maintenance
 
 1. **Review Validation Rules**:
+
    - Check if new validation rules are needed
    - Update validation thresholds if needed
    - Review team feedback on false positives
@@ -313,21 +340,24 @@ const vm = new ValidationManager();
 **When Validation is Blocking Development**:
 
 1. **Bypass Pre-commit Hook** (temporary):
+
    ```bash
    git commit --no-verify -m "Emergency commit - validation bypass"
    ```
 
 2. **Disable Monitoring** (if causing performance issues):
+
    ```bash
    # Kill monitoring processes
    pkill -f spec-integrity-monitor
    ```
 
 3. **Reset Validation State**:
+
    ```bash
    # Clear validation cache
    rm -rf .asd/integrity-reports/*
-   
+
    # Restart validation
    npm run validate-specs
    ```
@@ -337,12 +367,14 @@ const vm = new ValidationManager();
 ### New Team Members
 
 1. **Setup** (mandatory):
+
    ```bash
    npm run install-hooks
    npm run validate-specs
    ```
 
 2. **Training Checklist**:
+
    - [ ] Understand ID conventions
    - [ ] Know how to validate before committing
    - [ ] Can interpret validation error messages
@@ -359,6 +391,7 @@ const vm = new ValidationManager();
 ### Advanced Usage
 
 **Power Users can**:
+
 - Extend validation rules in `lib/validation-rules.js`
 - Customize monitoring settings
 - Integrate with CI/CD systems
@@ -369,11 +402,13 @@ const vm = new ValidationManager();
 ### Planned Improvements
 
 1. **Auto-fix Capabilities**:
+
    - Automatic ID conflict resolution
    - Reference update automation
    - Structural issue auto-correction
 
 2. **Enhanced Monitoring**:
+
    - Web-based dashboard
    - Slack/email notifications
    - Trend analysis and predictions
@@ -404,16 +439,18 @@ The system is designed for extensibility:
 4. **Integration conflicts**: Check ASD CLI compatibility
 
 **Getting Help**:
+
 - Check validation output for specific error messages
 - Review this guide for resolution procedures
 - Check project issues for known problems
 - Contact the development team for complex issues
 
 **Emergency Contacts**:
+
 - For urgent validation blocks: Disable hooks temporarily
 - For system failures: Restart monitoring and re-validate
 - For data corruption: Restore from backups and re-validate
 
 ---
 
-*This guide is part of MAINT-003 TASK-004 implementation and should be kept updated as the system evolves.*
+_This guide is part of MAINT-003 TASK-004 implementation and should be kept updated as the system evolves._

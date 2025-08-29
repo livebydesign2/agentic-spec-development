@@ -1,16 +1,16 @@
 ---
-process_type: "validation-checklist"
-version: "1.0"
-applies_to: ["all-agents"]
+process_type: 'validation-checklist'
+version: '1.0'
+applies_to: ['all-agents']
 mandatory_checks:
-  - "functional_completeness"
-  - "code_quality"
-  - "test_coverage"
-  - "documentation_accuracy"
+  - 'functional_completeness'
+  - 'code_quality'
+  - 'test_coverage'
+  - 'documentation_accuracy'
 recommended_checks:
-  - "performance_validation"
-  - "security_review"
-  - "accessibility_check"
+  - 'performance_validation'
+  - 'security_review'
+  - 'accessibility_check'
 ---
 
 # Universal Validation Checklist

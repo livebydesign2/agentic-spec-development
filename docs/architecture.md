@@ -104,40 +104,40 @@ docs/
 
 ```yaml
 ---
-id: "PROJECT-ROADMAP"
-title: "ASD CLI Development Roadmap"
-version: "0.1.0-alpha"
-created: "2024-08-24T10:00:00Z"
+id: 'PROJECT-ROADMAP'
+title: 'ASD CLI Development Roadmap'
+version: '0.1.0-alpha'
+created: '2024-08-24T10:00:00Z'
 phases:
-  - id: "PHASE-1A"
-    title: "Core Infrastructure & CLI"
-    description: "Foundation components and basic CLI functionality"
+  - id: 'PHASE-1A'
+    title: 'Core Infrastructure & CLI'
+    description: 'Foundation components and basic CLI functionality'
     priority: 1
-    target_completion: "2024-09-15"
+    target_completion: '2024-09-15'
     success_criteria:
-      - "CLI installs and runs correctly"
-      - "Basic TUI functionality complete"
-      - "Configuration system working"
-  - id: "PHASE-1B"
-    title: "Advanced Features & Agent Integration"
-    description: "Agentic workflows and context injection"
+      - 'CLI installs and runs correctly'
+      - 'Basic TUI functionality complete'
+      - 'Configuration system working'
+  - id: 'PHASE-1B'
+    title: 'Advanced Features & Agent Integration'
+    description: 'Agentic workflows and context injection'
     priority: 2
-    target_completion: "2024-10-15"
-    depends_on: ["PHASE-1A"]
+    target_completion: '2024-10-15'
+    depends_on: ['PHASE-1A']
     success_criteria:
-      - "Task routing system operational"
-      - "Context injection working"
-      - "Agent handoffs smooth"
-  - id: "PHASE-2"
-    title: "Integrations & Ecosystem"
-    description: "External tool integrations and plugin system"
+      - 'Task routing system operational'
+      - 'Context injection working'
+      - 'Agent handoffs smooth'
+  - id: 'PHASE-2'
+    title: 'Integrations & Ecosystem'
+    description: 'External tool integrations and plugin system'
     priority: 3
-    target_completion: "2024-11-15"
-    depends_on: ["PHASE-1B"]
+    target_completion: '2024-11-15'
+    depends_on: ['PHASE-1B']
 constraints:
-  - "Must maintain backwards compatibility"
-  - "Performance: < 2s response time"
-  - "Node.js 18+ required"
+  - 'Must maintain backwards compatibility'
+  - 'Performance: < 2s response time'
+  - 'Node.js 18+ required'
 ---
 # Project Roadmap
 
@@ -301,17 +301,17 @@ class WorkflowStateManager {
 const stateUpdate = {
   tasks: [
     {
-      id: "TASK-001",
-      status: "completed", // Changed from "in_progress"
-      completed_at: "2024-08-24T15:30:00Z",
+      id: 'TASK-001',
+      status: 'completed', // Changed from "in_progress"
+      completed_at: '2024-08-24T15:30:00Z',
     },
     {
-      id: "TASK-002",
-      status: "ready", // Auto-updated when TASK-001 completes
+      id: 'TASK-002',
+      status: 'ready', // Auto-updated when TASK-001 completes
     },
   ],
-  current_task: "TASK-002", // Auto-calculated next available
-  progress: "1 of 4 tasks complete",
+  current_task: 'TASK-002', // Auto-calculated next available
+  progress: '1 of 4 tasks complete',
 };
 ```
 
@@ -500,19 +500,19 @@ class SpecParser {
 
 ```javascript
 const modernConfig = {
-  dataPath: "docs/specs", // Specification storage
-  templatePath: "docs/templates", // Spec templates
-  dataFormat: "markdown", // Primary format
+  dataPath: 'docs/specs', // Specification storage
+  templatePath: 'docs/templates', // Spec templates
+  dataFormat: 'markdown', // Primary format
   structure: {
-    active: "active",
-    backlog: "backlog",
-    done: "done",
+    active: 'active',
+    backlog: 'backlog',
+    done: 'done',
   },
   cli: {
-    defaultPriority: "P2",
-    supportedTypes: ["SPEC", "FEAT", "BUG", "SPIKE", "MAINT"],
-    statusFolders: ["active", "backlog", "done"],
-    priorities: ["P0", "P1", "P2", "P3"],
+    defaultPriority: 'P2',
+    supportedTypes: ['SPEC', 'FEAT', 'BUG', 'SPIKE', 'MAINT'],
+    statusFolders: ['active', 'backlog', 'done'],
+    priorities: ['P0', 'P1', 'P2', 'P3'],
   },
   workflow: {
     autoAssignTasks: true,
@@ -678,18 +678,18 @@ asd next subtask --task TASK-001 --type implementation
 ```yaml
 subtask_templates:
   implementation:
-    focus: "Core feature development"
-    typical_duration: "60-80% of task estimate"
-    validation_required: ["unit tests", "integration tests", "type checking"]
+    focus: 'Core feature development'
+    typical_duration: '60-80% of task estimate'
+    validation_required: ['unit tests', 'integration tests', 'type checking']
   validation:
-    focus: "Testing, quality assurance, performance"
-    typical_duration: "15-25% of task estimate"
-    validation_required: ["E2E tests", "performance tests", "accessibility"]
+    focus: 'Testing, quality assurance, performance'
+    typical_duration: '15-25% of task estimate'
+    validation_required: ['E2E tests', 'performance tests', 'accessibility']
   product_management:
-    focus: "Documentation, handoffs, progress tracking"
-    typical_duration: "5-15% of task estimate"
+    focus: 'Documentation, handoffs, progress tracking'
+    typical_duration: '5-15% of task estimate'
     validation_required:
-      ["inline doc updates", "next task preparation", "handoff notes"]
+      ['inline doc updates', 'next task preparation', 'handoff notes']
 ```
 
 **Multi-Level Context Storage**:

@@ -1,25 +1,25 @@
 module.exports = {
   // Test environment
-  testEnvironment: "node",
+  testEnvironment: 'node',
 
   // Test files pattern
   testMatch: [
-    "**/test/**/*.test.js",
-    "**/__tests__/**/*.js",
-    "**/?(*.)+(spec|test).js",
+    '**/test/**/*.test.js',
+    '**/__tests__/**/*.js',
+    '**/?(*.)+(spec|test).js',
   ],
 
   // Coverage configuration
   collectCoverage: true,
   collectCoverageFrom: [
-    "lib/**/*.js",
-    "bin/**",
-    "!**/node_modules/**",
-    "!**/test/**",
-    "!**/coverage/**",
+    'lib/**/*.js',
+    'bin/**',
+    '!**/node_modules/**',
+    '!**/test/**',
+    '!**/coverage/**',
   ],
-  coverageDirectory: "coverage",
-  coverageReporters: ["text", "lcov", "html"],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
   coverageThreshold: {
     global: {
       branches: 80,
@@ -30,12 +30,12 @@ module.exports = {
   },
 
   // Setup files
-  setupFilesAfterEnv: ["<rootDir>/test/setup.js"],
+  setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
 
   // Module path mapping
   moduleNameMapper: {
-    "^@lib/(.*)$": "<rootDir>/lib/$1",
-    "^@test/(.*)$": "<rootDir>/test/$1",
+    '^@lib/(.*)$': '<rootDir>/lib/$1',
+    '^@test/(.*)$': '<rootDir>/test/$1',
   },
 
   // Test timeout
