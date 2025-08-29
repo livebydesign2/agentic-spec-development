@@ -132,7 +132,7 @@ acceptance_criteria:
 
 ### 🚦 Current State _(AGENTS: Update this when you complete YOUR task)_
 
-- **Next Available Task**: All tasks complete - FEAT-018 ready for product handoff  
+- **Next Available Task**: All tasks complete - FEAT-018 ready for product handoff
 - **Current Task Status**: TASK-004 Complete - Comprehensive CLI system with workflow & context commands implemented
 - **Overall Progress**: 4 of 4 tasks complete (100%) ✅
 - **Blockers**: None - Feature complete

@@ -22,24 +22,26 @@ describe('CompleteCurrentCommand', () => {
 
     // Setup mock instances
     mockConfigManager = {
-      getProjectRoot: jest.fn().mockReturnValue('/test/project')
+      getProjectRoot: jest.fn().mockReturnValue('/test/project'),
     };
 
     mockWorkflowStateManager = {
       initialize: jest.fn().mockResolvedValue(true),
       getCurrentAssignments: jest.fn(),
-      completeTask: jest.fn()
+      completeTask: jest.fn(),
     };
 
     mockHandoffAutomationEngine = {
       initialize: jest.fn().mockResolvedValue(true),
-      executeHandoff: jest.fn()
+      executeHandoff: jest.fn(),
     };
 
     // Setup constructor mocks
     ConfigManager.mockImplementation(() => mockConfigManager);
     WorkflowStateManager.mockImplementation(() => mockWorkflowStateManager);
-    HandoffAutomationEngine.mockImplementation(() => mockHandoffAutomationEngine);
+    HandoffAutomationEngine.mockImplementation(
+      () => mockHandoffAutomationEngine
+    );
 
     // Create command instance
     command = new CompleteCurrentCommand(mockConfigManager);
@@ -55,9 +57,13 @@ describe('CompleteCurrentCommand', () => {
     });
 
     it('should handle initialization failure', async () => {
-      mockWorkflowStateManager.initialize.mockRejectedValue(new Error('Init failed'));
+      mockWorkflowStateManager.initialize.mockRejectedValue(
+        new Error('Init failed')
+      );
 
-      await expect(command.initialize()).rejects.toThrow('CompleteCurrentCommand initialization failed: Init failed');
+      await expect(command.initialize()).rejects.toThrow(
+        'CompleteCurrentCommand initialization failed: Init failed'
+      );
     });
   });
 
@@ -71,8 +77,8 @@ describe('CompleteCurrentCommand', () => {
 
       mockWorkflowStateManager.getCurrentAssignments.mockResolvedValue({
         current_assignments: [
-          { spec_id: 'FEAT-001', task_id: 'TASK-001', status: 'in_progress' }
-        ]
+          { spec_id: 'FEAT-001', task_id: 'TASK-001', status: 'in_progress' },
+        ],
       });
 
       const result = await command.determineTaskToComplete(options);
@@ -96,8 +102,8 @@ describe('CompleteCurrentCommand', () => {
 
       mockWorkflowStateManager.getCurrentAssignments.mockResolvedValue({
         current_assignments: [
-          { spec_id: 'FEAT-002', task_id: 'TASK-003', status: 'in_progress' }
-        ]
+          { spec_id: 'FEAT-002', task_id: 'TASK-003', status: 'in_progress' },
+        ],
       });
 
       const result = await command.determineTaskToComplete(options);
@@ -111,7 +117,7 @@ describe('CompleteCurrentCommand', () => {
       const options = {};
 
       mockWorkflowStateManager.getCurrentAssignments.mockResolvedValue({
-        current_assignments: []
+        current_assignments: [],
       });
 
       const result = await command.determineTaskToComplete(options);
@@ -126,8 +132,8 @@ describe('CompleteCurrentCommand', () => {
       mockWorkflowStateManager.getCurrentAssignments.mockResolvedValue({
         current_assignments: [
           { spec_id: 'FEAT-001', task_id: 'TASK-001', status: 'in_progress' },
-          { spec_id: 'FEAT-002', task_id: 'TASK-002', status: 'in_progress' }
-        ]
+          { spec_id: 'FEAT-002', task_id: 'TASK-002', status: 'in_progress' },
+        ],
       });
 
       const result = await command.determineTaskToComplete(options);
@@ -147,13 +153,15 @@ describe('CompleteCurrentCommand', () => {
         success: true,
         completion: {
           completed_at: '2023-01-01T00:00:00Z',
-          duration_hours: 2
-        }
+          duration_hours: 2,
+        },
       };
 
       mockWorkflowStateManager.completeTask.mockResolvedValue(completionResult);
 
-      const result = await command.completeTask('FEAT-001', 'TASK-001', { notes: 'Test completion' });
+      const result = await command.completeTask('FEAT-001', 'TASK-001', {
+        notes: 'Test completion',
+      });
 
       expect(result.success).toBe(true);
       expect(mockWorkflowStateManager.completeTask).toHaveBeenCalledWith(
@@ -166,7 +174,7 @@ describe('CompleteCurrentCommand', () => {
     it('should handle completion failure', async () => {
       mockWorkflowStateManager.completeTask.mockResolvedValue({
         success: false,
-        error: 'Task not found'
+        error: 'Task not found',
       });
 
       const result = await command.completeTask('FEAT-001', 'TASK-001', {});
@@ -186,12 +194,17 @@ describe('CompleteCurrentCommand', () => {
         success: true,
         handoffNeeded: true,
         nextTask: 'TASK-002',
-        nextAgent: 'backend-developer'
+        nextAgent: 'backend-developer',
       };
 
-      mockHandoffAutomationEngine.executeHandoff.mockResolvedValue(handoffResult);
+      mockHandoffAutomationEngine.executeHandoff.mockResolvedValue(
+        handoffResult
+      );
 
-      const result = await command.triggerHandoffAutomation('FEAT-001', 'TASK-001');
+      const result = await command.triggerHandoffAutomation(
+        'FEAT-001',
+        'TASK-001'
+      );
 
       expect(result.success).toBe(true);
       expect(result.handoffNeeded).toBe(true);
@@ -202,8 +215,8 @@ describe('CompleteCurrentCommand', () => {
         fromAgent: 'complete-current-automation',
         context: {
           completionMethod: 'automated',
-          timestamp: expect.any(String)
-        }
+          timestamp: expect.any(String),
+        },
       });
     });
 
@@ -211,19 +224,27 @@ describe('CompleteCurrentCommand', () => {
       mockHandoffAutomationEngine.executeHandoff.mockResolvedValue({
         success: true,
         handoffNeeded: false,
-        reason: 'No dependent tasks'
+        reason: 'No dependent tasks',
       });
 
-      const result = await command.triggerHandoffAutomation('FEAT-001', 'TASK-001');
+      const result = await command.triggerHandoffAutomation(
+        'FEAT-001',
+        'TASK-001'
+      );
 
       expect(result.success).toBe(true);
       expect(result.handoffNeeded).toBe(false);
     });
 
     it('should handle handoff failure gracefully', async () => {
-      mockHandoffAutomationEngine.executeHandoff.mockRejectedValue(new Error('Handoff system down'));
+      mockHandoffAutomationEngine.executeHandoff.mockRejectedValue(
+        new Error('Handoff system down')
+      );
 
-      const result = await command.triggerHandoffAutomation('FEAT-001', 'TASK-001');
+      const result = await command.triggerHandoffAutomation(
+        'FEAT-001',
+        'TASK-001'
+      );
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('Handoff system down');
@@ -235,8 +256,12 @@ describe('CompleteCurrentCommand', () => {
       const result = command.generateCommitMessage('FEAT-001', 'TASK-001');
 
       expect(result).toContain('Complete FEAT-001 TASK-001');
-      expect(result).toContain('🤖 Generated with [Claude Code](https://claude.ai/code)');
-      expect(result).toContain('Co-Authored-By: Claude <noreply@anthropic.com>');
+      expect(result).toContain(
+        '🤖 Generated with [Claude Code](https://claude.ai/code)'
+      );
+      expect(result).toContain(
+        'Co-Authored-By: Claude <noreply@anthropic.com>'
+      );
     });
   });
 
@@ -247,8 +272,8 @@ describe('CompleteCurrentCommand', () => {
       // Mock successful task determination
       mockWorkflowStateManager.getCurrentAssignments.mockResolvedValue({
         current_assignments: [
-          { spec_id: 'FEAT-001', task_id: 'TASK-001', status: 'in_progress' }
-        ]
+          { spec_id: 'FEAT-001', task_id: 'TASK-001', status: 'in_progress' },
+        ],
       });
 
       // Mock successful task completion
@@ -256,15 +281,15 @@ describe('CompleteCurrentCommand', () => {
         success: true,
         completion: {
           completed_at: '2023-01-01T00:00:00Z',
-          duration_hours: 2
-        }
+          duration_hours: 2,
+        },
       });
 
       // Mock successful handoff
       mockHandoffAutomationEngine.executeHandoff.mockResolvedValue({
         success: true,
         handoffNeeded: false,
-        reason: 'No dependent tasks'
+        reason: 'No dependent tasks',
       });
     });
 
@@ -278,7 +303,7 @@ describe('CompleteCurrentCommand', () => {
           if (event === 'close') {
             callback(0); // Success exit code
           }
-        })
+        }),
       };
       spawn.mockReturnValue(mockChild);
 
@@ -286,13 +311,13 @@ describe('CompleteCurrentCommand', () => {
       const chokidar = require('chokidar');
       const mockWatcher = {
         on: jest.fn().mockReturnThis(),
-        close: jest.fn().mockResolvedValue()
+        close: jest.fn().mockResolvedValue(),
       };
       chokidar.watch.mockReturnValue(mockWatcher);
 
       const options = {
         notes: 'Test completion',
-        skipCommit: true // Skip git to avoid complexity in tests
+        skipCommit: true, // Skip git to avoid complexity in tests
       };
 
       const result = await command.execute(options);
@@ -312,7 +337,7 @@ describe('CompleteCurrentCommand', () => {
           if (event === 'close') {
             callback(1); // Failure exit code
           }
-        })
+        }),
       };
       spawn.mockReturnValue(mockChild);
 
@@ -332,20 +357,24 @@ describe('CompleteCurrentCommand', () => {
           if (event === 'close') {
             callback(0);
           }
-        })
+        }),
       });
 
       const options = {
         skipLint: true,
         skipTests: true,
-        skipCommit: true
+        skipCommit: true,
       };
 
       const result = await command.execute(options);
 
       expect(result.success).toBe(true);
       // Lint command should not have been called
-      expect(spawn).not.toHaveBeenCalledWith('npm', ['run', 'lint'], expect.any(Object));
+      expect(spawn).not.toHaveBeenCalledWith(
+        'npm',
+        ['run', 'lint'],
+        expect.any(Object)
+      );
     });
   });
 
@@ -362,7 +391,9 @@ describe('CompleteCurrentCommand', () => {
       expect(auditLog).toHaveLength(2); // Initialize + test event
       expect(auditLog[1].event).toBe('test_event');
       expect(auditLog[1].data.test).toBe('data');
-      expect(auditLog[1].timestamp).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+      expect(auditLog[1].timestamp).toMatch(
+        /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/
+      );
     });
 
     it('should clear audit log', () => {

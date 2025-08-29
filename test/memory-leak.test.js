@@ -62,7 +62,7 @@ describe('Memory Leak Tests - BUG-003', () => {
       cache.set('old-2', 'value2');
 
       // Wait a bit
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       cache.set('new-1', 'value3');
       cache.set('new-2', 'value4');
@@ -81,7 +81,9 @@ describe('Memory Leak Tests - BUG-003', () => {
   describe('SpecParser Caching', () => {
     beforeEach(async () => {
       // Create test spec files
-      global.createTestFile('docs/specs/active/SPEC-001-cache-test.md', `# SPEC-001: Cache Test Spec
+      global.createTestFile(
+        'docs/specs/active/SPEC-001-cache-test.md',
+        `# SPEC-001: Cache Test Spec
 
 **Priority:** P1
 
@@ -94,16 +96,20 @@ This is a test specification for cache validation.
 ### **TASK-001** 🤖 **Test Caching** | Agent: Developer
 - [ ] Implement cache
 - [ ] Test cache behavior
-`);
+`
+      );
 
-      global.createTestFile('docs/specs/active/SPEC-002-cache-test.md', `# SPEC-002: Another Cache Test
+      global.createTestFile(
+        'docs/specs/active/SPEC-002-cache-test.md',
+        `# SPEC-002: Another Cache Test
 
 **Priority:** P2
 
 ## Description
 
 Another test specification for cache validation.
-`);
+`
+      );
     });
 
     it('should cache parsed specifications and improve performance', async () => {
@@ -141,7 +147,9 @@ Another test specification for cache validation.
       let initialStats = specParser.getCacheStats();
 
       // Modify a file
-      global.createTestFile('docs/specs/active/SPEC-001-cache-test.md', `# SPEC-001: Modified Cache Test
+      global.createTestFile(
+        'docs/specs/active/SPEC-001-cache-test.md',
+        `# SPEC-001: Modified Cache Test
 
 **Priority:** P0
 
@@ -154,18 +162,21 @@ This specification has been modified to test cache invalidation.
 ### **TASK-001** 🤖 **Test Modified Caching** | Agent: Developer
 - [ ] Implement cache invalidation
 - [ ] Test modified cache behavior
-`);
+`
+      );
 
       // Reload specs
       await specParser.loadSpecs();
       let finalStats = specParser.getCacheStats();
 
       // Should detect the file change and reparse
-      expect(finalStats.load_stats.totalLoads).toBe(initialStats.load_stats.totalLoads + 1);
+      expect(finalStats.load_stats.totalLoads).toBe(
+        initialStats.load_stats.totalLoads + 1
+      );
 
       // Check that the modification was picked up
       const specs = specParser.getSpecs();
-      const modifiedSpec = specs.find(s => s.id === 'SPEC-001');
+      const modifiedSpec = specs.find((s) => s.id === 'SPEC-001');
       expect(modifiedSpec.priority).toBe('P0'); // Should reflect the change
     });
 
@@ -178,14 +189,16 @@ This specification has been modified to test cache invalidation.
 
       // Create many more spec files to test cache limits
       for (let i = 10; i <= 150; i++) {
-        global.createTestFile(`docs/specs/active/SPEC-${i.toString().padStart(3, '0')}-test.md`,
+        global.createTestFile(
+          `docs/specs/active/SPEC-${i.toString().padStart(3, '0')}-test.md`,
           `# SPEC-${i.toString().padStart(3, '0')}: Test Spec ${i}
           
 **Priority:** P2
 
 ## Description
 Test specification ${i} for cache maintenance testing.
-`);
+`
+        );
       }
 
       // Load all specs
@@ -204,7 +217,10 @@ Test specification ${i} for cache maintenance testing.
       );
 
       // Should have cleaned up some entries if cache was over limit
-      if (beforeMaintenance.cache_stats.size > beforeMaintenance.cache_stats.maxSize * 0.8) {
+      if (
+        beforeMaintenance.cache_stats.size >
+        beforeMaintenance.cache_stats.maxSize * 0.8
+      ) {
         expect(cleanedUp).toBeGreaterThan(0);
       }
     });
@@ -215,7 +231,7 @@ Test specification ${i} for cache maintenance testing.
       const monitor = new MemoryMonitor({
         monitorInterval: 50, // Very frequent for testing
         maxHistoryEntries: 10,
-        enableLogging: false
+        enableLogging: false,
       });
 
       let measurementCount = 0;
@@ -247,7 +263,7 @@ Test specification ${i} for cache maintenance testing.
         criticalThreshold: 2, // Very low threshold to trigger critical
         monitorInterval: 50,
         alertInterval: 10, // Short interval for testing
-        enableLogging: false
+        enableLogging: false,
       });
 
       let warningTriggered = false;
@@ -290,11 +306,14 @@ Test specification ${i} for cache maintenance testing.
 
     it('should properly clean up resources when terminated', async () => {
       // Create test files
-      global.createTestFile('docs/specs/active/SPEC-001-cleanup-test.md', `# SPEC-001: Cleanup Test
+      global.createTestFile(
+        'docs/specs/active/SPEC-001-cleanup-test.md',
+        `# SPEC-001: Cleanup Test
 **Priority:** P1
 ## Description
 Test cleanup behavior.
-`);
+`
+      );
 
       const configManager = new ConfigManager(testDir);
 
@@ -305,7 +324,7 @@ Test cleanup behavior.
 
       const client = new ASDClient({
         configManager,
-        appName: 'Test-Client'
+        appName: 'Test-Client',
       });
 
       // Track initial memory
@@ -316,7 +335,7 @@ Test cleanup behavior.
       client.cachedContent = {
         'test-1': { content: 'test data 1', lastAccess: Date.now() },
         'test-2': { content: 'test data 2', lastAccess: Date.now() },
-        'test-3': { content: 'test data 3', lastAccess: Date.now() }
+        'test-3': { content: 'test data 3', lastAccess: Date.now() },
       };
 
       // Cleanup
@@ -333,7 +352,8 @@ Test cleanup behavior.
       }
 
       const finalMemory = process.memoryUsage();
-      const memoryGrowth = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
+      const memoryGrowth =
+        (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
 
       // Should have minimal memory growth after cleanup
       expect(memoryGrowth).toBeLessThan(10); // Less than 10MB growth
@@ -344,7 +364,8 @@ Test cleanup behavior.
 
       // Create many test files
       for (let i = 1; i <= 50; i++) {
-        global.createTestFile(`docs/specs/active/SPEC-${i.toString().padStart(3, '0')}-mem-test.md`,
+        global.createTestFile(
+          `docs/specs/active/SPEC-${i.toString().padStart(3, '0')}-mem-test.md`,
           `# SPEC-${i.toString().padStart(3, '0')}: Memory Test ${i}
 **Priority:** P2
 ## Description
@@ -353,7 +374,8 @@ Memory test specification ${i}.
 ### **TASK-001** 🤖 **Memory Test Task** | Agent: Tester
 - [ ] Test memory usage
 - [ ] Monitor cleanup behavior
-`);
+`
+        );
       }
 
       const config = configManager.loadConfig();
@@ -372,7 +394,7 @@ Memory test specification ${i}.
         // Add cached content
         client.cachedContent[`iteration-${iteration}`] = {
           content: `Large test data for iteration ${iteration}`.repeat(100),
-          lastAccess: Date.now()
+          lastAccess: Date.now(),
         };
 
         // Trigger memory cleanup manually
@@ -380,10 +402,13 @@ Memory test specification ${i}.
       }
 
       const finalMemory = process.memoryUsage();
-      const memoryGrowth = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
+      const memoryGrowth =
+        (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
 
       // Cache should be limited by cleanup
-      expect(Object.keys(client.cachedContent).length).toBeLessThanOrEqual(config.maxCacheSize);
+      expect(Object.keys(client.cachedContent).length).toBeLessThanOrEqual(
+        config.maxCacheSize
+      );
 
       // Memory growth should be reasonable
       expect(memoryGrowth).toBeLessThan(50); // Less than 50MB growth
@@ -397,11 +422,14 @@ Memory test specification ${i}.
       const configManager = new ConfigManager(testDir);
 
       // Create test files
-      global.createTestFile('docs/specs/active/SPEC-001-watch-test.md', `# SPEC-001: Watch Test
+      global.createTestFile(
+        'docs/specs/active/SPEC-001-watch-test.md',
+        `# SPEC-001: Watch Test
 **Priority:** P1
 ## Description
 Test file watching cleanup.
-`);
+`
+      );
 
       const config = configManager.loadConfig();
       config.autoRefresh = true;
@@ -431,7 +459,10 @@ Test file watching cleanup.
 
       // Create realistic test data
       for (let i = 1; i <= 30; i++) {
-        global.createTestFile(`docs/specs/active/SPEC-${i.toString().padStart(3, '0')}-regression.md`,
+        global.createTestFile(
+          `docs/specs/active/SPEC-${i
+            .toString()
+            .padStart(3, '0')}-regression.md`,
           `# SPEC-${i.toString().padStart(3, '0')}: Regression Test ${i}
 **Priority:** P${(i % 3) + 1}
 ## Description
@@ -450,7 +481,8 @@ ${'Implement proper memory management and cleanup. '.repeat(10)}
 - [ ] Create test cases
 - [ ] Execute tests
 - [ ] Report results
-`);
+`
+        );
       }
 
       const config = configManager.loadConfig();
@@ -468,9 +500,9 @@ ${'Implement proper memory management and cleanup. '.repeat(10)}
 
         // Perform typical operations
         const specs = specParser.getSpecs();
-        specs.forEach(spec => {
-          const ____ = spec.tasks || [];
-          const _priority = spec._priority || 'P2';
+        specs.forEach((spec) => {
+          const ____ = spec.tasks || []; // eslint-disable-line no-unused-vars
+          const _priority = spec._priority || 'P2'; // eslint-disable-line no-unused-vars
         });
 
         // Take memory snapshot
@@ -478,7 +510,7 @@ ${'Implement proper memory management and cleanup. '.repeat(10)}
         memorySnapshots.push({
           cycle,
           rss: Math.round(memUsage.rss / 1024 / 1024),
-          heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024)
+          heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
         });
 
         // Trigger maintenance every few cycles

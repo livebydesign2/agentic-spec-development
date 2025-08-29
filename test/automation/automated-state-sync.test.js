@@ -1,18 +1,18 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const path = require('path');
-const __fs = require('fs').promises;
+const __fs = require('fs').promises; // eslint-disable-line no-unused-vars
 
 const AutomatedStateSync = require('../../lib/automation/automated-state-sync');
 const ConfigManager = require('../../lib/config-manager');
 
-describe('AutomatedStateSync', function() {
+describe('AutomatedStateSync', function () {
   let automatedStateSync;
   let configManager;
   let mockWorkflowStateManager;
   let mockFrontmatterSync;
 
-  beforeEach(function() {
+  beforeEach(function () {
     // Create test configuration
     configManager = new ConfigManager(path.join(__dirname, '../fixtures'));
 
@@ -25,14 +25,14 @@ describe('AutomatedStateSync', function() {
       completeTask: sinon.stub().resolves({ success: true }),
       updateSpecFrontmatter: sinon.stub().resolves({ success: true }),
       syncSpecState: sinon.stub().resolves({ success: true }),
-      updateProjectProgress: sinon.stub().resolves({})
+      updateProjectProgress: sinon.stub().resolves({}),
     };
 
     // Mock FrontmatterSync
     mockFrontmatterSync = {
       initialize: sinon.stub().resolves(true),
       updateSpecFrontmatter: sinon.stub().resolves({ success: true }),
-      batchUpdateSpecs: sinon.stub().resolves({ success: true })
+      batchUpdateSpecs: sinon.stub().resolves({ success: true }),
     };
 
     // Create AutomatedStateSync instance
@@ -43,15 +43,15 @@ describe('AutomatedStateSync', function() {
     );
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sinon.restore();
     if (automatedStateSync && automatedStateSync.isRunning) {
       automatedStateSync.shutdown();
     }
   });
 
-  describe('Initialization', function() {
-    it('should initialize all components successfully', async function() {
+  describe('Initialization', function () {
+    it('should initialize all components successfully', async function () {
       this.timeout(10000); // Allow extra time for initialization
 
       const result = await automatedStateSync.initialize();
@@ -69,7 +69,7 @@ describe('AutomatedStateSync', function() {
       expect(automatedStateSync.components.conflictResolver).to.not.be.null;
     });
 
-    it('should emit system_initialized event on successful initialization', async function() {
+    it('should emit system_initialized event on successful initialization', async function () {
       const initSpy = sinon.spy();
       automatedStateSync.on('system_initialized', initSpy);
 
@@ -86,19 +86,19 @@ describe('AutomatedStateSync', function() {
       expect(eventData.components).to.include('syncEngine');
     });
 
-    it('should handle initialization failure gracefully', async function() {
+    it('should handle initialization failure gracefully', async function () {
       // Force eventBus initialization to fail
-      const __originalEventBus = automatedStateSync.components.eventBus;
+      const __originalEventBus = automatedStateSync.components.eventBus; // eslint-disable-line no-unused-vars
       automatedStateSync.components.eventBus = null;
 
       // Create a mock EventBus that fails to initialize
       const mockEventBus = {
-        initialize: sinon.stub().resolves(false)
+        initialize: sinon.stub().resolves(false),
       };
 
       // Override the EventBus constructor temporarily
       const EventBus = require('../../lib/automation/event-bus');
-      const __originalConstructor = EventBus;
+      const __originalConstructor = EventBus; // eslint-disable-line no-unused-vars
 
       // Mock the EventBus constructor to return our failing mock
       sinon.stub(automatedStateSync, 'components').value({
@@ -107,23 +107,25 @@ describe('AutomatedStateSync', function() {
         changeDetector: null,
         stateValidator: null,
         syncEngine: null,
-        conflictResolver: null
+        conflictResolver: null,
       });
 
       const result = await automatedStateSync.initialize();
 
       expect(result).to.be.false;
       expect(automatedStateSync.systemHealth.overall).to.equal('failed');
-      expect(automatedStateSync.systemHealth.issues).to.have.length.greaterThan(0);
+      expect(automatedStateSync.systemHealth.issues).to.have.length.greaterThan(
+        0
+      );
     });
   });
 
-  describe('System Control', function() {
-    beforeEach(async function() {
+  describe('System Control', function () {
+    beforeEach(async function () {
       await automatedStateSync.initialize();
     });
 
-    it('should start successfully when initialized', async function() {
+    it('should start successfully when initialized', async function () {
       const result = await automatedStateSync.start();
 
       expect(result).to.be.true;
@@ -131,7 +133,7 @@ describe('AutomatedStateSync', function() {
       expect(automatedStateSync.systemHealth.overall).to.equal('running');
     });
 
-    it('should emit system_started event', async function() {
+    it('should emit system_started event', async function () {
       const startSpy = sinon.spy();
       automatedStateSync.on('system_started', startSpy);
 
@@ -144,7 +146,7 @@ describe('AutomatedStateSync', function() {
       expect(eventData).to.have.property('components');
     });
 
-    it('should stop gracefully when running', async function() {
+    it('should stop gracefully when running', async function () {
       await automatedStateSync.start();
 
       const result = await automatedStateSync.stop();
@@ -154,7 +156,7 @@ describe('AutomatedStateSync', function() {
       expect(automatedStateSync.systemHealth.overall).to.equal('stopped');
     });
 
-    it('should emit system_stopped event', async function() {
+    it('should emit system_stopped event', async function () {
       await automatedStateSync.start();
 
       const stopSpy = sinon.spy();
@@ -169,7 +171,7 @@ describe('AutomatedStateSync', function() {
       expect(eventData).to.have.property('finalStats');
     });
 
-    it('should handle multiple start calls gracefully', async function() {
+    it('should handle multiple start calls gracefully', async function () {
       await automatedStateSync.start();
       const result = await automatedStateSync.start(); // Second start call
 
@@ -177,7 +179,7 @@ describe('AutomatedStateSync', function() {
       expect(automatedStateSync.isRunning).to.be.true;
     });
 
-    it('should handle stop when not running', async function() {
+    it('should handle stop when not running', async function () {
       const result = await automatedStateSync.stop();
 
       expect(result).to.be.true;
@@ -185,12 +187,12 @@ describe('AutomatedStateSync', function() {
     });
   });
 
-  describe('Health Monitoring', function() {
-    beforeEach(async function() {
+  describe('Health Monitoring', function () {
+    beforeEach(async function () {
       await automatedStateSync.initialize();
     });
 
-    it('should perform health checks regularly', function(done) {
+    it('should perform health checks regularly', function (done) {
       this.timeout(5000);
 
       // Set up health check spy
@@ -214,7 +216,7 @@ describe('AutomatedStateSync', function() {
       }, 2500); // Wait for 2.5 seconds to catch at least 2 health checks
     });
 
-    it('should provide system status information', function() {
+    it('should provide system status information', function () {
       const status = automatedStateSync.getSystemStatus();
 
       expect(status).to.have.property('system');
@@ -227,7 +229,7 @@ describe('AutomatedStateSync', function() {
       expect(status.system.health).to.equal('healthy');
     });
 
-    it('should provide component status information', function() {
+    it('should provide component status information', function () {
       const componentStatus = automatedStateSync.getComponentStatus();
 
       expect(componentStatus).to.have.property('eventBus');
@@ -238,7 +240,7 @@ describe('AutomatedStateSync', function() {
       expect(componentStatus).to.have.property('conflictResolver');
     });
 
-    it('should provide performance metrics', function() {
+    it('should provide performance metrics', function () {
       const performanceMetrics = automatedStateSync.getPerformanceMetrics();
 
       expect(performanceMetrics).to.have.property('targets');
@@ -250,7 +252,7 @@ describe('AutomatedStateSync', function() {
       expect(performanceMetrics.targets.validation).to.equal(100);
     });
 
-    it('should handle component errors and update health', function() {
+    it('should handle component errors and update health', function () {
       const errorSpy = sinon.spy();
       automatedStateSync.on('component_error', errorSpy);
 
@@ -258,10 +260,17 @@ describe('AutomatedStateSync', function() {
       const testError = new Error('Test component error');
       automatedStateSync.handleComponentError('testComponent', testError);
 
-      expect(automatedStateSync.systemHealth.components.testComponent).to.equal('error');
-      expect(automatedStateSync.systemHealth.issues).to.have.length.greaterThan(0);
+      expect(automatedStateSync.systemHealth.components.testComponent).to.equal(
+        'error'
+      );
+      expect(automatedStateSync.systemHealth.issues).to.have.length.greaterThan(
+        0
+      );
 
-      const lastIssue = automatedStateSync.systemHealth.issues[automatedStateSync.systemHealth.issues.length - 1];
+      const lastIssue =
+        automatedStateSync.systemHealth.issues[
+          automatedStateSync.systemHealth.issues.length - 1
+        ];
       expect(lastIssue.type).to.equal('component_error');
       expect(lastIssue.component).to.equal('testComponent');
       expect(lastIssue.message).to.equal('Test component error');
@@ -270,34 +279,36 @@ describe('AutomatedStateSync', function() {
     });
   });
 
-  describe('Event Handling', function() {
-    beforeEach(async function() {
+  describe('Event Handling', function () {
+    beforeEach(async function () {
       await automatedStateSync.initialize();
       await automatedStateSync.start();
     });
 
-    it('should determine when to trigger validation correctly', function() {
+    it('should determine when to trigger validation correctly', function () {
       // High impact change should trigger validation
       const highImpactChange = {
         analysis: {
           impact: 'high',
           semanticChanges: {
-            statusChange: { isWorkflowChange: true }
-          }
-        }
+            statusChange: { isWorkflowChange: true },
+          },
+        },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(highImpactChange)).to.be.true;
+      expect(automatedStateSync.shouldTriggerValidation(highImpactChange)).to.be
+        .true;
 
       // Low impact change should not trigger validation
       const lowImpactChange = {
         analysis: {
           impact: 'low',
-          semanticChanges: {}
-        }
+          semanticChanges: {},
+        },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(lowImpactChange)).to.be.false;
+      expect(automatedStateSync.shouldTriggerValidation(lowImpactChange)).to.be
+        .false;
 
       // Medium impact with semantic changes should trigger validation
       const mediumImpactChange = {
@@ -305,15 +316,16 @@ describe('AutomatedStateSync', function() {
           impact: 'medium',
           changeType: 'yaml',
           semanticChanges: {
-            assignmentChange: { isHandoff: true }
-          }
-        }
+            assignmentChange: { isHandoff: true },
+          },
+        },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(mediumImpactChange)).to.be.true;
+      expect(automatedStateSync.shouldTriggerValidation(mediumImpactChange)).to
+        .be.true;
     });
 
-    it('should handle validation change analysis correctly', function() {
+    it('should handle validation change analysis correctly', function () {
       // JSON change with significant state changes
       const jsonChange = {
         analysis: {
@@ -321,10 +333,12 @@ describe('AutomatedStateSync', function() {
           changeType: 'json',
           stateChanges: {
             assignments: {
-              significantChanges: [{ field: 'assignment', type: 'modification' }]
-            }
-          }
-        }
+              significantChanges: [
+                { field: 'assignment', type: 'modification' },
+              ],
+            },
+          },
+        },
       };
 
       expect(automatedStateSync.shouldTriggerValidation(jsonChange)).to.be.true;
@@ -336,23 +350,25 @@ describe('AutomatedStateSync', function() {
           changeType: 'json',
           stateChanges: {
             metadata: {
-              significantChanges: []
-            }
-          }
-        }
+              significantChanges: [],
+            },
+          },
+        },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(insignificantJsonChange)).to.be.false;
+      expect(
+        automatedStateSync.shouldTriggerValidation(insignificantJsonChange)
+      ).to.be.false;
     });
   });
 
-  describe('Manual Operations', function() {
-    beforeEach(async function() {
+  describe('Manual Operations', function () {
+    beforeEach(async function () {
       await automatedStateSync.initialize();
       await automatedStateSync.start();
     });
 
-    it('should trigger manual sync successfully', async function() {
+    it('should trigger manual sync successfully', async function () {
       const result = await automatedStateSync.triggerManualSync('TEST-001');
 
       expect(result.success).to.be.true;
@@ -361,14 +377,14 @@ describe('AutomatedStateSync', function() {
       expect(result).to.have.property('timestamp');
     });
 
-    it('should trigger manual sync for all specs', async function() {
+    it('should trigger manual sync for all specs', async function () {
       const result = await automatedStateSync.triggerManualSync();
 
       expect(result.success).to.be.true;
       expect(result.specId).to.equal('all');
     });
 
-    it('should fail manual sync when system is not running', async function() {
+    it('should fail manual sync when system is not running', async function () {
       await automatedStateSync.stop();
 
       const result = await automatedStateSync.triggerManualSync('TEST-001');
@@ -378,12 +394,12 @@ describe('AutomatedStateSync', function() {
     });
   });
 
-  describe('System Statistics', function() {
-    beforeEach(async function() {
+  describe('System Statistics', function () {
+    beforeEach(async function () {
       await automatedStateSync.initialize();
     });
 
-    it('should provide comprehensive system statistics', function() {
+    it('should provide comprehensive system statistics', function () {
       const stats = automatedStateSync.getSystemStatistics();
 
       expect(stats).to.have.property('system');
@@ -396,20 +412,20 @@ describe('AutomatedStateSync', function() {
       expect(stats.system).to.have.property('failedOperations');
     });
 
-    it('should track system uptime correctly', function() {
+    it('should track system uptime correctly', function () {
       // System metrics should be initialized
       expect(automatedStateSync.systemMetrics.startTime).to.not.be.null;
       expect(automatedStateSync.systemMetrics.uptime).to.be.a('number');
     });
   });
 
-  describe('Shutdown', function() {
-    beforeEach(async function() {
+  describe('Shutdown', function () {
+    beforeEach(async function () {
       await automatedStateSync.initialize();
       await automatedStateSync.start();
     });
 
-    it('should shutdown gracefully', async function() {
+    it('should shutdown gracefully', async function () {
       this.timeout(15000); // Allow extra time for graceful shutdown
 
       const shutdownSpy = sinon.spy();
@@ -426,7 +442,7 @@ describe('AutomatedStateSync', function() {
       expect(eventData).to.have.property('finalStats');
     });
 
-    it('should stop health monitoring during shutdown', async function() {
+    it('should stop health monitoring during shutdown', async function () {
       // Start health monitoring
       automatedStateSync.startHealthMonitoring();
       expect(automatedStateSync.healthCheckInterval).to.not.be.null;
@@ -437,12 +453,12 @@ describe('AutomatedStateSync', function() {
     });
   });
 
-  describe('Error Handling', function() {
-    beforeEach(async function() {
+  describe('Error Handling', function () {
+    beforeEach(async function () {
       await automatedStateSync.initialize();
     });
 
-    it('should handle component initialization failures', async function() {
+    it('should handle component initialization failures', async function () {
       // Create a new instance that will fail
       const failingStateSync = new AutomatedStateSync(
         configManager,
@@ -458,10 +474,12 @@ describe('AutomatedStateSync', function() {
 
       expect(result).to.be.false;
       expect(failingStateSync.systemHealth.overall).to.equal('failed');
-      expect(failingStateSync.systemHealth.issues).to.have.length.greaterThan(0);
+      expect(failingStateSync.systemHealth.issues).to.have.length.greaterThan(
+        0
+      );
     });
 
-    it('should emit initialization_failed event on failure', async function() {
+    it('should emit initialization_failed event on failure', async function () {
       const failingSpy = sinon.spy();
       const failingStateSync = new AutomatedStateSync(null, null, null); // No dependencies
       failingStateSync.on('system_initialization_failed', failingSpy);
@@ -476,12 +494,14 @@ describe('AutomatedStateSync', function() {
       expect(eventData).to.have.property('timestamp');
     });
 
-    it('should handle shutdown errors gracefully', async function() {
+    it('should handle shutdown errors gracefully', async function () {
       const errorSpy = sinon.spy();
       automatedStateSync.on('system_shutdown_error', errorSpy);
 
       // Force an error during shutdown by corrupting a component
-      automatedStateSync.components.eventBus.shutdown = sinon.stub().rejects(new Error('Shutdown error'));
+      automatedStateSync.components.eventBus.shutdown = sinon
+        .stub()
+        .rejects(new Error('Shutdown error'));
 
       await automatedStateSync.shutdown();
 
@@ -491,29 +511,33 @@ describe('AutomatedStateSync', function() {
     });
   });
 
-  describe('Integration', function() {
-    beforeEach(async function() {
+  describe('Integration', function () {
+    beforeEach(async function () {
       await automatedStateSync.initialize();
       await automatedStateSync.start();
     });
 
-    it('should integrate all components properly', function() {
+    it('should integrate all components properly', function () {
       // Check that components are properly wired
       expect(automatedStateSync.components.eventBus).to.not.be.null;
       expect(automatedStateSync.components.fileWatchers).to.not.be.null;
       expect(automatedStateSync.components.syncEngine).to.not.be.null;
 
       // Check that EventBus has registered handlers
-      const eventBusStats = automatedStateSync.components.eventBus.getStatistics();
+      const eventBusStats =
+        automatedStateSync.components.eventBus.getStatistics();
       expect(eventBusStats.handlers.registered).to.be.greaterThan(0);
     });
 
-    it('should process file changes end-to-end', async function() {
+    it('should process file changes end-to-end', async function () {
       this.timeout(5000);
 
       // Create a spy to track event flow
       const changeAnalyzedSpy = sinon.spy();
-      automatedStateSync.components.eventBus.on('change_analyzed', changeAnalyzedSpy);
+      automatedStateSync.components.eventBus.on(
+        'change_analyzed',
+        changeAnalyzedSpy
+      );
 
       // Simulate a file change
       const mockChangePayload = {
@@ -523,14 +547,17 @@ describe('AutomatedStateSync', function() {
         fileName: 'FEAT-001-test-feature.md',
         fileExtension: '.md',
         timestamp: new Date().toISOString(),
-        eventId: 'test_event_001'
+        eventId: 'test_event_001',
       };
 
       // Emit the change event
-      automatedStateSync.components.fileWatchers.emit('file_change', mockChangePayload);
+      automatedStateSync.components.fileWatchers.emit(
+        'file_change',
+        mockChangePayload
+      );
 
       // Wait for processing
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Verify that change was processed
       expect(changeAnalyzedSpy.callCount).to.be.at.least(0); // May be 0 if change detection fails due to test environment

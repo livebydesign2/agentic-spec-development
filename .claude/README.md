@@ -5,7 +5,9 @@ This directory contains comprehensive documentation for Claude AI to effectively
 ## Documentation Files
 
 ### 📖 [ASD_USAGE_GUIDE.md](./ASD_USAGE_GUIDE.md)
+
 **Main comprehensive guide covering:**
+
 - System overview and current project state
 - Complete command reference with examples
 - Workflow guidance for task management
@@ -14,7 +16,9 @@ This directory contains comprehensive documentation for Claude AI to effectively
 - Project structure and priorities
 
 ### 🎯 [COMMAND_REFERENCE.md](./COMMAND_REFERENCE.md)
+
 **Quick reference for all ASD commands:**
+
 - Essential commands for daily use
 - Complete command list with options
 - Common patterns and filters
@@ -22,7 +26,9 @@ This directory contains comprehensive documentation for Claude AI to effectively
 - Example workflows for common tasks
 
 ### 🔄 [WORKFLOW_SCENARIOS.md](./WORKFLOW_SCENARIOS.md)
+
 **Detailed workflow scenarios covering:**
+
 - Starting fresh development sessions
 - Continuing previous work
 - Handling handoffs between agents
@@ -35,6 +41,7 @@ This directory contains comprehensive documentation for Claude AI to effectively
 ## Quick Start for Claude
 
 ### 1. First Steps - Always Do This
+
 ```bash
 # Get project overview
 node bin/asd workflow dashboard
@@ -44,6 +51,7 @@ node bin/asd next --agent software-architect
 ```
 
 ### 2. Standard Work Pattern
+
 ```bash
 # Validate assignment
 node bin/asd validate-assignment FEAT-XXX TASK-XXX --agent your-agent-type
@@ -58,6 +66,7 @@ node bin/asd workflow complete-task FEAT-XXX TASK-XXX
 ```
 
 ### 3. Common Status Commands
+
 ```bash
 node bin/asd workflow status        # Current assignments
 node bin/asd workflow progress      # Project progress
@@ -68,6 +77,7 @@ node bin/asd tasks --status ready   # Available tasks
 ## Current Project Context
 
 ### Project Status
+
 - **DOG FOOD MILESTONE**: ✅ ACHIEVED - ASD manages its own development
 - **Phase**: PHASE-1A Complete, PHASE-1B Active
 - **Active Specs**: 1 (with transitions happening)
@@ -76,11 +86,13 @@ node bin/asd tasks --status ready   # Available tasks
 - **Overall Progress**: 24% complete
 
 ### Immediate Priorities
+
 1. **FEAT-012 TASK-001**: Core Context Storage & File Structure (P0 Critical)
 2. **FEAT-018 TASK-001**: Core CLI Command Framework (P1 High)
 3. **FEAT-019 TASK-001**: Core Validation Framework (P1 High)
 
 ### Agent Types Available
+
 - `software-architect`: System design and technical architecture
 - `cli-specialist`: Command-line interface development
 - `backend-developer`: Server-side logic and APIs
@@ -92,24 +104,28 @@ node bin/asd tasks --status ready   # Available tasks
 ## Key System Features
 
 ### 1. Automated Workflow Management
+
 - Task assignment and validation
 - Automatic handoffs between agents
 - Progress tracking and metrics
 - Dependency management
 
 ### 2. Agent Specialization
+
 - Role-based task routing
 - Skill-specific assignments
 - Context injection for agents
 - Validation of agent capabilities
 
 ### 3. Systematic Task Management
+
 - Priority-based task ordering
 - Status tracking and updates
 - Blocker identification and resolution
 - Research and documentation capture
 
 ### 4. Self-Managing Development
+
 - ASD manages its own development
 - Specifications drive the process
 - Automated progress reporting
@@ -127,6 +143,7 @@ node bin/asd tasks --status ready   # Available tasks
 ## Integration with Claude Code
 
 This documentation is designed for use with Claude Code. You can:
+
 - Run ASD commands through the Bash tool
 - Edit specifications in `docs/specs/` using file editing tools
 - Follow systematic development workflows
@@ -151,16 +168,19 @@ This documentation is designed for use with Claude Code. You can:
 ## Support and Troubleshooting
 
 ### Health Check
+
 ```bash
 node bin/asd doctor
 ```
 
 ### Workflow Validation
+
 ```bash
 node bin/asd workflow validate
 ```
 
 ### Get Help
+
 ```bash
 node bin/asd --help
 node bin/asd <command> --help

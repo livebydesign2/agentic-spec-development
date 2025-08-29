@@ -10,11 +10,12 @@
 The current ASD task lifecycle relies heavily on manual agent updates using CLI commands (`asd assign`, `asd complete`, etc.), which results in:
 
 - **High failure rate** due to human error and cognitive load
-- **State inconsistency** across YAML frontmatter, JSON state files, and git history  
+- **State inconsistency** across YAML frontmatter, JSON state files, and git history
 - **Process inefficiency** with 40+ manual CLI commands required for task management
 - **Poor user experience** requiring agents to remember complex status update sequences
 
 The ideal workflow should be:
+
 1. User requests project status and next task
 2. Agent uses single command to start task with auto-assignment and validation
 3. Agent works with automatic context injection
@@ -33,7 +34,7 @@ The ideal workflow should be:
 ## Considered Options
 
 1. **Event-Driven Automation System** (Selected)
-2. Validation-Triggered Automation  
+2. Validation-Triggered Automation
 3. Hybrid Git + CLI Integration
 4. Time-Based + Pattern Recognition
 
@@ -53,7 +54,7 @@ graph TB
 
     subgraph "Command Processing Layer"
         START[asd start-next]
-        COMPLETE[asd complete-current] 
+        COMPLETE[asd complete-current]
         STATUS[asd workflow status]
     end
 
@@ -127,9 +128,11 @@ graph TB
 ### Functional Requirements
 
 **FR1: Enhanced Task Start Command**
+
 ```bash
 asd start-next --agent cli-specialist
 ```
+
 - Automatically find next recommended task using TaskRouter
 - Validate agent capability and assignment constraints
 - Update task status: `ready` → `in_progress` in both YAML and JSON
@@ -138,9 +141,11 @@ asd start-next --agent cli-specialist
 - Report validation status or actionable errors
 
 **FR2: Automated Completion Workflow**
+
 ```bash
 asd complete-current  # or asd complete FEAT-018 TASK-002
 ```
+
 - Update task status: `in_progress` → `complete` across all systems
 - Generate completion documentation and update context files
 - Execute `npm run lint` with automatic error resolution attempts
@@ -151,12 +156,14 @@ asd complete-current  # or asd complete FEAT-018 TASK-002
 - Trigger handoff automation for dependent tasks
 
 **FR3: Real-time State Synchronization**
+
 - File system watchers monitoring YAML frontmatter changes
 - Automatic JSON state file updates on YAML modifications
 - State consistency validation across all storage systems
 - Conflict resolution with manual override capabilities
 
 **FR4: Context Injection System**
+
 - Automatic gathering of task-specific context on start
 - Sub-agent prompt generation with relevant examples and constraints
 - Work environment setup (file paths, dependencies, requirements)
@@ -165,18 +172,21 @@ asd complete-current  # or asd complete FEAT-018 TASK-002
 ### Non-Functional Requirements
 
 **NFR1: Performance**
+
 - Command response time: <5 seconds for start/complete operations
 - Status synchronization: <2 seconds between YAML and JSON updates
 - Context injection: <3 seconds for sub-agent prompt generation
 - System throughput: Handle 100+ concurrent task operations
 
 **NFR2: Reliability**
+
 - 95% automation accuracy with <2% false positive rate
 - Comprehensive audit logging for all automated actions
 - Atomic operations with full rollback capabilities
 - State consistency checking with automatic repair
 
 **NFR3: Safety & Control**
+
 - Manual override system always available
 - Confidence scoring with human review for low-confidence actions
 - Comprehensive rollback to any previous state
@@ -191,7 +201,7 @@ asd/
 ├── lib/
 │   ├── automation/
 │   │   ├── event-bus.js              # NEW - Central event routing
-│   │   ├── automated-state-machine.js # NEW - Status transition automation  
+│   │   ├── automated-state-machine.js # NEW - Status transition automation
 │   │   ├── context-injector.js       # ENHANCED - Sub-agent context
 │   │   ├── git-integration.js        # NEW - Git workflow automation
 │   │   └── audit-system.js           # NEW - Comprehensive audit logging
@@ -215,6 +225,7 @@ asd/
 ### Data Flow Architecture
 
 **1. Task Start Flow**
+
 ```javascript
 // Command: asd start-next --agent cli-specialist
 1. TaskRouter.getNextTask(agentType) → recommended task
@@ -226,12 +237,13 @@ asd/
 ```
 
 **2. Work Completion Flow**
-```javascript  
+
+```javascript
 // Command: asd complete-current
 1. WorkflowStateManager.getCurrentAssignment() → active task
 2. GitIntegration.trackModifiedFiles() → file list for commit
 3. LintingSystem.runLint() → fix issues or report failures
-4. TestSystem.runTests() → validate passing or report failures  
+4. TestSystem.runTests() → validate passing or report failures
 5. GitIntegration.commitWork(files, message) → git commit with proper format
 6. PreCommitHooks.handle() → retry on failures, escalate on persistent issues
 7. AutomatedStateMachine.transitionStatus(in_progress → complete) → status update
@@ -240,11 +252,12 @@ asd/
 ```
 
 **3. State Synchronization Flow**
+
 ```javascript
 // File System Watcher Events
 1. FileWatcher.detect(yaml_change) → YAML frontmatter modified
 2. YamlParser.extractStatus(file) → parse new status
-3. StateValidator.checkConsistency() → validate across systems  
+3. StateValidator.checkConsistency() → validate across systems
 4. WorkflowStateManager.syncToJson() → update JSON state files
 5. EventBus.emit(status_changed) → notify dependent systems
 6. HandoffAutomationEngine.checkUnblocks() → process dependent tasks
@@ -253,41 +266,48 @@ asd/
 ### Technology Integration Points
 
 **CLI Command Enhancement**
+
 - Extend existing Commander.js command structure
 - Add automation flags and options to all workflow commands
 - Integrate with existing validation and error handling systems
 
-**File System Monitoring**  
+**File System Monitoring**
+
 - Use `chokidar` for real-time file watching
 - Monitor `docs/specs/**/*.md` for YAML frontmatter changes
 - Monitor `.asd/state/*.json` for direct JSON modifications
 - Monitor work files during active sessions for smart commit detection
 
 **Git Integration**
+
 - Shell command integration for commit operations
 - Commit message templating: `"Complete {SPEC-ID} {TASK-ID}: {TASK-TITLE}"`
 - Pre-commit hook integration with retry logic
 - File tracking during work sessions for selective commits
 
 **Sub-agent Integration**
+
 - Context preparation using existing ContextInjector
-- Prompt generation with task-specific examples and constraints  
+- Prompt generation with task-specific examples and constraints
 - Integration with Claude sub-agent APIs
 - Work environment setup and file path management
 
 ### Error Handling & Recovery
 
 **Validation Failures**
+
 - Assignment validation errors → clear actionable error messages
 - Dependency blocking → suggest resolution paths
 - Agent capability mismatches → recommend alternative agents
 
-**Automation Failures**  
+**Automation Failures**
+
 - File system conflicts → manual resolution with guided workflow
 - Git operation failures → retry with escalation to manual intervention
 - State inconsistencies → automatic repair with confirmation prompts
 
 **Pre-commit Hook Failures**
+
 - Linting errors → automatic fix attempts with manual fallback
 - Test failures → clear reporting with suggested fixes
 - Build failures → environment validation with setup guidance
@@ -313,24 +333,28 @@ asd/
 ## Implementation Plan
 
 ### Phase 1: Enhanced Assignment Automation (Weeks 1-2)
+
 - Enhance `asd assign` command with automatic status updates
 - Build real-time YAML/JSON synchronization system
 - Add comprehensive validation and error reporting
 - Create audit logging foundation
 
-### Phase 2: Completion Workflow Automation (Weeks 3-4)  
+### Phase 2: Completion Workflow Automation (Weeks 3-4)
+
 - Build `asd complete-current` command with git integration
 - Add automatic linting, testing, and commit workflow
 - Implement pre-commit hook error handling and retry logic
 - Integrate with HandoffAutomationEngine for dependent task triggering
 
 ### Phase 3: Context Injection & Sub-agent Integration (Weeks 5-6)
+
 - Build `asd start-next` as enhanced assignment command
 - Add automatic context injection for sub-agents
 - Implement work environment setup and file path management
 - Add sub-agent prompting with task-specific guidance
 
 ### Phase 4: Advanced Features & Optimization (Weeks 7-8)
+
 - Add confidence scoring for automation decisions
 - Implement manual review queues for low-confidence actions
 - Add performance monitoring and optimization
@@ -339,18 +363,21 @@ asd/
 ## Validation & Success Metrics
 
 ### Technical Validation
+
 - **Automation Accuracy**: >95% correct automated actions
 - **Performance**: <5 second response times for all commands
 - **Reliability**: <2% false positive rate with full rollback capability
 - **State Consistency**: >99.9% consistency across all storage systems
 
-### Process Validation  
+### Process Validation
+
 - **Manual Overhead Reduction**: 80% decrease in manual status updates
 - **Workflow Consistency**: 90% improvement in process adherence
 - **Team Satisfaction**: Positive feedback on reduced cognitive load
 - **Error Reduction**: 85% decrease in status management errors
 
 ### Business Validation
+
 - **Development Velocity**: Measurable increase in task throughput
 - **Quality Maintenance**: No decrease in deliverable quality
 - **Team Adoption**: >80% team adoption rate within 30 days

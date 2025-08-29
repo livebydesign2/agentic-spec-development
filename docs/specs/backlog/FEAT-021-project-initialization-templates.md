@@ -1,3 +1,20 @@
+---
+id: FEAT-021
+title: Project Initialization & Templates
+type: FEAT
+status: backlog
+priority: P2
+phase: PHASE-2A
+estimated_hours: 5
+tags: [templates, initialization, developer-experience]
+created: 2025-08-29
+updated: 2025-08-29
+assignee: null
+dependencies: []
+blocking: []
+related: []
+---
+
 # Project Initialization & Templates
 
 **Status**: Backlog  

@@ -122,16 +122,19 @@ acceptance_criteria:
 
 During MAINT-001 work, several critical issues were discovered with ASD's workflow state management:
 
-1. **Task Status Inconsistency**: 
+1. **Task Status Inconsistency**:
+
    - MAINT-001 TASK-001 shows as "complete" in assignment validation
    - But spec file clearly shows task as "pending"
    - `asd next` commands fail to find available tasks that should be ready
 
 2. **Memory Monitor Runtime Error**:
+
    ```
    ReferenceError: decreases is not defined
    at MemoryMonitor.detectSteadyGrowth (/Users/tylerbarnard/Developer/Apps/asd/lib/memory-monitor.js:253:9)
    ```
+
    - This error appears on every ASD command execution
    - Indicates undefined variable in memory monitoring code
 
@@ -270,12 +273,14 @@ Systematically audit the workflow state management system, fix synchronization i
 ### Error Examples
 
 **Assignment Validation Error**:
+
 ```
 ❌ Assignment validation failed:
   • Task TASK-001 is not available (status: complete)
 ```
 
 **Memory Monitor Error**:
+
 ```
 ReferenceError: decreases is not defined
     at MemoryMonitor.detectSteadyGrowth (/Users/tylerbarnard/Developer/Apps/asd/lib/memory-monitor.js:253:9)

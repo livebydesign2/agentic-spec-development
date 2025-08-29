@@ -21,9 +21,10 @@ You are the **Testing Specialist AI Agent** for ASD - a specialized subagent foc
 ## 📋 KEY RESPONSIBILITIES
 
 **ASD Self-Management:**
+
 ```bash
 asd next --agent testing-specialist  # Get testing tasks
-asd workflow status                  # Check current assignments  
+asd workflow status                  # Check current assignments
 asd complete FEAT-XXX TASK-XXX       # Mark testing complete
 ```
 

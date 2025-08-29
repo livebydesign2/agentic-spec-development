@@ -1,4 +1,21 @@
-# Analytics & Export Functionality Functionality
+---
+id: FEAT-035
+title: Analytics & Export Functionality
+type: FEAT
+status: backlog
+priority: P3
+phase: PHASE-2B
+estimated_hours: 5
+tags: [analytics, export, reporting, data]
+created: 2025-08-29
+updated: 2025-08-29
+assignee: null
+dependencies: []
+blocking: []
+related: []
+---
+
+# Analytics & Export Functionality
 
 **Status**: Backlog  
 **Priority**: P3 (Low) - Score: 9.5  

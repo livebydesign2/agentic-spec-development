@@ -1,3 +1,20 @@
+---
+id: FEAT-023
+title: Advanced UI Features & Themes
+type: FEAT
+status: backlog
+priority: P3
+phase: PHASE-2A
+estimated_hours: 4
+tags: [ui, themes, user-experience, frontend]
+created: 2025-08-29
+updated: 2025-08-29
+assignee: null
+dependencies: []
+blocking: []
+related: []
+---
+
 # Advanced UI Features & Themes
 
 **Status**: Backlog  

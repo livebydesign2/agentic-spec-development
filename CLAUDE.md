@@ -11,6 +11,7 @@
 ## 🚀 ESSENTIAL ASD COMMANDS FOR AGENTS
 
 ### **Project Status & Navigation**
+
 ```bash
 # Get project overview
 asd workflow dashboard           # Full project status
@@ -23,10 +24,11 @@ asd workflow handoffs          # Ready handoffs
 ```
 
 ### **Task Management Workflow**
+
 ```bash
 # 1. Get next recommended task
 asd next --agent software-architect
-asd next --agent cli-specialist  
+asd next --agent cli-specialist
 asd next --agent testing-specialist
 
 # 2. Assign task to yourself
@@ -40,6 +42,7 @@ asd validate-assignment FEAT-018 TASK-001 --agent cli-specialist
 ```
 
 ### **Research & Documentation**
+
 ```bash
 # Capture research findings
 asd research FEAT-019
@@ -51,17 +54,20 @@ asd report
 ## 📋 CURRENT PROJECT STATE (PHASE-1B)
 
 ### **Ready Tasks (3 tasks, 46 hours)**
+
 1. **FEAT-018**: Advanced CLI Commands (P1) - cli-specialist - 20 hours
-2. **FEAT-019**: Validation Manager System (P1) - software-architect - 12 hours  
+2. **FEAT-019**: Validation Manager System (P1) - software-architect - 12 hours
 3. **FEAT-020**: Multi-format Data Support (P1) - software-architect - 8 hours
 4. **FEAT-021**: Project Templates (P1) - cli-specialist - 6 hours
 
 ### **Completed (PHASE-1A)**
+
 - ✅ FEAT-012: Context Injection System
 - ✅ FEAT-013: Task Router System
 - ✅ FEAT-014: Workflow State Manager
 
 ### **File Structure**
+
 - **Active specs**: `docs/specs/active/`
 - **Backlog**: `docs/specs/backlog/`
 - **Completed**: `docs/specs/done/`
@@ -70,6 +76,7 @@ asd report
 ## 🔄 AGENT WORKFLOW PATTERNS
 
 ### **Starting Development Session**
+
 1. Check status: `asd workflow dashboard`
 2. Get next task: `asd next --agent [your-type]`
 3. Assign task: `asd assign [SPEC-ID] [TASK-ID]`
@@ -78,6 +85,7 @@ asd report
 6. Check handoffs: `asd workflow handoffs`
 
 ### **Cross-Agent Coordination**
+
 - Use `asd workflow assignments` to see who's working on what
 - Check `asd workflow handoffs` for ready transitions
 - Use `asd research [SPEC-ID]` to document findings for other agents
@@ -86,7 +94,7 @@ asd report
 
 - **software-architect**: System design, architecture decisions
 - **cli-specialist**: TUI development, CLI commands, UX
-- **testing-specialist**: Test suites, quality assurance  
+- **testing-specialist**: Test suites, quality assurance
 - **documentation-specialist**: Documentation, README files
 - **code-quality-specialist**: ESLint, code standards
 - **git-specialist**: Git workflow, commits, branches
@@ -94,12 +102,14 @@ asd report
 ## 🚨 IMPORTANT WORKFLOW RULES
 
 ### **Self-Managing Development**
+
 - ASD manages its own development - use ASD commands to coordinate work
 - Always check `asd workflow status` before starting
 - Mark tasks complete to trigger handoffs
 - Use the task assignment system for coordination
 
 ### **Quality Standards**
+
 - Run `npm run lint` and `npm run validate` before completing tasks
 - Use `asd validate-assignment` to ensure proper task routing
 - Document research with `asd research` for context sharing
@@ -107,19 +117,22 @@ asd report
 ## 💡 DOG FOOD MILESTONE SUCCESS
 
 **Why This Matters**: ASD successfully uses itself to manage development, proving:
+
 - AI-first workflow automation works
-- Context injection enables smart task routing  
+- Context injection enables smart task routing
 - Agent specialization improves development efficiency
 - Self-managing systems reduce coordination overhead
 
 ## 🔧 QUICK TROUBLESHOOTING
 
 **Commands not working?**
+
 - Ensure you're in the ASD project directory
 - Run `npm link` to make `asd` globally available
 - Check `asd doctor` for setup issues
 
 **No tasks found?**
+
 - Check `asd workflow status` for current assignments
 - Try different agent types with `asd next --agent [type]`
 - Check if tasks are blocked or need different agents

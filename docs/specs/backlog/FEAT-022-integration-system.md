@@ -1,4 +1,21 @@
-# Integration System (GitHub, Jira, Linear) (GitHub, Jira, Linear)
+---
+id: FEAT-022
+title: Integration System (GitHub, Jira, Linear)
+type: FEAT
+status: backlog
+priority: P2
+phase: PHASE-2A
+estimated_hours: 9
+tags: [integration, github, jira, linear, external-apis]
+created: 2025-08-29
+updated: 2025-08-29
+assignee: null
+dependencies: []
+blocking: []
+related: []
+---
+
+# Integration System (GitHub, Jira, Linear)
 
 **Status**: Backlog  
 **Priority**: P2 (Medium) - Score: 14.0  

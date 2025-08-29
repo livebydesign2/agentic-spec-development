@@ -3,7 +3,7 @@
 **Document Collection**: ADRs for ValidationManager System  
 **Status**: Proposed  
 **Date**: 2024-08-27  
-**Architect**: Software Architect AI Agent  
+**Architect**: Software Architect AI Agent
 
 ---
 
@@ -11,7 +11,7 @@
 
 **Status**: Proposed  
 **Date**: 2024-08-27  
-**Deciders**: Software Architect Agent  
+**Deciders**: Software Architect Agent
 
 ### Context and Problem Statement
 
@@ -36,7 +36,8 @@ The ASD project requires a comprehensive validation system to ensure specificati
 
 Chosen option: **Rule-Based System with Central Orchestrator**
 
-**Reasoning**: 
+**Reasoning**:
+
 - Follows existing ASD patterns (ContextValidator, TaskRouter constraint engine)
 - Provides extensibility through pluggable rules
 - Enables performance optimization through rule categorization and caching
@@ -72,7 +73,7 @@ Chosen option: **Rule-Based System with Central Orchestrator**
 
 **Status**: Proposed  
 **Date**: 2024-08-27  
-**Deciders**: Software Architect Agent  
+**Deciders**: Software Architect Agent
 
 ### Context and Problem Statement
 
@@ -98,6 +99,7 @@ The validation system needs to support various types of validation (spec format,
 Chosen option: **Class Inheritance with Interface Consistency**
 
 **Reasoning**:
+
 - Provides strong typing and interface consistency
 - Allows shared functionality through base class
 - Enables polymorphic rule handling
@@ -109,18 +111,24 @@ Chosen option: **Class Inheritance with Interface Consistency**
 ```javascript
 // Base rule class with common functionality
 class ValidationRule {
-  constructor(name, category, severity) { /* ... */ }
-  async validate(data, context) { /* Abstract method */ }
-  canAutoFix(error) { return false; }
+  constructor(name, category, severity) {
+    /* ... */
+  }
+  async validate(data, context) {
+    /* Abstract method */
+  }
+  canAutoFix(error) {
+    return false;
+  }
   // Helper methods for results, context access
 }
 
 // Specific rule implementation
 class RequiredFieldsRule extends ValidationRule {
   constructor() {
-    super('required-fields', 'spec', 'error');
+    super("required-fields", "spec", "error");
   }
-  
+
   async validate(spec, context) {
     // Rule-specific validation logic
     return this.success() || this.error(message, code, data);
@@ -148,7 +156,7 @@ class RequiredFieldsRule extends ValidationRule {
 
 **Status**: Proposed  
 **Date**: 2024-08-27  
-**Deciders**: Software Architect Agent  
+**Deciders**: Software Architect Agent
 
 ### Context and Problem Statement
 
@@ -174,6 +182,7 @@ Users need automated fixing of common validation issues to reduce manual effort,
 Chosen option: **Tiered Auto-Fixing with Risk Assessment and User Confirmation**
 
 **Reasoning**:
+
 - Balances automation benefits with safety requirements
 - Allows users to control risk level they're comfortable with
 - Provides clear risk assessment for informed decisions
@@ -185,18 +194,18 @@ Chosen option: **Tiered Auto-Fixing with Risk Assessment and User Confirmation**
 ```javascript
 // Risk levels and confirmation requirements
 const RISK_LEVELS = {
-  low: { 
+  low: {
     requiresConfirmation: false,
-    operations: ['format-whitespace', 'add-missing-field', 'normalize-dates']
+    operations: ["format-whitespace", "add-missing-field", "normalize-dates"],
   },
-  medium: { 
+  medium: {
     requiresConfirmation: true,
-    operations: ['fix-yaml-syntax', 'update-default-values']
+    operations: ["fix-yaml-syntax", "update-default-values"],
   },
-  high: { 
+  high: {
     requiresConfirmation: true,
-    operations: ['modify-id', 'restructure-content', 'change-dependencies']
-  }
+    operations: ["modify-id", "restructure-content", "change-dependencies"],
+  },
 };
 ```
 
@@ -223,7 +232,7 @@ const RISK_LEVELS = {
 
 **Status**: Proposed  
 **Date**: 2024-08-27  
-**Deciders**: Software Architect Agent  
+**Deciders**: Software Architect Agent
 
 ### Context and Problem Statement
 
@@ -249,6 +258,7 @@ The ASD workflow system (WorkflowStateManager, TaskRouter) needs validation chec
 Chosen option: **Pre-Operation Validation with Hook System**
 
 **Reasoning**:
+
 - Prevents invalid operations before they execute
 - Maintains separation of concerns through hooks
 - Allows existing code to remain largely unchanged
@@ -262,27 +272,29 @@ Chosen option: **Pre-Operation Validation with Hook System**
 class WorkflowStateManager {
   async assignTask(specId, taskId, agentType, options = {}) {
     // Execute pre-hooks (including quality gates)
-    const hookData = await this.hookManager.executePreHooks(
-      'assignTask',
-      { specId, taskId, agentType, options }
-    );
-    
+    const hookData = await this.hookManager.executePreHooks("assignTask", {
+      specId,
+      taskId,
+      agentType,
+      options,
+    });
+
     // Proceed with original operation if hooks pass
     return this.originalAssignTask(hookData);
   }
 }
 
 // Quality gate as pre-hook
-this.hookManager.registerPreHook('assignTask', async (data) => {
+this.hookManager.registerPreHook("assignTask", async (data) => {
   const gateResult = await qualityGateManager.enforceAssignmentGate(
-    data.taskId, 
+    data.taskId,
     data.agentType
   );
-  
+
   if (!gateResult.allowed) {
     throw new Error(`Assignment blocked: ${gateResult.reason}`);
   }
-  
+
   return data; // Allow operation to proceed
 });
 ```
@@ -290,12 +302,14 @@ this.hookManager.registerPreHook('assignTask', async (data) => {
 ### Quality Gate Types
 
 1. **Assignment Gates**: Task assignment validation
+
    - Agent capability checking
-   - Task readiness validation  
+   - Task readiness validation
    - Workload capacity validation
    - Dependency satisfaction
 
 2. **Transition Gates**: Status transition validation
+
    - Valid transition paths
    - Completion requirement checking
    - Phase progression rules
@@ -318,7 +332,7 @@ this.hookManager.registerPreHook('assignTask', async (data) => {
 
 **Status**: Proposed  
 **Date**: 2024-08-27  
-**Deciders**: Software Architect Agent  
+**Deciders**: Software Architect Agent
 
 ### Context and Problem Statement
 
@@ -344,6 +358,7 @@ The validation system needs consistent error reporting across all validation rul
 Chosen option: **Structured Result Pattern with Rich Error Objects**
 
 **Reasoning**:
+
 - Provides consistent interface across all validation components
 - Supports rich error metadata for better user experience
 - Enables programmatic error handling and filtering
@@ -358,20 +373,22 @@ const ValidationResult = {
   success: boolean,
   errors: [
     {
-      code: 'ERROR_CODE',
-      message: 'Human-readable error message',
-      data: { /* Additional error context */ },
-      rule: 'rule-name',
-      file: '/path/to/file',
+      code: "ERROR_CODE",
+      message: "Human-readable error message",
+      data: {
+        /* Additional error context */
+      },
+      rule: "rule-name",
+      file: "/path/to/file",
       line: number, // Optional
       column: number, // Optional
-      severity: 'error' | 'warning' | 'info'
-    }
+      severity: "error" | "warning" | "info",
+    },
   ],
   warnings: [], // Same format as errors
   info: [], // Same format as errors
   data: {}, // Additional result data
-  fixes: [] // Available auto-fixes
+  fixes: [], // Available auto-fixes
 };
 
 // Aggregated results from multiple rules
@@ -383,31 +400,31 @@ const AggregatedResult = {
     failed: number,
     errors: number,
     warnings: number,
-    info: number
+    info: number,
   },
   byCategory: {
     spec: ValidationResult,
     task: ValidationResult,
-    consistency: ValidationResult
+    consistency: ValidationResult,
   },
   bySeverity: {
     error: [ErrorObject],
     warning: [WarningObject],
-    info: [InfoObject]
+    info: [InfoObject],
   },
   results: [ValidationResult], // Individual rule results
   fixes: [FixObject], // All available fixes
   performance: {
     executionTime: number,
-    averageTime: number
-  }
+    averageTime: number,
+  },
 };
 ```
 
 ### Error Code Standardization
 
 - **Naming Convention**: CATEGORY_SPECIFIC_ERROR (e.g., MISSING_REQUIRED_FIELDS)
-- **Categories**: VALIDATION_, FIX_, GATE_, SYSTEM_
+- **Categories**: VALIDATION*, FIX*, GATE*, SYSTEM*
 - **Severity Mapping**: Automatic severity based on error code prefix
 - **Localization**: Support for multiple languages through code mapping
 
@@ -415,16 +432,16 @@ const AggregatedResult = {
 
 ```javascript
 const FixSuggestion = {
-  code: 'FIX_CODE',
-  description: 'What this fix does',
-  riskLevel: 'low' | 'medium' | 'high',
+  code: "FIX_CODE",
+  description: "What this fix does",
+  riskLevel: "low" | "medium" | "high",
   autoFixable: boolean,
   estimatedTime: number, // milliseconds
-  preview: 'What the change would look like',
+  preview: "What the change would look like",
   confirmation: {
     required: boolean,
-    message: 'Confirmation prompt for user'
-  }
+    message: "Confirmation prompt for user",
+  },
 };
 ```
 
@@ -434,7 +451,7 @@ const FixSuggestion = {
 
 **Status**: Proposed  
 **Date**: 2024-08-27  
-**Deciders**: Software Architect Agent  
+**Deciders**: Software Architect Agent
 
 ### Context and Problem Statement
 
@@ -459,6 +476,7 @@ The validation system must meet strict performance requirements (<2s for 100+ sp
 ### Decision Outcome
 
 Chosen option: **Multi-Level Optimization Strategy**
+
 - **Parallel Rule Execution** for independent validations
 - **Multi-Level Caching** for results, context, and parsed data
 - **Lazy Loading** for rule discovery and spec loading
@@ -471,24 +489,24 @@ Chosen option: **Multi-Level Optimization Strategy**
 const CachingLevels = {
   // Level 1: Rule results cache
   ruleResults: {
-    key: 'file_path_rule_name_content_hash',
+    key: "file_path_rule_name_content_hash",
     ttl: 300000, // 5 minutes
-    storage: 'memory'
+    storage: "memory",
   },
-  
+
   // Level 2: Context cache
   validationContext: {
-    key: 'project_state_hash',
+    key: "project_state_hash",
     ttl: 60000, // 1 minute
-    storage: 'memory'
+    storage: "memory",
   },
-  
+
   // Level 3: Parsed spec cache
   specMetadata: {
-    key: 'file_path_modification_time',
+    key: "file_path_modification_time",
     ttl: 600000, // 10 minutes
-    storage: 'disk' // For large projects
-  }
+    storage: "disk", // For large projects
+  },
 };
 ```
 
@@ -510,13 +528,13 @@ const PerformanceMetrics = {
   memoryUsage: {
     current: Number,
     peak: Number,
-    cacheSize: Number
+    cacheSize: Number,
   },
   operationCounts: {
     validations: Number,
     cacheHits: Number,
-    cacheMisses: Number
-  }
+    cacheMisses: Number,
+  },
 };
 ```
 

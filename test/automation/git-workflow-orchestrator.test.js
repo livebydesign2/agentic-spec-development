@@ -12,7 +12,7 @@ describe('GitWorkflowOrchestrator', () => {
     orchestrator = new GitWorkflowOrchestrator(configManager, {
       enableFileTracking: false, // Disable for testing
       enableLinting: false,
-      enableTesting: false
+      enableTesting: false,
     });
   });
 
@@ -43,7 +43,7 @@ describe('GitWorkflowOrchestrator', () => {
         dryRun: true,
         skipLinting: true,
         skipTesting: true,
-        skipCommit: true
+        skipCommit: true,
       });
       expect(result).to.be.an('object');
       expect(result).to.have.property('success');

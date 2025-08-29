@@ -1,3 +1,20 @@
+---
+id: FEAT-010
+title: ASD CLI Repository Abstraction
+type: FEAT
+status: done
+priority: P1
+phase: PHASE-1A
+estimated_hours: 10
+tags: [cli, repository, open-source, abstraction]
+created: 2025-08-29
+updated: 2025-08-29
+assignee: null
+dependencies: []
+blocking: []
+related: []
+---
+
 # ASD CLI Repository Abstraction
 
 **Status**: COMPLETED  

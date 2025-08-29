@@ -1,5 +1,5 @@
-const _fs = require('_fs').promises;
-const _path = require('_path');
+const _fs = require('_fs').promises; // eslint-disable-line no-unused-vars
+const _path = require('_path'); // eslint-disable-line no-unused-vars
 
 // Mock fs operations for testing
 jest.mock('fs', () => ({
@@ -11,8 +11,8 @@ jest.mock('fs', () => ({
     appendFile: jest.fn(),
     readdir: jest.fn(),
     unlink: jest.fn(),
-    rm: jest.fn()
-  }
+    rm: jest.fn(),
+  },
 }));
 
 describe('FEAT-028: Context Injection & Sub-agent Integration', () => {
@@ -26,7 +26,7 @@ describe('FEAT-028: Context Injection & Sub-agent Integration', () => {
     // Setup mock config manager
     configManager = {
       getProjectRoot: () => '/test/project',
-      getConfig: () => ({})
+      getConfig: () => ({}),
     };
   });
 
@@ -80,7 +80,7 @@ priority: P1
       const context = await gatherer.gatherTaskContext({
         specId: 'FEAT-028',
         taskId: 'TASK-001',
-        agentType: 'software-architect'
+        agentType: 'software-architect',
       });
 
       expect(context).toHaveProperty('metadata');
@@ -114,10 +114,12 @@ priority: P1
     test('should validate required parameters for automated injection', async () => {
       const injector = new ContextInjector(configManager);
 
-      await expect(injector.injectContextForTask({
-        agentType: 'software-architect'
-        // Missing specId and taskId
-      })).rejects.toThrow('agentType, specId, and taskId are required');
+      await expect(
+        injector.injectContextForTask({
+          agentType: 'software-architect',
+          // Missing specId and taskId
+        })
+      ).rejects.toThrow('agentType, specId, and taskId are required');
     });
   });
 
@@ -149,19 +151,19 @@ priority: P1
           task: {
             title: 'Test Task',
             content: 'Test content',
-            checklist: [{ item: 'Test item' }]
+            checklist: [{ item: 'Test item' }],
           },
           specification: {
             frontmatter: { title: 'Test Spec', priority: 'P1' },
-            content: 'Test spec content'
-          }
+            content: 'Test spec content',
+          },
         },
-        validation: { relevanceScore: 0.8, isSufficient: true }
+        validation: { relevanceScore: 0.8, isSufficient: true },
       };
 
       const result = await generator.generateTaskPrompt({
         agentType: 'software-architect',
-        taskContext: mockTaskContext
+        taskContext: mockTaskContext,
       });
 
       expect(result).toHaveProperty('prompt');
@@ -197,15 +199,15 @@ priority: P1
       const mockTaskContext = {
         metadata: { taskId: 'TASK-001', specId: 'FEAT-028' },
         taskSpecific: {
-          task: { files: ['lib/test.js'] }
-        }
+          task: { files: ['lib/test.js'] },
+        },
       };
 
       const config = await manager.setupWorkspace({
         specId: 'FEAT-028',
         taskId: 'TASK-001',
         agentType: 'software-architect',
-        taskContext: mockTaskContext
+        taskContext: mockTaskContext,
       });
 
       expect(config).toHaveProperty('metadata');
@@ -227,23 +229,25 @@ priority: P1
         validation: { relevanceScore: 0.8, isSufficient: true },
         taskSpecific: {
           specification: { title: 'Test' },
-          task: { id: 'TASK-001', checklist: [] }
-        }
+          task: { id: 'TASK-001', checklist: [] },
+        },
       };
 
       // Mock the methods to avoid file system calls
-      injector.contextGatherer.gatherTaskContext = jest.fn().mockResolvedValue(mockTaskContext);
+      injector.contextGatherer.gatherTaskContext = jest
+        .fn()
+        .mockResolvedValue(mockTaskContext);
       injector.injectContext = jest.fn().mockResolvedValue({
         layers: { critical: {}, taskSpecific: {} },
         metadata: { performance: {} },
-        validation: { isValid: true }
+        validation: { isValid: true },
       });
 
       const result = await injector.injectContextForTask({
         agentType: 'software-architect',
         specId: 'FEAT-028',
         taskId: 'TASK-001',
-        automated: true
+        automated: true,
       });
 
       expect(result).toHaveProperty('automation');
@@ -291,7 +295,7 @@ priority: P1
       const ContextGatherer = require('../../lib/automation/context-gatherer');
       const ContextInjector = require('../../lib/context-injector');
 
-      const _gatherer = new ContextGatherer(configManager);
+      const _gatherer = new ContextGatherer(configManager); // eslint-disable-line no-unused-vars
       const injector = new ContextInjector(configManager);
 
       // Verify performance timeout settings

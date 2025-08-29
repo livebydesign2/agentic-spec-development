@@ -16,7 +16,7 @@ describe('Startup Performance Tests', () => {
         stdio: 'pipe',
         cwd: options.cwd || tempDir,
         env: { ...process.env, ...options.env },
-        timeout: 30000 // 30 second max timeout
+        timeout: 30000, // 30 second max timeout
       });
 
       let stdout = '';
@@ -39,7 +39,7 @@ describe('Startup Performance Tests', () => {
           stdout,
           stderr,
           duration,
-          success: code === 0
+          success: code === 0,
         });
       });
 
@@ -117,8 +117,13 @@ describe('Startup Performance Tests', () => {
         results.push(result.duration);
       }
 
-      const average = results.reduce((sum, duration) => sum + duration, 0) / runs;
-      const variance = results.reduce((sum, duration) => sum + Math.pow(duration - average, 2), 0) / runs;
+      const average =
+        results.reduce((sum, duration) => sum + duration, 0) / runs;
+      const variance =
+        results.reduce(
+          (sum, duration) => sum + Math.pow(duration - average, 2),
+          0
+        ) / runs;
       const stdDev = Math.sqrt(variance);
 
       console.log(`Performance statistics over ${runs} runs:`);
@@ -137,8 +142,12 @@ describe('Startup Performance Tests', () => {
     test('maintains performance with large project structure', async () => {
       // Create a large project structure
       const createLargeProject = () => {
-        const dirs = ['docs/specs/active', 'docs/specs/backlog', 'docs/specs/done'];
-        dirs.forEach(dir => {
+        const dirs = [
+          'docs/specs/active',
+          'docs/specs/backlog',
+          'docs/specs/done',
+        ];
+        dirs.forEach((dir) => {
           fs.mkdirSync(path.join(tempDir, dir), { recursive: true });
         });
 
@@ -155,7 +164,11 @@ status: active
 
 This is test specification number ${i}.`;
           fs.writeFileSync(
-            path.join(tempDir, 'docs/specs/active', `SPEC-${i.toString().padStart(3, '0')}.md`),
+            path.join(
+              tempDir,
+              'docs/specs/active',
+              `SPEC-${i.toString().padStart(3, '0')}.md`
+            ),
             specContent
           );
         }
@@ -182,7 +195,9 @@ This is test specification number ${i}.`;
       results.forEach((result, index) => {
         expect(result.success).toBe(true);
         expect(result.duration).toBeLessThan(3000); // Allow slightly more time for concurrent runs
-        console.log(`Concurrent run ${index + 1}: ${result.duration.toFixed(2)}ms`);
+        console.log(
+          `Concurrent run ${index + 1}: ${result.duration.toFixed(2)}ms`
+        );
       });
     });
   });
@@ -191,10 +206,10 @@ This is test specification number ${i}.`;
     test('startup performance meets baseline expectations', async () => {
       // These are baseline expectations based on current implementation
       const expectations = {
-        '--version': 1000,    // Should be very fast
-        '--help': 1500,       // Should be fast
-        'doctor': 3000,       // Can be slower due to comprehensive checks
-        'validate-startup': 2000  // Should be reasonably fast
+        '--version': 1000, // Should be very fast
+        '--help': 1500, // Should be fast
+        doctor: 3000, // Can be slower due to comprehensive checks
+        'validate-startup': 2000, // Should be reasonably fast
       };
 
       for (const [command, expectedMax] of Object.entries(expectations)) {
@@ -203,8 +218,15 @@ This is test specification number ${i}.`;
         expect(result.duration).toBeLessThan(expectedMax);
 
         // Log actual performance for monitoring
-        const percentOfExpected = (result.duration / expectedMax * 100).toFixed(1);
-        console.log(`${command}: ${result.duration.toFixed(2)}ms (${percentOfExpected}% of ${expectedMax}ms limit)`);
+        const percentOfExpected = (
+          (result.duration / expectedMax) *
+          100
+        ).toFixed(1);
+        console.log(
+          `${command}: ${result.duration.toFixed(
+            2
+          )}ms (${percentOfExpected}% of ${expectedMax}ms limit)`
+        );
       }
     });
   });
@@ -216,7 +238,7 @@ This is test specification number ${i}.`;
           const cliPath = path.join(__dirname, '..', 'bin', 'asd');
           const child = spawn('node', ['--expose-gc', cliPath, command], {
             stdio: 'pipe',
-            cwd: tempDir
+            cwd: tempDir,
           });
 
           let maxMemory = 0;
@@ -240,7 +262,7 @@ This is test specification number ${i}.`;
               exitCode: code,
               stdout,
               maxMemory: maxMemory / 1024 / 1024, // Convert to MB
-              success: code === 0
+              success: code === 0,
             });
           });
 
@@ -266,7 +288,7 @@ This is test specification number ${i}.`;
       const originalCache = { ...require.cache };
 
       // Clear cache for our modules
-      Object.keys(require.cache).forEach(key => {
+      Object.keys(require.cache).forEach((key) => {
         if (key.includes('/asd/')) {
           delete require.cache[key];
         }
@@ -275,7 +297,7 @@ This is test specification number ${i}.`;
       const result = await measurePerformance('--version');
 
       // Restore cache
-      Object.keys(originalCache).forEach(key => {
+      Object.keys(originalCache).forEach((key) => {
         require.cache[key] = originalCache[key];
       });
 
@@ -291,15 +313,21 @@ This is test specification number ${i}.`;
 
       expect(result.success).toBe(true);
       expect(result.stdout).toContain('validation'); // Should contain performance information
-      console.log(`Doctor with performance metrics: ${result.duration.toFixed(2)}ms`);
+      console.log(
+        `Doctor with performance metrics: ${result.duration.toFixed(2)}ms`
+      );
     });
 
     test('validate-startup reports timing information', async () => {
-      const result = await measurePerformance('validate-startup', ['--performance']);
+      const result = await measurePerformance('validate-startup', [
+        '--performance',
+      ]);
 
       expect(result.success).toBe(true);
       expect(result.stdout).toContain('validation'); // Should contain timing information
-      console.log(`Validate-startup with performance: ${result.duration.toFixed(2)}ms`);
+      console.log(
+        `Validate-startup with performance: ${result.duration.toFixed(2)}ms`
+      );
     });
   });
 });

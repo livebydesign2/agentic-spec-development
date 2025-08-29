@@ -5,7 +5,7 @@ const {
   MarkdownAdapter,
   FormatDetector,
   SchemaValidator,
-  FormatConverter
+  FormatConverter,
 } = require('../lib/data-adapters');
 const fs = require('fs').promises;
 const path = require('path');
@@ -40,7 +40,9 @@ describe('Multi-Format Data Support (FEAT-020)', () => {
     });
 
     test('throws error for unsupported format', () => {
-      expect(() => factory.create('xml')).toThrow('Unsupported data format: xml');
+      expect(() => factory.create('xml')).toThrow(
+        'Unsupported data format: xml'
+      );
     });
 
     test('creates adapter from file extension', () => {
@@ -89,9 +91,9 @@ describe('Multi-Format Data Support (FEAT-020)', () => {
           {
             id: 'TASK-001',
             title: 'Test task',
-            status: 'ready'
-          }
-        ]
+            status: 'ready',
+          },
+        ],
       });
 
       const spec = adapter.parseContent(jsonContent);
@@ -106,9 +108,12 @@ describe('Multi-Format Data Support (FEAT-020)', () => {
     });
 
     test('handles malformed JSON', () => {
-      const malformedJson = '{ "id": "FEAT-001", "title": "Test" invalid json }';
+      const malformedJson =
+        '{ "id": "FEAT-001", "title": "Test" invalid json }';
 
-      expect(() => adapter.parseContent(malformedJson)).toThrow('Invalid JSON format');
+      expect(() => adapter.parseContent(malformedJson)).toThrow(
+        'Invalid JSON format'
+      );
     });
 
     test('serializes specification to JSON', () => {
@@ -119,7 +124,7 @@ describe('Multi-Format Data Support (FEAT-020)', () => {
         status: 'backlog',
         priority: 'P2',
         description: 'Another test feature',
-        tasks: []
+        tasks: [],
       };
 
       const serialized = adapter.serialize(spec);
@@ -159,15 +164,15 @@ describe('Multi-Format Data Support (FEAT-020)', () => {
             subtasks: [
               {
                 description: 'Setup database schema',
-                completed: true
+                completed: true,
               },
               {
                 description: 'Implement API endpoints',
-                completed: false
-              }
-            ]
-          }
-        ]
+                completed: false,
+              },
+            ],
+          },
+        ],
       });
 
       const spec = adapter.parseContent(jsonContent);
@@ -224,7 +229,9 @@ title: Test
   invalid: yaml: structure
 `;
 
-      expect(() => adapter.parseContent(malformedYaml)).toThrow('Invalid YAML format');
+      expect(() => adapter.parseContent(malformedYaml)).toThrow(
+        'Invalid YAML format'
+      );
     });
 
     test('serializes specification to YAML', () => {
@@ -239,9 +246,9 @@ title: Test
           {
             id: 'TASK-001',
             title: 'YAML task',
-            status: 'ready'
-          }
-        ]
+            status: 'ready',
+          },
+        ],
       };
 
       const serialized = adapter.serialize(spec);
@@ -353,7 +360,7 @@ environment: Chrome 91, Windows 10
         type: 'FEAT',
         title: 'Valid Feature',
         status: 'active',
-        priority: 'P1'
+        priority: 'P1',
       };
 
       const result = await validator.validate(spec);
@@ -365,7 +372,7 @@ environment: Chrome 91, Windows 10
     test('detects missing required fields', async () => {
       const spec = {
         type: 'FEAT',
-        title: 'Invalid Feature'
+        title: 'Invalid Feature',
         // Missing id, status, priority
       };
 
@@ -373,14 +380,14 @@ environment: Chrome 91, Windows 10
 
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors.some(e => e.field === 'id')).toBe(true);
+      expect(result.errors.some((e) => e.field === 'id')).toBe(true);
     });
 
     test('applies auto-fixes', async () => {
       const spec = {
         id: 'FEAT-001',
         type: 'FEAT',
-        title: 'Feature needing fixes'
+        title: 'Feature needing fixes',
         // Missing status and priority
       };
 
@@ -396,13 +403,13 @@ environment: Chrome 91, Windows 10
       const invalidIdSpecs = [
         { id: 'invalid-id', type: 'FEAT', title: 'Test', status: 'active' },
         { id: 'FEAT001', type: 'FEAT', title: 'Test', status: 'active' },
-        { id: 'feat-001', type: 'FEAT', title: 'Test', status: 'active' }
+        { id: 'feat-001', type: 'FEAT', title: 'Test', status: 'active' },
       ];
 
       for (const spec of invalidIdSpecs) {
         const result = await validator.validate(spec);
         expect(result.isValid).toBe(false);
-        expect(result.errors.some(e => e.field === 'id')).toBe(true);
+        expect(result.errors.some((e) => e.field === 'id')).toBe(true);
       }
     });
 
@@ -440,9 +447,9 @@ environment: Chrome 91, Windows 10
           {
             id: 'TASK-001',
             title: 'Test task',
-            status: 'ready'
-          }
-        ]
+            status: 'ready',
+          },
+        ],
       };
 
       // JSON file
@@ -485,7 +492,7 @@ A feature for testing conversions
 
       const result = await converter.convertFile(testFiles.json, outputFile, {
         sourceFormat: 'json',
-        targetFormat: 'yaml'
+        targetFormat: 'yaml',
       });
 
       expect(result.success).toBe(true);
@@ -502,7 +509,7 @@ A feature for testing conversions
 
       const result = await converter.convertFile(testFiles.yaml, outputFile, {
         sourceFormat: 'yaml',
-        targetFormat: 'json'
+        targetFormat: 'json',
       });
 
       expect(result.success).toBe(true);
@@ -526,7 +533,11 @@ A feature for testing conversions
     test('performs roundtrip validation', async () => {
       const jsonContent = await fs.readFile(testFiles.json, 'utf-8');
 
-      const validation = await converter.validateConversion(jsonContent, 'json', 'yaml');
+      const validation = await converter.validateConversion(
+        jsonContent,
+        'json',
+        'yaml'
+      );
 
       expect(validation.isValid).toBe(true);
       expect(validation.differences).toHaveLength(0);
@@ -550,11 +561,13 @@ A feature for testing conversions
       const results = await converter.convertBatch(filePaths, {
         targetFormat: 'json',
         outputDir: tempDir,
-        parallel: false
+        parallel: false,
       });
 
       expect(results).toHaveLength(2);
-      expect(results.every(r => r.success || r.targetFormat === 'json')).toBe(true);
+      expect(results.every((r) => r.success || r.targetFormat === 'json')).toBe(
+        true
+      );
     });
   });
 
@@ -563,12 +576,17 @@ A feature for testing conversions
       const factory = new DataAdapterFactory();
 
       // Test content validation
-      const jsonContent = '{"id": "FEAT-001", "type": "FEAT", "title": "Test", "status": "active"}';
+      const jsonContent =
+        '{"id": "FEAT-001", "type": "FEAT", "title": "Test", "status": "active"}';
       const validation = await factory.validateContent(jsonContent, 'json');
       expect(validation.isValid).toBe(true);
 
       // Test conversion
-      const yamlResult = await factory.convertContent(jsonContent, 'json', 'yaml');
+      const yamlResult = await factory.convertContent(
+        jsonContent,
+        'json',
+        'yaml'
+      );
       expect(yamlResult.convertedContent).toContain('id: FEAT-001');
 
       // Test format detection
@@ -605,21 +623,21 @@ A feature for testing conversions
             subtasks: [
               {
                 description: 'Research existing solutions',
-                completed: true
+                completed: true,
               },
               {
                 description: 'Design API interface',
-                completed: true
-              }
-            ]
-          }
+                completed: true,
+              },
+            ],
+          },
         ],
         acceptance_criteria: [
           'All tests pass',
           'Performance meets requirements',
-          'Documentation is complete'
+          'Documentation is complete',
         ],
-        technical_notes: 'Consider using microservices architecture'
+        technical_notes: 'Consider using microservices architecture',
       };
 
       const factory = new DataAdapterFactory();
@@ -637,12 +655,18 @@ A feature for testing conversions
             const sourceContent = sourceAdapter.serialize(originalSpec);
 
             // Convert to target format
-            const convertResult = await factory.convertContent(sourceContent, sourceFormat, targetFormat);
+            const convertResult = await factory.convertContent(
+              sourceContent,
+              sourceFormat,
+              targetFormat
+            );
             expect(convertResult.sourceFormat).toBe(sourceFormat);
             expect(convertResult.targetFormat).toBe(targetFormat);
 
             // Parse back to verify data preservation
-            const targetSpec = targetAdapter.parseContent(convertResult.convertedContent);
+            const targetSpec = targetAdapter.parseContent(
+              convertResult.convertedContent
+            );
 
             // Verify core fields are preserved
             expect(targetSpec.id).toBe(originalSpec.id);

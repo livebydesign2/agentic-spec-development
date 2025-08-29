@@ -10,11 +10,13 @@ describe('ChangeDetector', () => {
 
   beforeEach(async () => {
     // Create temporary test directory
-    testDir = await fs.mkdtemp(path.join(os.tmpdir(), 'asd-changedetector-test-'));
+    testDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), 'asd-changedetector-test-')
+    );
 
     // Mock ConfigManager
     const configManager = {
-      getProjectRoot: () => testDir
+      getProjectRoot: () => testDir,
     };
 
     // Create ChangeDetector instance
@@ -24,11 +26,11 @@ describe('ChangeDetector', () => {
     // Set up event spy
     eventSpy = {
       change_analyzed: jest.fn(),
-      processing_error: jest.fn()
+      processing_error: jest.fn(),
     };
 
     // Attach event listeners
-    Object.keys(eventSpy).forEach(event => {
+    Object.keys(eventSpy).forEach((event) => {
       changeDetector.on(event, eventSpy[event]);
     });
   });
@@ -84,7 +86,7 @@ Content here.`;
         fileName: 'test-spec.md',
         fileExtension: '.md',
         timestamp: new Date().toISOString(),
-        eventId: 'test-event-001'
+        eventId: 'test-event-001',
       };
 
       const result = await changeDetector.processChange(changePayload);
@@ -131,7 +133,7 @@ assigned_agent: cli-specialist
         fileName: 'mod-spec.md',
         fileExtension: '.md',
         timestamp: new Date().toISOString(),
-        eventId: 'test-event-002'
+        eventId: 'test-event-002',
       };
 
       await changeDetector.processChange(initialPayload);
@@ -145,7 +147,7 @@ assigned_agent: cli-specialist
         fileName: 'mod-spec.md',
         fileExtension: '.md',
         timestamp: new Date().toISOString(),
-        eventId: 'test-event-003'
+        eventId: 'test-event-003',
       };
 
       const result = await changeDetector.processChange(modificationPayload);
@@ -157,19 +159,19 @@ assigned_agent: cli-specialist
       expect(result.analysis.semanticChanges.statusChange).toMatchObject({
         oldStatus: 'active',
         newStatus: 'in_progress',
-        isWorkflowChange: true
+        isWorkflowChange: true,
       });
 
       // Should detect priority escalation
       expect(result.analysis.semanticChanges.priorityChange).toMatchObject({
         oldPriority: 'P2',
         newPriority: 'P1',
-        priorityEscalation: true
+        priorityEscalation: true,
       });
 
       // Should detect assignment
       expect(result.analysis.semanticChanges.assignmentChange).toMatchObject({
-        newAgent: 'cli-specialist'
+        newAgent: 'cli-specialist',
       });
 
       expect(result.analysis.impact).toBe('high');
@@ -185,7 +187,7 @@ assigned_agent: cli-specialist
         fileName: 'deleted-spec.md',
         fileExtension: '.md',
         timestamp: new Date().toISOString(),
-        eventId: 'test-event-004'
+        eventId: 'test-event-004',
       };
 
       const result = await changeDetector.processChange(deletePayload);
@@ -193,13 +195,15 @@ assigned_agent: cli-specialist
       expect(result.analysis.success).toBe(true);
       expect(result.analysis.changeType).toBe('yaml_deleted');
       expect(result.analysis.impact).toBe('high');
-      expect(result.analysis.changes).toEqual([{
-        field: 'file_existence',
-        type: 'deletion',
-        oldValue: 'exists',
-        newValue: 'deleted',
-        timestamp: expect.any(String)
-      }]);
+      expect(result.analysis.changes).toEqual([
+        {
+          field: 'file_existence',
+          type: 'deletion',
+          oldValue: 'exists',
+          newValue: 'deleted',
+          timestamp: expect.any(String),
+        },
+      ]);
     });
 
     test('should handle malformed YAML gracefully', async () => {
@@ -222,7 +226,7 @@ invalid: yaml: content: here
         fileName: 'malformed-spec.md',
         fileExtension: '.md',
         timestamp: new Date().toISOString(),
-        eventId: 'test-event-005'
+        eventId: 'test-event-005',
       };
 
       const result = await changeDetector.processChange(changePayload);
@@ -242,12 +246,12 @@ invalid: yaml: content: here
             'TASK-001': {
               assigned_agent: 'cli-specialist',
               status: 'in_progress',
-              started_at: new Date().toISOString()
-            }
-          }
+              started_at: new Date().toISOString(),
+            },
+          },
         },
         assignment_history: [],
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       };
 
       await fs.writeFile(jsonFile, JSON.stringify(jsonData, null, 2), 'utf-8');
@@ -259,7 +263,7 @@ invalid: yaml: content: here
         fileName: 'assignments.json',
         fileExtension: '.json',
         timestamp: new Date().toISOString(),
-        eventId: 'test-event-006'
+        eventId: 'test-event-006',
       };
 
       const result = await changeDetector.processChange(changePayload);
@@ -278,9 +282,9 @@ invalid: yaml: content: here
         overall: {
           total_specs: 5,
           completed_specs: 2,
-          completion_percentage: 40
+          completion_percentage: 40,
         },
-        last_updated: '2023-01-01T10:00:00.000Z'
+        last_updated: '2023-01-01T10:00:00.000Z',
       };
 
       // Modified state
@@ -288,19 +292,23 @@ invalid: yaml: content: here
         overall: {
           total_specs: 5,
           completed_specs: 3,
-          completion_percentage: 60
+          completion_percentage: 60,
         },
         by_spec: {
           'FEAT-001': {
             completed_tasks: 2,
-            total_tasks: 3
-          }
+            total_tasks: 3,
+          },
         },
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       };
 
       // Write initial and cache
-      await fs.writeFile(jsonFile, JSON.stringify(initialData, null, 2), 'utf-8');
+      await fs.writeFile(
+        jsonFile,
+        JSON.stringify(initialData, null, 2),
+        'utf-8'
+      );
       const initialPayload = {
         watcherType: 'json',
         changeType: 'add',
@@ -308,13 +316,17 @@ invalid: yaml: content: here
         fileName: 'progress.json',
         fileExtension: '.json',
         timestamp: new Date().toISOString(),
-        eventId: 'test-event-007'
+        eventId: 'test-event-007',
       };
 
       await changeDetector.processChange(initialPayload);
 
       // Write modified
-      await fs.writeFile(jsonFile, JSON.stringify(modifiedData, null, 2), 'utf-8');
+      await fs.writeFile(
+        jsonFile,
+        JSON.stringify(modifiedData, null, 2),
+        'utf-8'
+      );
       const modificationPayload = {
         watcherType: 'json',
         changeType: 'change',
@@ -322,7 +334,7 @@ invalid: yaml: content: here
         fileName: 'progress.json',
         fileExtension: '.json',
         timestamp: new Date().toISOString(),
-        eventId: 'test-event-008'
+        eventId: 'test-event-008',
       };
 
       const result = await changeDetector.processChange(modificationPayload);
@@ -349,7 +361,7 @@ invalid: yaml: content: here
         fileName: 'malformed.json',
         fileExtension: '.json',
         timestamp: new Date().toISOString(),
-        eventId: 'test-event-009'
+        eventId: 'test-event-009',
       };
 
       const result = await changeDetector.processChange(changePayload);
@@ -366,10 +378,10 @@ invalid: yaml: content: here
         level1: {
           level2: {
             field1: 'value1',
-            field2: 'value2'
+            field2: 'value2',
           },
-          simpleField: 'simple'
-        }
+          simpleField: 'simple',
+        },
       };
 
       const newObj = {
@@ -377,70 +389,80 @@ invalid: yaml: content: here
           level2: {
             field1: 'modified_value1',
             field2: 'value2',
-            field3: 'new_field'
+            field3: 'new_field',
           },
-          simpleField: 'modified'
+          simpleField: 'modified',
         },
-        newTopLevel: 'added'
+        newTopLevel: 'added',
       };
 
       const diffs = changeDetector.deepObjectDiff(oldObj, newObj, 'test');
 
-      expect(diffs).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          field: 'test.level1.level2.field1',
-          type: 'modification',
-          oldValue: 'value1',
-          newValue: 'modified_value1'
-        }),
-        expect.objectContaining({
-          field: 'test.level1.level2.field3',
-          type: 'addition',
-          oldValue: 'undefined',
-          newValue: 'new_field'
-        }),
-        expect.objectContaining({
-          field: 'test.level1.simpleField',
-          type: 'modification',
-          oldValue: 'simple',
-          newValue: 'modified'
-        }),
-        expect.objectContaining({
-          field: 'test.newTopLevel',
-          type: 'addition',
-          oldValue: 'undefined',
-          newValue: 'added'
-        })
-      ]));
+      expect(diffs).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            field: 'test.level1.level2.field1',
+            type: 'modification',
+            oldValue: 'value1',
+            newValue: 'modified_value1',
+          }),
+          expect.objectContaining({
+            field: 'test.level1.level2.field3',
+            type: 'addition',
+            oldValue: 'undefined',
+            newValue: 'new_field',
+          }),
+          expect.objectContaining({
+            field: 'test.level1.simpleField',
+            type: 'modification',
+            oldValue: 'simple',
+            newValue: 'modified',
+          }),
+          expect.objectContaining({
+            field: 'test.newTopLevel',
+            type: 'addition',
+            oldValue: 'undefined',
+            newValue: 'added',
+          }),
+        ])
+      );
     });
 
     test('should detect array changes', () => {
       const oldObj = {
-        items: ['item1', 'item2']
+        items: ['item1', 'item2'],
       };
 
       const newObj = {
-        items: ['item1', 'modified_item2', 'item3']
+        items: ['item1', 'modified_item2', 'item3'],
       };
 
       const diffs = changeDetector.deepObjectDiff(oldObj, newObj, 'test');
 
       expect(diffs.length).toBeGreaterThan(0);
-      expect(diffs).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          field: 'test.items',
-          type: 'modification'
-        })
-      ]));
+      expect(diffs).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            field: 'test.items',
+            type: 'modification',
+          }),
+        ])
+      );
     });
   });
 
   describe('Change Classification', () => {
     test('should classify workflow status changes', () => {
-      const isWorkflowChange = changeDetector.isWorkflowStatusChange('ready', 'in_progress');
+      const isWorkflowChange = changeDetector.isWorkflowStatusChange(
+        'ready',
+        'in_progress'
+      );
       expect(isWorkflowChange).toBe(true);
 
-      const isNotWorkflowChange = changeDetector.isWorkflowStatusChange('active', 'draft');
+      const isNotWorkflowChange = changeDetector.isWorkflowStatusChange(
+        'active',
+        'draft'
+      );
       expect(isNotWorkflowChange).toBe(false);
     });
 
@@ -453,7 +475,9 @@ invalid: yaml: content: here
     });
 
     test('should extract task IDs from field paths', () => {
-      const taskId1 = changeDetector.extractTaskIdFromField('tasks.TASK-001.status');
+      const taskId1 = changeDetector.extractTaskIdFromField(
+        'tasks.TASK-001.status'
+      );
       expect(taskId1).toBe('TASK-001');
 
       const taskId2 = changeDetector.extractTaskIdFromField('tasks.0.title');
@@ -472,16 +496,38 @@ invalid: yaml: content: here
     });
 
     test('should identify significant state changes', () => {
-      expect(changeDetector.isSignificantStateChange('current_assignments.FEAT-001.TASK-001.assigned_agent', 'modification', 'agent1', 'agent2')).toBe(true);
-      expect(changeDetector.isSignificantStateChange('overall.status', 'modification', 'active', 'completed')).toBe(true);
-      expect(changeDetector.isSignificantStateChange('last_updated', 'modification', '2023-01-01', '2023-01-02')).toBe(false);
+      expect(
+        changeDetector.isSignificantStateChange(
+          'current_assignments.FEAT-001.TASK-001.assigned_agent',
+          'modification',
+          'agent1',
+          'agent2'
+        )
+      ).toBe(true);
+      expect(
+        changeDetector.isSignificantStateChange(
+          'overall.status',
+          'modification',
+          'active',
+          'completed'
+        )
+      ).toBe(true);
+      expect(
+        changeDetector.isSignificantStateChange(
+          'last_updated',
+          'modification',
+          '2023-01-01',
+          '2023-01-02'
+        )
+      ).toBe(false);
     });
   });
 
   describe('Performance Monitoring', () => {
     test('should track processing performance', async () => {
       const yamlFile = path.join(testDir, 'perf-test.md');
-      const yamlContent = '---\nid: FEAT-PERF\ntitle: Performance Test\n---\n# Test';
+      const yamlContent =
+        '---\nid: FEAT-PERF\ntitle: Performance Test\n---\n# Test';
 
       await fs.writeFile(yamlFile, yamlContent, 'utf-8');
 
@@ -492,7 +538,7 @@ invalid: yaml: content: here
         fileName: 'perf-test.md',
         fileExtension: '.md',
         timestamp: new Date().toISOString(),
-        eventId: 'perf-test-001'
+        eventId: 'perf-test-001',
       };
 
       const result = await changeDetector.processChange(changePayload);
@@ -500,7 +546,7 @@ invalid: yaml: content: here
       expect(result.processing).toMatchObject({
         timeMs: expect.any(Number),
         withinTarget: expect.any(Boolean),
-        target: 100
+        target: 100,
       });
 
       expect(result.processing.timeMs).toBeLessThan(1000); // Should be reasonably fast
@@ -519,7 +565,7 @@ invalid: yaml: content: here
         fileName: 'stats-test.md',
         fileExtension: '.md',
         timestamp: new Date().toISOString(),
-        eventId: 'stats-test-001'
+        eventId: 'stats-test-001',
       };
 
       await changeDetector.processChange(changePayload);
@@ -541,7 +587,7 @@ invalid: yaml: content: here
         fileName: 'file.txt',
         fileExtension: '.txt',
         timestamp: new Date().toISOString(),
-        eventId: 'error-test-001'
+        eventId: 'error-test-001',
       };
 
       const result = await changeDetector.processChange(invalidPayload);
@@ -561,7 +607,7 @@ invalid: yaml: content: here
         fileName: 'file.md',
         fileExtension: '.md',
         timestamp: new Date().toISOString(),
-        eventId: 'fs-error-test-001'
+        eventId: 'fs-error-test-001',
       };
 
       const result = await changeDetector.processChange(changePayload);
@@ -574,7 +620,8 @@ invalid: yaml: content: here
   describe('Cache Management', () => {
     test('should cache file states for diff analysis', async () => {
       const yamlFile = path.join(testDir, 'cache-test.md');
-      const initialContent = '---\nid: FEAT-CACHE\nstatus: active\n---\n# Initial';
+      const initialContent =
+        '---\nid: FEAT-CACHE\nstatus: active\n---\n# Initial';
 
       await fs.writeFile(yamlFile, initialContent, 'utf-8');
 
@@ -585,7 +632,7 @@ invalid: yaml: content: here
         fileName: 'cache-test.md',
         fileExtension: '.md',
         timestamp: new Date().toISOString(),
-        eventId: 'cache-test-001'
+        eventId: 'cache-test-001',
       };
 
       await changeDetector.processChange(initialPayload);
@@ -603,7 +650,7 @@ invalid: yaml: content: here
       changeDetector.fileStateCache.set(expiredFile, {
         parseable: true,
         frontmatter: { id: 'expired' },
-        cachedAt: Date.now() - 400000 // 400 seconds ago (> 5 min timeout)
+        cachedAt: Date.now() - 400000, // 400 seconds ago (> 5 min timeout)
       });
 
       expect(changeDetector.fileStateCache.has(expiredFile)).toBe(true);
@@ -626,7 +673,7 @@ invalid: yaml: content: here
         cacheSize: expect.any(Number),
         cacheTimeout: 300000,
         performanceTarget: 100,
-        timestamp: expect.any(String)
+        timestamp: expect.any(String),
       });
     });
 
@@ -658,7 +705,9 @@ invalid: yaml: content: here
       expect(changeDetector.serializeValue(null)).toBe('null');
       expect(changeDetector.serializeValue('string')).toBe('string');
       expect(changeDetector.serializeValue(123)).toBe('123');
-      expect(changeDetector.serializeValue({ key: 'value' })).toBe('{"key":"value"}');
+      expect(changeDetector.serializeValue({ key: 'value' })).toBe(
+        '{"key":"value"}'
+      );
       expect(changeDetector.serializeValue([1, 2, 3])).toBe('[1,2,3]');
     });
 
@@ -667,21 +716,23 @@ invalid: yaml: content: here
         level1: {
           level2: {
             field1: 'value1',
-            field2: 'value2'
+            field2: 'value2',
           },
-          simple: 'value'
+          simple: 'value',
         },
-        top: 'topValue'
+        top: 'topValue',
       };
 
       const flattened = changeDetector.flattenObject(obj);
 
-      expect(flattened).toEqual(expect.arrayContaining([
-        ['level1.level2.field1', 'value1'],
-        ['level1.level2.field2', 'value2'],
-        ['level1.simple', 'value'],
-        ['top', 'topValue']
-      ]));
+      expect(flattened).toEqual(
+        expect.arrayContaining([
+          ['level1.level2.field1', 'value1'],
+          ['level1.level2.field2', 'value2'],
+          ['level1.simple', 'value'],
+          ['top', 'topValue'],
+        ])
+      );
     });
   });
 });

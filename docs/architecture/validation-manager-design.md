@@ -3,7 +3,7 @@
 **Document**: ADR-001: ValidationManager Core Architecture Design  
 **Status**: Proposed  
 **Date**: 2024-08-27  
-**Architect**: Software Architect AI Agent  
+**Architect**: Software Architect AI Agent
 
 ## 🎯 Architecture Overview
 
@@ -23,7 +23,7 @@ The ValidationManager system provides comprehensive validation for ASD specifica
 ┌─────────────────── CLI INTERFACE ──────────────────┐
 │ asd validate [options]                             │
 │ • Full project validation                          │
-│ • Auto-fixing with --fix flag                     │  
+│ • Auto-fixing with --fix flag                     │
 │ • Specific spec/task validation                    │
 └────────────────────┬───────────────────────────────┘
                      │
@@ -131,35 +131,55 @@ class ValidationManager {
     this.specParser = specParser;
     this.configManager = configManager;
     this.workflowStateManager = workflowStateManager;
-    
+
     // Core systems
     this.ruleEngine = new ValidationRuleEngine();
     this.autoFixEngine = new AutoFixEngine();
     this.qualityGateManager = new QualityGateManager();
-    
+
     // Performance optimization
     this.cache = new Map();
     this.cacheTimeout = 300000; // 5 minutes
     this.performanceTarget = 2000; // 2s for 100+ specs
   }
-  
+
   // Core validation methods
-  async validateProject(options = {}) { /* Project-wide validation */ }
-  async validateSpec(specId, options = {}) { /* Single spec validation */ }
-  async validateTask(specId, taskId, options = {}) { /* Task validation */ }
-  
+  async validateProject(options = {}) {
+    /* Project-wide validation */
+  }
+  async validateSpec(specId, options = {}) {
+    /* Single spec validation */
+  }
+  async validateTask(specId, taskId, options = {}) {
+    /* Task validation */
+  }
+
   // Quality gate integration
-  async enforceQualityGate(operation, data) { /* Block invalid operations */ }
-  async validateAssignment(taskId, agentType) { /* Agent assignment validation */ }
-  async validateTransition(specId, fromStatus, toStatus) { /* Status transition */ }
-  
+  async enforceQualityGate(operation, data) {
+    /* Block invalid operations */
+  }
+  async validateAssignment(taskId, agentType) {
+    /* Agent assignment validation */
+  }
+  async validateTransition(specId, fromStatus, toStatus) {
+    /* Status transition */
+  }
+
   // Auto-fixing capabilities
-  async autoFix(validationResults, options = {}) { /* Fix common issues */ }
-  async previewFixes(validationResults) { /* Show what would be fixed */ }
-  
+  async autoFix(validationResults, options = {}) {
+    /* Fix common issues */
+  }
+  async previewFixes(validationResults) {
+    /* Show what would be fixed */
+  }
+
   // Reporting and CLI integration
-  async generateReport(results, format = 'terminal') { /* Validation reports */ }
-  async getSummary(results) { /* Brief summary */ }
+  async generateReport(results, format = "terminal") {
+    /* Validation reports */
+  }
+  async getSummary(results) {
+    /* Brief summary */
+  }
 }
 ```
 
@@ -172,21 +192,35 @@ class ValidationRuleEngine {
     this.ruleCategories = new Map();
     this.context = null;
   }
-  
+
   // Rule management
-  registerRule(rule) { /* Register validation rule */ }
-  unregisterRule(ruleName) { /* Remove rule */ }
-  getRulesByCategory(category) { /* Get rules by type */ }
-  
+  registerRule(rule) {
+    /* Register validation rule */
+  }
+  unregisterRule(ruleName) {
+    /* Remove rule */
+  }
+  getRulesByCategory(category) {
+    /* Get rules by type */
+  }
+
   // Execution
-  async executeRules(data, context, options = {}) { /* Run all applicable rules */ }
-  async executeRule(rule, data, context) { /* Run single rule */ }
-  
+  async executeRules(data, context, options = {}) {
+    /* Run all applicable rules */
+  }
+  async executeRule(rule, data, context) {
+    /* Run single rule */
+  }
+
   // Context management
-  prepareContext(specData, projectData) { /* Build validation context */ }
-  
+  prepareContext(specData, projectData) {
+    /* Build validation context */
+  }
+
   // Performance optimization
-  async executeRulesParallel(rules, data, context) { /* Parallel execution */ }
+  async executeRulesParallel(rules, data, context) {
+    /* Parallel execution */
+  }
 }
 ```
 
@@ -194,32 +228,44 @@ class ValidationRuleEngine {
 
 ```javascript
 class ValidationRule {
-  constructor(name, category, severity = 'error') {
+  constructor(name, category, severity = "error") {
     this.name = name;
     this.category = category; // 'spec', 'task', 'consistency', 'workflow'
     this.severity = severity; // 'error', 'warning', 'info'
     this.autoFixable = false;
   }
-  
+
   // Core validation
-  async validate(data, context) { 
-    /* Return ValidationResult */ 
+  async validate(data, context) {
+    /* Return ValidationResult */
   }
-  
+
   // Auto-fixing (optional)
-  canAutoFix(error) { return this.autoFixable; }
-  async autoFix(data, error, context) { 
-    /* Return fixed data or null */ 
+  canAutoFix(error) {
+    return this.autoFixable;
   }
-  
+  async autoFix(data, error, context) {
+    /* Return fixed data or null */
+  }
+
   // Metadata
-  getDescription() { return "Rule description"; }
-  getFixSuggestion(error) { return "How to fix this error"; }
-  
+  getDescription() {
+    return "Rule description";
+  }
+  getFixSuggestion(error) {
+    return "How to fix this error";
+  }
+
   // Context helpers
-  getProjectContext(context) { return context.project; }
-  getSpecContext(context, specId) { return context.specs[specId]; }
-  getAllSpecs(context) { return context.specs; }
+  getProjectContext(context) {
+    return context.project;
+  }
+  getSpecContext(context, specId) {
+    return context.specs[specId];
+  }
+  getAllSpecs(context) {
+    return context.specs;
+  }
 }
 ```
 
@@ -232,28 +278,32 @@ class AutoFixEngine {
     this.userConfirmationRequired = true;
     this.safetyChecks = true;
   }
-  
+
   // Fix execution
   async executeFixes(validationResults, options = {}) {
     /* Apply fixes with safety checks */
   }
-  
+
   async previewFixes(validationResults) {
     /* Show what would be changed without applying */
   }
-  
+
   // Safety mechanisms
   async validateFixSafety(fix, originalData) {
     /* Ensure fix won't corrupt data */
   }
-  
+
   async getUserConfirmation(fixes) {
     /* Prompt user for non-trivial changes */
   }
-  
+
   // Fix strategies
-  registerFixStrategy(name, strategy) { /* Add fix strategy */ }
-  getApplicableFixes(error) { /* Get fixes for error type */ }
+  registerFixStrategy(name, strategy) {
+    /* Add fix strategy */
+  }
+  getApplicableFixes(error) {
+    /* Get fixes for error type */
+  }
 }
 ```
 
@@ -266,23 +316,27 @@ class QualityGateManager {
     this.qualityRules = new Map();
     this.hooks = new Map();
   }
-  
+
   // Quality gate enforcement
   async enforceAssignmentGate(taskId, agentType) {
     /* Validate assignment before allowing */
   }
-  
+
   async enforceTransitionGate(specId, fromStatus, toStatus) {
     /* Validate status transitions */
   }
-  
+
   async enforceCompletionGate(specId, taskId) {
     /* Validate task completion requirements */
   }
-  
+
   // Hook management
-  registerHook(operation, validator) { /* Add workflow hook */ }
-  async executeHooks(operation, data) { /* Run operation hooks */ }
+  registerHook(operation, validator) {
+    /* Add workflow hook */
+  }
+  async executeHooks(operation, data) {
+    /* Run operation hooks */
+  }
 }
 ```
 
@@ -328,11 +382,11 @@ class QualityGateManager {
 async validateProject() {
   await this.specParser.loadSpecs();
   const specs = this.specParser.getSpecs();
-  
+
   const results = await Promise.all(
     specs.map(spec => this.validateSpec(spec.id))
   );
-  
+
   return this.aggregateResults(results);
 }
 ```
@@ -344,14 +398,14 @@ async validateProject() {
 async assignTask(specId, taskId, agentType, options = {}) {
   // Quality gate validation before assignment
   const gateResult = await this.qualityGateManager.enforceAssignmentGate(
-    taskId, 
+    taskId,
     agentType
   );
-  
+
   if (!gateResult.allowed) {
     throw new Error(`Assignment blocked: ${gateResult.reason}`);
   }
-  
+
   // Proceed with assignment via WorkflowStateManager
   return this.workflowStateManager.assignTask(specId, taskId, agentType, options);
 }
@@ -362,25 +416,28 @@ async assignTask(specId, taskId, agentType, options = {}) {
 ```javascript
 // New CLI commands for validation
 commander
-  .command('validate [spec-id]')
-  .option('--fix', 'Auto-fix issues where possible')
-  .option('--format <format>', 'Output format (terminal, json)', 'terminal')
-  .option('--rules <rules>', 'Specific rule categories to run')
+  .command("validate [spec-id]")
+  .option("--fix", "Auto-fix issues where possible")
+  .option("--format <format>", "Output format (terminal, json)", "terminal")
+  .option("--rules <rules>", "Specific rule categories to run")
   .action(async (specId, options) => {
     const validationManager = new ValidationManager(specParser, configManager);
-    
+
     let results;
     if (specId) {
       results = await validationManager.validateSpec(specId, options);
     } else {
       results = await validationManager.validateProject(options);
     }
-    
+
     if (options.fix) {
       await validationManager.autoFix(results, options);
     }
-    
-    const report = await validationManager.generateReport(results, options.format);
+
+    const report = await validationManager.generateReport(
+      results,
+      options.format
+    );
     console.log(report);
   });
 ```
@@ -437,14 +494,14 @@ module.exports = {
     cacheTimeout: 300000, // 5 minutes
     performanceTarget: 2000, // 2s for project validation
     parallelization: true,
-    
+
     // Rule configuration
     rules: {
-      'spec-required-fields': { enabled: true, severity: 'error' },
-      'id-format': { enabled: true, severity: 'error', pattern: 'FEAT-\\d{3}' },
-      'task-dependencies': { enabled: true, severity: 'warning' },
+      "spec-required-fields": { enabled: true, severity: "error" },
+      "id-format": { enabled: true, severity: "error", pattern: "FEAT-\\d{3}" },
+      "task-dependencies": { enabled: true, severity: "warning" },
     },
-    
+
     // Auto-fixing
     autoFix: {
       enabled: true,
@@ -452,21 +509,21 @@ module.exports = {
       safetyChecks: true,
       maxFixes: 10, // Limit fixes per operation
     },
-    
+
     // Quality gates
     qualityGates: {
       enforceAssignments: true,
       enforceTransitions: true,
       enforceCompletion: false, // Optional
     },
-    
+
     // Reporting
     reporting: {
-      format: 'terminal', // 'terminal', 'json', 'html'
-      verbosity: 'normal', // 'minimal', 'normal', 'detailed'
+      format: "terminal", // 'terminal', 'json', 'html'
+      verbosity: "normal", // 'minimal', 'normal', 'detailed'
       showPerformance: true,
-    }
-  }
+    },
+  },
 };
 ```
 
@@ -475,7 +532,7 @@ module.exports = {
 ### Phase 2 Enhancements
 
 1. **Custom Rule Development**: User-defined validation rules
-2. **Machine Learning**: Intelligent error detection and suggestions  
+2. **Machine Learning**: Intelligent error detection and suggestions
 3. **Integration Plugins**: External tool integration (GitHub, Jira, etc.)
 4. **Advanced Auto-fixing**: Context-aware content generation
 5. **Real-time Validation**: File system watching with live feedback
@@ -501,7 +558,7 @@ module.exports = {
 ### Phase 1B Extensions
 
 1. **Auto-fixing System**: Safe automatic issue resolution
-2. **Quality Gates**: Workflow operation validation  
+2. **Quality Gates**: Workflow operation validation
 3. **CLI Integration**: `asd validate` commands
 4. **Performance Optimization**: Caching and parallelization
 5. **Advanced Rules**: Dependency validation, consistency checks

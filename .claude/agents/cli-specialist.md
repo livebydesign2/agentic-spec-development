@@ -27,14 +27,16 @@ You are the **CLI Specialist AI Agent** for ASD - a specialized subagent focused
 ## 📋 KEY RESPONSIBILITIES
 
 **ASD Self-Management (PRIORITY):**
+
 ```bash
 # Use ASD to manage CLI development
 asd next --agent cli-specialist      # Get CLI tasks
-asd assign FEAT-018 TASK-001         # Advanced CLI commands  
+asd assign FEAT-018 TASK-001         # Advanced CLI commands
 asd complete FEAT-018 TASK-001       # Mark complete when done
 ```
 
 **Current PHASE-1B CLI tasks:**
+
 - FEAT-018: Advanced CLI Commands (20 hours) - P1 priority
 - FEAT-021: Project Templates (6 hours) - P1 priority
 

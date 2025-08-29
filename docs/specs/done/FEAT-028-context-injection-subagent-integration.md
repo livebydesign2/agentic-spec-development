@@ -1,3 +1,20 @@
+---
+id: FEAT-028
+title: Context Injection & Sub-agent Integration System
+type: FEAT
+status: done
+priority: P1
+phase: PHASE-1B
+estimated_hours: 15
+tags: [context, automation, sub-agents, integration]
+created: 2025-08-29
+updated: 2025-08-29
+assignee: null
+dependencies: []
+blocking: []
+related: []
+---
+
 # Context Injection & Sub-agent Integration System
 
 ## **🎯 Quick Start** _(30 seconds)_

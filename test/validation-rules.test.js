@@ -5,17 +5,25 @@ describe('ValidationRules', () => {
     test('should throw error for unimplemented validate method', async () => {
       const rule = new ValidationRules.ValidationRule('test', 'spec');
 
-      await expect(rule.validate({})).rejects.toThrow('Subclasses must implement validate method');
+      await expect(rule.validate({})).rejects.toThrow(
+        'Subclasses must implement validate method'
+      );
     });
 
     test('should throw error for unimplemented autoFix method', async () => {
       const rule = new ValidationRules.ValidationRule('test', 'spec');
 
-      await expect(rule.autoFix('content', {})).rejects.toThrow('Auto-fix not implemented for this rule');
+      await expect(rule.autoFix('content', {})).rejects.toThrow(
+        'Auto-fix not implemented for this rule'
+      );
     });
 
     test('should return default values for methods', () => {
-      const rule = new ValidationRules.ValidationRule('test', 'spec', 'warning');
+      const rule = new ValidationRules.ValidationRule(
+        'test',
+        'spec',
+        'warning'
+      );
 
       expect(rule.name).toBe('test');
       expect(rule.category).toBe('spec');
@@ -42,7 +50,7 @@ describe('ValidationRules', () => {
         type: 'FEAT',
         status: 'active',
         priority: 'P1',
-        filePath: '/test/spec.md'
+        filePath: '/test/spec.md',
       };
 
       const result = await rule.validate(spec, {});
@@ -55,14 +63,14 @@ describe('ValidationRules', () => {
         id: 'FEAT-001',
         title: 'Test Feature',
         // Missing type, status, priority
-        filePath: '/test/spec.md'
+        filePath: '/test/spec.md',
       };
 
       const result = await rule.validate(spec, {});
       expect(result.valid).toBe(false);
       expect(result.errors).toHaveLength(3);
 
-      const missingFields = result.errors.map(e => e.field);
+      const missingFields = result.errors.map((e) => e.field);
       expect(missingFields).toContain('type');
       expect(missingFields).toContain('status');
       expect(missingFields).toContain('priority');
@@ -112,7 +120,7 @@ status: active
       const specs = [
         { id: 'FEAT-001', filePath: '/test/spec.md' },
         { id: 'BUG-042', filePath: '/test/spec.md' },
-        { id: 'SPEC-123', filePath: '/test/spec.md' }
+        { id: 'SPEC-123', filePath: '/test/spec.md' },
       ];
 
       const context = { supportedTypes: ['FEAT', 'BUG', 'SPEC'] };
@@ -234,7 +242,7 @@ priority: p2
       const testCases = [
         { input: 'in_progress', expected: 'active' },
         { input: 'completed', expected: 'done' },
-        { input: 'todo', expected: 'backlog' }
+        { input: 'todo', expected: 'backlog' },
       ];
 
       for (const testCase of testCases) {
@@ -257,16 +265,16 @@ priority: p2
     test('should validate tasks with valid dependencies', async () => {
       const task = {
         id: 'TASK-002',
-        depends_on: ['TASK-001']
+        depends_on: ['TASK-001'],
       };
 
       const context = {
         spec: {
           tasks: [
             { id: 'TASK-001' },
-            { id: 'TASK-002', depends_on: ['TASK-001'] }
-          ]
-        }
+            { id: 'TASK-002', depends_on: ['TASK-001'] },
+          ],
+        },
       };
 
       const result = await rule.validate(task, context);
@@ -276,13 +284,13 @@ priority: p2
     test('should detect invalid dependencies', async () => {
       const task = {
         id: 'TASK-002',
-        depends_on: ['NONEXISTENT-TASK']
+        depends_on: ['NONEXISTENT-TASK'],
       };
 
       const context = {
         spec: {
-          tasks: [{ id: 'TASK-002' }]
-        }
+          tasks: [{ id: 'TASK-002' }],
+        },
       };
 
       const result = await rule.validate(task, context);
@@ -294,16 +302,16 @@ priority: p2
     test('should detect circular dependencies', async () => {
       const task = {
         id: 'TASK-001',
-        depends_on: ['TASK-002']
+        depends_on: ['TASK-002'],
       };
 
       const context = {
         spec: {
           tasks: [
             { id: 'TASK-001', depends_on: ['TASK-002'] },
-            { id: 'TASK-002', depends_on: ['TASK-001'] }
-          ]
-        }
+            { id: 'TASK-002', depends_on: ['TASK-001'] },
+          ],
+        },
       };
 
       const result = await rule.validate(task, context);
@@ -332,7 +340,7 @@ priority: p2
         'software-architect',
         'backend-specialist',
         'frontend-specialist',
-        'cli-specialist'
+        'cli-specialist',
       ];
 
       for (const agentType of knownTypes) {
@@ -374,7 +382,7 @@ priority: p2
       const specs = [
         { id: 'FEAT-001', filePath: '/test/feat1.md' },
         { id: 'FEAT-002', filePath: '/test/feat2.md' },
-        { id: 'SPEC-001', filePath: '/test/spec1.md' }
+        { id: 'SPEC-001', filePath: '/test/spec1.md' },
       ];
 
       const result = await rule.validate(specs, {});
@@ -385,7 +393,7 @@ priority: p2
       const specs = [
         { id: 'FEAT-001', filePath: '/test/feat1.md' },
         { id: 'FEAT-001', filePath: '/test/feat1-duplicate.md' },
-        { id: 'SPEC-001', filePath: '/test/spec1.md' }
+        { id: 'SPEC-001', filePath: '/test/spec1.md' },
       ];
 
       const result = await rule.validate(specs, {});
@@ -400,7 +408,7 @@ priority: p2
       const specs = [
         { id: 'FEAT-001', filePath: '/test/feat1.md' },
         { filePath: '/test/no-id.md' }, // No ID
-        { id: 'SPEC-001', filePath: '/test/spec1.md' }
+        { id: 'SPEC-001', filePath: '/test/spec1.md' },
       ];
 
       const result = await rule.validate(specs, {});
@@ -421,10 +429,10 @@ priority: p2
             tasks: [
               { id: 'TASK-001', status: 'ready' },
               { id: 'TASK-002', status: 'in_progress' },
-              { id: 'TASK-003', status: 'completed' }
-            ]
-          }
-        ])
+              { id: 'TASK-003', status: 'completed' },
+            ],
+          },
+        ]),
       };
     });
 
@@ -432,12 +440,12 @@ priority: p2
       const data = {
         taskId: 'TASK-001',
         agentType: 'backend-specialist',
-        specId: 'FEAT-001'
+        specId: 'FEAT-001',
       };
 
       const context = {
         operation: 'assignment',
-        specParser: mockSpecParser
+        specParser: mockSpecParser,
       };
 
       const result = await rule.validate(data, context);
@@ -461,12 +469,12 @@ priority: p2
       const data = {
         taskId: 'TASK-002', // Already in_progress
         agentType: 'backend-specialist',
-        specId: 'FEAT-001'
+        specId: 'FEAT-001',
       };
 
       const context = {
         operation: 'assignment',
-        specParser: mockSpecParser
+        specParser: mockSpecParser,
       };
 
       const result = await rule.validate(data, context);
@@ -478,12 +486,12 @@ priority: p2
       const data = {
         taskId: 'TASK-003', // Already completed
         agentType: 'backend-specialist',
-        specId: 'FEAT-001'
+        specId: 'FEAT-001',
       };
 
       const context = {
         operation: 'assignment',
-        specParser: mockSpecParser
+        specParser: mockSpecParser,
       };
 
       const result = await rule.validate(data, context);
@@ -503,14 +511,14 @@ priority: p2
       const validTransitions = [
         { from: 'backlog', to: 'active' },
         { from: 'active', to: 'done' },
-        { from: 'active', to: 'backlog' }
+        { from: 'active', to: 'backlog' },
       ];
 
       for (const transition of validTransitions) {
         const data = {
           specId: 'FEAT-001',
           fromStatus: transition.from,
-          toStatus: transition.to
+          toStatus: transition.to,
         };
 
         const context = { operation: 'transition' };
@@ -524,14 +532,14 @@ priority: p2
       const invalidTransitions = [
         { from: 'done', to: 'active' }, // Done is terminal
         { from: 'done', to: 'backlog' },
-        { from: 'backlog', to: 'done' } // Must go through active
+        { from: 'backlog', to: 'done' }, // Must go through active
       ];
 
       for (const transition of invalidTransitions) {
         const data = {
           specId: 'FEAT-001',
           fromStatus: transition.from,
-          toStatus: transition.to
+          toStatus: transition.to,
         };
 
         const context = { operation: 'transition' };

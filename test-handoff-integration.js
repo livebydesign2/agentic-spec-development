@@ -3,7 +3,7 @@
 /**
  * Test script demonstrating the HandoffAutomationEngine integration
  * with ContextInjector (FEAT-012) and TaskRouter (FEAT-013)
- * 
+ *
  * This demonstrates the DOG FOOD MILESTONE capability!
  */
 
@@ -18,7 +18,7 @@ async function demonstrateHandoffIntegration() {
 
   try {
     const configManager = new ConfigManager(process.cwd());
-    
+
     // 1. Initialize all three systems
     console.log('\n1️⃣ Initializing integrated systems...');
     const handoffEngine = new HandoffAutomationEngine(configManager);
@@ -35,12 +35,32 @@ async function demonstrateHandoffIntegration() {
     // 2. Check system health
     console.log('\n2️⃣ Checking system health...');
     const status = await handoffEngine.getHandoffStatus();
-    console.log(`   🏥 Overall Health: ${status.systemHealth.overall ? '✅ Healthy' : '❌ Unhealthy'}`);
-    console.log(`   📊 System Components:`);
-    console.log(`      - Workflow State Manager: ${status.systemHealth.workflowStateManager ? '✅' : '❌'}`);
-    console.log(`      - Context Injector: ${status.systemHealth.contextInjector ? '✅' : '❌'}`);
-    console.log(`      - Task Router API: ${status.systemHealth.taskRecommendationAPI ? '✅' : '❌'}`);
-    console.log(`      - Handoff Engine: ${status.systemHealth.handoffEngine ? '✅' : '❌'}`);
+    console.log(
+      `   🏥 Overall Health: ${
+        status.systemHealth.overall ? '✅ Healthy' : '❌ Unhealthy'
+      }`
+    );
+    console.log('   📊 System Components:');
+    console.log(
+      `      - Workflow State Manager: ${
+        status.systemHealth.workflowStateManager ? '✅' : '❌'
+      }`
+    );
+    console.log(
+      `      - Context Injector: ${
+        status.systemHealth.contextInjector ? '✅' : '❌'
+      }`
+    );
+    console.log(
+      `      - Task Router API: ${
+        status.systemHealth.taskRecommendationAPI ? '✅' : '❌'
+      }`
+    );
+    console.log(
+      `      - Handoff Engine: ${
+        status.systemHealth.handoffEngine ? '✅' : '❌'
+      }`
+    );
 
     // 3. Test Context Injection for next agent
     console.log('\n3️⃣ Testing ContextInjector integration...');
@@ -48,11 +68,13 @@ async function demonstrateHandoffIntegration() {
     const context = await contextInjector.injectContext({
       agentType: 'software-architect',
       specId: 'FEAT-014',
-      taskId: 'TASK-005'
+      taskId: 'TASK-005',
     });
     const contextTime = Date.now() - startTime;
-    
-    console.log(`   📋 Context Layers: ${Object.keys(context.layers || {}).join(', ')}`);
+
+    console.log(
+      `   📋 Context Layers: ${Object.keys(context.layers || {}).join(', ')}`
+    );
     console.log(`   ⚡ Context Injection Time: ${contextTime}ms`);
     console.log(`   🎯 Context Ready: ${context.layers ? '✅' : '❌'}`);
 
@@ -61,11 +83,15 @@ async function demonstrateHandoffIntegration() {
     const taskStartTime = Date.now();
     const recommendation = await taskRouter.getNextTask({
       agentType: 'software-architect',
-      includeReasoning: true
+      includeReasoning: true,
     });
     const taskTime = Date.now() - taskStartTime;
 
-    console.log(`   🎯 Next Task Found: ${recommendation.task ? '✅ ' + recommendation.task.id : '❌ None'}`);
+    console.log(
+      `   🎯 Next Task Found: ${
+        recommendation.task ? '✅ ' + recommendation.task.id : '❌ None'
+      }`
+    );
     console.log(`   ⚡ Task Router Time: ${taskTime}ms`);
     if (recommendation.reasoning) {
       console.log(`   💭 Reasoning: ${recommendation.reasoning.summary}`);
@@ -75,24 +101,28 @@ async function demonstrateHandoffIntegration() {
     console.log('\n5️⃣ Testing full handoff automation...');
     const handoffStartTime = Date.now();
     const handoffResult = await handoffEngine.triggerManualHandoff(
-      'FEAT-014', 
-      'TASK-004', 
-      'software-architect', 
-      { 
+      'FEAT-014',
+      'TASK-004',
+      'software-architect',
+      {
         reason: 'Demonstrating integration test',
-        nextTask: 'TASK-005'
+        nextTask: 'TASK-005',
       }
     );
     const handoffTime = Date.now() - handoffStartTime;
 
-    console.log(`   🤝 Handoff Success: ${handoffResult.success ? '✅' : '❌'}`);
+    console.log(
+      `   🤝 Handoff Success: ${handoffResult.success ? '✅' : '❌'}`
+    );
     console.log(`   ⚡ Handoff Time: ${handoffTime}ms (target: <500ms)`);
     console.log(`   🎯 Performance Met: ${handoffTime < 500 ? '✅' : '❌'}`);
-    
+
     if (handoffResult.success && handoffResult.handoffNeeded) {
       console.log(`   📋 Next Task: ${handoffResult.nextTask}`);
       console.log(`   👤 Next Agent: ${handoffResult.nextAgent}`);
-      console.log(`   📊 Context Prepared: ${handoffResult.context ? '✅' : '❌'}`);
+      console.log(
+        `   📊 Context Prepared: ${handoffResult.context ? '✅' : '❌'}`
+      );
     }
 
     // 6. Summary
@@ -108,7 +138,6 @@ async function demonstrateHandoffIntegration() {
     console.log('🚀 The system is ready for agent handoffs!');
     console.log('   Agents can now seamlessly hand off work to each other');
     console.log('   with full context and intelligent task routing.');
-
   } catch (error) {
     console.error('❌ Integration test failed:', error.message);
     console.error(error.stack);

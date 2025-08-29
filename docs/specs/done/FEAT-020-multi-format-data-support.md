@@ -100,7 +100,7 @@ While markdown provides excellent human readability, many development workflows 
 #### YAML Format
 
 ```yaml
-id: FEAT-045
+id: FEAT-XXX
 type: feature
 title: Enhanced Search System
 status: active

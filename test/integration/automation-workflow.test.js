@@ -54,7 +54,7 @@ describe('Automation Workflow Integration', () => {
 
       const startResult = await startNextCommand.execute({
         agent: 'cli-specialist',
-        dryRun: false
+        dryRun: false,
       });
 
       if (!startResult.success || !startResult.assigned) {
@@ -73,8 +73,11 @@ describe('Automation Workflow Integration', () => {
 
       // Step 2: Verify task is in progress
       const assignments = await workflowStateManager.getCurrentAssignments();
-      const activeAssignment = assignments.current_assignments.find(a =>
-        a.spec_id === specId && a.task_id === taskId && a.status === 'in_progress'
+      const activeAssignment = assignments.current_assignments.find(
+        (a) =>
+          a.spec_id === specId &&
+          a.task_id === taskId &&
+          a.status === 'in_progress'
       );
 
       expect(activeAssignment).toBeDefined();
@@ -88,7 +91,7 @@ describe('Automation Workflow Integration', () => {
         notes: 'Integration test completion',
         skipLint: true,
         skipTests: true,
-        skipCommit: true
+        skipCommit: true,
       });
 
       expect(completeResult.success).toBe(true);
@@ -97,9 +100,10 @@ describe('Automation Workflow Integration', () => {
       expect(completeResult.task.taskId).toBe(taskId);
 
       // Step 4: Verify task is completed
-      const updatedAssignments = await workflowStateManager.getCurrentAssignments();
-      const completedAssignment = updatedAssignments.completed_assignments.find(a =>
-        a.spec_id === specId && a.task_id === taskId
+      const updatedAssignments =
+        await workflowStateManager.getCurrentAssignments();
+      const completedAssignment = updatedAssignments.completed_assignments.find(
+        (a) => a.spec_id === specId && a.task_id === taskId
       );
 
       expect(completedAssignment).toBeDefined();
@@ -112,7 +116,7 @@ describe('Automation Workflow Integration', () => {
 
       const startResult = await startNextCommand.execute({
         agent: 'non-existent-agent',
-        dryRun: false
+        dryRun: false,
       });
 
       expect(startResult.success).toBe(true);
@@ -127,11 +131,13 @@ describe('Automation Workflow Integration', () => {
       const completeResult = await completeCurrentCommand.execute({
         skipLint: true,
         skipTests: true,
-        skipCommit: true
+        skipCommit: true,
       });
 
       expect(completeResult.success).toBe(false);
-      expect(completeResult.error).toContain('No active task assignments found');
+      expect(completeResult.error).toContain(
+        'No active task assignments found'
+      );
     });
   });
 
@@ -144,7 +150,7 @@ describe('Automation Workflow Integration', () => {
       const startResult = await startNextCommand.execute({
         agent: 'cli-specialist',
         priority: 'P0', // P0 tasks might require confirmation
-        dryRun: false
+        dryRun: false,
       });
 
       // Should either succeed or provide actionable error messages
@@ -162,7 +168,7 @@ describe('Automation Workflow Integration', () => {
       // Test with invalid agent type
       const startResult = await startNextCommand.execute({
         agent: '', // Invalid agent
-        dryRun: false
+        dryRun: false,
       });
 
       expect(startResult.success).toBe(false);
@@ -178,7 +184,7 @@ describe('Automation Workflow Integration', () => {
         spec: 'NON-EXISTENT-SPEC',
         skipLint: true,
         skipTests: true,
-        skipCommit: true
+        skipCommit: true,
       });
 
       expect(completeResult.success).toBe(false);
@@ -195,7 +201,7 @@ describe('Automation Workflow Integration', () => {
       const startResult = await startNextCommand.execute({
         agent: 'cli-specialist',
         showReasoning: true,
-        dryRun: true
+        dryRun: true,
       });
 
       if (startResult.success && startResult.wouldAssign) {
@@ -207,7 +213,8 @@ describe('Automation Workflow Integration', () => {
 
     it('should properly integrate with WorkflowStateManager for state updates', async () => {
       // Test that state management is working correctly
-      const initialAssignments = await workflowStateManager.getCurrentAssignments();
+      const initialAssignments =
+        await workflowStateManager.getCurrentAssignments();
       const initialCount = initialAssignments.current_assignments.length;
 
       const startNextCommand = new StartNextCommand(configManager);
@@ -215,26 +222,32 @@ describe('Automation Workflow Integration', () => {
 
       const startResult = await startNextCommand.execute({
         agent: 'cli-specialist',
-        dryRun: false
+        dryRun: false,
       });
 
       if (startResult.success && startResult.assigned) {
         // Verify assignment was recorded
-        const updatedAssignments = await workflowStateManager.getCurrentAssignments();
-        expect(updatedAssignments.current_assignments.length).toBe(initialCount + 1);
+        const updatedAssignments =
+          await workflowStateManager.getCurrentAssignments();
+        expect(updatedAssignments.current_assignments.length).toBe(
+          initialCount + 1
+        );
 
         // Complete the task to clean up
-        const completeCurrentCommand = new CompleteCurrentCommand(configManager);
+        const completeCurrentCommand = new CompleteCurrentCommand(
+          configManager
+        );
         await completeCurrentCommand.initialize();
 
         await completeCurrentCommand.execute({
           skipLint: true,
           skipTests: true,
-          skipCommit: true
+          skipCommit: true,
         });
 
         // Verify task was completed
-        const finalAssignments = await workflowStateManager.getCurrentAssignments();
+        const finalAssignments =
+          await workflowStateManager.getCurrentAssignments();
         expect(finalAssignments.current_assignments.length).toBe(initialCount);
       }
     });
@@ -246,7 +259,7 @@ describe('Automation Workflow Integration', () => {
 
       const startResult = await startNextCommand.execute({
         agent: 'cli-specialist',
-        dryRun: false
+        dryRun: false,
       });
 
       if (!startResult.success || !startResult.assigned) {
@@ -261,7 +274,7 @@ describe('Automation Workflow Integration', () => {
         notes: 'Integration test for handoff',
         skipLint: true,
         skipTests: true,
-        skipCommit: true
+        skipCommit: true,
       });
 
       expect(completeResult.success).toBe(true);
@@ -279,7 +292,7 @@ describe('Automation Workflow Integration', () => {
 
       const startResult = await startNextCommand.execute({
         agent: 'cli-specialist',
-        dryRun: true
+        dryRun: true,
       });
 
       expect(startResult.auditLog).toBeDefined();
@@ -300,7 +313,7 @@ describe('Automation Workflow Integration', () => {
 
       const startResult = await startNextCommand.execute({
         agent: 'cli-specialist',
-        dryRun: false
+        dryRun: false,
       });
 
       if (!startResult.success || !startResult.assigned) {
@@ -314,7 +327,7 @@ describe('Automation Workflow Integration', () => {
       const completeResult = await completeCurrentCommand.execute({
         skipLint: true,
         skipTests: true,
-        skipCommit: true
+        skipCommit: true,
       });
 
       expect(completeResult.auditLog).toBeDefined();
@@ -322,7 +335,7 @@ describe('Automation Workflow Integration', () => {
       expect(completeResult.auditLog.length).toBeGreaterThan(0);
 
       // Verify key events are logged
-      const eventTypes = completeResult.auditLog.map(entry => entry.event);
+      const eventTypes = completeResult.auditLog.map((entry) => entry.event);
       expect(eventTypes).toContain('command_initialized');
       expect(eventTypes).toContain('command_started');
     });
@@ -336,7 +349,7 @@ describe('Automation Workflow Integration', () => {
 
       const startResult = await startNextCommand.execute({
         agent: 'cli-specialist',
-        dryRun: false
+        dryRun: false,
       });
 
       if (!startResult.success || !startResult.assigned) {
@@ -356,7 +369,7 @@ describe('Automation Workflow Integration', () => {
         notes: 'Manual override test',
         skipLint: true,
         skipTests: true,
-        skipCommit: true
+        skipCommit: true,
       });
 
       expect(completeResult.success).toBe(true);
@@ -373,7 +386,7 @@ describe('Automation Workflow Integration', () => {
       const startTime = Date.now();
       const startResult = await startNextCommand.execute({
         agent: 'cli-specialist',
-        dryRun: true
+        dryRun: true,
       });
       const startDuration = Date.now() - startTime;
 
@@ -391,7 +404,7 @@ describe('Automation Workflow Integration', () => {
       const completeResult = await completeCurrentCommand.execute({
         skipLint: true,
         skipTests: true,
-        skipCommit: true
+        skipCommit: true,
       });
       const completeDuration = Date.now() - completeStartTime;
 
@@ -411,7 +424,7 @@ describe('Automation Workflow Integration', () => {
 
       const startResult = await startNextCommand.execute({
         agent: 'cli-specialist',
-        dryRun: false
+        dryRun: false,
       });
 
       if (!startResult.success || !startResult.assigned) {
@@ -427,14 +440,14 @@ describe('Automation Workflow Integration', () => {
         notes: 'Integration test with git workflow',
         skipLint: true,
         skipTests: true,
-        skipCommit: true // Skip actual git operations in tests
+        skipCommit: true, // Skip actual git operations in tests
       });
 
       expect(completeResult.success).toBe(true);
       expect(completeResult.auditLog).toBeDefined();
 
       // Check audit log contains expected events
-      const eventTypes = completeResult.auditLog.map(entry => entry.event);
+      const eventTypes = completeResult.auditLog.map((entry) => entry.event);
       expect(eventTypes).toContain('command_started');
       expect(eventTypes).toContain('task_completed');
     });
@@ -449,7 +462,7 @@ describe('Automation Workflow Integration', () => {
         spec: 'INVALID-SPEC',
         skipLint: true,
         skipTests: true,
-        skipCommit: true
+        skipCommit: true,
       });
 
       expect(result.success).toBe(false);
@@ -470,13 +483,13 @@ describe('Automation Workflow Integration', () => {
         completeCurrentCommand1.execute({
           skipLint: true,
           skipTests: true,
-          skipCommit: true
+          skipCommit: true,
         }),
         completeCurrentCommand2.execute({
           skipLint: true,
           skipTests: true,
-          skipCommit: true
-        })
+          skipCommit: true,
+        }),
       ]);
 
       // Both should handle the same error condition consistently
@@ -503,7 +516,9 @@ describe('Automation Workflow Integration', () => {
       expect(completeCurrentCommand.handoffAutomationEngine).toBeDefined();
 
       // Verify command isolation - each has its own instances
-      expect(startNextCommand.auditLog).not.toBe(completeCurrentCommand.auditLog);
+      expect(startNextCommand.auditLog).not.toBe(
+        completeCurrentCommand.auditLog
+      );
     });
   });
 });

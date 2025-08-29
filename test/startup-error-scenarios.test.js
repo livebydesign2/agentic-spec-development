@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
-const _os = require('_os');
+const _os = require('_os'); // eslint-disable-line no-unused-vars
 
 describe('Startup Error Scenarios', () => {
   let tempDir;
@@ -14,7 +14,7 @@ describe('Startup Error Scenarios', () => {
         stdio: 'pipe',
         cwd: options.cwd || tempDir,
         env: { ...process.env, ...options.env },
-        timeout: 10000
+        timeout: 10000,
       });
 
       let stdout = '';
@@ -33,7 +33,7 @@ describe('Startup Error Scenarios', () => {
           exitCode: code,
           stdout,
           stderr,
-          success: code === 0
+          success: code === 0,
         });
       });
 
@@ -43,7 +43,7 @@ describe('Startup Error Scenarios', () => {
           stdout,
           stderr: stderr + error.message,
           success: false,
-          error
+          error,
         });
       });
     });
@@ -82,7 +82,10 @@ describe('Startup Error Scenarios', () => {
 
     test('handles configuration file with runtime errors', async () => {
       const configPath = path.join(tempDir, 'asd.config.js');
-      fs.writeFileSync(configPath, 'throw new Error("Config error"); module.exports = {};');
+      fs.writeFileSync(
+        configPath,
+        'throw new Error("Config error"); module.exports = {};'
+      );
 
       const result = await execASD(['doctor']);
 
@@ -150,7 +153,7 @@ describe('Startup Error Scenarios', () => {
   describe('Environment Variable Errors', () => {
     test('handles missing PATH environment variable', async () => {
       const result = await execASD(['--version'], {
-        env: { ...process.env, PATH: '' }
+        env: { ...process.env, PATH: '' },
       });
 
       expect(result.success).toBe(true);
@@ -158,7 +161,7 @@ describe('Startup Error Scenarios', () => {
 
     test('handles missing HOME environment variable', async () => {
       const result = await execASD(['--version'], {
-        env: { ...process.env, HOME: '', USERPROFILE: '' }
+        env: { ...process.env, HOME: '', USERPROFILE: '' },
       });
 
       expect(result.success).toBe(true);
@@ -169,8 +172,8 @@ describe('Startup Error Scenarios', () => {
         env: {
           ...process.env,
           TERM: 'corrupted-terminal-type',
-          LANG: 'invalid-locale'
-        }
+          LANG: 'invalid-locale',
+        },
       });
 
       expect(result.success).toBe(true);
@@ -183,8 +186,8 @@ describe('Startup Error Scenarios', () => {
         env: {
           ...process.env,
           COLUMNS: '10',
-          LINES: '5'
-        }
+          LINES: '5',
+        },
       });
 
       // Should complete but show warnings about terminal size
@@ -195,8 +198,8 @@ describe('Startup Error Scenarios', () => {
       const result = await execASD(['--version'], {
         env: {
           ...process.env,
-          TERM: undefined
-        }
+          TERM: undefined,
+        },
       });
 
       expect(result.success).toBe(true);
@@ -206,8 +209,8 @@ describe('Startup Error Scenarios', () => {
       const result = await execASD(['--version'], {
         env: {
           ...process.env,
-          TERM: 'dumb'
-        }
+          TERM: 'dumb',
+        },
       });
 
       expect(result.success).toBe(true);
@@ -240,7 +243,10 @@ describe('Startup Error Scenarios', () => {
     test('handles file locking conflicts', async () => {
       // Create a config file
       const configPath = path.join(tempDir, 'asd.config.js');
-      fs.writeFileSync(configPath, 'module.exports = { featuresPath: "docs/specs" };');
+      fs.writeFileSync(
+        configPath,
+        'module.exports = { featuresPath: "docs/specs" };'
+      );
 
       // Run multiple ASD instances concurrently
       const promises = [];
@@ -309,8 +315,8 @@ describe('Startup Error Scenarios', () => {
         env: {
           ...process.env,
           COLUMNS: '50',
-          LINES: '15'
-        }
+          LINES: '15',
+        },
       });
 
       expect(result.success).toBe(true);
@@ -345,7 +351,7 @@ describe('Startup Error Scenarios', () => {
       }
 
       const results = await Promise.all(commands);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.success).toBe(true);
       });
     });

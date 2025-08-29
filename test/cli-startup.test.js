@@ -14,7 +14,7 @@ describe('CLI Startup Integration', () => {
         stdio: 'pipe',
         timeout: 10000, // 10 second timeout
         cwd: options.cwd || process.cwd(),
-        env: { ...process.env, ...options.env }
+        env: { ...process.env, ...options.env },
       });
 
       let stdout = '';
@@ -33,7 +33,7 @@ describe('CLI Startup Integration', () => {
           exitCode: code,
           stdout,
           stderr,
-          success: code === 0
+          success: code === 0,
         });
       });
 
@@ -92,7 +92,9 @@ describe('CLI Startup Integration', () => {
       const result = await execASD(['invalid-command'], { timeout: 5000 });
 
       expect(result.success).toBe(false);
-      expect(result.stderr || result.stdout).toMatch(/Unknown command|error|invalid/i);
+      expect(result.stderr || result.stdout).toMatch(
+        /Unknown command|error|invalid/i
+      );
     });
   });
 
@@ -112,7 +114,9 @@ describe('CLI Startup Integration', () => {
     });
 
     test('doctor command with performance flag', async () => {
-      const result = await execASD(['doctor', '--performance'], { cwd: tempDir });
+      const result = await execASD(['doctor', '--performance'], {
+        cwd: tempDir,
+      });
 
       expect(result.success).toBe(true);
       expect(result.stdout).toContain('Environment validation');
@@ -135,17 +139,23 @@ describe('CLI Startup Integration', () => {
     });
 
     test('validate-startup with debug flag', async () => {
-      const result = await execASD(['validate-startup', '--debug'], { cwd: tempDir });
+      const result = await execASD(['validate-startup', '--debug'], {
+        cwd: tempDir,
+      });
 
       expect(result.success).toBe(true);
       expect(result.stdout).toMatch(/validation|environment|ready/i);
     });
 
     test('validate-startup with performance flag', async () => {
-      const result = await execASD(['validate-startup', '--performance'], { cwd: tempDir });
+      const result = await execASD(['validate-startup', '--performance'], {
+        cwd: tempDir,
+      });
 
       expect(result.success).toBe(true);
-      expect(result.stdout).toMatch(/validation|environment|ready|performance/i);
+      expect(result.stdout).toMatch(
+        /validation|environment|ready|performance/i
+      );
     });
   });
 
@@ -191,7 +201,7 @@ describe('CLI Startup Integration', () => {
     test('works with limited terminal size', async () => {
       const result = await execASD(['--version'], {
         cwd: tempDir,
-        env: { COLUMNS: '40', LINES: '10' }
+        env: { COLUMNS: '40', LINES: '10' },
       });
 
       expect(result.success).toBe(true);
@@ -201,7 +211,7 @@ describe('CLI Startup Integration', () => {
       // This test simulates running in CI/automation
       const result = await execASD(['--version'], {
         cwd: tempDir,
-        env: { CI: 'true' }
+        env: { CI: 'true' },
       });
 
       expect(result.success).toBe(true);
@@ -256,7 +266,7 @@ describe('CLI Startup Integration', () => {
       try {
         const result = await execASD(['--version'], {
           cwd: tempDir,
-          env: { ...process.env, PATH: '/usr/bin:/bin' } // Minimal PATH without npm global
+          env: { ...process.env, PATH: '/usr/bin:/bin' }, // Minimal PATH without npm global
         });
 
         expect(result.success).toBe(true);
@@ -289,7 +299,7 @@ describe('CLI Startup Integration', () => {
         ['--help'],
         ['--version'],
         ['doctor'],
-        ['validate-startup']
+        ['validate-startup'],
       ];
 
       for (const command of commands) {
@@ -300,8 +310,12 @@ describe('CLI Startup Integration', () => {
 
     test('startup validation does not break existing functionality', async () => {
       // Create a basic ASD project structure
-      const dirs = ['docs/specs/active', 'docs/specs/backlog', 'docs/specs/done'];
-      dirs.forEach(dir => {
+      const dirs = [
+        'docs/specs/active',
+        'docs/specs/backlog',
+        'docs/specs/done',
+      ];
+      dirs.forEach((dir) => {
         fs.mkdirSync(path.join(tempDir, dir), { recursive: true });
       });
 
@@ -316,7 +330,10 @@ status: active
 # Test Specification
 
 This is a test specification.`;
-      fs.writeFileSync(path.join(tempDir, 'docs/specs/active/TEST-001.md'), specContent);
+      fs.writeFileSync(
+        path.join(tempDir, 'docs/specs/active/TEST-001.md'),
+        specContent
+      );
 
       const result = await execASD(['doctor'], { cwd: tempDir });
       expect(result.success).toBe(true);

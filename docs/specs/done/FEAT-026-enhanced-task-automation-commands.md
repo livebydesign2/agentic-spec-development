@@ -1,3 +1,20 @@
+---
+id: FEAT-026
+title: Enhanced Task Automation Commands
+type: FEAT
+status: done
+priority: P0
+phase: PHASE-1B
+estimated_hours: 8
+tags: [cli, automation, task-management, commands]
+created: 2025-08-29
+updated: 2025-08-29
+assignee: null
+dependencies: []
+blocking: []
+related: []
+---
+
 # Enhanced Task Automation Commands
 
 ## **🎯 Quick Start** _(30 seconds)_
@@ -202,14 +219,16 @@ Extend existing Commander.js CLI structure by building new automated commands th
 ### **✅ Completed Tasks** _(Add entry when you finish your task)_
 
 - **TASK-001** ✅ Enhanced start-next Command - Completed 2025-08-28 by cli-specialist
+
   - Built comprehensive automation command with intelligent task routing
-  - Integrated with TaskRouter and WorkflowStateManager systems  
+  - Integrated with TaskRouter and WorkflowStateManager systems
   - Added AssignmentValidator with comprehensive constraint validation
   - Implemented audit logging and actionable error handling
   - Added dry-run mode and critical task confirmation
   - Created unit tests and CLI integration
 
 - **TASK-002** ✅ Enhanced complete-current Command - Completed 2025-08-28 by cli-specialist
+
   - Built comprehensive task completion automation with full workflow integration
   - Implemented git integration with file tracking and commit automation
   - Added linting validation with automatic fix attempts and retry logic
@@ -353,7 +372,7 @@ Task completed and dependent tasks unblocked
 
 ### **Integration Tests**
 
-- [ ] Commands integrate properly with TaskRouter and WorkflowStateManager  
+- [ ] Commands integrate properly with TaskRouter and WorkflowStateManager
 - [ ] State synchronization works across YAML, JSON, and git
 - [ ] HandoffAutomationEngine triggers correctly on task completion
 - [ ] Manual override capabilities preserve user control

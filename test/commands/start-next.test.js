@@ -20,22 +20,22 @@ describe('StartNextCommand', () => {
 
     // Setup mock instances
     mockConfigManager = {
-      getProjectRoot: jest.fn().mockReturnValue('/test/project')
+      getProjectRoot: jest.fn().mockReturnValue('/test/project'),
     };
 
     mockTaskAPI = {
       initialize: jest.fn().mockResolvedValue(true),
-      getNextTask: jest.fn()
+      getNextTask: jest.fn(),
     };
 
     mockWorkflowStateManager = {
       initialize: jest.fn().mockResolvedValue(),
-      assignTask: jest.fn()
+      assignTask: jest.fn(),
     };
 
     mockAssignmentValidator = {
       validateAssignment: jest.fn(),
-      getActionableErrors: jest.fn()
+      getActionableErrors: jest.fn(),
     };
 
     // Setup constructor mocks
@@ -79,13 +79,13 @@ describe('StartNextCommand', () => {
         id: 'TASK-001',
         specId: 'FEAT-026',
         title: 'Test Task',
-        priority: 'P1'
+        priority: 'P1',
       };
 
       const mockRecommendation = {
         success: true,
         task: mockTask,
-        reasoning: { summary: 'Good match' }
+        reasoning: { summary: 'Good match' },
       };
 
       const mockValidation = {
@@ -94,23 +94,25 @@ describe('StartNextCommand', () => {
         canProceed: true,
         confidence: 0.9,
         violations: [],
-        warnings: []
+        warnings: [],
       };
 
       const mockAssignment = {
         success: true,
         assignment: {
-          started_at: new Date().toISOString()
-        }
+          started_at: new Date().toISOString(),
+        },
       };
 
       mockTaskAPI.getNextTask.mockResolvedValue(mockRecommendation);
-      mockAssignmentValidator.validateAssignment.mockResolvedValue(mockValidation);
+      mockAssignmentValidator.validateAssignment.mockResolvedValue(
+        mockValidation
+      );
       mockWorkflowStateManager.assignTask.mockResolvedValue(mockAssignment);
 
       const result = await command.execute({
         agent: 'cli-specialist',
-        dryRun: false
+        dryRun: false,
       });
 
       expect(result.success).toBe(true);
@@ -124,11 +126,11 @@ describe('StartNextCommand', () => {
         success: true,
         task: null,
         alternatives: [],
-        metadata: { totalAvailable: 0 }
+        metadata: { totalAvailable: 0 },
       });
 
       const result = await command.execute({
-        agent: 'cli-specialist'
+        agent: 'cli-specialist',
       });
 
       expect(result.success).toBe(true);
@@ -141,27 +143,27 @@ describe('StartNextCommand', () => {
       const mockTask = {
         id: 'TASK-001',
         specId: 'FEAT-026',
-        title: 'Test Task'
+        title: 'Test Task',
       };
 
       mockTaskAPI.getNextTask.mockResolvedValue({
         success: true,
-        task: mockTask
+        task: mockTask,
       });
 
       mockAssignmentValidator.validateAssignment.mockResolvedValue({
         isValid: false,
         canProceed: false,
         violations: ['Agent cannot handle this task'],
-        warnings: []
+        warnings: [],
       });
 
       mockAssignmentValidator.getActionableErrors.mockReturnValue([
-        'Agent cannot handle this task. Check agent capabilities.'
+        'Agent cannot handle this task. Check agent capabilities.',
       ]);
 
       const result = await command.execute({
-        agent: 'cli-specialist'
+        agent: 'cli-specialist',
       });
 
       expect(result.success).toBe(false);
@@ -172,12 +174,12 @@ describe('StartNextCommand', () => {
       const mockTask = {
         id: 'TASK-001',
         specId: 'FEAT-026',
-        title: 'Test Task'
+        title: 'Test Task',
       };
 
       mockTaskAPI.getNextTask.mockResolvedValue({
         success: true,
-        task: mockTask
+        task: mockTask,
       });
 
       mockAssignmentValidator.validateAssignment.mockResolvedValue({
@@ -185,12 +187,12 @@ describe('StartNextCommand', () => {
         canProceed: true,
         confidence: 0.8,
         violations: [],
-        warnings: []
+        warnings: [],
       });
 
       const result = await command.execute({
         agent: 'cli-specialist',
-        dryRun: true
+        dryRun: true,
       });
 
       expect(result.success).toBe(true);
@@ -204,20 +206,26 @@ describe('StartNextCommand', () => {
   describe('generateNoTaskSuggestions', () => {
     it('should generate appropriate suggestions when no tasks available', () => {
       const suggestions = command.generateNoTaskSuggestions('cli-specialist', {
-        metadata: { totalAvailable: 0 }
+        metadata: { totalAvailable: 0 },
       });
 
       expect(suggestions).toContain('No tasks available in the project');
-      expect(suggestions).toContain("Use 'asd tasks' to see all available tasks");
+      expect(suggestions).toContain(
+        "Use 'asd tasks' to see all available tasks"
+      );
     });
 
     it('should generate suggestions when no agent matches', () => {
       const suggestions = command.generateNoTaskSuggestions('invalid-agent', {
-        metadata: { totalAvailable: 5, agentMatches: 0 }
+        metadata: { totalAvailable: 5, agentMatches: 0 },
       });
 
-      expect(suggestions).toContain('No tasks match invalid-agent agent capabilities');
-      expect(suggestions).toContain("Use 'asd agent list --details' to see available agent types");
+      expect(suggestions).toContain(
+        'No tasks match invalid-agent agent capabilities'
+      );
+      expect(suggestions).toContain(
+        "Use 'asd agent list --details' to see available agent types"
+      );
     });
   });
 
@@ -232,34 +240,34 @@ describe('StartNextCommand', () => {
       const mockTask = {
         id: 'TASK-001',
         specId: 'FEAT-026',
-        title: 'Test Task'
+        title: 'Test Task',
       };
 
       mockTaskAPI.getNextTask.mockResolvedValue({
         success: true,
-        task: mockTask
+        task: mockTask,
       });
 
       mockAssignmentValidator.validateAssignment.mockResolvedValue({
         isValid: true,
         canProceed: true,
         violations: [],
-        warnings: []
+        warnings: [],
       });
 
       mockWorkflowStateManager.assignTask.mockResolvedValue({
         success: true,
-        assignment: { started_at: new Date().toISOString() }
+        assignment: { started_at: new Date().toISOString() },
       });
 
       await command.execute({
-        agent: 'cli-specialist'
+        agent: 'cli-specialist',
       });
 
       const auditLog = command.getAuditLog();
       expect(auditLog).toHaveLength(5); // command_started, recommendation_retrieved, assignment_validated, task_assigned, command_completed_successfully
 
-      const events = auditLog.map(entry => entry.event);
+      const events = auditLog.map((entry) => entry.event);
       expect(events).toContain('command_started');
       expect(events).toContain('recommendation_retrieved');
       expect(events).toContain('assignment_validated');

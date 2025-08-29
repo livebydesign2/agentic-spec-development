@@ -41,8 +41,8 @@ tasks:
         status: pending
   - id: TASK-002
     title: Fix Critical Code Quality Issues
-    agent_type: backend-developer
-    status: pending
+    agent_type: code-quality-specialist
+    status: complete
     estimated_hours: 8
     context_requirements:
       - refactoring-patterns
@@ -68,8 +68,8 @@ tasks:
         status: pending
   - id: TASK-003
     title: Resolve Remaining Quality Violations
-    agent_type: backend-developer
-    status: pending
+    agent_type: code-quality-specialist
+    status: complete
     estimated_hours: 4
     context_requirements:
       - code-cleanup
@@ -143,14 +143,14 @@ acceptance_criteria:
 
 ### AGENT PICKUP GUIDE
 
-**➡️ Next Available Task**: **TASK-002** - Fix Critical Code Quality Issues  
-**📋 Your Job**: Work on TASK-002 only, then update docs and hand off  
-**🚦 Dependencies**: TASK-001 complete ✅
+**➡️ Next Available Task**: **TASK-004** - Validate & Test Quality Improvements  
+**📋 Your Job**: Work on TASK-004 only, then update docs and hand off  
+**🚦 Dependencies**: All previous tasks complete ✅
 
 ### Current State (AGENTS: Update when you complete YOUR task)
 
-- **Current Task Status**: TASK-001 complete ✅ - TASK-002 ready for backend developer pickup
-- **Overall Progress**: 1 of 4 tasks complete (25%)
+- **Current Task Status**: TASK-003 complete ✅ - TASK-004 ready for QA engineer pickup
+- **Overall Progress**: 3 of 4 tasks complete (75%)
 - **Phase**: PHASE-STABILIZATION-1 (Week 1 - Critical)
 - **Violations**: 382 identified violations need systematic resolution
 - **Last Updated**: 2025-08-29 by Product Manager - Sprint initiated

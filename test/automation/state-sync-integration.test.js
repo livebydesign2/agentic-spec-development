@@ -1,5 +1,5 @@
 const path = require('path');
-const __fs = require('fs').promises;
+const __fs = require('fs').promises; // eslint-disable-line no-unused-vars
 
 const AutomatedStateSync = require('../../lib/automation/automated-state-sync');
 const ConfigManager = require('../../lib/config-manager');
@@ -23,14 +23,14 @@ describe('State Synchronization Integration Tests', () => {
       completeTask: jest.fn().mockResolvedValue({ success: true }),
       updateSpecFrontmatter: jest.fn().mockResolvedValue({ success: true }),
       syncSpecState: jest.fn().mockResolvedValue({ success: true }),
-      updateProjectProgress: jest.fn().mockResolvedValue({})
+      updateProjectProgress: jest.fn().mockResolvedValue({}),
     };
 
     // Mock FrontmatterSync
     mockFrontmatterSync = {
       initialize: jest.fn().mockResolvedValue(true),
       updateSpecFrontmatter: jest.fn().mockResolvedValue({ success: true }),
-      batchUpdateSpecs: jest.fn().mockResolvedValue({ success: true })
+      batchUpdateSpecs: jest.fn().mockResolvedValue({ success: true }),
     };
 
     // Create AutomatedStateSync instance
@@ -113,8 +113,8 @@ describe('State Synchronization Integration Tests', () => {
       expect(performanceMetrics).toHaveProperty('withinTargets');
 
       expect(performanceMetrics.targets.changeDetection).toBe(1000); // <1s requirement
-      expect(performanceMetrics.targets.syncOperations).toBe(2000);  // <2s requirement
-      expect(performanceMetrics.targets.validation).toBe(100);       // <100ms requirement
+      expect(performanceMetrics.targets.syncOperations).toBe(2000); // <2s requirement
+      expect(performanceMetrics.targets.validation).toBe(100); // <100ms requirement
     });
 
     test('should track system uptime', () => {
@@ -140,7 +140,8 @@ describe('State Synchronization Integration Tests', () => {
       expect(automatedStateSync.components.syncEngine).not.toBeNull();
 
       // Check that EventBus has registered handlers
-      const eventBusStats = automatedStateSync.components.eventBus.getStatistics();
+      const eventBusStats =
+        automatedStateSync.components.eventBus.getStatistics();
       expect(eventBusStats.handlers.registered).toBeGreaterThan(0);
 
       await automatedStateSync.stop();
@@ -152,22 +153,26 @@ describe('State Synchronization Integration Tests', () => {
         analysis: {
           impact: 'high',
           semanticChanges: {
-            statusChange: { isWorkflowChange: true }
-          }
-        }
+            statusChange: { isWorkflowChange: true },
+          },
+        },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(highImpactChange)).toBe(true);
+      expect(automatedStateSync.shouldTriggerValidation(highImpactChange)).toBe(
+        true
+      );
 
       // Low impact change should not trigger validation
       const lowImpactChange = {
         analysis: {
           impact: 'low',
-          semanticChanges: {}
-        }
+          semanticChanges: {},
+        },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(lowImpactChange)).toBe(false);
+      expect(automatedStateSync.shouldTriggerValidation(lowImpactChange)).toBe(
+        false
+      );
 
       // Medium impact with semantic changes should trigger validation
       const mediumImpactChange = {
@@ -175,12 +180,14 @@ describe('State Synchronization Integration Tests', () => {
           impact: 'medium',
           changeType: 'yaml',
           semanticChanges: {
-            assignmentChange: { isHandoff: true }
-          }
-        }
+            assignmentChange: { isHandoff: true },
+          },
+        },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(mediumImpactChange)).toBe(true);
+      expect(
+        automatedStateSync.shouldTriggerValidation(mediumImpactChange)
+      ).toBe(true);
     });
   });
 
@@ -214,10 +221,15 @@ describe('State Synchronization Integration Tests', () => {
       const testError = new Error('Test component error');
       automatedStateSync.handleComponentError('testComponent', testError);
 
-      expect(automatedStateSync.systemHealth.components.testComponent).toBe('error');
+      expect(automatedStateSync.systemHealth.components.testComponent).toBe(
+        'error'
+      );
       expect(automatedStateSync.systemHealth.issues.length).toBeGreaterThan(0);
 
-      const lastIssue = automatedStateSync.systemHealth.issues[automatedStateSync.systemHealth.issues.length - 1];
+      const lastIssue =
+        automatedStateSync.systemHealth.issues[
+          automatedStateSync.systemHealth.issues.length - 1
+        ];
       expect(lastIssue.type).toBe('component_error');
       expect(lastIssue.component).toBe('testComponent');
       expect(lastIssue.message).toBe('Test component error');
@@ -225,13 +237,24 @@ describe('State Synchronization Integration Tests', () => {
 
     test('should handle system degradation based on component health', () => {
       // Simulate multiple component errors to test degradation
-      automatedStateSync.handleComponentError('component1', new Error('Error 1'));
-      automatedStateSync.handleComponentError('component2', new Error('Error 2'));
-      automatedStateSync.handleComponentError('component3', new Error('Error 3'));
+      automatedStateSync.handleComponentError(
+        'component1',
+        new Error('Error 1')
+      );
+      automatedStateSync.handleComponentError(
+        'component2',
+        new Error('Error 2')
+      );
+      automatedStateSync.handleComponentError(
+        'component3',
+        new Error('Error 3')
+      );
 
       // System should detect degraded state
       const status = automatedStateSync.getSystemStatus();
-      expect(['degraded', 'critical', 'error', 'stopped']).toContain(status.health.overall);
+      expect(['degraded', 'critical', 'error', 'stopped']).toContain(
+        status.health.overall
+      );
     });
   });
 

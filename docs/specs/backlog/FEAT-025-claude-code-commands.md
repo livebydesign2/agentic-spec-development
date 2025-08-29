@@ -30,19 +30,22 @@ Integrate ASD workflow management with Claude Code's custom slash commands syste
 ## 🎯 GOALS & SUCCESS CRITERIA
 
 ### Primary Goals
+
 - **Seamless Integration**: ASD workflows accessible via Claude Code slash commands
 - **Context Preservation**: Commands maintain full ASD project context
 - **Workflow Acceleration**: Reduce friction in AI-assisted development
 - **Command Completeness**: Cover all essential ASD CLI operations
 
 ### Success Metrics
+
 - ✅ All core ASD commands available as slash commands
-- ✅ Commands work identically to ASD CLI equivalents  
+- ✅ Commands work identically to ASD CLI equivalents
 - ✅ Zero context loss when using slash commands vs. CLI
 - ✅ <500ms response time for status commands
 - ✅ Agent workflow integration seamless
 
 ### Acceptance Criteria
+
 - [ ] `.claude/commands/` directory with ASD slash commands
 - [ ] Commands mirror ASD CLI functionality exactly
 - [ ] Full project context maintained in command responses
@@ -57,14 +60,16 @@ Integrate ASD workflow management with Claude Code's custom slash commands syste
 ### Core Slash Commands
 
 #### Project Status Commands
+
 ```bash
 /asd-status          # Equivalent to: asd workflow status
-/asd-dashboard       # Equivalent to: asd workflow dashboard  
+/asd-dashboard       # Equivalent to: asd workflow dashboard
 /asd-progress        # Equivalent to: asd workflow progress
 /asd-tasks           # Equivalent to: asd tasks
 ```
 
-#### Task Management Commands  
+#### Task Management Commands
+
 ```bash
 /asd-next            # Equivalent to: asd next --agent [auto-detect]
 /asd-assign          # Equivalent to: asd assign [spec] [task]
@@ -73,6 +78,7 @@ Integrate ASD workflow management with Claude Code's custom slash commands syste
 ```
 
 #### Workflow Commands
+
 ```bash
 /asd-handoffs        # Equivalent to: asd workflow handoffs
 /asd-assignments     # Equivalent to: asd workflow assignments
@@ -82,17 +88,20 @@ Integrate ASD workflow management with Claude Code's custom slash commands syste
 ### Command Features
 
 #### Context Integration
+
 - **Auto-detect agent type** from Claude Code conversation context
 - **Preserve conversation state** across command executions
 - **Rich formatting** using Claude Code's markdown support
 - **Interactive elements** where appropriate
 
 #### Error Handling
+
 - **Identical error messages** to ASD CLI
 - **Context-aware suggestions** for command fixes
 - **Graceful fallbacks** when ASD CLI unavailable
 
 #### Performance
+
 - **<500ms response time** for status commands
 - **<1s response time** for complex operations
 - **Async operations** for long-running tasks
@@ -102,6 +111,7 @@ Integrate ASD workflow management with Claude Code's custom slash commands syste
 ## 🏗️ TECHNICAL DESIGN
 
 ### Directory Structure
+
 ```
 .claude/commands/
 ├── asd-status.md
@@ -119,7 +129,8 @@ Integrate ASD workflow management with Claude Code's custom slash commands syste
 ```
 
 ### Command Implementation Pattern
-```markdown
+
+````markdown
 ---
 name: asd-status
 description: Show current ASD workflow status and active assignments
@@ -135,15 +146,19 @@ parameters:
 This command shows your current ASD workflow assignments and project status.
 
 ## Usage
+
 - `/asd-status` - Show all current assignments
 - `/asd-status --agent software-architect` - Filter by agent type
 
 ## Implementation
+
 ```bash
 asd workflow status ${agent ? '--agent ' + agent : ''}
 ```
+````
 
 The command will execute the ASD CLI and return formatted results with full context.
+
 ```
 
 ### Integration Architecture
@@ -172,7 +187,7 @@ The command will execute the ASD CLI and return formatted results with full cont
 ### Phase 1: Core Commands (4 hours)
 **Tasks**:
 - TASK-001: Create `.claude/commands/` directory structure
-- TASK-002: Implement status commands (`asd-status`, `asd-dashboard`, `asd-progress`)  
+- TASK-002: Implement status commands (`asd-status`, `asd-dashboard`, `asd-progress`)
 - TASK-003: Implement task listing (`asd-tasks`)
 - TASK-004: Basic error handling and CLI integration
 
@@ -181,7 +196,7 @@ The command will execute the ASD CLI and return formatted results with full cont
 - Basic command documentation
 - Error handling framework
 
-### Phase 2: Workflow Commands (4 hours)  
+### Phase 2: Workflow Commands (4 hours)
 **Tasks**:
 - TASK-005: Implement task management commands (`asd-next`, `asd-assign`, `asd-complete`)
 - TASK-006: Implement workflow commands (`asd-handoffs`, `asd-assignments`)
@@ -253,7 +268,7 @@ The command will execute the ASD CLI and return formatted results with full cont
 - **Performance degradation** → Caching and optimization strategy
 - **Context loss** → Robust state management design
 
-### Project Risks  
+### Project Risks
 - **Feature creep** → Strict scope adherence to core commands
 - **Maintenance overhead** → Automated testing and CI integration
 - **User confusion** → Clear documentation and consistent patterns
@@ -277,10 +292,11 @@ The command will execute the ASD CLI and return formatted results with full cont
 
 ## 📋 DEFINITION OF DONE
 
-**Architecture**: ✅ Technical design reviewed and approved  
-**Implementation**: ✅ All commands working identically to CLI  
-**Testing**: ✅ Unit, integration, and UAT passed  
-**Documentation**: ✅ Agent and technical docs complete  
-**Performance**: ✅ Response times meet targets  
-**Integration**: ✅ Context preservation validated  
+**Architecture**: ✅ Technical design reviewed and approved
+**Implementation**: ✅ All commands working identically to CLI
+**Testing**: ✅ Unit, integration, and UAT passed
+**Documentation**: ✅ Agent and technical docs complete
+**Performance**: ✅ Response times meet targets
+**Integration**: ✅ Context preservation validated
 **Quality**: ✅ Code review and QA approval
+```

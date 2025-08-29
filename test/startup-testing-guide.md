@@ -21,18 +21,21 @@ test/
 ### Test Categories
 
 1. **Unit Tests** (`startup-validation.test.js`)
+
    - StartupValidator class functionality
    - Individual validation methods
    - Error handling and edge cases
    - Performance analysis features
 
 2. **Integration Tests** (`cli-startup.test.js`)
+
    - Full CLI command execution
    - Cross-platform compatibility
    - Environment variable handling
    - Real-world usage scenarios
 
 3. **Performance Tests** (`startup-performance.test.js`)
+
    - Startup timing requirements (<2s)
    - Performance consistency
    - Load testing
@@ -83,16 +86,17 @@ npm run test:debug -- --testPathPattern="startup"
 
 ### Critical Thresholds
 
-| Command | Maximum Time | Typical Time |
-|---------|-------------|-------------|
-| `asd --version` | 2000ms | <200ms |
-| `asd --help` | 2000ms | <300ms |
-| `asd doctor` | 5000ms | <1000ms |
-| `asd validate-startup` | 3000ms | <500ms |
+| Command                | Maximum Time | Typical Time |
+| ---------------------- | ------------ | ------------ |
+| `asd --version`        | 2000ms       | <200ms       |
+| `asd --help`           | 2000ms       | <300ms       |
+| `asd doctor`           | 5000ms       | <1000ms      |
+| `asd validate-startup` | 3000ms       | <500ms       |
 
 ### Performance Monitoring
 
 The test suite automatically:
+
 - Measures execution time for all commands
 - Detects performance regressions
 - Generates performance reports
@@ -128,6 +132,7 @@ JEST_TIMEOUT=60000 npm run test:startup
 ### Covered Scenarios
 
 #### ✅ Success Cases
+
 - Normal startup in ASD project
 - Startup in empty directory
 - All CLI commands work correctly
@@ -135,12 +140,14 @@ JEST_TIMEOUT=60000 npm run test:startup
 - Cross-platform compatibility
 
 #### ⚠️ Warning Cases
+
 - Missing project structure
 - Small terminal dimensions
 - Non-TTY environment
 - Missing optional dependencies
 
 #### ❌ Error Cases
+
 - Corrupted configuration files
 - Insufficient permissions
 - Missing critical dependencies
@@ -201,12 +208,14 @@ test-results/
 ### Common Issues
 
 #### Tests Timeout
+
 ```bash
 # Increase timeout for slower systems
 JEST_TIMEOUT=30000 npm run test:startup
 ```
 
 #### Permission Errors
+
 ```bash
 # Ensure proper permissions
 chmod +x bin/asd
@@ -215,6 +224,7 @@ chmod +x bin/asd
 ```
 
 #### Performance Failures
+
 ```bash
 # Check system load
 top
@@ -241,15 +251,17 @@ DEBUG_TESTS=true npm run test:startup
 ### Adding New Tests
 
 1. **Choose appropriate test file**:
+
    - Unit tests → `startup-validation.test.js`
    - CLI tests → `cli-startup.test.js`
    - Performance → `startup-performance.test.js`
    - Error cases → `startup-error-scenarios.test.js`
 
 2. **Follow naming conventions**:
+
    ```javascript
-   describe('Feature Category', () => {
-     test('specific behavior description', async () => {
+   describe("Feature Category", () => {
+     test("specific behavior description", async () => {
        // Test implementation
      });
    });
@@ -300,6 +312,7 @@ npm run preversion  # Includes startup tests
 ### Performance Monitoring
 
 The system continuously monitors:
+
 - **Average execution times** for all commands
 - **Performance variance** (consistency)
 - **Cross-platform differences**

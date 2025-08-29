@@ -9,7 +9,7 @@ jest.mock('fs', () => ({
     writeFile: jest.fn(),
     readdir: jest.fn(),
     access: jest.fn(),
-  }
+  },
 }));
 
 describe('ValidationManager', () => {
@@ -35,8 +35,8 @@ describe('ValidationManager', () => {
             agent_type: 'backend-specialist',
             status: 'ready',
             estimated_hours: 4,
-          }
-        ]
+          },
+        ],
       },
       {
         id: 'SPEC-002',
@@ -45,8 +45,8 @@ describe('ValidationManager', () => {
         status: 'backlog',
         priority: 'P2',
         filePath: '/test/SPEC-002.md',
-        tasks: []
-      }
+        tasks: [],
+      },
     ];
 
     // Setup mocks
@@ -59,7 +59,7 @@ describe('ValidationManager', () => {
           performanceThreshold: 2000,
           autoFixing: true,
           requireConfirmation: true,
-        }
+        },
       }),
       get: jest.fn((key, fallback) => {
         const config = {
@@ -68,15 +68,18 @@ describe('ValidationManager', () => {
           priorities: ['P0', 'P1', 'P2', 'P3'],
         };
         return config[key] || fallback;
-      })
+      }),
     };
 
     mockSpecParser = {
       loadSpecs: jest.fn().mockResolvedValue(),
-      getSpecs: jest.fn().mockReturnValue(mockSpecs)
+      getSpecs: jest.fn().mockReturnValue(mockSpecs),
     };
 
-    validationManager = new ValidationManager(mockConfigManager, mockSpecParser);
+    validationManager = new ValidationManager(
+      mockConfigManager,
+      mockSpecParser
+    );
   });
 
   afterEach(() => {
@@ -96,7 +99,7 @@ describe('ValidationManager', () => {
       const rules = validationManager.getRules();
       expect(rules.length).toBeGreaterThan(0);
 
-      const ruleNames = rules.map(rule => rule.name);
+      const ruleNames = rules.map((rule) => rule.name);
       expect(ruleNames).toContain('required-fields');
       expect(ruleNames).toContain('id-format');
       expect(ruleNames).toContain('priority-validation');
@@ -135,7 +138,7 @@ describe('ValidationManager', () => {
         status: 'invalid_status',
         priority: 'INVALID',
         filePath: '/test/INVALID-001.md',
-        tasks: []
+        tasks: [],
       });
 
       const result = await validationManager.validateProject();
@@ -150,7 +153,9 @@ describe('ValidationManager', () => {
 
       const result = await validationManager.validateProject();
 
-      const performanceWarnings = result.warnings.filter(w => w.type === 'performance');
+      const performanceWarnings = result.warnings.filter(
+        (w) => w.type === 'performance'
+      );
       expect(performanceWarnings.length).toBeGreaterThan(0);
     });
   });
@@ -181,7 +186,10 @@ describe('ValidationManager', () => {
 
     test('should skip cache when requested', async () => {
       const result1 = await validationManager.validateSpec('/test/FEAT-001.md');
-      const result2 = await validationManager.validateSpec('/test/FEAT-001.md', { skipCache: true });
+      const result2 = await validationManager.validateSpec(
+        '/test/FEAT-001.md',
+        { skipCache: true }
+      );
 
       // Both results should be valid but independently generated
       expect(result1.valid).toBe(result2.valid);
@@ -194,7 +202,10 @@ describe('ValidationManager', () => {
     });
 
     test('should validate individual task', async () => {
-      const result = await validationManager.validateTask('FEAT-001', 'TASK-001');
+      const result = await validationManager.validateTask(
+        'FEAT-001',
+        'TASK-001'
+      );
 
       expect(result).toHaveProperty('valid');
       expect(result).toHaveProperty('taskId');
@@ -202,27 +213,33 @@ describe('ValidationManager', () => {
     });
 
     test('should handle missing task', async () => {
-      const result = await validationManager.validateTask('FEAT-001', 'NONEXISTENT');
+      const result = await validationManager.validateTask(
+        'FEAT-001',
+        'NONEXISTENT'
+      );
 
       expect(result.valid).toBe(false);
       expect(result.errors).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            type: 'task_not_found'
-          })
+            type: 'task_not_found',
+          }),
         ])
       );
     });
 
     test('should handle missing spec', async () => {
-      const result = await validationManager.validateTask('NONEXISTENT', 'TASK-001');
+      const result = await validationManager.validateTask(
+        'NONEXISTENT',
+        'TASK-001'
+      );
 
       expect(result.valid).toBe(false);
       expect(result.errors).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            type: 'spec_not_found'
-          })
+            type: 'spec_not_found',
+          }),
         ])
       );
     });
@@ -234,11 +251,14 @@ describe('ValidationManager', () => {
     });
 
     test('should validate assignment operations', async () => {
-      const result = await validationManager.validateWorkflowOperation('assignment', {
-        taskId: 'TASK-001',
-        agentType: 'backend-specialist',
-        specId: 'FEAT-001'
-      });
+      const result = await validationManager.validateWorkflowOperation(
+        'assignment',
+        {
+          taskId: 'TASK-001',
+          agentType: 'backend-specialist',
+          specId: 'FEAT-001',
+        }
+      );
 
       expect(result).toHaveProperty('valid');
       expect(result).toHaveProperty('operation');
@@ -246,28 +266,34 @@ describe('ValidationManager', () => {
     });
 
     test('should validate status transitions', async () => {
-      const result = await validationManager.validateWorkflowOperation('transition', {
-        specId: 'FEAT-001',
-        fromStatus: 'backlog',
-        toStatus: 'active'
-      });
+      const result = await validationManager.validateWorkflowOperation(
+        'transition',
+        {
+          specId: 'FEAT-001',
+          fromStatus: 'backlog',
+          toStatus: 'active',
+        }
+      );
 
       expect(result).toHaveProperty('valid');
     });
 
     test('should reject invalid transitions', async () => {
-      const result = await validationManager.validateWorkflowOperation('transition', {
-        specId: 'FEAT-001',
-        fromStatus: 'done',
-        toStatus: 'backlog'
-      });
+      const result = await validationManager.validateWorkflowOperation(
+        'transition',
+        {
+          specId: 'FEAT-001',
+          fromStatus: 'done',
+          toStatus: 'backlog',
+        }
+      );
 
       expect(result.valid).toBe(false);
       expect(result.errors).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            type: 'invalid_status_transition'
-          })
+            type: 'invalid_status_transition',
+          }),
         ])
       );
     });
@@ -287,7 +313,7 @@ describe('ValidationManager', () => {
         status: 'active',
         priority: 'P1',
         filePath: '/test/FEAT-001-duplicate.md',
-        tasks: []
+        tasks: [],
       });
 
       const result = await validationManager.validateConsistency(mockSpecs);
@@ -296,8 +322,8 @@ describe('ValidationManager', () => {
       expect(result.errors).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            type: 'duplicate_id'
-          })
+            type: 'duplicate_id',
+          }),
         ])
       );
     });
@@ -312,7 +338,7 @@ describe('ValidationManager', () => {
         priority: 'P2',
         filePath: '/test/FEAT-003.md',
         dependencies: ['NONEXISTENT-SPEC'],
-        tasks: []
+        tasks: [],
       });
 
       const result = await validationManager.validateConsistency(mockSpecs);
@@ -321,8 +347,8 @@ describe('ValidationManager', () => {
       expect(result.errors).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            type: 'invalid_spec_dependencies'
-          })
+            type: 'invalid_spec_dependencies',
+          }),
         ])
       );
     });
@@ -334,20 +360,29 @@ describe('ValidationManager', () => {
     });
 
     test('should register new validation rule', () => {
-      const customRule = new ValidationRules.ValidationRule('custom-rule', 'spec', 'warning');
+      const customRule = new ValidationRules.ValidationRule(
+        'custom-rule',
+        'spec',
+        'warning'
+      );
       customRule.validate = jest.fn().mockResolvedValue({ valid: true });
 
       const result = validationManager.registerRule('custom-rule', customRule);
       expect(result).toBe(true);
 
       const rules = validationManager.getRules();
-      expect(rules).toContainEqual(expect.objectContaining({ name: 'custom-rule' }));
+      expect(rules).toContainEqual(
+        expect.objectContaining({ name: 'custom-rule' })
+      );
     });
 
     test('should reject invalid rule registration', () => {
       const invalidRule = { name: 'invalid' }; // Missing validate method
 
-      const result = validationManager.registerRule('invalid-rule', invalidRule);
+      const result = validationManager.registerRule(
+        'invalid-rule',
+        invalidRule
+      );
       expect(result).toBe(false);
     });
 
@@ -356,7 +391,9 @@ describe('ValidationManager', () => {
       expect(result).toBe(true);
 
       const rules = validationManager.getRules();
-      expect(rules).not.toContainEqual(expect.objectContaining({ name: 'required-fields' }));
+      expect(rules).not.toContainEqual(
+        expect.objectContaining({ name: 'required-fields' })
+      );
     });
 
     test('should filter rules by category', () => {
@@ -365,8 +402,8 @@ describe('ValidationManager', () => {
 
       expect(specRules.length).toBeGreaterThan(0);
       expect(taskRules.length).toBeGreaterThan(0);
-      expect(specRules.every(rule => rule.category === 'spec')).toBe(true);
-      expect(taskRules.every(rule => rule.category === 'task')).toBe(true);
+      expect(specRules.every((rule) => rule.category === 'spec')).toBe(true);
+      expect(taskRules.every((rule) => rule.category === 'task')).toBe(true);
     });
   });
 
@@ -394,9 +431,9 @@ status: active
             type: 'invalid_priority',
             message: 'Invalid priority: HIGH',
             rule: 'priority-validation',
-            file: '/test/FEAT-001.md'
-          }
-        ]
+            file: '/test/FEAT-001.md',
+          },
+        ],
       };
 
       const preview = await validationManager.previewFixes(validationResults);
@@ -413,12 +450,15 @@ status: active
             type: 'invalid_priority',
             message: 'Invalid priority: HIGH',
             rule: 'priority-validation',
-            file: '/test/FEAT-001.md'
-          }
-        ]
+            file: '/test/FEAT-001.md',
+          },
+        ],
       };
 
-      const result = await validationManager.autoFix(validationResults, { confirmed: true, skipConfirmation: true });
+      const result = await validationManager.autoFix(validationResults, {
+        confirmed: true,
+        skipConfirmation: true,
+      });
 
       expect(result.success).toBe(true);
       // Note: might not write if no changes were made by the rule
@@ -444,7 +484,7 @@ status: active
       const result = await validationManager.enforceQualityGate('assignment', {
         taskId: 'TASK-001',
         agentType: 'backend-specialist',
-        specId: 'FEAT-001'
+        specId: 'FEAT-001',
       });
 
       expect(result).toHaveProperty('allowed');
@@ -454,7 +494,7 @@ status: active
       const result = await validationManager.enforceQualityGate('assignment', {
         taskId: 'NONEXISTENT',
         agentType: 'backend-specialist',
-        specId: 'FEAT-001'
+        specId: 'FEAT-001',
       });
 
       expect(result.allowed).toBe(false);
@@ -471,7 +511,7 @@ status: active
       const error = {
         type: 'missing_required_field',
         field: 'priority',
-        rule: 'required-fields'
+        rule: 'required-fields',
       };
 
       const suggestions = validationManager.getFixSuggestions(error);
@@ -482,7 +522,7 @@ status: active
     test('should handle unknown error types', () => {
       const error = {
         type: 'unknown_error',
-        rule: 'unknown-rule'
+        rule: 'unknown-rule',
       };
 
       const suggestions = validationManager.getFixSuggestions(error);

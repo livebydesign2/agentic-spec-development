@@ -58,7 +58,7 @@ describe('Startup Validation System', () => {
           // Mock invalid version
           Object.defineProperty(process, 'version', {
             value: 'invalid-version',
-            configurable: true
+            configurable: true,
           });
 
           const result = validator.validateNodeVersion();
@@ -75,7 +75,7 @@ describe('Startup Validation System', () => {
           // Restore original version
           Object.defineProperty(process, 'version', {
             value: originalVersion,
-            configurable: true
+            configurable: true,
           });
         }
       });
@@ -100,7 +100,7 @@ describe('Startup Validation System', () => {
         process.stdout.isTTY = false;
 
         const result = await validator.validateTerminalCapabilities();
-        expect(result.warnings.some(w => w.includes('TTY'))).toBe(true);
+        expect(result.warnings.some((w) => w.includes('TTY'))).toBe(true);
 
         // Restore original
         process.stdout.isTTY = originalIsTTY;
@@ -116,8 +116,8 @@ describe('Startup Validation System', () => {
         process.stdout.rows = 10;
 
         const result = await validator.validateTerminalCapabilities();
-        expect(result.warnings.some(w => w.includes('width'))).toBe(true);
-        expect(result.warnings.some(w => w.includes('height'))).toBe(true);
+        expect(result.warnings.some((w) => w.includes('width'))).toBe(true);
+        expect(result.warnings.some((w) => w.includes('height'))).toBe(true);
 
         // Restore original
         process.stdout.columns = originalColumns;
@@ -155,7 +155,9 @@ describe('Startup Validation System', () => {
 
           const result = await validator.validateDependencies();
           expect(result.valid).toBe(false);
-          expect(result.errors.some(e => e.includes('terminal-kit'))).toBe(true);
+          expect(result.errors.some((e) => e.includes('terminal-kit'))).toBe(
+            true
+          );
         } finally {
           // Restore original
           require.resolve = originalResolve;
@@ -168,8 +170,12 @@ describe('Startup Validation System', () => {
         const validator = new StartupValidator({ cwd: tempDir });
 
         // Create ASD project structure
-        const dirs = ['docs/specs/active', 'docs/specs/backlog', 'docs/specs/done'];
-        dirs.forEach(dir => {
+        const dirs = [
+          'docs/specs/active',
+          'docs/specs/backlog',
+          'docs/specs/done',
+        ];
+        dirs.forEach((dir) => {
           fs.mkdirSync(path.join(tempDir, dir), { recursive: true });
         });
 
@@ -181,7 +187,9 @@ describe('Startup Validation System', () => {
         const validator = new StartupValidator({ cwd: tempDir });
         const result = validator.validateProjectStructure();
 
-        expect(result.warnings.some(w => w.includes('No ASD project structure'))).toBe(true);
+        expect(
+          result.warnings.some((w) => w.includes('No ASD project structure'))
+        ).toBe(true);
       });
 
       test('validates configuration file', () => {
@@ -189,7 +197,10 @@ describe('Startup Validation System', () => {
 
         // Create valid config
         const configPath = path.join(tempDir, 'asd.config.js');
-        fs.writeFileSync(configPath, 'module.exports = { featuresPath: "docs/specs" };');
+        fs.writeFileSync(
+          configPath,
+          'module.exports = { featuresPath: "docs/specs" };'
+        );
 
         const result = validator.validateProjectStructure();
         expect(result.valid).toBe(true);
@@ -204,7 +215,10 @@ describe('Startup Validation System', () => {
 
         const result = validator.validateProjectStructure();
         // Should detect syntax errors in config file
-        expect(result.errors.length > 0 || result.warnings.some(w => w.includes('syntax'))).toBe(true);
+        expect(
+          result.errors.length > 0 ||
+            result.warnings.some((w) => w.includes('syntax'))
+        ).toBe(true);
       });
     });
 
@@ -261,8 +275,8 @@ describe('Startup Validation System', () => {
 
         const result = validator.validateTerminalSize();
         expect(result.valid).toBe(false);
-        expect(result.errors.some(e => e.includes('width'))).toBe(true);
-        expect(result.errors.some(e => e.includes('height'))).toBe(true);
+        expect(result.errors.some((e) => e.includes('width'))).toBe(true);
+        expect(result.errors.some((e) => e.includes('height'))).toBe(true);
 
         // Restore original
         process.stdout.columns = originalColumns;
@@ -310,7 +324,7 @@ describe('Startup Validation System', () => {
         expect(endTime - startTime).toBeLessThan(1000); // Total time under 1 second
 
         // Check individual phase performance
-        Object.values(result.metrics.phases).forEach(phaseTime => {
+        Object.values(result.metrics.phases).forEach((phaseTime) => {
           expect(phaseTime).toBeLessThan(200); // Each phase should be fast
         });
       });
@@ -328,8 +342,8 @@ describe('Startup Validation System', () => {
             projectValidation: 15,
             permissionsValidation: 30,
             terminalSizeValidation: 5,
-            cliEnvironmentValidation: 10
-          }
+            cliEnvironmentValidation: 10,
+          },
         };
 
         const analysis = validator.analyzePerformance(mockMetrics);
@@ -351,8 +365,8 @@ describe('Startup Validation System', () => {
             projectValidation: 15,
             permissionsValidation: 300, // Slow phase
             terminalSizeValidation: 5,
-            cliEnvironmentValidation: 10
-          }
+            cliEnvironmentValidation: 10,
+          },
         };
 
         const analysis = validator.analyzePerformance(mockMetrics);
@@ -375,7 +389,7 @@ describe('Startup Validation System', () => {
         validator.logStartupAttempt(result);
 
         // Give it a moment for async logging
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         const logFile = path.join(tempDir, '.asd', 'logs', 'startup.log');
         if (fs.existsSync(logFile)) {

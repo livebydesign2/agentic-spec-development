@@ -32,10 +32,10 @@ describe('BUG-003: Memory Leak Fixes', () => {
       // Add new item - should evict 'b' (least recently used)
       cache.set('d', 4);
 
-      expect(cache.has('a')).toBe(true);   // Most recent
-      expect(cache.has('b')).toBe(false);  // Evicted
-      expect(cache.has('c')).toBe(true);   // Still there
-      expect(cache.has('d')).toBe(true);   // Newly added
+      expect(cache.has('a')).toBe(true); // Most recent
+      expect(cache.has('b')).toBe(false); // Evicted
+      expect(cache.has('c')).toBe(true); // Still there
+      expect(cache.has('d')).toBe(true); // Newly added
 
       const stats = cache.getStats();
       expect(stats.size).toBe(3);
@@ -66,7 +66,7 @@ describe('BUG-003: Memory Leak Fixes', () => {
       cache.set('old2', 'value');
 
       // Wait to create age difference
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       cache.set('new1', 'value');
       cache.set('new2', 'value');
@@ -84,7 +84,9 @@ describe('BUG-003: Memory Leak Fixes', () => {
   describe('Enhanced SpecParser with Caching', () => {
     beforeEach(() => {
       // Create test spec files
-      global.createTestFile('docs/specs/active/SPEC-001-cache-test.md', `# SPEC-001: Cache Test
+      global.createTestFile(
+        'docs/specs/active/SPEC-001-cache-test.md',
+        `# SPEC-001: Cache Test
 
 **Priority:** P1
 
@@ -94,15 +96,19 @@ Test specification for caching functionality.
 ## Tasks
 ### **TASK-001** 🤖 **Test Task**
 - [ ] Test caching behavior
-`);
+`
+      );
 
-      global.createTestFile('docs/specs/active/FEAT-002-feature-test.md', `# FEAT-002: Feature Test
+      global.createTestFile(
+        'docs/specs/active/FEAT-002-feature-test.md',
+        `# FEAT-002: Feature Test
 
 **Priority:** P2
 
 ## Description
 Another test specification.
-`);
+`
+      );
     });
 
     it('should cache parsed specifications', async () => {
@@ -139,15 +145,17 @@ Another test specification.
       // Initial load
       await specParser.loadSpecs();
       const initialSpecs = specParser.getSpecs();
-      const spec001 = initialSpecs.find(s => s.id === 'SPEC-001');
+      const spec001 = initialSpecs.find((s) => s.id === 'SPEC-001');
       expect(spec001).toBeDefined();
       expect(spec001.priority).toBe('P1');
 
       // Wait a moment for file system
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       // Modify the file
-      global.createTestFile('docs/specs/active/SPEC-001-cache-test.md', `# SPEC-001: Modified Cache Test
+      global.createTestFile(
+        'docs/specs/active/SPEC-001-cache-test.md',
+        `# SPEC-001: Modified Cache Test
 
 **Priority:** P0
 
@@ -157,12 +165,13 @@ This spec has been modified to test cache invalidation.
 ## Tasks
 ### **TASK-001** 🤖 **Modified Task**
 - [ ] Test cache invalidation
-`);
+`
+      );
 
       // Reload specs
       await specParser.loadSpecs();
       const modifiedSpecs = specParser.getSpecs();
-      const modifiedSpec001 = modifiedSpecs.find(s => s.id === 'SPEC-001');
+      const modifiedSpec001 = modifiedSpecs.find((s) => s.id === 'SPEC-001');
 
       expect(modifiedSpec001).toBeDefined();
       expect(modifiedSpec001.priority).toBe('P0'); // Should reflect the change
@@ -174,21 +183,25 @@ This spec has been modified to test cache invalidation.
 
       // Create many files to test cache limits
       for (let i = 10; i < 30; i++) {
-        global.createTestFile(`docs/specs/active/TEST-${i.toString().padStart(3, '0')}-test.md`,
+        global.createTestFile(
+          `docs/specs/active/TEST-${i.toString().padStart(3, '0')}-test.md`,
           `# TEST-${i.toString().padStart(3, '0')}: Test Spec ${i}
 **Priority:** P2
 ## Description
-Test spec ${i}`);
+Test spec ${i}`
+        );
       }
 
       await specParser.loadSpecs();
 
       const beforeMaintenance = specParser.getCacheStats();
-      const __cleanedUp = specParser.performCacheMaintenance();
+      const __cleanedUp = specParser.performCacheMaintenance(); // eslint-disable-line no-unused-vars
       const afterMaintenance = specParser.getCacheStats();
 
       // Cache should be managed properly
-      expect(afterMaintenance.cache_stats.size).toBeLessThanOrEqual(beforeMaintenance.cache_stats.maxSize);
+      expect(afterMaintenance.cache_stats.size).toBeLessThanOrEqual(
+        beforeMaintenance.cache_stats.maxSize
+      );
 
       // Generate cache report
       const report = specParser.generateCacheReport();
@@ -202,7 +215,7 @@ Test spec ${i}`);
       const monitor = new MemoryMonitor({
         monitorInterval: 100,
         maxHistoryEntries: 5,
-        enableLogging: false
+        enableLogging: false,
       });
 
       let measurements = 0;
@@ -229,7 +242,7 @@ Test spec ${i}`);
 
     it('should generate memory usage report', () => {
       const monitor = new MemoryMonitor({
-        enableLogging: false
+        enableLogging: false,
       });
 
       // Record some measurements
@@ -249,7 +262,7 @@ Test spec ${i}`);
     it('should trigger garbage collection when available', () => {
       const monitor = new MemoryMonitor({
         enableLogging: false,
-        autoCleanup: true
+        autoCleanup: true,
       });
 
       const freedMB = monitor.triggerGarbageCollection('test');
@@ -261,7 +274,7 @@ Test spec ${i}`);
 
     it('should reset statistics properly', () => {
       const monitor = new MemoryMonitor({
-        enableLogging: false
+        enableLogging: false,
       });
 
       // Take some measurements
@@ -286,7 +299,8 @@ Test spec ${i}`);
 
       // Create test files
       for (let i = 1; i <= 20; i++) {
-        global.createTestFile(`docs/specs/active/REPEAT-${i.toString().padStart(3, '0')}-test.md`,
+        global.createTestFile(
+          `docs/specs/active/REPEAT-${i.toString().padStart(3, '0')}-test.md`,
           `# REPEAT-${i.toString().padStart(3, '0')}: Repeat Test ${i}
 **Priority:** P2
 ## Description
@@ -294,7 +308,8 @@ Repeat test ${i} for memory leak prevention.
 ## Tasks
 ### **TASK-001** 🤖 **Repeat Task**
 - [ ] Test repeated operations
-`);
+`
+        );
       }
 
       const specParser = new SpecParser(configManager);
@@ -306,8 +321,8 @@ Repeat test ${i} for memory leak prevention.
         const specs = specParser.getSpecs();
 
         // Simulate typical operations
-        specs.forEach(spec => {
-          spec.tasks?.forEach(task => task.title);
+        specs.forEach((spec) => {
+          spec.tasks?.forEach((task) => task.title);
           spec.description?.length;
         });
 
@@ -318,7 +333,8 @@ Repeat test ${i} for memory leak prevention.
       }
 
       const finalMemory = process.memoryUsage();
-      const heapGrowth = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
+      const heapGrowth =
+        (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
 
       // Memory growth should be reasonable
       expect(heapGrowth).toBeLessThan(20); // Less than 20MB heap growth
@@ -337,7 +353,8 @@ Repeat test ${i} for memory leak prevention.
 
       // Create more test files
       for (let i = 1; i <= 50; i++) {
-        global.createTestFile(`docs/specs/active/PERF-${i.toString().padStart(3, '0')}-test.md`,
+        global.createTestFile(
+          `docs/specs/active/PERF-${i.toString().padStart(3, '0')}-test.md`,
           `# PERF-${i.toString().padStart(3, '0')}: Performance Test ${i}
 **Priority:** P${(i % 3) + 1}
 ## Description
@@ -346,7 +363,8 @@ Performance test specification ${i}.
 ### **TASK-001** 🤖 **Performance Task**
 - [ ] Measure performance
 - [ ] Optimize if needed
-`);
+`
+        );
       }
 
       const specParser = new SpecParser(configManager);
@@ -381,7 +399,7 @@ Performance test specification ${i}.
 
       // Test Memory Monitor
       const monitor = new MemoryMonitor({
-        enableLogging: false
+        enableLogging: false,
       });
       monitor.recordMemoryUsage();
       const stats = monitor.getStats();
