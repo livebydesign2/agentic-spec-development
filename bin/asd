@@ -5808,9 +5808,45 @@ formatCommand
     await handleFormatConversion(input, output, options);
   });
 
-const validateCommand = program
+// Comprehensive project validation command (FEAT-019)
+program
   .command('validate')
-  .description('Validate specification files against schema');
+  .description('Validate entire project or specific specs using ValidationManager')
+  .option('--fix', 'Auto-fix common issues with confirmation')
+  .option('--spec <spec-id>', 'Validate specific specification')
+  .option('--rules <categories>', 'Run specific rule categories (spec,task,workflow,consistency)', 'spec,task,workflow,consistency')
+  .option('--format <format>', 'Output format (table,json,detailed)', 'table')
+  .option('--performance', 'Show detailed performance metrics')
+  .option('--skip-confirmation', 'Skip confirmation for auto-fixes (use with caution)')
+  .action(async (options) => {
+    await handleProjectValidation(options);
+  });
+
+program
+  .command('validate-assignment')
+  .description('Validate task assignment before execution (quality gate)')
+  .requiredOption('--task <task-id>', 'Task ID to validate')
+  .requiredOption('--agent <agent-type>', 'Agent type for assignment')
+  .requiredOption('--spec <spec-id>', 'Specification ID containing the task')
+  .option('--show-details', 'Show detailed validation information', false)
+  .action(async (options) => {
+    await handleAssignmentValidation(options);
+  });
+
+program
+  .command('lint')
+  .description('Quick validation for development (continuous validation)')
+  .option('--fix', 'Auto-fix trivial issues without confirmation')
+  .option('--watch', 'Continuous validation on file changes')
+  .option('--limit <number>', 'Limit number of issues to fix', '10')
+  .action(async (options) => {
+    await handleLintValidation(options);
+  });
+
+// Legacy schema validation command for backward compatibility  
+const validateCommand = program
+  .command('validate-schema')
+  .description('Validate specification files against schema (legacy)');
 
 validateCommand
   .command('spec <file>')
@@ -5903,6 +5939,402 @@ async function handleSpecValidation(filePath, options) {
     console.error(chalk.red('❌ Validation failed:'), error.message);
     process.exit(1);
   }
+}
+
+// Comprehensive validation command handlers (FEAT-019)
+async function handleProjectValidation(options) {
+  try {
+    const ValidationManager = require('../lib/validation-manager');
+    const ConfigManager = require('../lib/config-manager');
+    
+    console.log(chalk.cyan('🔍 ASD Project Validation'));
+    console.log(chalk.gray('='.repeat(50)));
+    
+    const startTime = Date.now();
+    const configManager = new ConfigManager(process.cwd());
+    const validationManager = new ValidationManager(configManager);
+    
+    // Initialize validation manager
+    await validationManager.initialize();
+    
+    let results;
+    
+    if (options.spec) {
+      // Validate specific spec
+      console.log(`Validating specification: ${chalk.yellow(options.spec)}\n`);
+      
+      const specs = validationManager.specParser.getSpecs();
+      const spec = specs.find(s => s.id === options.spec);
+      
+      if (!spec) {
+        console.error(chalk.red(`❌ Specification ${options.spec} not found`));
+        process.exit(1);
+      }
+      
+      results = await validationManager.validateSpec(spec.filePath);
+    } else {
+      // Full project validation
+      console.log('Validating entire project...\n');
+      results = await validationManager.validateProject();
+    }
+    
+    // Display results based on format
+    if (options.format === 'json') {
+      console.log(JSON.stringify(results, null, 2));
+      return;
+    }
+    
+    // Detailed table format
+    displayValidationResults(results, options);
+    
+    // Auto-fix if requested
+    if (options.fix && results.fixable && results.fixable.length > 0) {
+      await handleAutoFix(validationManager, results, options);
+    }
+    
+    // Performance metrics
+    if (options.performance) {
+      console.log('\n' + chalk.cyan('⚡ Performance Metrics'));
+      console.log(chalk.gray('='.repeat(30)));
+      console.log(`Total time: ${results.performance?.total || 0}ms`);
+      console.log(`Specs processed: ${results.summary?.total_specs || 0}`);
+      
+      if (results.performance?.total > 2000) {
+        console.log(chalk.red('⚠️  Validation exceeded 2s performance target'));
+      } else {
+        console.log(chalk.green('✅ Performance target met (<2s)'));
+      }
+    }
+    
+    // Exit with error code if validation failed
+    if (!results.valid) {
+      process.exit(1);
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Project validation failed:'), error.message);
+    if (error.stack) {
+      console.error(chalk.gray(error.stack));
+    }
+    process.exit(1);
+  }
+}
+
+async function handleAssignmentValidation(options) {
+  try {
+    const ValidationManager = require('../lib/validation-manager');
+    const ConfigManager = require('../lib/config-manager');
+    
+    console.log(chalk.cyan('🔒 Assignment Validation (Quality Gate)'));
+    console.log(chalk.gray('='.repeat(45)));
+    
+    const configManager = new ConfigManager(process.cwd());
+    const validationManager = new ValidationManager(configManager);
+    
+    await validationManager.initialize();
+    
+    // Prepare assignment validation data
+    const assignmentData = {
+      taskId: options.task,
+      agentType: options.agent,
+      specId: options.spec
+    };
+    
+    console.log(`Task: ${chalk.yellow(options.task)}`);
+    console.log(`Agent: ${chalk.blue(options.agent)}`);
+    console.log(`Spec: ${chalk.cyan(options.spec)}\n`);
+    
+    // Run quality gate validation
+    const qualityGateResult = await validationManager.enforceQualityGate('assignment', assignmentData);
+    
+    if (qualityGateResult.allowed) {
+      console.log(chalk.green('✅ Assignment validation passed - Quality gate allows assignment'));
+      
+      if (qualityGateResult.validation?.warnings?.length > 0) {
+        console.log(chalk.yellow('\n⚠️  Warnings:'));
+        qualityGateResult.validation.warnings.forEach(warning => {
+          console.log(`  • ${warning.message}`);
+        });
+      }
+    } else {
+      console.log(chalk.red('❌ Assignment validation failed - Quality gate blocks assignment'));
+      console.log(`Reason: ${qualityGateResult.reason}`);
+      
+      if (qualityGateResult.errors) {
+        console.log('\nErrors:');
+        qualityGateResult.errors.forEach(error => {
+          console.log(`  • ${chalk.red(error.type)}: ${error.message}`);
+        });
+      }
+      
+      process.exit(1);
+    }
+    
+    if (options.showDetails && qualityGateResult.validation) {
+      console.log('\n' + chalk.cyan('📋 Detailed Validation Information'));
+      console.log(chalk.gray('='.repeat(40)));
+      displayValidationResults(qualityGateResult.validation, { format: 'detailed' });
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Assignment validation failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function handleLintValidation(options) {
+  try {
+    const ValidationManager = require('../lib/validation-manager');
+    const ConfigManager = require('../lib/config-manager');
+    
+    console.log(chalk.cyan('🔧 ASD Lint (Quick Validation)'));
+    console.log(chalk.gray('='.repeat(35)));
+    
+    const configManager = new ConfigManager(process.cwd());
+    const validationManager = new ValidationManager(configManager);
+    
+    await validationManager.initialize();
+    
+    if (options.watch) {
+      // Continuous validation mode
+      console.log('👀 Watching for file changes...\n');
+      
+      const chokidar = require('chokidar');
+      const watcher = chokidar.watch(['docs/**/*.md', 'specs/**/*.md'], {
+        ignoreInitial: false,
+        ignored: /(^|[\/\\])\../
+      });
+      
+      let debounceTimeout;
+      watcher.on('change', async (filePath) => {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(async () => {
+          console.log(`File changed: ${chalk.yellow(filePath)}`);
+          await runQuickLint(validationManager, options);
+        }, 500);
+      });
+      
+      // Keep process alive
+      process.stdin.resume();
+      
+    } else {
+      // One-time lint
+      await runQuickLint(validationManager, options);
+    }
+    
+  } catch (error) {
+    console.error(chalk.red('❌ Lint validation failed:'), error.message);
+    process.exit(1);
+  }
+}
+
+async function runQuickLint(validationManager, options) {
+  const results = await validationManager.validateProject();
+  
+  const errorCount = results.errors?.length || 0;
+  const warningCount = results.warnings?.length || 0;
+  const fixableCount = results.fixable?.length || 0;
+  
+  if (errorCount === 0 && warningCount === 0) {
+    console.log(chalk.green('✅ No issues found - project is lint-clean!'));
+    return;
+  }
+  
+  console.log(`Found ${chalk.red(errorCount)} errors, ${chalk.yellow(warningCount)} warnings`);
+  
+  if (errorCount > 0) {
+    console.log('\n' + chalk.red('Errors:'));
+    results.errors.slice(0, 5).forEach(error => {
+      console.log(`  • ${error.message} ${chalk.gray(`(${error.file || 'unknown'})`)}`);
+    });
+    
+    if (errorCount > 5) {
+      console.log(`  ... and ${errorCount - 5} more errors`);
+    }
+  }
+  
+  if (fixableCount > 0 && options.fix) {
+    console.log(`\n${chalk.blue('Auto-fixing')} ${Math.min(fixableCount, parseInt(options.limit) || 10)} issues...`);
+    
+    await validationManager.autoFix(results, {
+      skipConfirmation: true, // Trivial fixes only in lint mode
+      limit: parseInt(options.limit) || 10
+    });
+    
+    console.log(chalk.green('✅ Auto-fix complete'));
+  } else if (fixableCount > 0) {
+    console.log(chalk.blue(`\n💡 ${fixableCount} issues can be auto-fixed with --fix`));
+  }
+}
+
+function displayValidationResults(results, options) {
+  if (!results) return;
+  
+  // Summary
+  console.log(chalk.white('📊 Summary'));
+  console.log(chalk.gray('-'.repeat(20)));
+  
+  const valid = results.valid;
+  const errorCount = results.errors?.length || 0;
+  const warningCount = results.warnings?.length || 0;
+  const infoCount = results.info?.length || 0;
+  const fixableCount = results.fixable?.length || 0;
+  
+  console.log(`Status: ${valid ? chalk.green('✅ Valid') : chalk.red('❌ Invalid')}`);
+  console.log(`Errors: ${errorCount > 0 ? chalk.red(errorCount) : chalk.green('0')}`);
+  console.log(`Warnings: ${warningCount > 0 ? chalk.yellow(warningCount) : chalk.green('0')}`);
+  console.log(`Info: ${infoCount > 0 ? chalk.blue(infoCount) : chalk.gray('0')}`);
+  console.log(`Auto-fixable: ${fixableCount > 0 ? chalk.blue(fixableCount) : chalk.gray('0')}`);
+  
+  if (results.summary) {
+    console.log(`Total Specs: ${chalk.cyan(results.summary.total_specs || 0)}`);
+    console.log(`Validation Time: ${chalk.cyan(results.summary.validation_time || 0)}ms`);
+  }
+  
+  // Detailed errors
+  if (errorCount > 0) {
+    console.log('\n' + chalk.red('🚨 Errors'));
+    console.log(chalk.gray('-'.repeat(15)));
+    
+    results.errors.forEach((error, index) => {
+      console.log(`${index + 1}. ${chalk.red(error.type || 'error')}: ${error.message}`);
+      
+      if (error.file) {
+        console.log(`   📁 ${chalk.gray(error.file)}`);
+      }
+      
+      if (error.context) {
+        console.log(`   🏷️  Context: ${chalk.cyan(error.context)}`);
+      }
+      
+      if (options.format === 'detailed') {
+        // Show fix suggestions
+        const suggestions = getErrorFixSuggestions(error);
+        if (suggestions.length > 0) {
+          console.log(`   💡 Suggestions:`);
+          suggestions.forEach(suggestion => {
+            console.log(`      • ${chalk.blue(suggestion)}`);
+          });
+        }
+      }
+      
+      console.log(); // Empty line between errors
+    });
+  }
+  
+  // Warnings
+  if (warningCount > 0 && options.format === 'detailed') {
+    console.log(chalk.yellow('⚠️  Warnings'));
+    console.log(chalk.gray('-'.repeat(15)));
+    
+    results.warnings.forEach((warning, index) => {
+      console.log(`${index + 1}. ${warning.message}`);
+      if (warning.file) {
+        console.log(`   📁 ${chalk.gray(warning.file)}`);
+      }
+      console.log();
+    });
+  }
+  
+  // Performance warning
+  if (results.performance?.total > 2000) {
+    console.log(chalk.yellow('⚠️  Performance: Validation took longer than 2s target'));
+  }
+  
+  // Auto-fix suggestion
+  if (fixableCount > 0) {
+    console.log(chalk.blue(`💡 Run with --fix to automatically resolve ${fixableCount} issues`));
+  }
+}
+
+async function handleAutoFix(validationManager, results, options) {
+  console.log('\n' + chalk.cyan('🔧 Auto-fixing Issues'));
+  console.log(chalk.gray('='.repeat(30)));
+  
+  // Preview fixes first
+  const preview = await validationManager.previewFixes(results);
+  
+  if (preview.fixable_count === 0) {
+    console.log(chalk.yellow('No auto-fixable issues found'));
+    return;
+  }
+  
+  console.log(`Found ${chalk.blue(preview.fixable_count)} auto-fixable issues:`);
+  preview.fixes.forEach((fix, index) => {
+    console.log(`${index + 1}. ${fix.description} ${chalk.gray(`(${fix.file})`)}`);
+  });
+  
+  // Confirmation unless skipped
+  let proceed = options.skipConfirmation;
+  
+  if (!proceed) {
+    const readline = require('readline');
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+    
+    const answer = await new Promise(resolve => {
+      rl.question(chalk.yellow('\nProceed with auto-fixing? (y/N): '), resolve);
+    });
+    
+    rl.close();
+    proceed = answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes';
+  }
+  
+  if (proceed) {
+    const fixResults = await validationManager.autoFix(results, {
+      skipConfirmation: options.skipConfirmation
+    });
+    
+    if (fixResults.success) {
+      console.log(chalk.green(`✅ Auto-fix complete! Fixed ${fixResults.fixed.length} issues`));
+      
+      if (fixResults.skipped.length > 0) {
+        console.log(chalk.yellow(`⏭️  Skipped ${fixResults.skipped.length} issues (manual review needed)`));
+      }
+      
+      if (fixResults.failed.length > 0) {
+        console.log(chalk.red(`❌ Failed to fix ${fixResults.failed.length} issues`));
+      }
+    } else {
+      console.log(chalk.red('❌ Auto-fix failed:'), fixResults.error);
+    }
+  } else {
+    console.log(chalk.gray('Auto-fix cancelled'));
+  }
+}
+
+function getErrorFixSuggestions(error) {
+  const suggestions = [];
+  
+  switch (error.type) {
+    case 'missing_required_field':
+      suggestions.push(`Add '${error.field}: <value>' to the frontmatter`);
+      break;
+    case 'invalid_id_format':
+      suggestions.push('Update ID to follow pattern: TYPE-###');
+      suggestions.push('Examples: FEAT-001, BUG-042, SPEC-123');
+      break;
+    case 'invalid_priority':
+      suggestions.push('Use one of: P0 (critical), P1 (high), P2 (normal), P3 (low)');
+      break;
+    case 'invalid_dependencies':
+      suggestions.push('Remove invalid dependencies or create the missing tasks');
+      break;
+    case 'circular_dependency':
+      suggestions.push('Break the circular dependency chain');
+      break;
+    case 'duplicate_id':
+      suggestions.push('Make spec IDs unique across all files');
+      break;
+    default:
+      if (error.rule) {
+        suggestions.push(`Review rule: ${error.rule}`);
+      }
+  }
+  
+  return suggestions;
 }
 
 // Handle CLI parsing
