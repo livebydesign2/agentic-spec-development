@@ -60,7 +60,10 @@
           "spec-parsing",
           "agent-capabilities",
           "dependency-tracking",
-          "system-architecture"
+          "system-architecture",
+          "node-modules",
+          "cli-architecture",
+          "error-handling"
         ],
         "typical_tasks": [
           "API implementation",
@@ -100,7 +103,12 @@
           "task-routing",
           "agent-assignment",
           "context-injection",
-          "workflow-automation"
+          "workflow-automation",
+          "cli-debugging",
+          "node-runtime",
+          "process-management",
+          "validation-patterns",
+          "cli-testing"
         ],
         "typical_tasks": [
           "CLI command implementation",
@@ -249,6 +257,42 @@
           "from_backend_developer": "Receives deployment artifacts and requirements",
           "to_qa_engineer": "Provides testing environments and validation pipelines",
           "from_software_architect": "Receives infrastructure and deployment architecture"
+        }
+      },
+      "code-quality-specialist": {
+        "capabilities": [
+          "Analyze code quality violations and technical debt",
+          "Implement ESLint rules and code standards enforcement",
+          "Refactor code to improve maintainability and performance",
+          "Setup automated code quality gates and CI/CD integration",
+          "Conduct code reviews and provide improvement recommendations"
+        ],
+        "specialization_areas": [
+          "code-quality-analysis",
+          "linting-automation",
+          "refactoring-patterns",
+          "technical-debt-resolution",
+          "code-standards-enforcement"
+        ],
+        "context_requirements": [
+          "code-quality-standards",
+          "linting-tools",
+          "static-analysis",
+          "refactoring-patterns",
+          "code-standards",
+          "best-practices"
+        ],
+        "typical_tasks": [
+          "Code quality audits",
+          "ESLint configuration",
+          "Automated refactoring",
+          "Technical debt cleanup",
+          "Code standards implementation"
+        ],
+        "handoff_patterns": {
+          "to_testing_specialist": "Provides cleaned code for comprehensive testing",
+          "from_backend_developer": "Receives code for quality analysis and improvement",
+          "to_cli_specialist": "Provides improved code for CLI integration"
         }
       }
     }

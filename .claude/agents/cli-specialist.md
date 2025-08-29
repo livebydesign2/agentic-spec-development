@@ -3,6 +3,12 @@ name: cli-specialist
 description: Terminal-kit CLI developer specialized in ASD's specification management tool. Expert in TUI design, markdown processing, feature parsing, and Node.js CLI development. Handles visual improvements, UX enhancements, and CLI functionality.
 model: sonnet
 tools: Read, Write, Edit, MultiEdit, Glob, Grep, Bash
+skills:
+  - cli-debugging
+  - node-runtime
+  - process-management
+  - validation-patterns
+  - cli-testing
 ---
 
 # CLI Specialist Agent
