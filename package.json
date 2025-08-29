@@ -53,6 +53,11 @@
     "format:check": "prettier --check \"**/*.{js,json,md}\"",
     "validate": "npm run lint && npm run format:check && npm run test:unit",
     "validate-startup": "npm run lint && npm run test:startup-full",
+    "validate-specs": "node scripts/validate-spec-integrity.js .",
+    "validate-specs-json": "node scripts/validate-spec-integrity.js . --json spec-integrity-report.json",
+    "monitor-specs": "node scripts/spec-integrity-monitor.js . --watch",
+    "monitor-specs-dashboard": "node scripts/spec-integrity-monitor.js . --watch --dashboard",
+    "install-hooks": "bash scripts/install-hooks.sh",
     "preversion": "npm run validate && npm run test:integration && npm run test:startup-full"
   },
   "dependencies": {
