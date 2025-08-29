@@ -9,7 +9,7 @@ describe('Startup Performance Tests', () => {
   // Performance measurement helper
   const measurePerformance = async (command, args = [], options = {}) => {
     const startTime = process.hrtime.bigint();
-    
+
     const result = await new Promise((resolve, reject) => {
       const cliPath = path.join(__dirname, '..', 'bin', 'asd');
       const child = spawn('node', [cliPath, command, ...args], {
@@ -33,7 +33,7 @@ describe('Startup Performance Tests', () => {
       child.on('close', (code) => {
         const endTime = process.hrtime.bigint();
         const duration = Number(endTime - startTime) / 1000000; // Convert to milliseconds
-        
+
         resolve({
           exitCode: code,
           stdout,
@@ -75,7 +75,7 @@ describe('Startup Performance Tests', () => {
   describe('Critical Performance Requirements', () => {
     test('CLI startup (--version) completes under 2 seconds', async () => {
       const result = await measurePerformance('--version');
-      
+
       expect(result.success).toBe(true);
       expect(result.duration).toBeLessThan(2000); // 2 seconds requirement
       console.log(`Version command: ${result.duration.toFixed(2)}ms`);
@@ -83,7 +83,7 @@ describe('Startup Performance Tests', () => {
 
     test('Help command completes under 2 seconds', async () => {
       const result = await measurePerformance('--help');
-      
+
       expect(result.success).toBe(true);
       expect(result.duration).toBeLessThan(2000);
       console.log(`Help command: ${result.duration.toFixed(2)}ms`);
@@ -91,7 +91,7 @@ describe('Startup Performance Tests', () => {
 
     test('Doctor command completes under 5 seconds', async () => {
       const result = await measurePerformance('doctor');
-      
+
       expect(result.success).toBe(true);
       expect(result.duration).toBeLessThan(5000); // Doctor can be slower but should be reasonable
       console.log(`Doctor command: ${result.duration.toFixed(2)}ms`);
@@ -99,7 +99,7 @@ describe('Startup Performance Tests', () => {
 
     test('Validate-startup command completes under 3 seconds', async () => {
       const result = await measurePerformance('validate-startup');
-      
+
       expect(result.success).toBe(true);
       expect(result.duration).toBeLessThan(3000);
       console.log(`Validate-startup command: ${result.duration.toFixed(2)}ms`);
@@ -110,23 +110,23 @@ describe('Startup Performance Tests', () => {
     test('startup performance is consistent across multiple runs', async () => {
       const runs = 5;
       const results = [];
-      
+
       for (let i = 0; i < runs; i++) {
         const result = await measurePerformance('--version');
         expect(result.success).toBe(true);
         results.push(result.duration);
       }
-      
+
       const average = results.reduce((sum, duration) => sum + duration, 0) / runs;
       const variance = results.reduce((sum, duration) => sum + Math.pow(duration - average, 2), 0) / runs;
       const stdDev = Math.sqrt(variance);
-      
+
       console.log(`Performance statistics over ${runs} runs:`);
       console.log(`  Average: ${average.toFixed(2)}ms`);
       console.log(`  Std Dev: ${stdDev.toFixed(2)}ms`);
       console.log(`  Min: ${Math.min(...results).toFixed(2)}ms`);
       console.log(`  Max: ${Math.max(...results).toFixed(2)}ms`);
-      
+
       // Performance should be consistent (std dev should not be too high)
       expect(stdDev).toBeLessThan(average * 0.5); // Standard deviation should be less than 50% of average
       expect(Math.max(...results)).toBeLessThan(2000); // All runs should be under 2s
@@ -141,7 +141,7 @@ describe('Startup Performance Tests', () => {
         dirs.forEach(dir => {
           fs.mkdirSync(path.join(tempDir, dir), { recursive: true });
         });
-        
+
         // Create 100 spec files
         for (let i = 1; i <= 100; i++) {
           const specContent = `---
@@ -160,9 +160,9 @@ This is test specification number ${i}.`;
           );
         }
       };
-      
+
       createLargeProject();
-      
+
       const result = await measurePerformance('doctor');
       expect(result.success).toBe(true);
       expect(result.duration).toBeLessThan(10000); // Allow more time for large project
@@ -172,13 +172,13 @@ This is test specification number ${i}.`;
     test('handles concurrent startup attempts', async () => {
       const concurrentRuns = 3;
       const promises = [];
-      
+
       for (let i = 0; i < concurrentRuns; i++) {
         promises.push(measurePerformance('--version'));
       }
-      
+
       const results = await Promise.all(promises);
-      
+
       results.forEach((result, index) => {
         expect(result.success).toBe(true);
         expect(result.duration).toBeLessThan(3000); // Allow slightly more time for concurrent runs
@@ -196,12 +196,12 @@ This is test specification number ${i}.`;
         'doctor': 3000,       // Can be slower due to comprehensive checks
         'validate-startup': 2000  // Should be reasonably fast
       };
-      
+
       for (const [command, expectedMax] of Object.entries(expectations)) {
         const result = await measurePerformance(command);
         expect(result.success).toBe(true);
         expect(result.duration).toBeLessThan(expectedMax);
-        
+
         // Log actual performance for monitoring
         const percentOfExpected = (result.duration / expectedMax * 100).toFixed(1);
         console.log(`${command}: ${result.duration.toFixed(2)}ms (${percentOfExpected}% of ${expectedMax}ms limit)`);
@@ -253,7 +253,7 @@ This is test specification number ${i}.`;
 
       const result = await measureMemory('--version');
       expect(result.success).toBe(true);
-      
+
       // Memory usage should be reasonable (under 100MB for simple commands)
       console.log(`Max memory usage: ${result.maxMemory.toFixed(2)}MB`);
       // Note: This is a rough check as memory measurement in tests can be unreliable
@@ -264,21 +264,21 @@ This is test specification number ${i}.`;
     test('first startup after system restart simulation', async () => {
       // Clear require cache to simulate cold start
       const originalCache = { ...require.cache };
-      
+
       // Clear cache for our modules
       Object.keys(require.cache).forEach(key => {
         if (key.includes('/asd/')) {
           delete require.cache[key];
         }
       });
-      
+
       const result = await measurePerformance('--version');
-      
+
       // Restore cache
       Object.keys(originalCache).forEach(key => {
         require.cache[key] = originalCache[key];
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.duration).toBeLessThan(3000); // Cold start may be slightly slower
       console.log(`Cold start performance: ${result.duration.toFixed(2)}ms`);
@@ -288,7 +288,7 @@ This is test specification number ${i}.`;
   describe('Performance Monitoring', () => {
     test('doctor command reports performance metrics', async () => {
       const result = await measurePerformance('doctor', ['--performance']);
-      
+
       expect(result.success).toBe(true);
       expect(result.stdout).toContain('validation'); // Should contain performance information
       console.log(`Doctor with performance metrics: ${result.duration.toFixed(2)}ms`);
@@ -296,7 +296,7 @@ This is test specification number ${i}.`;
 
     test('validate-startup reports timing information', async () => {
       const result = await measurePerformance('validate-startup', ['--performance']);
-      
+
       expect(result.success).toBe(true);
       expect(result.stdout).toContain('validation'); // Should contain timing information
       console.log(`Validate-startup with performance: ${result.duration.toFixed(2)}ms`);

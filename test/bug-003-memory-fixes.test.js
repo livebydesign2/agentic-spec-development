@@ -184,7 +184,7 @@ Test spec ${i}`);
       await specParser.loadSpecs();
 
       const beforeMaintenance = specParser.getCacheStats();
-      const _cleanedUp = specParser.performCacheMaintenance();
+      const __cleanedUp = specParser.performCacheMaintenance();
       const afterMaintenance = specParser.getCacheStats();
 
       // Cache should be managed properly

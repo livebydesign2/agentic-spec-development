@@ -1,5 +1,5 @@
-const fs = require('fs').promises;
-const path = require('path');
+const _fs = require('_fs').promises;
+const _path = require('_path');
 
 // Mock fs operations for testing
 jest.mock('fs', () => ({
@@ -33,7 +33,7 @@ describe('FEAT-028: Context Injection & Sub-agent Integration', () => {
   beforeEach(() => {
     // Clear all mocks
     jest.clearAllMocks();
-    
+
     // Mock file system operations
     require('fs').promises.access.mockResolvedValue();
     require('fs').promises.mkdir.mockResolvedValue();
@@ -58,7 +58,7 @@ describe('FEAT-028: Context Injection & Sub-agent Integration', () => {
 
     test('should throw error for missing required parameters', async () => {
       const gatherer = new ContextGatherer(configManager);
-      
+
       await expect(gatherer.gatherTaskContext({})).rejects.toThrow(
         'Both specId and taskId are required'
       );
@@ -66,7 +66,7 @@ describe('FEAT-028: Context Injection & Sub-agent Integration', () => {
 
     test('should gather context with proper structure', async () => {
       const gatherer = new ContextGatherer(configManager);
-      
+
       // Mock specification file
       const mockSpec = `---
 title: Test Feature
@@ -87,7 +87,7 @@ priority: P1
       expect(context.metadata.specId).toBe('FEAT-028');
       expect(context.metadata.taskId).toBe('TASK-001');
       expect(context.metadata.agentType).toBe('software-architect');
-      
+
       expect(context).toHaveProperty('taskSpecific');
       expect(context).toHaveProperty('validation');
       expect(context.validation).toHaveProperty('relevanceScore');
@@ -113,7 +113,7 @@ priority: P1
 
     test('should validate required parameters for automated injection', async () => {
       const injector = new ContextInjector(configManager);
-      
+
       await expect(injector.injectContextForTask({
         agentType: 'software-architect'
         // Missing specId and taskId
@@ -134,7 +134,7 @@ priority: P1
 
     test('should validate required parameters', async () => {
       const generator = new PromptGenerator(configManager);
-      
+
       await expect(generator.generateTaskPrompt({})).rejects.toThrow(
         'agentType and taskContext are required'
       );
@@ -142,7 +142,7 @@ priority: P1
 
     test('should generate prompt with proper structure', async () => {
       const generator = new PromptGenerator(configManager);
-      
+
       const mockTaskContext = {
         metadata: { taskId: 'TASK-001', specId: 'FEAT-028' },
         taskSpecific: {
@@ -185,7 +185,7 @@ priority: P1
 
     test('should validate required parameters for workspace setup', async () => {
       const manager = new WorkspaceManager(configManager);
-      
+
       await expect(manager.setupWorkspace({})).rejects.toThrow(
         'specId, taskId, and agentType are required'
       );
@@ -193,7 +193,7 @@ priority: P1
 
     test('should set up workspace with proper structure', async () => {
       const manager = new WorkspaceManager(configManager);
-      
+
       const mockTaskContext = {
         metadata: { taskId: 'TASK-001', specId: 'FEAT-028' },
         taskSpecific: {
@@ -220,7 +220,7 @@ priority: P1
     test('should integrate ContextGatherer with ContextInjector', async () => {
       const ContextInjector = require('../../lib/context-injector');
       const injector = new ContextInjector(configManager);
-      
+
       // Mock the context gatherer response
       const mockTaskContext = {
         metadata: { taskId: 'TASK-001', specId: 'FEAT-028' },
@@ -254,7 +254,7 @@ priority: P1
     test('should handle performance requirements', () => {
       const ContextGatherer = require('../../lib/automation/context-gatherer');
       const gatherer = new ContextGatherer(configManager);
-      
+
       // Check performance-related properties
       expect(gatherer.cacheTimeout).toBe(300000); // 5 minutes
       expect(gatherer.maxCacheSize).toBe(100);
@@ -264,10 +264,10 @@ priority: P1
     test('should provide caching functionality', () => {
       const ContextGatherer = require('../../lib/automation/context-gatherer');
       const gatherer = new ContextGatherer(configManager);
-      
+
       expect(typeof gatherer.clearCache).toBe('function');
       expect(typeof gatherer.getCacheStats).toBe('function');
-      
+
       const stats = gatherer.getCacheStats();
       expect(stats).toHaveProperty('size');
       expect(stats).toHaveProperty('maxSize');
@@ -277,7 +277,7 @@ priority: P1
     test('should handle agent-specific optimizations', () => {
       const PromptGenerator = require('../../lib/automation/prompt-generator');
       const generator = new PromptGenerator(configManager);
-      
+
       // Test that the instance has required properties
       expect(generator.templateCache).toBeInstanceOf(Map);
       expect(generator.maxPromptLength).toBe(32000);
@@ -290,10 +290,10 @@ priority: P1
     test('should meet automation performance targets', () => {
       const ContextGatherer = require('../../lib/automation/context-gatherer');
       const ContextInjector = require('../../lib/context-injector');
-      
-      const gatherer = new ContextGatherer(configManager);
+
+      const _gatherer = new ContextGatherer(configManager);
       const injector = new ContextInjector(configManager);
-      
+
       // Verify performance timeout settings
       expect(injector.performanceTimeout).toBe(500); // 500ms for standard injection
       // Context gathering should target <3 seconds for automation
@@ -302,14 +302,14 @@ priority: P1
     test('should provide audit logging capabilities', () => {
       const ContextInjector = require('../../lib/context-injector');
       const injector = new ContextInjector(configManager);
-      
+
       expect(typeof injector.auditLogContextOperation).toBe('function');
     });
 
     test('should support task recommendations', () => {
       const ContextInjector = require('../../lib/context-injector');
       const injector = new ContextInjector(configManager);
-      
+
       expect(typeof injector.getContextualTaskRecommendations).toBe('function');
     });
   });

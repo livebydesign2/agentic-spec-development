@@ -1,5 +1,5 @@
 const path = require('path');
-const _fs = require('fs').promises;
+const __fs = require('fs').promises;
 
 const AutomatedStateSync = require('../../lib/automation/automated-state-sync');
 const ConfigManager = require('../../lib/config-manager');

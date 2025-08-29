@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync, spawn } = require('child_process');
 const StartupValidator = require('../lib/startup-validator');
 
 describe('Startup Validation System', () => {
@@ -12,7 +11,7 @@ describe('Startup Validation System', () => {
     // Save original state
     originalCwd = process.cwd();
     originalEnv = { ...process.env };
-    
+
     // Create temporary test directory
     tempDir = path.join(__dirname, 'temp', `startup-test-${Date.now()}`);
     if (!fs.existsSync(tempDir)) {
@@ -24,7 +23,7 @@ describe('Startup Validation System', () => {
     // Restore original state
     process.chdir(originalCwd);
     process.env = originalEnv;
-    
+
     // Cleanup test directory
     if (fs.existsSync(tempDir)) {
       try {
@@ -46,7 +45,7 @@ describe('Startup Validation System', () => {
         expect(result).toHaveProperty('warnings');
         expect(Array.isArray(result.errors)).toBe(true);
         expect(Array.isArray(result.warnings)).toBe(true);
-        
+
         // Should pass for current Node version (>=16)
         expect(result.valid).toBe(true);
       });
@@ -54,20 +53,20 @@ describe('Startup Validation System', () => {
       test('handles version parsing errors gracefully', () => {
         const validator = new StartupValidator();
         const originalVersion = process.version;
-        
+
         try {
           // Mock invalid version
           Object.defineProperty(process, 'version', {
             value: 'invalid-version',
             configurable: true
           });
-          
+
           const result = validator.validateNodeVersion();
           // The validator should handle parsing errors gracefully
           expect(result).toHaveProperty('valid');
           expect(result).toHaveProperty('errors');
           expect(result).toHaveProperty('warnings');
-          
+
           // Should either fail validation or handle gracefully
           if (!result.valid) {
             expect(result.errors.length).toBeGreaterThan(0);
@@ -96,13 +95,13 @@ describe('Startup Validation System', () => {
       test('handles non-TTY environment', async () => {
         const validator = new StartupValidator();
         const originalIsTTY = process.stdout.isTTY;
-        
+
         // Mock non-TTY environment
         process.stdout.isTTY = false;
-        
+
         const result = await validator.validateTerminalCapabilities();
         expect(result.warnings.some(w => w.includes('TTY'))).toBe(true);
-        
+
         // Restore original
         process.stdout.isTTY = originalIsTTY;
       });
@@ -111,15 +110,15 @@ describe('Startup Validation System', () => {
         const validator = new StartupValidator();
         const originalColumns = process.stdout.columns;
         const originalRows = process.stdout.rows;
-        
+
         // Mock small terminal
         process.stdout.columns = 40;
         process.stdout.rows = 10;
-        
+
         const result = await validator.validateTerminalCapabilities();
         expect(result.warnings.some(w => w.includes('width'))).toBe(true);
         expect(result.warnings.some(w => w.includes('height'))).toBe(true);
-        
+
         // Restore original
         process.stdout.columns = originalColumns;
         process.stdout.rows = originalRows;
@@ -134,7 +133,7 @@ describe('Startup Validation System', () => {
         expect(result).toHaveProperty('valid');
         expect(result).toHaveProperty('errors');
         expect(result).toHaveProperty('warnings');
-        
+
         // Should pass in normal environment
         expect(result.valid).toBe(true);
       });
@@ -142,7 +141,7 @@ describe('Startup Validation System', () => {
       test('handles missing dependencies gracefully', async () => {
         const validator = new StartupValidator();
         const originalResolve = require.resolve;
-        
+
         try {
           // Mock missing dependency
           require.resolve = jest.fn().mockImplementation((id) => {
@@ -153,7 +152,7 @@ describe('Startup Validation System', () => {
             }
             return originalResolve.call(require, id);
           });
-          
+
           const result = await validator.validateDependencies();
           expect(result.valid).toBe(false);
           expect(result.errors.some(e => e.includes('terminal-kit'))).toBe(true);
@@ -167,13 +166,13 @@ describe('Startup Validation System', () => {
     describe('Project Structure Validation', () => {
       test('validates ASD project structure', () => {
         const validator = new StartupValidator({ cwd: tempDir });
-        
+
         // Create ASD project structure
         const dirs = ['docs/specs/active', 'docs/specs/backlog', 'docs/specs/done'];
         dirs.forEach(dir => {
           fs.mkdirSync(path.join(tempDir, dir), { recursive: true });
         });
-        
+
         const result = validator.validateProjectStructure();
         expect(result.valid).toBe(true);
       });
@@ -181,28 +180,28 @@ describe('Startup Validation System', () => {
       test('handles missing project structure gracefully', () => {
         const validator = new StartupValidator({ cwd: tempDir });
         const result = validator.validateProjectStructure();
-        
+
         expect(result.warnings.some(w => w.includes('No ASD project structure'))).toBe(true);
       });
 
       test('validates configuration file', () => {
         const validator = new StartupValidator({ cwd: tempDir });
-        
+
         // Create valid config
         const configPath = path.join(tempDir, 'asd.config.js');
         fs.writeFileSync(configPath, 'module.exports = { featuresPath: "docs/specs" };');
-        
+
         const result = validator.validateProjectStructure();
         expect(result.valid).toBe(true);
       });
 
       test('handles corrupted configuration file', () => {
         const validator = new StartupValidator({ cwd: tempDir });
-        
+
         // Create invalid config
         const configPath = path.join(tempDir, 'asd.config.js');
         fs.writeFileSync(configPath, 'invalid javascript syntax {');
-        
+
         const result = validator.validateProjectStructure();
         // Should detect syntax errors in config file
         expect(result.errors.length > 0 || result.warnings.some(w => w.includes('syntax'))).toBe(true);
@@ -224,10 +223,10 @@ describe('Startup Validation System', () => {
         if (process.platform === 'win32') {
           return;
         }
-        
+
         const validator = new StartupValidator({ cwd: '/root' });
         const result = await validator.validateFileSystemPermissions();
-        
+
         // May have permission warnings/errors for restricted directories
         expect(result).toHaveProperty('valid');
       });
@@ -238,14 +237,14 @@ describe('Startup Validation System', () => {
         const validator = new StartupValidator();
         const originalColumns = process.stdout.columns;
         const originalRows = process.stdout.rows;
-        
+
         // Mock adequate terminal size
         process.stdout.columns = 120;
         process.stdout.rows = 30;
-        
+
         const result = validator.validateTerminalSize();
         expect(result.valid).toBe(true);
-        
+
         // Restore original
         process.stdout.columns = originalColumns;
         process.stdout.rows = originalRows;
@@ -255,16 +254,16 @@ describe('Startup Validation System', () => {
         const validator = new StartupValidator();
         const originalColumns = process.stdout.columns;
         const originalRows = process.stdout.rows;
-        
+
         // Mock too small terminal
         process.stdout.columns = 50;
         process.stdout.rows = 15;
-        
+
         const result = validator.validateTerminalSize();
         expect(result.valid).toBe(false);
         expect(result.errors.some(e => e.includes('width'))).toBe(true);
         expect(result.errors.some(e => e.includes('height'))).toBe(true);
-        
+
         // Restore original
         process.stdout.columns = originalColumns;
         process.stdout.rows = originalRows;
@@ -291,12 +290,12 @@ describe('Startup Validation System', () => {
         expect(result).toHaveProperty('warnings');
         expect(result).toHaveProperty('errors');
         expect(result).toHaveProperty('metrics');
-        
+
         expect(result.metrics).toHaveProperty('validationTime');
         expect(result.metrics).toHaveProperty('phases');
         expect(typeof result.metrics.validationTime).toBe('number');
         expect(result.metrics.validationTime).toBeLessThan(2000); // Under 2 seconds
-        
+
         // Should pass in clean test environment
         expect(result.valid).toBe(true);
       });
@@ -306,10 +305,10 @@ describe('Startup Validation System', () => {
         const startTime = Date.now();
         const result = await validator.validateEnvironment();
         const endTime = Date.now();
-        
+
         expect(result.metrics.validationTime).toBeLessThan(500); // Should be fast
         expect(endTime - startTime).toBeLessThan(1000); // Total time under 1 second
-        
+
         // Check individual phase performance
         Object.values(result.metrics.phases).forEach(phaseTime => {
           expect(phaseTime).toBeLessThan(200); // Each phase should be fast
@@ -332,9 +331,9 @@ describe('Startup Validation System', () => {
             cliEnvironmentValidation: 10
           }
         };
-        
+
         const analysis = validator.analyzePerformance(mockMetrics);
-        
+
         expect(analysis).toHaveProperty('overall');
         expect(analysis).toHaveProperty('slowPhases');
         expect(analysis).toHaveProperty('recommendations');
@@ -355,9 +354,9 @@ describe('Startup Validation System', () => {
             cliEnvironmentValidation: 10
           }
         };
-        
+
         const analysis = validator.analyzePerformance(mockMetrics);
-        
+
         expect(analysis.overall).toBe('slow');
         expect(analysis.slowPhases.length).toBe(2);
         expect(analysis.recommendations.length).toBeGreaterThan(0);
@@ -368,16 +367,16 @@ describe('Startup Validation System', () => {
       test('logs startup attempts', async () => {
         const validator = new StartupValidator({ cwd: tempDir });
         const result = await validator.validateEnvironment();
-        
+
         // Create .asd/logs directory for logging test
         fs.mkdirSync(path.join(tempDir, '.asd', 'logs'), { recursive: true });
-        
+
         // Manually call logStartupAttempt to test logging
         validator.logStartupAttempt(result);
-        
+
         // Give it a moment for async logging
         await new Promise(resolve => setTimeout(resolve, 100));
-        
+
         const logFile = path.join(tempDir, '.asd', 'logs', 'startup.log');
         if (fs.existsSync(logFile)) {
           const logContent = fs.readFileSync(logFile, 'utf-8');
@@ -390,7 +389,7 @@ describe('Startup Validation System', () => {
         // Use a directory we can't write to
         const validator = new StartupValidator({ cwd: '/root' });
         const result = await validator.validateEnvironment();
-        
+
         // This should not throw even if logging fails
         expect(() => validator.logStartupAttempt(result)).not.toThrow();
       });
@@ -401,14 +400,14 @@ describe('Startup Validation System', () => {
         const validator = new StartupValidator({ cwd: tempDir });
         const result = await validator.validateEnvironment();
         const report = validator.generateStartupReport(result);
-        
+
         expect(report).toHaveProperty('status');
         expect(report).toHaveProperty('validationTime');
         expect(report).toHaveProperty('errorCount');
         expect(report).toHaveProperty('warningCount');
         expect(report).toHaveProperty('performance');
         expect(report).toHaveProperty('environment');
-        
+
         expect(report.status).toBe('SUCCESS');
         expect(typeof report.validationTime).toBe('number');
         expect(report.environment.nodeVersion).toBe(process.version);

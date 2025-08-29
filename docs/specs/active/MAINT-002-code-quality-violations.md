@@ -16,8 +16,8 @@ tags:
 tasks:
   - id: TASK-001
     title: Audit & Categorize Code Quality Violations
-    agent_type: backend-developer
-    status: pending
+    agent_type: code-quality-specialist
+    status: complete
     estimated_hours: 4
     context_requirements:
       - code-quality-standards
@@ -143,14 +143,14 @@ acceptance_criteria:
 
 ### AGENT PICKUP GUIDE
 
-**➡️ Next Available Task**: **TASK-001** - Audit & Categorize Code Quality Violations  
-**📋 Your Job**: Work on TASK-001 only, then update docs and hand off  
-**🚦 Dependencies**: None - can start immediately
+**➡️ Next Available Task**: **TASK-002** - Fix Critical Code Quality Issues  
+**📋 Your Job**: Work on TASK-002 only, then update docs and hand off  
+**🚦 Dependencies**: TASK-001 complete ✅
 
 ### Current State (AGENTS: Update when you complete YOUR task)
 
-- **Current Task Status**: TASK-001 pending - needs backend developer to begin audit
-- **Overall Progress**: 0 of 4 tasks complete (0%)
+- **Current Task Status**: TASK-001 complete ✅ - TASK-002 ready for backend developer pickup
+- **Overall Progress**: 1 of 4 tasks complete (25%)
 - **Phase**: PHASE-STABILIZATION-1 (Week 1 - Critical)
 - **Violations**: 382 identified violations need systematic resolution
 - **Last Updated**: 2025-08-29 by Product Manager - Sprint initiated

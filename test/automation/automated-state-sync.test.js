@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const path = require('path');
-const _fs = require('fs').promises;
+const __fs = require('fs').promises;
 
 const AutomatedStateSync = require('../../lib/automation/automated-state-sync');
 const ConfigManager = require('../../lib/config-manager');
@@ -88,7 +88,7 @@ describe('AutomatedStateSync', function() {
 
     it('should handle initialization failure gracefully', async function() {
       // Force eventBus initialization to fail
-      const _originalEventBus = automatedStateSync.components.eventBus;
+      const __originalEventBus = automatedStateSync.components.eventBus;
       automatedStateSync.components.eventBus = null;
 
       // Create a mock EventBus that fails to initialize
@@ -98,7 +98,7 @@ describe('AutomatedStateSync', function() {
 
       // Override the EventBus constructor temporarily
       const EventBus = require('../../lib/automation/event-bus');
-      const _originalConstructor = EventBus;
+      const __originalConstructor = EventBus;
 
       // Mock the EventBus constructor to return our failing mock
       sinon.stub(automatedStateSync, 'components').value({

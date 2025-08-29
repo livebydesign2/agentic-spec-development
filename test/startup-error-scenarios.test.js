@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
-const os = require('os');
+const _os = require('_os');
 
 describe('Startup Error Scenarios', () => {
   let tempDir;
@@ -72,9 +72,9 @@ describe('Startup Error Scenarios', () => {
     test('handles malformed configuration file', async () => {
       const configPath = path.join(tempDir, 'asd.config.js');
       fs.writeFileSync(configPath, 'module.exports = { invalid: syntax }');
-      
+
       const result = await execASD(['doctor']);
-      
+
       // Should complete but show configuration error
       expect(result.success).toBe(true);
       expect(result.stdout || result.stderr).toContain('syntax');
@@ -83,9 +83,9 @@ describe('Startup Error Scenarios', () => {
     test('handles configuration file with runtime errors', async () => {
       const configPath = path.join(tempDir, 'asd.config.js');
       fs.writeFileSync(configPath, 'throw new Error("Config error"); module.exports = {};');
-      
+
       const result = await execASD(['doctor']);
-      
+
       // Should handle the error gracefully
       expect(result.success).toBe(true);
     });
@@ -93,7 +93,7 @@ describe('Startup Error Scenarios', () => {
     test('handles missing required configuration properties', async () => {
       const configPath = path.join(tempDir, 'asd.config.js');
       fs.writeFileSync(configPath, 'module.exports = { featuresPath: null };');
-      
+
       const result = await execASD(['doctor']);
       expect(result.success).toBe(true);
     });
@@ -105,16 +105,16 @@ describe('Startup Error Scenarios', () => {
       if (process.platform === 'win32') {
         return;
       }
-      
+
       const readOnlyDir = path.join(tempDir, 'readonly');
       fs.mkdirSync(readOnlyDir, { recursive: true });
       fs.chmodSync(readOnlyDir, 0o444); // Read-only
-      
+
       const result = await execASD(['--version'], { cwd: readOnlyDir });
-      
+
       // Should still work for simple commands
       expect(result.success).toBe(true);
-      
+
       // Restore permissions for cleanup
       fs.chmodSync(readOnlyDir, 0o755);
     });
@@ -124,16 +124,16 @@ describe('Startup Error Scenarios', () => {
       if (process.platform === 'win32') {
         return;
       }
-      
+
       const noWriteDir = path.join(tempDir, 'nowrite');
       fs.mkdirSync(noWriteDir, { recursive: true });
       fs.chmodSync(noWriteDir, 0o555); // Read and execute only
-      
+
       const result = await execASD(['doctor'], { cwd: noWriteDir });
-      
+
       // Should complete but may show warnings
       expect(result.success).toBe(true);
-      
+
       // Restore permissions
       fs.chmodSync(noWriteDir, 0o755);
     });
@@ -141,7 +141,7 @@ describe('Startup Error Scenarios', () => {
     test('handles missing parent directories', async () => {
       const deepPath = path.join(tempDir, 'very', 'deep', 'nested', 'path');
       fs.mkdirSync(deepPath, { recursive: true });
-      
+
       const result = await execASD(['--version'], { cwd: deepPath });
       expect(result.success).toBe(true);
     });
@@ -152,7 +152,7 @@ describe('Startup Error Scenarios', () => {
       const result = await execASD(['--version'], {
         env: { ...process.env, PATH: '' }
       });
-      
+
       expect(result.success).toBe(true);
     });
 
@@ -160,7 +160,7 @@ describe('Startup Error Scenarios', () => {
       const result = await execASD(['--version'], {
         env: { ...process.env, HOME: '', USERPROFILE: '' }
       });
-      
+
       expect(result.success).toBe(true);
     });
 
@@ -172,7 +172,7 @@ describe('Startup Error Scenarios', () => {
           LANG: 'invalid-locale'
         }
       });
-      
+
       expect(result.success).toBe(true);
     });
   });
@@ -186,7 +186,7 @@ describe('Startup Error Scenarios', () => {
           LINES: '5'
         }
       });
-      
+
       // Should complete but show warnings about terminal size
       expect(result.success).toBe(true);
     });
@@ -198,7 +198,7 @@ describe('Startup Error Scenarios', () => {
           TERM: undefined
         }
       });
-      
+
       expect(result.success).toBe(true);
     });
 
@@ -209,7 +209,7 @@ describe('Startup Error Scenarios', () => {
           TERM: 'dumb'
         }
       });
-      
+
       expect(result.success).toBe(true);
     });
   });
@@ -230,7 +230,7 @@ describe('Startup Error Scenarios', () => {
         const dir = path.join(tempDir, `test-dir-${i}`);
         fs.mkdirSync(dir, { recursive: true });
       }
-      
+
       const result = await execASD(['doctor']);
       expect(result.success).toBe(true);
     });
@@ -241,17 +241,17 @@ describe('Startup Error Scenarios', () => {
       // Create a config file
       const configPath = path.join(tempDir, 'asd.config.js');
       fs.writeFileSync(configPath, 'module.exports = { featuresPath: "docs/specs" };');
-      
+
       // Run multiple ASD instances concurrently
       const promises = [];
       for (let i = 0; i < 3; i++) {
         promises.push(execASD(['doctor']));
       }
-      
+
       const results = await Promise.all(promises);
-      
+
       // All should succeed or at least not crash
-      results.forEach((result, index) => {
+      results.forEach((result, _index) => {
         expect(result.success).toBe(true);
       });
     });
@@ -261,10 +261,10 @@ describe('Startup Error Scenarios', () => {
     test('falls back to defaults when config is corrupted', async () => {
       const configPath = path.join(tempDir, 'asd.config.js');
       fs.writeFileSync(configPath, 'this is not valid javascript');
-      
+
       const result = await execASD(['doctor']);
       expect(result.success).toBe(true);
-      
+
       // Should indicate fallback to defaults
       expect(result.stdout || result.stderr).toBeTruthy();
     });
@@ -273,14 +273,14 @@ describe('Startup Error Scenarios', () => {
       // Create .asd directory but make it read-only
       const asdDir = path.join(tempDir, '.asd');
       fs.mkdirSync(asdDir, { recursive: true });
-      
+
       if (process.platform !== 'win32') {
         fs.chmodSync(asdDir, 0o444); // Read-only
       }
-      
+
       const result = await execASD(['doctor']);
       expect(result.success).toBe(true);
-      
+
       // Restore permissions for cleanup
       if (process.platform !== 'win32') {
         fs.chmodSync(asdDir, 0o755);
@@ -298,7 +298,7 @@ describe('Startup Error Scenarios', () => {
   describe('Error Message Quality', () => {
     test('provides actionable error messages', async () => {
       const result = await execASD(['invalid-command']);
-      
+
       expect(result.success).toBe(false);
       expect(result.stderr || result.stdout).toContain('Unknown command');
     });
@@ -312,7 +312,7 @@ describe('Startup Error Scenarios', () => {
           LINES: '15'
         }
       });
-      
+
       expect(result.success).toBe(true);
       // Should provide guidance about terminal size
       if (result.stdout.includes('width') || result.stdout.includes('height')) {
@@ -331,7 +331,7 @@ describe('Startup Error Scenarios', () => {
     test('works on different operating systems', async () => {
       const result = await execASD(['doctor']);
       expect(result.success).toBe(true);
-      
+
       // Should report the current platform correctly
       expect(result.stdout).toContain(process.platform);
     });
@@ -343,7 +343,7 @@ describe('Startup Error Scenarios', () => {
       for (let i = 0; i < 5; i++) {
         commands.push(execASD(['--version']));
       }
-      
+
       const results = await Promise.all(commands);
       results.forEach(result => {
         expect(result.success).toBe(true);

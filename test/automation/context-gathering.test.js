@@ -1,5 +1,5 @@
 const fs = require('fs').promises;
-const path = require('path');
+const _path = require('_path');
 const { expect } = require('chai');
 const sinon = require('sinon');
 const ContextGatherer = require('../../lib/automation/context-gatherer');
@@ -13,7 +13,7 @@ describe('FEAT-028: Enhanced Context Gathering', function() {
 
   beforeEach(function() {
     sandbox = sinon.createSandbox();
-    
+
     // Mock config manager
     configManager = {
       getProjectRoot: () => '/test/project',
@@ -50,7 +50,7 @@ priority: P1
         sandbox.stub(fs, 'readFile').resolves(mockSpec);
         sandbox.stub(fs, 'access').resolves();
         sandbox.stub(contextGatherer, 'findAllSpecifications').resolves([]);
-        
+
         const context = await contextGatherer.gatherTaskContext({
           specId: 'FEAT-028',
           taskId: 'TASK-001',
@@ -100,8 +100,8 @@ priority: P1
       });
 
       it('should calculate relevance scores based on agent type', async function() {
-        const mockSpec = `---\ntitle: CLI Enhancement\n---\n**TASK-001** CLI Development Task`;
-        
+        const mockSpec = '---\ntitle: CLI Enhancement\n---\n**TASK-001** CLI Development Task';
+
         sandbox.stub(fs, 'readFile').resolves(mockSpec);
         sandbox.stub(fs, 'access').resolves();
         sandbox.stub(contextGatherer, 'findAllSpecifications').resolves([]);
@@ -126,14 +126,14 @@ priority: P1
       });
 
       it('should use caching for performance', async function() {
-        const mockSpec = `---\ntitle: Test\n---\n**TASK-001** Test Task`;
-        
+        const mockSpec = '---\ntitle: Test\n---\n**TASK-001** Test Task';
+
         sandbox.stub(fs, 'readFile').resolves(mockSpec);
         sandbox.stub(fs, 'access').resolves();
         sandbox.stub(contextGatherer, 'findAllSpecifications').resolves([]);
 
         // First call
-        const context1 = await contextGatherer.gatherTaskContext({
+        const _context1 = await contextGatherer.gatherTaskContext({
           specId: 'FEAT-028',
           taskId: 'TASK-001',
           agentType: 'software-architect',
@@ -153,7 +153,7 @@ priority: P1
 
       it('should handle missing specifications gracefully', async function() {
         sandbox.stub(fs, 'access').rejects(new Error('File not found'));
-        
+
         try {
           await contextGatherer.gatherTaskContext({
             specId: 'NONEXISTENT',
@@ -167,8 +167,8 @@ priority: P1
       });
 
       it('should complete context gathering within performance targets', async function() {
-        const mockSpec = `---\ntitle: Test\n---\n**TASK-001** Test Task`;
-        
+        const mockSpec = '---\ntitle: Test\n---\n**TASK-001** Test Task';
+
         sandbox.stub(fs, 'readFile').resolves(mockSpec);
         sandbox.stub(fs, 'access').resolves();
         sandbox.stub(contextGatherer, 'findAllSpecifications').resolves([]);
@@ -235,7 +235,7 @@ Dependency content`;
 
         sandbox.stub(contextInjector.contextGatherer, 'gatherTaskContext')
           .resolves(mockTaskContext);
-        
+
         sandbox.stub(contextInjector, 'injectContext').resolves({
           layers: { critical: {}, taskSpecific: {} },
           metadata: { performance: {} },
@@ -266,7 +266,7 @@ Dependency content`;
 
         sandbox.stub(contextInjector.contextGatherer, 'gatherTaskContext')
           .resolves(mockTaskContext);
-        
+
         sandbox.stub(contextInjector, 'injectContext').resolves({
           layers: { critical: {}, taskSpecific: {} },
           metadata: { performance: {} },
@@ -314,7 +314,7 @@ Dependency content`;
 
         sandbox.stub(contextInjector.contextGatherer, 'gatherTaskContext')
           .resolves(mockTaskContext);
-        
+
         sandbox.stub(contextInjector, 'injectContext').resolves({
           layers: { critical: {} },
           metadata: { performance: {} },
@@ -346,7 +346,7 @@ Dependency content`;
         ];
 
         sandbox.stub(TaskRouter.prototype, 'getNextTask').resolves(mockRecommendations);
-        
+
         const mockContextPreview = {
           validation: { relevanceScore: 0.8, completeness: 0.9, isSufficient: true },
           metadata: { performance: { gatheringTimeMs: 200 } }
@@ -371,7 +371,7 @@ Dependency content`;
         ];
 
         sandbox.stub(TaskRouter.prototype, 'getNextTask').resolves(mockRecommendations);
-        
+
         sandbox.stub(contextInjector.contextGatherer, 'gatherTaskContext')
           .onFirstCall().resolves({
             validation: { relevanceScore: 0.6, completeness: 0.7, isSufficient: true },
@@ -394,8 +394,8 @@ Dependency content`;
   describe('Integration Tests', function() {
     it('should integrate with existing TaskRouter for automated workflows', async function() {
       // This would test the full integration with FEAT-026 automation commands
-      const mockSpec = `---\ntitle: Test\n---\n**TASK-001** Test Task | Agent: software-architect`;
-      
+      const mockSpec = '---\ntitle: Test\n---\n**TASK-001** Test Task | Agent: software-architect';
+
       sandbox.stub(fs, 'readFile').resolves(mockSpec);
       sandbox.stub(fs, 'access').resolves();
       sandbox.stub(contextGatherer, 'findAllSpecifications').resolves([]);
@@ -414,12 +414,12 @@ Dependency content`;
     it('should maintain performance under load', async function() {
       // Performance test with multiple concurrent context injections
       const promises = [];
-      
+
       for (let i = 0; i < 10; i++) {
         const mockSpec = `---\ntitle: Test ${i}\n---\n**TASK-001** Test Task ${i}`;
         sandbox.stub(fs, 'readFile').onCall(i).resolves(mockSpec);
       }
-      
+
       sandbox.stub(fs, 'access').resolves();
       sandbox.stub(contextGatherer, 'findAllSpecifications').resolves([]);
 
