@@ -1,6 +1,5 @@
 const fs = require('fs').promises;
-const _path = require('_path'); // eslint-disable-line no-unused-vars
-const { expect } = require('chai');
+const path = require('path'); // eslint-disable-line no-unused-vars
 const sinon = require('sinon');
 const ContextGatherer = require('../../lib/automation/context-gatherer');
 const ContextInjector = require('../../lib/context-injector');
@@ -58,21 +57,21 @@ priority: P1
           includeFiles: false,
         });
 
-        expect(context).to.have.property('metadata');
-        expect(context.metadata).to.have.property('specId', 'FEAT-028');
-        expect(context.metadata).to.have.property('taskId', 'TASK-001');
-        expect(context.metadata).to.have.property(
+        expect(context).toHaveProperty('metadata');
+        expect(context.metadata).toHaveProperty('specId', 'FEAT-028');
+        expect(context.metadata).toHaveProperty('taskId', 'TASK-001');
+        expect(context.metadata).toHaveProperty(
           'agentType',
           'software-architect'
         );
 
-        expect(context).to.have.property('taskSpecific');
-        expect(context.taskSpecific).to.have.property('specification');
-        expect(context.taskSpecific).to.have.property('task');
+        expect(context).toHaveProperty('taskSpecific');
+        expect(context.taskSpecific).toHaveProperty('specification');
+        expect(context.taskSpecific).toHaveProperty('task');
 
-        expect(context).to.have.property('validation');
-        expect(context.validation).to.have.property('relevanceScore');
-        expect(context.validation).to.have.property('completeness');
+        expect(context).toHaveProperty('validation');
+        expect(context.validation).toHaveProperty('relevanceScore');
+        expect(context.validation).toHaveProperty('completeness');
       });
 
       it('should extract task details correctly from specification', async function () {
@@ -96,12 +95,12 @@ priority: P1
         });
 
         const task = context.taskSpecific.task;
-        expect(task.id).to.equal('TASK-001');
-        expect(task.title).to.equal('Enhanced Context Injector');
-        expect(task.status).to.equal('ready');
-        expect(task.agent).to.equal('software-architect');
-        expect(task.files).to.include('lib/context-injector.js');
-        expect(task.checklist).to.have.length(2);
+        expect(task.id).toBe('TASK-001');
+        expect(task.title).toBe('Enhanced Context Injector');
+        expect(task.status).toBe('ready');
+        expect(task.agent).toBe('software-architect');
+        expect(task.files).toContain('lib/context-injector.js');
+        expect(task.checklist).toHaveLength(2);
       });
 
       it('should calculate relevance scores based on agent type', async function () {
@@ -126,7 +125,7 @@ priority: P1
           agentType: 'backend-developer',
         });
 
-        expect(contextMatching.validation.relevanceScore).to.be.greaterThan(
+        expect(contextMatching.validation.relevanceScore).toBeGreaterThan(
           contextNonMatching.validation.relevanceScore
         );
       });
@@ -154,7 +153,7 @@ priority: P1
           useCache: true,
         });
 
-        expect(context2.metadata.performance.cacheHit).to.be.true;
+        expect(context2.metadata.performance.cacheHit).toBe(true);
       });
 
       it('should handle missing specifications gracefully', async function () {
@@ -166,9 +165,9 @@ priority: P1
             taskId: 'TASK-001',
             agentType: 'software-architect',
           });
-          expect.fail('Should have thrown an error');
+          expect(true).toBe(false); // Should have thrown an error
         } catch (error) {
-          expect(error.message).to.include(
+          expect(error.message).toContain(
             'Specification NONEXISTENT not found'
           );
         }
@@ -190,8 +189,8 @@ priority: P1
         const totalTime = Date.now() - startTime;
 
         // Should complete within reasonable time for automation
-        expect(totalTime).to.be.lessThan(5000);
-        expect(context.metadata.performance.gatheringTimeMs).to.be.lessThan(
+        expect(totalTime).toBeLessThan(5000);
+        expect(context.metadata.performance.gatheringTimeMs).toBeLessThan(
           5000
         );
       });
@@ -228,7 +227,7 @@ Dependency content`;
           agentType: 'software-architect',
         });
 
-        expect(context.dependencies.required).to.have.length.greaterThan(0);
+        expect(context.dependencies.required.length).toBeGreaterThan(0);
       });
     });
   });
@@ -263,10 +262,10 @@ Dependency content`;
           automated: true,
         });
 
-        expect(context).to.have.property('automation');
-        expect(context.automation.enabled).to.be.true;
-        expect(context.automation.taskSpecific).to.deep.equal(mockTaskContext);
-        expect(context.automation.validation).to.have.property('isReady');
+        expect(context).toHaveProperty('automation');
+        expect(context.automation.enabled).toBe(true);
+        expect(context.automation.taskSpecific).toEqual(mockTaskContext);
+        expect(context.automation.validation).toHaveProperty('isReady');
       });
 
       it('should validate automated context quality', async function () {
@@ -295,9 +294,9 @@ Dependency content`;
           automated: true,
         });
 
-        expect(context.automation.validation.score).to.be.greaterThan(0.7);
-        expect(context.automation.validation.isReady).to.be.true;
-        expect(context.automation.validation.issues).to.be.empty;
+        expect(context.automation.validation.score).toBeGreaterThan(0.7);
+        expect(context.automation.validation.isReady).toBe(true);
+        expect(context.automation.validation.issues).toHaveLength(0);
       });
 
       it('should fallback to standard injection when not automated', async function () {
@@ -313,8 +312,8 @@ Dependency content`;
           automated: false,
         });
 
-        expect(context).to.not.have.property('automation');
-        expect(context).to.have.property('layers');
+        expect(context).not.toHaveProperty('automation');
+        expect(context).toHaveProperty('layers');
       });
 
       it('should meet automation performance targets', async function () {
@@ -347,8 +346,8 @@ Dependency content`;
         const totalTime = Date.now() - startTime;
 
         // Should complete within 3 seconds for automation
-        expect(totalTime).to.be.lessThan(3000);
-        expect(context.metadata.performance.automatedInjection).to.be.lessThan(
+        expect(totalTime).toBeLessThan(3000);
+        expect(context.metadata.performance.automatedInjection).toBeLessThan(
           3000
         );
       });
@@ -385,16 +384,16 @@ Dependency content`;
             'software-architect'
           );
 
-        expect(recommendations.recommendations).to.have.length(2);
-        expect(recommendations.recommendations[0]).to.have.property(
+        expect(recommendations.recommendations).toHaveLength(2);
+        expect(recommendations.recommendations[0]).toHaveProperty(
           'contextPreview'
         );
         expect(
           recommendations.recommendations[0].contextPreview.relevanceScore
-        ).to.equal(0.8);
+        ).toBe(0.8);
         expect(
           recommendations.recommendations[0].contextPreview.hasRequiredContext
-        ).to.be.true;
+        ).toBe(true);
       });
 
       it('should sort recommendations by relevance score', async function () {
@@ -435,8 +434,8 @@ Dependency content`;
           );
 
         // Second recommendation should be first due to higher relevance
-        expect(recommendations.recommendations[0].specId).to.equal('FEAT-029');
-        expect(recommendations.recommendations[1].specId).to.equal('FEAT-028');
+        expect(recommendations.recommendations[0].specId).toBe('FEAT-029');
+        expect(recommendations.recommendations[1].specId).toBe('FEAT-028');
       });
     });
   });
@@ -458,8 +457,8 @@ Dependency content`;
         automated: true,
       });
 
-      expect(context.automation).to.exist;
-      expect(context.automation.triggers.taskAssignment).to.be.true;
+      expect(context.automation).toBeDefined();
+      expect(context.automation.triggers.taskAssignment).toBe(true);
     });
 
     it('should maintain performance under load', async function () {
@@ -489,10 +488,10 @@ Dependency content`;
       const totalTime = Date.now() - startTime;
 
       // All should complete within reasonable time
-      expect(totalTime).to.be.lessThan(10000);
-      expect(results).to.have.length(10);
+      expect(totalTime).toBeLessThan(10000);
+      expect(results).toHaveLength(10);
       results.forEach((result) => {
-        expect(result.metadata.performance.gatheringTimeMs).to.be.lessThan(
+        expect(result.metadata.performance.gatheringTimeMs).toBeLessThan(
           5000
         );
       });

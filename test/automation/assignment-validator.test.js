@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+// Using Jest's built-in expect
 const sinon = require('sinon');
 const AssignmentValidator = require('../../lib/automation/assignment-validator');
 
@@ -75,10 +75,10 @@ describe('AssignmentValidator', function () {
 
       const result = await validator.validateAssignment(assignment);
 
-      expect(result.isValid).to.be.true;
-      expect(result.canProceed).to.be.true;
-      expect(result.violations).to.be.empty;
-      expect(result.validationDetails).to.be.an('object');
+      expect(result.isValid).toBe(true);
+      expect(result.canProceed).toBe(true);
+      expect(result.violations).toHaveLength(0);
+      expect(typeof result.validationDetails).toBe('object');
     });
 
     it('should reject assignment for unavailable task', async function () {
@@ -101,10 +101,8 @@ describe('AssignmentValidator', function () {
 
       const result = await validator.validateAssignment(assignment);
 
-      expect(result.isValid).to.be.false;
-      expect(result.violations).to.include.something.that.includes(
-        'not available for assignment'
-      );
+      expect(result.isValid).toBe(false);
+      expect(result.violations.some(violation => violation.includes('not available for assignment'))).toBe(true);
     });
 
     it('should reject assignment for already assigned task', async function () {
@@ -136,10 +134,8 @@ describe('AssignmentValidator', function () {
 
       const result = await validator.validateAssignment(assignment);
 
-      expect(result.isValid).to.be.false;
-      expect(result.violations).to.include.something.that.includes(
-        'already assigned'
-      );
+      expect(result.isValid).toBe(false);
+      expect(result.violations.some(violation => violation.includes('already assigned'))).toBe(true);
     });
 
     it('should reject assignment for blocked task', async function () {
@@ -177,10 +173,8 @@ describe('AssignmentValidator', function () {
 
       const result = await validator.validateAssignment(assignment);
 
-      expect(result.isValid).to.be.false;
-      expect(result.violations).to.include.something.that.includes(
-        'blocked by unmet dependencies'
-      );
+      expect(result.isValid).toBe(false);
+      expect(result.violations.some(violation => violation.includes('blocked by unmet dependencies'))).toBe(true);
     });
 
     it('should reject assignment for incapable agent', async function () {
@@ -214,10 +208,8 @@ describe('AssignmentValidator', function () {
 
       const result = await validator.validateAssignment(assignment);
 
-      expect(result.isValid).to.be.false;
-      expect(result.violations).to.include.something.that.includes(
-        'cannot handle task'
-      );
+      expect(result.isValid).toBe(false);
+      expect(result.violations.some(violation => violation.includes('cannot handle task'))).toBe(true);
     });
 
     it('should handle task not found', async function () {
@@ -234,8 +226,8 @@ describe('AssignmentValidator', function () {
 
       const result = await validator.validateAssignment(assignment);
 
-      expect(result.isValid).to.be.false;
-      expect(result.violations).to.include.something.that.includes('not found');
+      expect(result.isValid).toBe(false);
+      expect(result.violations.some(violation => violation.includes('not found'))).toBe(true);
     });
   });
 
@@ -257,8 +249,8 @@ describe('AssignmentValidator', function () {
         maxWorkloadPerAgent: 40,
       });
 
-      expect(result.isValid).to.be.true;
-      expect(result.currentWorkload).to.equal(20);
+      expect(result.isValid).toBe(true);
+      expect(result.currentWorkload).toBe(20);
     });
   });
 
@@ -285,10 +277,8 @@ describe('AssignmentValidator', function () {
         confirmCritical: false,
       });
 
-      expect(result.isValid).to.be.false;
-      expect(result.violations).to.include.something.that.includes(
-        'P0 (Critical) tasks require explicit confirmation'
-      );
+      expect(result.isValid).toBe(false);
+      expect(result.violations.some(violation => violation.includes('P0 (Critical) tasks require explicit confirmation'))).toBe(true);
     });
 
     it('should allow P0 tasks with confirmation', async function () {
@@ -313,7 +303,7 @@ describe('AssignmentValidator', function () {
         confirmCritical: true,
       });
 
-      expect(result.isValid).to.be.true;
+      expect(result.isValid).toBe(true);
     });
 
     it('should enforce maximum concurrent tasks per agent', async function () {
@@ -344,10 +334,8 @@ describe('AssignmentValidator', function () {
         maxConcurrentTasks: 3,
       });
 
-      expect(result.isValid).to.be.false;
-      expect(result.violations).to.include.something.that.includes(
-        'already has maximum concurrent tasks'
-      );
+      expect(result.isValid).toBe(false);
+      expect(result.violations.some(violation => violation.includes('already has maximum concurrent tasks'))).toBe(true);
     });
   });
 
@@ -365,14 +353,12 @@ describe('AssignmentValidator', function () {
 
       const actionableErrors = validator.getActionableErrors(validation);
 
-      expect(actionableErrors).to.have.lengthOf(5);
-      expect(actionableErrors[0]).to.include(
-        'Check task ID and spec ID are correct'
-      );
-      expect(actionableErrors[1]).to.include("Use 'asd tasks --agent");
-      expect(actionableErrors[2]).to.include('Complete dependencies first');
-      expect(actionableErrors[3]).to.include('Check agent capabilities');
-      expect(actionableErrors[4]).to.include('Consider load balancing');
+      expect(actionableErrors).toHaveLength(5);
+      expect(actionableErrors[0]).toContain('Check task ID and spec ID are correct');
+      expect(actionableErrors[1]).toContain("Use 'asd tasks --agent");
+      expect(actionableErrors[2]).toContain('Complete dependencies first');
+      expect(actionableErrors[3]).toContain('Check agent capabilities');
+      expect(actionableErrors[4]).toContain('Consider load balancing');
     });
   });
 
@@ -392,12 +378,12 @@ describe('AssignmentValidator', function () {
       await validator.validateAssignment(assignment);
 
       const auditLog = validator.getAuditLog();
-      expect(auditLog).to.be.an('array');
-      expect(auditLog.length).to.be.greaterThan(0);
+      expect(Array.isArray(auditLog)).toBe(true);
+      expect(auditLog.length).toBeGreaterThan(0);
 
       const events = auditLog.map((entry) => entry.event);
-      expect(events).to.include('assignment_validation_started');
-      expect(events).to.include('assignment_validation_completed');
+      expect(events).toContain('assignment_validation_started');
+      expect(events).toContain('assignment_validation_completed');
     });
   });
 });

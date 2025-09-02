@@ -4,7 +4,7 @@ title: Test Suite Stabilization
 type: MAINT
 phase: PHASE-STABILIZATION-1
 priority: P1
-status: active
+status: done
 created: '2025-08-29T12:00:00Z'
 estimated_hours: 12
 tags:

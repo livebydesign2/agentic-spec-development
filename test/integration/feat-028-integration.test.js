@@ -1,5 +1,5 @@
-const _fs = require('_fs').promises; // eslint-disable-line no-unused-vars
-const _path = require('_path'); // eslint-disable-line no-unused-vars
+const _fs = require('fs').promises; // eslint-disable-line no-unused-vars
+const _path = require('path'); // eslint-disable-line no-unused-vars
 
 // Mock fs operations for testing
 jest.mock('fs', () => ({

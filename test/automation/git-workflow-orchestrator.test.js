@@ -1,7 +1,7 @@
 // Using Jest assertions instead of Chai
 // const { expect } = require('chai');
 const GitWorkflowOrchestrator = require('../../lib/automation/git-workflow-orchestrator');
-const ConfigManager = require('../../lib/config/config-manager');
+const ConfigManager = require('../../lib/config-manager');
 
 describe('GitWorkflowOrchestrator', () => {
   let orchestrator;

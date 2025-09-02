@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
-const _os = require('_os'); // eslint-disable-line no-unused-vars
+const _os = require('os'); // eslint-disable-line no-unused-vars
 
 describe('Startup Error Scenarios', () => {
   let tempDir;

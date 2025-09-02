@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+// Using Jest's built-in expect
 const sinon = require('sinon');
 const path = require('path');
 const __fs = require('fs').promises; // eslint-disable-line no-unused-vars
@@ -52,21 +52,21 @@ describe('AutomatedStateSync', function () {
 
   describe('Initialization', function () {
     it('should initialize all components successfully', async function () {
-      this.timeout(10000); // Allow extra time for initialization
+      // Allow extra time for initialization
 
       const result = await automatedStateSync.initialize();
 
-      expect(result).to.be.true;
-      expect(automatedStateSync.isInitialized).to.be.true;
-      expect(automatedStateSync.systemHealth.overall).to.equal('healthy');
+      expect(result).toBe(true);
+      expect(automatedStateSync.isInitialized).toBe(true);
+      expect(automatedStateSync.systemHealth.overall).toBe('healthy');
 
       // Check that all components are initialized
-      expect(automatedStateSync.components.eventBus).to.not.be.null;
-      expect(automatedStateSync.components.fileWatchers).to.not.be.null;
-      expect(automatedStateSync.components.changeDetector).to.not.be.null;
-      expect(automatedStateSync.components.stateValidator).to.not.be.null;
-      expect(automatedStateSync.components.syncEngine).to.not.be.null;
-      expect(automatedStateSync.components.conflictResolver).to.not.be.null;
+      expect(automatedStateSync.components.eventBus).not.toBeNull();
+      expect(automatedStateSync.components.fileWatchers).not.toBeNull();
+      expect(automatedStateSync.components.changeDetector).not.toBeNull();
+      expect(automatedStateSync.components.stateValidator).not.toBeNull();
+      expect(automatedStateSync.components.syncEngine).not.toBeNull();
+      expect(automatedStateSync.components.conflictResolver).not.toBeNull();
     });
 
     it('should emit system_initialized event on successful initialization', async function () {
@@ -75,15 +75,15 @@ describe('AutomatedStateSync', function () {
 
       await automatedStateSync.initialize();
 
-      expect(initSpy.calledOnce).to.be.true;
+      expect(initSpy.calledOnce).toBe(true);
 
       const eventData = initSpy.firstCall.args[0];
-      expect(eventData).to.have.property('initializationTime');
-      expect(eventData).to.have.property('components');
-      expect(eventData.components).to.be.an('array');
-      expect(eventData.components).to.include('eventBus');
-      expect(eventData.components).to.include('fileWatchers');
-      expect(eventData.components).to.include('syncEngine');
+      expect(eventData).toHaveProperty('initializationTime');
+      expect(eventData).toHaveProperty('components');
+      expect(Array.isArray(eventData.components)).toBe(true);
+      expect(eventData.components).toContain('eventBus');
+      expect(eventData.components).toContain('fileWatchers');
+      expect(eventData.components).toContain('syncEngine');
     });
 
     it('should handle initialization failure gracefully', async function () {
@@ -112,9 +112,9 @@ describe('AutomatedStateSync', function () {
 
       const result = await automatedStateSync.initialize();
 
-      expect(result).to.be.false;
-      expect(automatedStateSync.systemHealth.overall).to.equal('failed');
-      expect(automatedStateSync.systemHealth.issues).to.have.length.greaterThan(
+      expect(result).toBe(false);
+      expect(automatedStateSync.systemHealth.overall).toBe('failed');
+      expect(automatedStateSync.systemHealth.issues.length).toBeGreaterThan(
         0
       );
     });
@@ -128,9 +128,9 @@ describe('AutomatedStateSync', function () {
     it('should start successfully when initialized', async function () {
       const result = await automatedStateSync.start();
 
-      expect(result).to.be.true;
-      expect(automatedStateSync.isRunning).to.be.true;
-      expect(automatedStateSync.systemHealth.overall).to.equal('running');
+      expect(result).toBe(true);
+      expect(automatedStateSync.isRunning).toBe(true);
+      expect(automatedStateSync.systemHealth.overall).toBe('running');
     });
 
     it('should emit system_started event', async function () {
@@ -139,11 +139,11 @@ describe('AutomatedStateSync', function () {
 
       await automatedStateSync.start();
 
-      expect(startSpy.calledOnce).to.be.true;
+      expect(startSpy.calledOnce).toBe(true);
 
       const eventData = startSpy.firstCall.args[0];
-      expect(eventData).to.have.property('startedAt');
-      expect(eventData).to.have.property('components');
+      expect(eventData).toHaveProperty('startedAt');
+      expect(eventData).toHaveProperty('components');
     });
 
     it('should stop gracefully when running', async function () {
@@ -151,9 +151,9 @@ describe('AutomatedStateSync', function () {
 
       const result = await automatedStateSync.stop();
 
-      expect(result).to.be.true;
-      expect(automatedStateSync.isRunning).to.be.false;
-      expect(automatedStateSync.systemHealth.overall).to.equal('stopped');
+      expect(result).toBe(true);
+      expect(automatedStateSync.isRunning).toBe(false);
+      expect(automatedStateSync.systemHealth.overall).toBe('stopped');
     });
 
     it('should emit system_stopped event', async function () {
@@ -164,26 +164,26 @@ describe('AutomatedStateSync', function () {
 
       await automatedStateSync.stop();
 
-      expect(stopSpy.calledOnce).to.be.true;
+      expect(stopSpy.calledOnce).toBe(true);
 
       const eventData = stopSpy.firstCall.args[0];
-      expect(eventData).to.have.property('stoppedAt');
-      expect(eventData).to.have.property('finalStats');
+      expect(eventData).toHaveProperty('stoppedAt');
+      expect(eventData).toHaveProperty('finalStats');
     });
 
     it('should handle multiple start calls gracefully', async function () {
       await automatedStateSync.start();
       const result = await automatedStateSync.start(); // Second start call
 
-      expect(result).to.be.true;
-      expect(automatedStateSync.isRunning).to.be.true;
+      expect(result).toBe(true);
+      expect(automatedStateSync.isRunning).toBe(true);
     });
 
     it('should handle stop when not running', async function () {
       const result = await automatedStateSync.stop();
 
-      expect(result).to.be.true;
-      expect(automatedStateSync.isRunning).to.be.false;
+      expect(result).toBe(true);
+      expect(automatedStateSync.isRunning).toBe(false);
     });
   });
 
@@ -193,7 +193,6 @@ describe('AutomatedStateSync', function () {
     });
 
     it('should perform health checks regularly', function (done) {
-      this.timeout(5000);
 
       // Set up health check spy
       const healthCheckSpy = sinon.spy();
@@ -205,12 +204,12 @@ describe('AutomatedStateSync', function () {
 
       // Wait for at least one health check
       setTimeout(() => {
-        expect(healthCheckSpy.callCount).to.be.at.least(1);
+        expect(healthCheckSpy.callCount).toBeGreaterThanOrEqual(1);
 
         const eventData = healthCheckSpy.firstCall.args[0];
-        expect(eventData).to.have.property('overall');
-        expect(eventData).to.have.property('componentHealth');
-        expect(eventData).to.have.property('checkDuration');
+        expect(eventData).toHaveProperty('overall');
+        expect(eventData).toHaveProperty('componentHealth');
+        expect(eventData).toHaveProperty('checkDuration');
 
         done();
       }, 2500); // Wait for 2.5 seconds to catch at least 2 health checks
@@ -219,37 +218,37 @@ describe('AutomatedStateSync', function () {
     it('should provide system status information', function () {
       const status = automatedStateSync.getSystemStatus();
 
-      expect(status).to.have.property('system');
-      expect(status).to.have.property('components');
-      expect(status).to.have.property('health');
-      expect(status).to.have.property('metrics');
-      expect(status).to.have.property('performance');
+      expect(status).toHaveProperty('system');
+      expect(status).toHaveProperty('components');
+      expect(status).toHaveProperty('health');
+      expect(status).toHaveProperty('metrics');
+      expect(status).toHaveProperty('performance');
 
-      expect(status.system.initialized).to.be.true;
-      expect(status.system.health).to.equal('healthy');
+      expect(status.system.initialized).toBe(true);
+      expect(status.system.health).toBe('healthy');
     });
 
     it('should provide component status information', function () {
       const componentStatus = automatedStateSync.getComponentStatus();
 
-      expect(componentStatus).to.have.property('eventBus');
-      expect(componentStatus).to.have.property('fileWatchers');
-      expect(componentStatus).to.have.property('changeDetector');
-      expect(componentStatus).to.have.property('stateValidator');
-      expect(componentStatus).to.have.property('syncEngine');
-      expect(componentStatus).to.have.property('conflictResolver');
+      expect(componentStatus).toHaveProperty('eventBus');
+      expect(componentStatus).toHaveProperty('fileWatchers');
+      expect(componentStatus).toHaveProperty('changeDetector');
+      expect(componentStatus).toHaveProperty('stateValidator');
+      expect(componentStatus).toHaveProperty('syncEngine');
+      expect(componentStatus).toHaveProperty('conflictResolver');
     });
 
     it('should provide performance metrics', function () {
       const performanceMetrics = automatedStateSync.getPerformanceMetrics();
 
-      expect(performanceMetrics).to.have.property('targets');
-      expect(performanceMetrics).to.have.property('current');
-      expect(performanceMetrics).to.have.property('withinTargets');
+      expect(performanceMetrics).toHaveProperty('targets');
+      expect(performanceMetrics).toHaveProperty('current');
+      expect(performanceMetrics).toHaveProperty('withinTargets');
 
-      expect(performanceMetrics.targets.changeDetection).to.equal(1000);
-      expect(performanceMetrics.targets.syncOperations).to.equal(2000);
-      expect(performanceMetrics.targets.validation).to.equal(100);
+      expect(performanceMetrics.targets.changeDetection).toBe(1000);
+      expect(performanceMetrics.targets.syncOperations).toBe(2000);
+      expect(performanceMetrics.targets.validation).toBe(100);
     });
 
     it('should handle component errors and update health', function () {
@@ -260,10 +259,10 @@ describe('AutomatedStateSync', function () {
       const testError = new Error('Test component error');
       automatedStateSync.handleComponentError('testComponent', testError);
 
-      expect(automatedStateSync.systemHealth.components.testComponent).to.equal(
+      expect(automatedStateSync.systemHealth.components.testComponent).toBe(
         'error'
       );
-      expect(automatedStateSync.systemHealth.issues).to.have.length.greaterThan(
+      expect(automatedStateSync.systemHealth.issues.length).toBeGreaterThan(
         0
       );
 
@@ -271,11 +270,11 @@ describe('AutomatedStateSync', function () {
         automatedStateSync.systemHealth.issues[
           automatedStateSync.systemHealth.issues.length - 1
         ];
-      expect(lastIssue.type).to.equal('component_error');
-      expect(lastIssue.component).to.equal('testComponent');
-      expect(lastIssue.message).to.equal('Test component error');
+      expect(lastIssue.type).toBe('component_error');
+      expect(lastIssue.component).toBe('testComponent');
+      expect(lastIssue.message).toBe('Test component error');
 
-      expect(errorSpy.calledOnce).to.be.true;
+      expect(errorSpy.calledOnce).toBe(true);
     });
   });
 
@@ -296,8 +295,7 @@ describe('AutomatedStateSync', function () {
         },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(highImpactChange)).to.be
-        .true;
+      expect(automatedStateSync.shouldTriggerValidation(highImpactChange)).toBe(true);
 
       // Low impact change should not trigger validation
       const lowImpactChange = {
@@ -307,8 +305,7 @@ describe('AutomatedStateSync', function () {
         },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(lowImpactChange)).to.be
-        .false;
+      expect(automatedStateSync.shouldTriggerValidation(lowImpactChange)).toBe(false);
 
       // Medium impact with semantic changes should trigger validation
       const mediumImpactChange = {
@@ -321,8 +318,7 @@ describe('AutomatedStateSync', function () {
         },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(mediumImpactChange)).to
-        .be.true;
+      expect(automatedStateSync.shouldTriggerValidation(mediumImpactChange)).toBe(true);
     });
 
     it('should handle validation change analysis correctly', function () {
@@ -341,7 +337,7 @@ describe('AutomatedStateSync', function () {
         },
       };
 
-      expect(automatedStateSync.shouldTriggerValidation(jsonChange)).to.be.true;
+      expect(automatedStateSync.shouldTriggerValidation(jsonChange)).toBe(true);
 
       // JSON change without significant changes
       const insignificantJsonChange = {
@@ -358,7 +354,7 @@ describe('AutomatedStateSync', function () {
 
       expect(
         automatedStateSync.shouldTriggerValidation(insignificantJsonChange)
-      ).to.be.false;
+      ).toBe(false);
     });
   });
 
@@ -371,17 +367,17 @@ describe('AutomatedStateSync', function () {
     it('should trigger manual sync successfully', async function () {
       const result = await automatedStateSync.triggerManualSync('TEST-001');
 
-      expect(result.success).to.be.true;
-      expect(result.triggered).to.equal('manual_sync');
-      expect(result.specId).to.equal('TEST-001');
-      expect(result).to.have.property('timestamp');
+      expect(result.success).toBe(true);
+      expect(result.triggered).toBe('manual_sync');
+      expect(result.specId).toBe('TEST-001');
+      expect(result).toHaveProperty('timestamp');
     });
 
     it('should trigger manual sync for all specs', async function () {
       const result = await automatedStateSync.triggerManualSync();
 
-      expect(result.success).to.be.true;
-      expect(result.specId).to.equal('all');
+      expect(result.success).toBe(true);
+      expect(result.specId).toBe('all');
     });
 
     it('should fail manual sync when system is not running', async function () {
@@ -389,8 +385,8 @@ describe('AutomatedStateSync', function () {
 
       const result = await automatedStateSync.triggerManualSync('TEST-001');
 
-      expect(result.success).to.be.false;
-      expect(result.error).to.include('must be running');
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('must be running');
     });
   });
 
@@ -402,20 +398,20 @@ describe('AutomatedStateSync', function () {
     it('should provide comprehensive system statistics', function () {
       const stats = automatedStateSync.getSystemStatistics();
 
-      expect(stats).to.have.property('system');
-      expect(stats).to.have.property('components');
+      expect(stats).toHaveProperty('system');
+      expect(stats).toHaveProperty('components');
 
-      expect(stats.system).to.have.property('uptime');
-      expect(stats.system).to.have.property('startTime');
-      expect(stats.system).to.have.property('totalEvents');
-      expect(stats.system).to.have.property('successfulOperations');
-      expect(stats.system).to.have.property('failedOperations');
+      expect(stats.system).toHaveProperty('uptime');
+      expect(stats.system).toHaveProperty('startTime');
+      expect(stats.system).toHaveProperty('totalEvents');
+      expect(stats.system).toHaveProperty('successfulOperations');
+      expect(stats.system).toHaveProperty('failedOperations');
     });
 
     it('should track system uptime correctly', function () {
       // System metrics should be initialized
-      expect(automatedStateSync.systemMetrics.startTime).to.not.be.null;
-      expect(automatedStateSync.systemMetrics.uptime).to.be.a('number');
+      expect(automatedStateSync.systemMetrics.startTime).not.toBeNull();
+      expect(typeof automatedStateSync.systemMetrics.uptime).toBe('number');
     });
   });
 
@@ -426,30 +422,30 @@ describe('AutomatedStateSync', function () {
     });
 
     it('should shutdown gracefully', async function () {
-      this.timeout(15000); // Allow extra time for graceful shutdown
+      // Allow extra time for graceful shutdown
 
       const shutdownSpy = sinon.spy();
       automatedStateSync.on('system_shutdown_complete', shutdownSpy);
 
       await automatedStateSync.shutdown();
 
-      expect(automatedStateSync.isInitialized).to.be.false;
-      expect(automatedStateSync.systemHealth.overall).to.equal('shutdown');
-      expect(shutdownSpy.calledOnce).to.be.true;
+      expect(automatedStateSync.isInitialized).toBe(false);
+      expect(automatedStateSync.systemHealth.overall).toBe('shutdown');
+      expect(shutdownSpy.calledOnce).toBe(true);
 
       const eventData = shutdownSpy.firstCall.args[0];
-      expect(eventData).to.have.property('shutdownAt');
-      expect(eventData).to.have.property('finalStats');
+      expect(eventData).toHaveProperty('shutdownAt');
+      expect(eventData).toHaveProperty('finalStats');
     });
 
     it('should stop health monitoring during shutdown', async function () {
       // Start health monitoring
       automatedStateSync.startHealthMonitoring();
-      expect(automatedStateSync.healthCheckInterval).to.not.be.null;
+      expect(automatedStateSync.healthCheckInterval).not.toBeNull();
 
       await automatedStateSync.shutdown();
 
-      expect(automatedStateSync.healthCheckInterval).to.be.null;
+      expect(automatedStateSync.healthCheckInterval).toBeNull();
     });
   });
 
@@ -472,9 +468,9 @@ describe('AutomatedStateSync', function () {
 
       const result = await failingStateSync.initialize();
 
-      expect(result).to.be.false;
-      expect(failingStateSync.systemHealth.overall).to.equal('failed');
-      expect(failingStateSync.systemHealth.issues).to.have.length.greaterThan(
+      expect(result).toBe(false);
+      expect(failingStateSync.systemHealth.overall).toBe('failed');
+      expect(failingStateSync.systemHealth.issues.length).toBeGreaterThan(
         0
       );
     });
@@ -487,11 +483,11 @@ describe('AutomatedStateSync', function () {
       // Force failure by providing invalid config
       await failingStateSync.initialize();
 
-      expect(failingSpy.calledOnce).to.be.true;
+      expect(failingSpy.calledOnce).toBe(true);
 
       const eventData = failingSpy.firstCall.args[0];
-      expect(eventData).to.have.property('error');
-      expect(eventData).to.have.property('timestamp');
+      expect(eventData).toHaveProperty('error');
+      expect(eventData).toHaveProperty('timestamp');
     });
 
     it('should handle shutdown errors gracefully', async function () {
@@ -506,8 +502,8 @@ describe('AutomatedStateSync', function () {
       await automatedStateSync.shutdown();
 
       // Should still complete shutdown despite error
-      expect(automatedStateSync.isInitialized).to.be.false;
-      expect(automatedStateSync.systemHealth.overall).to.equal('shutdown');
+      expect(automatedStateSync.isInitialized).toBe(false);
+      expect(automatedStateSync.systemHealth.overall).toBe('shutdown');
     });
   });
 
@@ -519,18 +515,17 @@ describe('AutomatedStateSync', function () {
 
     it('should integrate all components properly', function () {
       // Check that components are properly wired
-      expect(automatedStateSync.components.eventBus).to.not.be.null;
-      expect(automatedStateSync.components.fileWatchers).to.not.be.null;
-      expect(automatedStateSync.components.syncEngine).to.not.be.null;
+      expect(automatedStateSync.components.eventBus).not.toBeNull();
+      expect(automatedStateSync.components.fileWatchers).not.toBeNull();
+      expect(automatedStateSync.components.syncEngine).not.toBeNull();
 
       // Check that EventBus has registered handlers
       const eventBusStats =
         automatedStateSync.components.eventBus.getStatistics();
-      expect(eventBusStats.handlers.registered).to.be.greaterThan(0);
+      expect(eventBusStats.handlers.registered).toBeGreaterThan(0);
     });
 
     it('should process file changes end-to-end', async function () {
-      this.timeout(5000);
 
       // Create a spy to track event flow
       const changeAnalyzedSpy = sinon.spy();
@@ -560,7 +555,7 @@ describe('AutomatedStateSync', function () {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Verify that change was processed
-      expect(changeAnalyzedSpy.callCount).to.be.at.least(0); // May be 0 if change detection fails due to test environment
+      expect(changeAnalyzedSpy.callCount).toBeGreaterThanOrEqual(0); // May be 0 if change detection fails due to test environment
     });
   });
 });
