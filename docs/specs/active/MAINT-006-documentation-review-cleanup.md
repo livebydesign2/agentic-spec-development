@@ -2,8 +2,8 @@
 id: MAINT-006
 title: Documentation Review & Cleanup
 type: MAINT
-phase: PHASE-STABILIZATION-3
-priority: P2
+phase: MVP-CRITICAL  
+priority: P1
 status: active
 created: '2025-08-29T12:00:00Z'
 estimated_hours: 4

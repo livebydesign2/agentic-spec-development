@@ -2,7 +2,7 @@
 id: FEAT-030
 title: Comprehensive Error Handling System
 type: FEAT
-phase: PHASE-STABILIZATION-2
+phase: MVP-CRITICAL
 priority: P1
 status: active
 created: '2025-08-29T12:00:00Z'

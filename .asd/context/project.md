@@ -2,8 +2,8 @@
 context_type: 'project'
 project_name: 'ASD CLI'
 version: '0.1.0-alpha'
-phase: 'PHASE-1A'
-last_updated: '2024-08-24'
+phase: 'MVP-CRITICAL'
+last_updated: '2025-01-03'
 constraints:
   - 'Node.js 18+ required'
   - 'Zero legacy compatibility - clean slate architecture'
@@ -27,17 +27,34 @@ technology_stack:
 
 **ASD (Agentic Spec Development) CLI** is a tool for managing software development roadmaps and specifications with AI agent workflows. This is a **0.1.0-alpha pre-production** system designed as a clean slate architecture with **no legacy compatibility**.
 
-## Current Phase: PHASE-1A (Core Infrastructure)
+## Current Phase: MVP-CRITICAL (Smoke Testing Readiness)
 
-**Target**: Build foundation systems for agentic development workflows
-**Goal**: Enable ASD to manage its own development ("eat our own dog food")
-**Milestone**: Self-use capability after PHASE-1A completion
+**Target**: Make ASD usable for real-world smoke testing
+**Goal**: Clean UI, fast performance, easy installation for daily use
+**Milestone**: Comfortable to use on real projects
 
-### Active Work
+### MVP Critical Path (Priority Order)
 
-- **FEAT-012**: Context Injection System (Foundation - enables all other features)
-- **FEAT-013**: Task Router System (Depends on FEAT-012)
-- **FEAT-014**: Workflow State Manager (Depends on FEAT-012)
+1. **FEAT-035**: Improved CLI UI Experience (P0 - BLOCKING - 12 hours)
+   - Current UI too cluttered for comfortable use
+   - Clean output formatting, better error messages
+   - Quiet/verbose modes for different use cases
+
+2. **MAINT-005**: Performance Optimization (P0 - CRITICAL - 8 hours)  
+   - CLI startup time < 1 second
+   - Command response time < 500ms
+   
+3. **FEAT-030**: Error Handling (P0 - Partial - 6 hours)
+   - No uncaught exceptions
+   - Graceful degradation
+
+### Completed Foundation Work
+
+- **FEAT-012**: Context Injection System ✅
+- **FEAT-013**: Task Router System ✅
+- **FEAT-014**: Workflow State Manager ✅
+- **MAINT-001-004**: Core stability issues ✅
+- **BUG-003-004**: Critical bugs resolved ✅
 
 ## Critical Constraints
 
@@ -148,12 +165,14 @@ const spec = await adapter.loadDocument(filePath);
 
 ## Success Criteria
 
-### PHASE-1A Success Criteria
+### MVP Success Criteria
 
-- [ ] Context injection provides 4-layer context to agents
-- [ ] Task routing matches agent capabilities with available work
-- [ ] Workflow state updates automatically with inline documentation
-- [ ] **DOG FOOD MILESTONE**: ASD manages PHASE-1B development using itself
+- [x] Core functionality working (specs, tasks, workflow)
+- [ ] UI clean and readable (FEAT-035)
+- [ ] Performance < 1s startup (MAINT-005)
+- [ ] No crashes during normal use (FEAT-030)
+- [ ] Installation < 5 minutes
+- [ ] **SMOKE TEST MILESTONE**: Can use ASD daily on real projects
 
 ### Quality Gates
 

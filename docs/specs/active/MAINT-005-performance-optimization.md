@@ -2,8 +2,8 @@
 id: MAINT-005
 title: Performance Optimization
 type: MAINT
-phase: PHASE-STABILIZATION-2
-priority: P2
+phase: MVP-CRITICAL
+priority: P0
 status: active
 created: '2025-08-29T12:00:00Z'
 estimated_hours: 8
